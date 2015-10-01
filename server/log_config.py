@@ -10,7 +10,7 @@ fh.setLevel(LOG_LEVEL)
 ch = logging.StreamHandler()
 ch.setLevel(LOG_LEVEL)
 # create formatter and add it to the handlers
-formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 ch.setFormatter(formatter)
 fh.setFormatter(formatter)
 # add the handlers to logging.root
