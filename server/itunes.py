@@ -1,3 +1,4 @@
+import re
 import psutil as psutil
 from win32com import client
 import pythoncom
@@ -31,6 +32,10 @@ class Track(object):
     def play_count(self):
         return self.com_obj.PlayedCount
 
+    @play_count.setter
+    def play_count(self, value):
+        self.com_obj.PlayedCount = value
+
     @property
     def last_played(self):
         if float(self.com_obj.PlayedDate):
@@ -48,6 +53,10 @@ class Track(object):
         id_parts = get_itunes().GetITObjectPersistentIDs(self.com_obj)
         return "%s_%s" % id_parts
 
+    @property
+    def location(self):
+        return re.sub(r"^.+\\Music\\", "", self.com_obj.Location)
+
     def __str__(self):
         return "%s - %s" % (self.artist, self.name)
 
@@ -57,7 +66,8 @@ class Track(object):
             "artist": self.artist,
             "name": self.name,
             "rating": self.rating,
-            "play_count": self.play_count
+            "play_count": self.play_count,
+            "location": self.location
         }
 
 
