@@ -40,7 +40,7 @@ def next_song(name):
 def stream_song(id):
     logger.info("Streaming song: %s", id)
     track = itunes.track_by_id(id)
-    logger.info("Track: %s", track )
+    logger.info("Track: %s", track)
 
     full_path = os.path.join(music_dir, track.location)
     logger.info("Track path: %s", full_path)
