@@ -3,3 +3,4 @@ server/output.log
 *.pyc
 www2
 www3
+www/.idea/
