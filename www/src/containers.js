@@ -18,7 +18,18 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+class App extends Component {
+  render() {
+    return (
+          <div>
+            <h1>Hello world!</h1>
+            <Counter value={this.props.value} handler={this.props.onIncrement}></Counter>
+          </div>
+    );
+  }
+}
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Counter);
+)(App);
