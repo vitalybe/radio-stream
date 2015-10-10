@@ -20,16 +20,33 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-
-@connect(mapStateToProps, mapDispatchToProps)
 export class App extends Component {
   render() {
     return (
+      <div>
+        <h1>Menu</h1>
+        <ul>
+            <li>
+              <Link to="/">Counter</Link>
+            </li>
+            <li>
+              <Link to="/silly">Silly link</Link>
+            </li>
+        </ul>
+        <h1>Content</h1>
+        {this.props.children}
+      </div>
+    );
+  }
+}
+
+
+@connect(mapStateToProps, mapDispatchToProps)
+export class CounterDisplay extends Component {
+  render() {
+    return (
           <div>
-            <h1>Hello world, I am a container!</h1>
             <Counter value={this.props.value} handler={this.props.onIncrement}></Counter>
-            <Link to="/silly">Silly link</Link>
-            {this.props.children}
           </div>
     );
   }
