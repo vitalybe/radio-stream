@@ -1,7 +1,9 @@
 import { INCREMENT } from './actions';
 import { combineReducers } from 'redux';
+import { routerStateReducer } from 'redux-router';
 
-function counter(state = 0, action) {
+
+function counter(state = 0, action = null) {
   switch (action.type) {
   case INCREMENT:
     return state + 2;
@@ -11,7 +13,8 @@ function counter(state = 0, action) {
 }
 
 const rootReducer = combineReducers({
-  counter
+  counter,
+  router: routerStateReducer
 });
 
 export default rootReducer;
