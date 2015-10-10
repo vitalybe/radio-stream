@@ -20,7 +20,9 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-class App extends Component {
+
+@connect(mapStateToProps, mapDispatchToProps)
+export class App extends Component {
   render() {
     return (
           <div>
@@ -32,8 +34,3 @@ class App extends Component {
     );
   }
 }
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);

@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { Route, Link } from 'react-router';
 import { ReduxRouter } from 'redux-router';
 import configureStore from './store_config';
-import App from './containers';
+import { App } from './containers';
 import { Silly } from './components';
 
 const store = configureStore();
