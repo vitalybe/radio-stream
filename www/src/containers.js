@@ -3,51 +3,61 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { Counter } from './components';
-import { increment } from './actions';
+import { fetchNextSongDetails } from './actions';
+
+export class App extends Component {
+    render() {
+        return (
+            <div>
+                <h1>Music stream</h1>
+                {this.props.children}
+            </div>
+        );
+    }
+}
+
 
 // Which part of the Redux global state does our component want to receive as props?
 function mapStateToProps(state) {
-  return {
-    value: state.counter,
-    routerState: state.router
-  };
+    return {
+        nextSongAsync: state.nextSongAsync,
+        playlistName: state.router.params.playlistName
+    };
 }
 
-// Which action creators does it want to receive by props?
-function mapDispatchToProps(dispatch) {
-  return {
-    onIncrement: () => dispatch(increment())
-  };
-}
+@connect(mapStateToProps)
+export class PlaylistPage extends Component {
 
-export class App extends Component {
-  render() {
-    return (
-      <div>
-        <h1>Menu</h1>
-        <ul>
-            <li>
-              <Link to="/">Counter</Link>
-            </li>
-            <li>
-              <Link to="/silly">Silly link</Link>
-            </li>
-        </ul>
-        <h1>Content</h1>
-        {this.props.children}
-      </div>
-    );
-  }
-}
+    constructor(props, context) {
+        super(props, context);
+    }
+
+    _fetchNextSong() {
+        this.props.dispatch(fetchNextSongDetails(this.props.playlistName));
+    }
+
+    render() {
+
+        let nextSongAsync = this.props.nextSongAsync;
+        let nextSongText = null;
+
+        if (!nextSongAsync.inProgress) {
+            if(nextSongAsync.song) {
+                nextSongText = JSON.stringify(nextSongAsync.song)
+            } else {
+                nextSongText = JSON.stringify(nextSongAsync.error)
+            }
+        } else {
+            nextSongText = "Loading...";
+        }
 
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class CounterDisplay extends Component {
-  render() {
-    return (
-          <div>
-            <Counter value={this.props.value} handler={this.props.onIncrement}></Counter>
-          </div>
-    );
-  }
+        return (
+            <div>
+                <div>Current playlist: {this.props.playlistName}</div>
+                <div>Next song: {nextSongText}</div>
+                <button onClick={() => this._fetchNextSong()}>Get next song</button>
+            </div>
+        );
+    }
 }
