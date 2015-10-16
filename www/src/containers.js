@@ -38,27 +38,34 @@ export class PlaylistPage extends Component {
             flashVersion: 9, // optional: shiny features (default = 8)
             // optional: ignore Flash where possible, use 100% HTML5 mode
             // preferFlash: false,
-            onready: function() {
+            onready: function () {
             }
         });
 
         this.props.dispatch(fetchNextSongDetails(this.props.playlistName));
+        this.sound = null;
+    }
+
+    _createSound(songId) {
+        return soundManager.createSound({
+            id: songId, // optional: provide your own unique id
+            url: 'http://localhost:5000/song/' + songId + "/stream",
+            autoLoad: true,
+            onload: function() {
+                // DEBUG - Auto rewind to -10 seconds
+                console.log('sound loaded! duration: ' + this.duration, this);
+                this.setPosition(this.duration - 10000);
+            }
+        });
     }
 
     _play() {
-        let nextSongAsync = this.props.nextSongAsync;
-        if(!nextSongAsync.song) {
-            throw new Error("No song available")
+        if (!this.sound) {
+            throw new Error("No sound available")
         }
 
-        var mySound = soundManager.createSound({
-            id: nextSongAsync.song.id, // optional: provide your own unique id
-            url: 'http://localhost:5000/song/' + nextSongAsync.song.id + "/stream"
-            // onload: function() { console.log('sound loaded!', this); }
-            // other options here..
-        });
-
-        mySound.play();
+        this.sound.togglePause();
+        this.sound.setPosition(this.sound.duration - 10000);
     }
 
     render() {
@@ -66,16 +73,17 @@ export class PlaylistPage extends Component {
         let nextSongAsync = this.props.nextSongAsync;
         let nextSongText = null;
 
-        if (!nextSongAsync.inProgress) {
-            if(nextSongAsync.song) {
-                nextSongText = JSON.stringify(nextSongAsync.song)
-            } else {
-                nextSongText = JSON.stringify(nextSongAsync.error)
-            }
+        if (nextSongAsync.song) {
+            nextSongText = JSON.stringify(nextSongAsync.song)
+        } else if (nextSongAsync.error) {
+            nextSongText = JSON.stringify(nextSongAsync.error)
         } else {
             nextSongText = "Loading...";
         }
 
+        if (nextSongAsync.song && (!this.sound || this.sound.id !== nextSongAsync.song.id)) {
+            this.sound = this._createSound(nextSongAsync.song.id)
+        }
 
         return (
             <div>
