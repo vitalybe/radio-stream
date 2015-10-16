@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import { soundManager } from 'soundmanager2';
 
 import { Counter } from './components';
 import { fetchNextSongDetails } from './actions';
@@ -30,10 +31,34 @@ export class PlaylistPage extends Component {
 
     constructor(props, context) {
         super(props, context);
+
+        let soundManagerSwf = require("file!../lib/swf/soundmanager2.swf");
+        soundManager.setup({
+            url: soundManagerSwf,
+            flashVersion: 9, // optional: shiny features (default = 8)
+            // optional: ignore Flash where possible, use 100% HTML5 mode
+            // preferFlash: false,
+            onready: function() {
+            }
+        });
+
+        this.props.dispatch(fetchNextSongDetails(this.props.playlistName));
     }
 
-    _fetchNextSong() {
-        this.props.dispatch(fetchNextSongDetails(this.props.playlistName));
+    _play() {
+        let nextSongAsync = this.props.nextSongAsync;
+        if(!nextSongAsync.song) {
+            throw new Error("No song available")
+        }
+
+        var mySound = soundManager.createSound({
+            id: nextSongAsync.song.id, // optional: provide your own unique id
+            url: 'http://localhost:5000/song/' + nextSongAsync.song.id + "/stream"
+            // onload: function() { console.log('sound loaded!', this); }
+            // other options here..
+        });
+
+        mySound.play();
     }
 
     render() {
@@ -56,7 +81,7 @@ export class PlaylistPage extends Component {
             <div>
                 <div>Current playlist: {this.props.playlistName}</div>
                 <div>Next song: {nextSongText}</div>
-                <button onClick={() => this._fetchNextSong()}>Get next song</button>
+                <button onClick={() => this._play()} disabled={!nextSongAsync.song}>Play</button>
             </div>
         );
     }
