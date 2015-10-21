@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { soundManager } from 'soundmanager2';
 
 import { Counter } from './components';
-import { fetchNextSongDetails } from './actions';
+import * as actions from './actions';
 
 export class App extends Component {
     render() {
@@ -22,7 +21,8 @@ export class App extends Component {
 function mapStateToProps(state) {
     return {
         nextSongAsync: state.nextSongAsync,
-        playlistName: state.router.params.playlistName
+        playlistName: state.router.params.playlistName,
+        currentSong: state.currentSong
     };
 }
 
@@ -31,41 +31,16 @@ export class PlaylistPage extends Component {
 
     constructor(props, context) {
         super(props, context);
-
-        let soundManagerSwf = require("file!../lib/swf/soundmanager2.swf");
-        soundManager.setup({
-            url: soundManagerSwf,
-            flashVersion: 9, // optional: shiny features (default = 8)
-            // optional: ignore Flash where possible, use 100% HTML5 mode
-            // preferFlash: false,
-            onready: function () {
-            }
-        });
-
-        this.props.dispatch(fetchNextSongDetails(this.props.playlistName));
-        this.sound = null;
-    }
-
-    _createSound(songId) {
-        return soundManager.createSound({
-            id: songId, // optional: provide your own unique id
-            url: 'http://localhost:5000/song/' + songId + "/stream",
-            autoLoad: true,
-            onload: function() {
-                // DEBUG - Auto rewind to -10 seconds
-                console.log('sound loaded! duration: ' + this.duration, this);
-                this.setPosition(this.duration - 10000);
-            }
-        });
+        this.props.dispatch(actions.fetchNextSongDetails(this.props.playlistName));
     }
 
     _play() {
-        if (!this.sound) {
-            throw new Error("No sound available")
+        let song = this.props.nextSongAsync.song;
+        if(!song.id) {
+            throw new Error("Song ID is invalid: " + song.id);
         }
 
-        this.sound.togglePause();
-        this.sound.setPosition(this.sound.duration - 10000);
+        this.props.dispatch(actions.playToggle(song.id));
     }
 
     render() {
@@ -81,15 +56,19 @@ export class PlaylistPage extends Component {
             nextSongText = "Loading...";
         }
 
-        if (nextSongAsync.song && (!this.sound || this.sound.id !== nextSongAsync.song.id)) {
-            this.sound = this._createSound(nextSongAsync.song.id)
+        let currentSong = this.props.currentSong;
+        let playButtonText = "Play";
+        if(currentSong.loading) {
+            playButtonText = "Loading...";
+        } else if(currentSong.playing) {
+            playButtonText = "Pause";
         }
 
         return (
             <div>
                 <div>Current playlist: {this.props.playlistName}</div>
                 <div>Next song: {nextSongText}</div>
-                <button onClick={() => this._play()} disabled={!nextSongAsync.song}>Play</button>
+                <button onClick={() => this._play()} disabled={!nextSongAsync.song}>{playButtonText}</button>
             </div>
         );
     }

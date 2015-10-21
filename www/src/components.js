@@ -1,16 +1,7 @@
-import React, { Component } from 'react';
+import { Component, PropTypes as T } from 'react';
 
-export class Counter extends Component {
-  render() {
-    return (
-      <button onClick={this.props.handler}>
-        {this.props.value}
-      </button>
-    );
-  }
-}
+export class MusicPlayer extends Component {
 
-export class Silly extends Component {
   render() {
     return (
       <div>I am very silly</div>
