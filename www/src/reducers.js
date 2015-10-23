@@ -28,6 +28,9 @@ function currentSong(state = currentSongData.get(), action = null) {
         case actions.SOUND_PAUSE:
             state.set({loading: false, playing: false, id: action.songId});
             break;
+        case actions.SOUND_FINISHED:
+            state.set({loading: false, playing: false, id: action.songId});
+            break;
     }
 
     return currentSongData.get();

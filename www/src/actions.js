@@ -6,6 +6,8 @@ export const FETCH_NEXT_SONG_DETAILS_ASYNC = 'FETCH_NEXT_SONG_DETAILS_ASYNC';
 export const SOUND_LOADING = 'SOUND_LOADING';
 export const SOUND_PLAY = 'SOUND_PLAY';
 export const SOUND_PAUSE = 'SOUND_PAUSE';
+export const SOUND_FINISHED = 'SOUND_FINISHED';
+
 
 const SERVER_ADDRESS = "http://localhost:5000";
 
@@ -32,7 +34,7 @@ export function fetchNextSongDetails(playlistName) {
     }
 }
 
-function _loadSound(songId) {
+function _loadSound(dispatch, songId) {
     return new Promise(function(resolve, reject) {
         soundManager.createSound({
             id: songId, // optional: provide your own unique id
@@ -44,6 +46,9 @@ function _loadSound(songId) {
                 this.setPosition(this.duration - 10000);
 
                 resolve(this);
+            },
+            onfinish: function() {
+                dispatch({type: SOUND_FINISHED, songId: songId})
             }
         })
     })
@@ -56,8 +61,8 @@ export function playToggle(songId) {
                 if (sound && sound.loaded) {
                     return sound;
                 } else {
-                    dispatch({type: SOUND_LOADING, songId: songId})
-                    return _loadSound(songId, dispatch)
+                    dispatch({type: SOUND_LOADING, songId: songId});
+                    return _loadSound(dispatch, songId);
                 }
             })
             .then(function (sound) {
@@ -75,3 +80,4 @@ export function playToggle(songId) {
             });
     }
 }
+
