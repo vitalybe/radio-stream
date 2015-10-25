@@ -6,6 +6,7 @@ import random
 import flask
 from flask import Flask
 import itunes
+import json
 
 music_dir = 'c:\Users\Vitaly\Dropbox\iTunes Media\Music'
 
@@ -67,7 +68,9 @@ def playlist(name):
         logger.warn("unknown playlist: %s", name)
         flask.abort(404)
 
-    return flask.jsonify(tracks=tracks)
+    tracksJson = [json.loads(tracks[0].__repr__()) for track in tracks]
+
+    return flask.jsonify(tracks=tracksJson)
 
 
 @app.route('/playlist/<name>/next')
@@ -81,19 +84,7 @@ def next_song(name):
     # This constant seed is used to always return the same next song, as long as the playlist didn't change
     random.seed(42)
     random.shuffle(tracks)
-    print tracks[0].__repr__()
-    return flask.jsonify(next=tracks[0].__repr__())
-
-@app.route('/song/<id>/stream')
-@crossdomain(origin='*')
-def stream_song(id):
-    logger.info("Streaming song: %s", id)
-    track = itunes.track_by_id(id)
-    logger.info("Track: %s", track)
-
-    full_path = os.path.join(music_dir, track.location)
-    logger.info("Track path: %s", full_path)
-    return flask.send_from_directory(os.path.dirname(full_path), os.path.basename(full_path))
+    return flask.jsonify(next=json.loads(tracks[0].__repr__()))
 
 @app.route('/song/<id>/last-played', methods=["POST"])
 @crossdomain(origin='*')
@@ -107,4 +98,4 @@ def update_last_played(id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=True, threaded=True)

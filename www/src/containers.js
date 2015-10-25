@@ -40,7 +40,7 @@ export class PlaylistPage extends Component {
             throw new Error("Song ID is invalid: " + song.id);
         }
 
-        this.props.dispatch(actions.playToggle(song.id));
+        this.props.dispatch(actions.playToggle(song));
     }
 
     render() {
@@ -69,6 +69,10 @@ export class PlaylistPage extends Component {
                 <div>Current playlist: {this.props.playlistName}</div>
                 <div>Next song: {nextSongText}</div>
                 <button onClick={() => this._play()} disabled={!nextSongAsync.song}>{playButtonText}</button>
+                <button onClick={() => this.props.dispatch(actions.fastForward(currentSong.id))}
+                        disabled={!currentSong.playing}>
+                    Fast forward
+                </button>
             </div>
         );
     }

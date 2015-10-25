@@ -2,7 +2,7 @@ import logging
 from os import path
 
 LOG_FILE = path.join(path.dirname(__file__), "output.log")
-LOG_LEVEL = logging.INFO
+LOG_LEVEL = logging.DEBUG
 
 logging.root.setLevel(LOG_LEVEL)
 fh = logging.FileHandler(LOG_FILE)

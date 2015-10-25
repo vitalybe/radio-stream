@@ -10,12 +10,14 @@ export const SOUND_FINISHED = 'SOUND_FINISHED';
 
 
 const SERVER_ADDRESS = "http://localhost:5000";
+const MUSIC_ADDRESS = "http://localhost:16768";
 
 soundManager.setup({
     url: require("file!../lib/swf/soundmanager2.swf"),
     flashVersion: 9, // optional: shiny features (default = 8)
     // optional: ignore Flash where possible, use 100% HTML5 mode
-    preferFlash: false
+    preferFlash: false,
+    html5PollingInterval: 50
 });
 
 export function fetchNextSongDetails(playlistName) {
@@ -34,27 +36,55 @@ export function fetchNextSongDetails(playlistName) {
     }
 }
 
-function _loadSound(dispatch, songId) {
-    return new Promise(function(resolve, reject) {
+function _markSongAsPlayed(songId, dispatch) {
+    let fullUrl = SERVER_ADDRESS + `/song/${songId}/last-played`;
+    console.log(`IN PRROGESS song ${songId}: mark as played`)
+    return fetch(fullUrl, {method: "POST"})
+        .then(response => response.json().then(json => ({json, response})))
+        .then(({ json, response }) => {
+            console.log(`SUCCESS song ${songId}: mark as played`)
+        })
+        .catch((ex) => {
+            console.log(`ERROR song ${songId}: mark as played: ${ex}`);
+        });
+}
+
+function _loadSound(dispatch, song) {
+    // TODO: Handle failures
+    let songId = song.id;
+
+    return new Promise(function (resolve, reject) {
         soundManager.createSound({
             id: songId, // optional: provide your own unique id
-            url: 'http://localhost:5000/song/' + songId + "/stream",
+            url: MUSIC_ADDRESS + "/" + song.location,
             autoLoad: true,
             onload: function () {
                 // DEBUG - Auto rewind to -10 seconds
                 console.log('sound loaded! duration: ' + this.duration, this);
-                this.setPosition(this.duration - 10000);
+                this.onPosition(this.duration - 1000, () => {
+                    _markSongAsPlayed(songId, dispatch)
+                });
 
                 resolve(this);
+
             },
-            onfinish: function() {
+            onfinish: function () {
                 dispatch({type: SOUND_FINISHED, songId: songId})
             }
         })
     })
 }
 
-export function playToggle(songId) {
+export function fastForward(songId) {
+    console.log('fastForward');
+    let sound = soundManager.getSoundById(songId)
+    sound.setPosition(sound.duration - 10000);
+
+    return  {type: "N/A"};
+}
+
+export function playToggle(song) {
+    let songId = song.id;
     return function (dispatch) {
         return Promise.resolve(soundManager.getSoundById(songId))
             .then(function (sound) {
@@ -62,7 +92,7 @@ export function playToggle(songId) {
                     return sound;
                 } else {
                     dispatch({type: SOUND_LOADING, songId: songId});
-                    return _loadSound(dispatch, songId);
+                    return _loadSound(dispatch, song);
                 }
             })
             .then(function (sound) {

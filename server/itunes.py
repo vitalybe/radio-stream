@@ -4,6 +4,7 @@ from win32com import client
 import pythoncom
 import logging
 from datetime import datetime
+import json
 
 logger = logging.getLogger('itunes')
 
@@ -51,6 +52,7 @@ class Track(object):
     @property
     def id(self):
         id_parts = get_itunes().GetITObjectPersistentIDs(self.com_obj)
+        logger.debug("Song IDs: " + str(id_parts))
         return "%s_%s" % id_parts
 
     @property
@@ -61,14 +63,14 @@ class Track(object):
         return "%s - %s" % (self.artist, self.name)
 
     def __repr__(self):
-        return {
+        return json.dumps({
             "id": self.id,
             "artist": self.artist,
             "name": self.name,
             "rating": self.rating,
             "play_count": self.play_count,
             "location": self.location
-        }
+        })
 
 
 def is_itunes_running():
@@ -123,5 +125,8 @@ def playlist_tracks(name):
         return None
 
 def track_by_id(id):
-    track_com = get_lib().Tracks.ItemByPersistentID(*id.split("_"))
-    return Track(track_com)
+    logger.debug("track_by_id: %s" % id)
+    ids = id.split("_")
+    found_track = Track(get_lib().Tracks.ItemByPersistentID(*ids))
+    logger.debug("found_track: %s" % found_track)
+    return found_track
