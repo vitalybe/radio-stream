@@ -69,6 +69,8 @@ export class PlaylistPage extends Component {
                 <div>Current playlist: {this.props.playlistName}</div>
                 <div>Next song: {nextSongText}</div>
                 <button onClick={() => this._play()} disabled={!nextSongAsync.song}>{playButtonText}</button>
+                <button onClick={() => this.props.dispatch(actions.playPlaylist(this.props.playlistName))}
+                        disabled={!nextSongAsync.song}>Play playlist</button>
                 <button onClick={() => this.props.dispatch(actions.fastForward(currentSong.id))}
                         disabled={!currentSong.playing}>
                     Fast forward
