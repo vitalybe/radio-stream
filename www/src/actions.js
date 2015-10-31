@@ -67,6 +67,10 @@ function _loadSound(dispatch, song) {
             // events can be subscribed to only on creation or during play.
             onload: function () {
 
+                if (this.duration == 0) {
+                    reject(new Error(`Song ${songId} duration after load was 0`))
+                }
+
                 this.onPosition(this.duration - 1000, () => {
                     console.log(`SUCCESS song ${songId}: almost finished. marking as played`);
                     _markSongAsPlayed(songId, dispatch)
@@ -135,14 +139,19 @@ export function playToggle(song, playOptions) {
 function _playPlaylist(dispatch, playlistName) {
     _fetchNextSongDetails(playlistName, dispatch)
         .then(function (nextSong) {
-            return _playToggle(dispatch, nextSong, {onfinish: () => {
-                debugger;
-                _playPlaylist(dispatch, playlistName);
-            }});
+            return _playToggle(dispatch, nextSong, {
+                onfinish: () => {
+                    _playPlaylist(dispatch, playlistName);
+                }
+            }).catch(function (err) {
+                console.log(`ERROR failed to play song ${nextSong.id}: Will mark it as read and proceed to next oen`);
+                _markSongAsPlayed(nextSong.id, dispatch).then(function() {
+                    console.log(`Marked as read - Continue to play playlist: ${playlistName}`);
+                    _playPlaylist(dispatch, playlistName);
+                });
+            });
+
         })
-        .catch(function(err) {
-            console.log(`ERROR song: failed to play`);
-        });
 }
 
 export function playPlaylist(playlistName) {
