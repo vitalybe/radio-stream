@@ -1,4 +1,4 @@
-require('es6-promise').polyfill();
+window.Promise = require('yaku');
 
 import React from 'react';
 import { Provider } from 'react-redux';
