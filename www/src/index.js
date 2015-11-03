@@ -11,6 +11,9 @@ import { Silly } from './components';
 
 const store = configureStore();
 
+var app = document.createElement('div');
+document.body.appendChild(app);
+
 React.render(
   <Provider store={store}>
     {() =>
@@ -29,4 +32,4 @@ React.render(
     }
   </Provider>
 
-, document.getElementById('root'));
+, app);
