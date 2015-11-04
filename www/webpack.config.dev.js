@@ -14,7 +14,10 @@ module.exports = {
   },
   plugins: [
   new webpack.HotModuleReplacementPlugin(),
-  new webpack.NoErrorsPlugin()
+  new webpack.NoErrorsPlugin(),
+  new webpack.ProvidePlugin({
+    _: "lodash",
+  })
   ],
   module: {
     loaders: [{

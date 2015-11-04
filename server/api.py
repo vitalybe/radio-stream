@@ -4,20 +4,20 @@ from datetime import datetime
 import logging
 import random
 import flask
-from flask import Flask, session, request
+from flask import Flask, session, request, g
 import itunes
 import json
+from datetime import timedelta
+from flask import make_response, request, current_app
+from functools import update_wrapper
+from flaskext.auth import Auth, AuthUser, login_required, logout
 
 music_dir = 'c:\Users\Vitaly\Dropbox\iTunes Media\Music'
 
 app = Flask(__name__)
+auth = Auth(app)
+app.auth.user_timeout = 0
 logger = logging.getLogger(__name__)
-
-
-from datetime import timedelta
-from flask import make_response, request, current_app
-from functools import update_wrapper
-
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -53,6 +53,7 @@ def crossdomain(origin=None, methods=None, headers=None,
             h['Access-Control-Allow-Methods'] = get_methods()
             h['Access-Control-Max-Age'] = str(max_age)
             h['Access-Control-Allow-Credentials'] = 'true'
+            h['Access-Control-Allow-Headers'] = "content-type"
             if headers is not None:
                 h['Access-Control-Allow-Headers'] = headers
             return resp
@@ -61,8 +62,25 @@ def crossdomain(origin=None, methods=None, headers=None,
         return update_wrapper(wrapped_function, f)
     return decorator
 
+
+@app.before_request
+def init_users():
+    print "initiating users"
+    admin = AuthUser(username='admin')
+    admin.set_and_encrypt_password('check this auth pass')
+    g.users = {'admin': admin}
+
+
+# Authentication per: https://github.com/thedekel/flask-auth/blob/master/examples/no_db_persistence.py
+@app.route('/access-token', methods=["POST", "OPTIONS"])
+@crossdomain(origin='http://localhost:3000')
+def request_access_token():
+    success = g.users['admin'].authenticate(request.get_json()['password'])
+    
+    return flask.jsonify(success=success)
+
 @app.route('/playlist/<name>')
-@crossdomain(origin='*')
+@crossdomain(origin='http://localhost:3000')
 def playlist(name):
     tracks = itunes.playlist_tracks(name)
     if tracks is None:
@@ -76,26 +94,22 @@ def playlist(name):
 
 @app.route('/playlist/<name>/next')
 @crossdomain(origin='http://localhost:3000')
+@login_required()
 def next_song(name):
     tracks = itunes.playlist_tracks(name)
     if tracks is None:
         logger.warn("unknown playlist: %s", name)
         flask.abort(404)
 
-    session['username'] = "Vitaly"
-    meatcookie = request.cookies.get('meatcookie')
-    print "Meat cookie: " + str(meatcookie)
-
     # This constant seed is used to always return the same next song, as long as the playlist didn't change
     random.seed(42)
     random.shuffle(tracks)
 
     resp = make_response((flask.jsonify(next=json.loads(tracks[0].__repr__())), 200))
-    resp.set_cookie('meatcookie', 'meatcookiezzzzzzzz')
     return resp
 
 @app.route('/song/<id>/last-played', methods=["POST"])
-@crossdomain(origin='*')
+@crossdomain(origin='http://localhost:3000')
 def update_last_played(id):
     track = itunes.track_by_id(id)
     track.play_count += 1
@@ -106,5 +120,5 @@ def update_last_played(id):
 
 
 if __name__ == '__main__':
-    app.secret_key = 'A0Zr98j/3zY R~XHH!jmN]LWX/,?RT'
+    app.secret_key = 'A0Zra98j/3zYaR~XHaH!jmN]LWX/,?RT'
     app.run(host='0.0.0.0', debug=True, threaded=True)

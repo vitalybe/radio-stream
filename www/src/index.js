@@ -8,7 +8,7 @@ import { IndexRoute, Route, Link } from 'react-router';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
 import { ReduxRouter } from 'redux-router';
 import configureStore from './store_config';
-import { App, PlaylistPage } from './containers';
+import { App, PlaylistPage, LoginPage } from './containers';
 import { Silly } from './components';
 
 const store = configureStore();
@@ -19,6 +19,7 @@ React.render(
     <div>
         <ReduxRouter>
           <Route path="/" component={App}>
+            <Route path="login" component={LoginPage}/>
             <Route path="playlist/:playlistName" component={PlaylistPage}/>
           </Route>
         </ReduxRouter>

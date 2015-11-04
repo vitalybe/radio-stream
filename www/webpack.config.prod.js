@@ -21,6 +21,9 @@ module.exports = {
       compressor: {
         warnings: false
       }
+    }),
+    new webpack.ProvidePlugin({
+      _: "lodash",
     })
   ],
   module: {

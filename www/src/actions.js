@@ -19,6 +19,55 @@ soundManager.setup({
     html5PollingInterval: 50
 });
 
+
+
+function ajax(apiAddress, userConfig) {
+    var config = {
+        credentials: 'include',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    };
+
+    config = _.assign(config, userConfig);
+    if(config.body) {
+        config.body = JSON.stringify(config.body);
+    }
+
+    return fetch(SERVER_ADDRESS + apiAddress, config)
+        .then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Bad response from server");
+            }
+
+            return response;
+        });
+}
+
+function post(apiAddress, userConfig) {
+    return ajax(apiAddress, _.assign({method: "post"}, userConfig))
+}
+
+function get(apiAddress, userConfig) {
+    return ajax(apiAddress, _.assign({method: "get"}, userConfig))
+}
+
+function patch(apiAddress, userConfig) {
+    return ajax(apiAddress, _.assign({method: "patch"}, userConfig))
+}
+
+function put(apiAddress, userConfig) {
+    return ajax(apiAddress, _.assign({method: "put"}, userConfig))
+}
+
+export function login(password) {
+
+    return post("/access-token", {body: {password}}).
+        then(response => response.json().then(json => json))
+
+};
+
 function _fetchNextSongDetails(playlistName, dispatch) {
     dispatch({type: FETCH_NEXT_SONG_DETAILS_ASYNC, inProgress: true});
 
