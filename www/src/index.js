@@ -1,3 +1,5 @@
+require('file?name=[name].[ext]!../index.html');
+
 window.Promise = require('yaku');
 
 import React from 'react';
