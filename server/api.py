@@ -4,7 +4,7 @@ from datetime import datetime
 import logging
 import random
 import flask
-from flask import Flask
+from flask import Flask, session, request
 import itunes
 import json
 
@@ -52,6 +52,7 @@ def crossdomain(origin=None, methods=None, headers=None,
             h['Access-Control-Allow-Origin'] = origin
             h['Access-Control-Allow-Methods'] = get_methods()
             h['Access-Control-Max-Age'] = str(max_age)
+            h['Access-Control-Allow-Credentials'] = 'true'
             if headers is not None:
                 h['Access-Control-Allow-Headers'] = headers
             return resp
@@ -74,17 +75,24 @@ def playlist(name):
 
 
 @app.route('/playlist/<name>/next')
-@crossdomain(origin='*')
+@crossdomain(origin='http://localhost:3000')
 def next_song(name):
     tracks = itunes.playlist_tracks(name)
     if tracks is None:
         logger.warn("unknown playlist: %s", name)
         flask.abort(404)
 
+    session['username'] = "Vitaly"
+    meatcookie = request.cookies.get('meatcookie')
+    print "Meat cookie: " + str(meatcookie)
+
     # This constant seed is used to always return the same next song, as long as the playlist didn't change
     random.seed(42)
     random.shuffle(tracks)
-    return flask.jsonify(next=json.loads(tracks[0].__repr__()))
+
+    resp = make_response((flask.jsonify(next=json.loads(tracks[0].__repr__())), 200))
+    resp.set_cookie('meatcookie', 'meatcookiezzzzzzzz')
+    return resp
 
 @app.route('/song/<id>/last-played', methods=["POST"])
 @crossdomain(origin='*')
@@ -98,4 +106,5 @@ def update_last_played(id):
 
 
 if __name__ == '__main__':
+    app.secret_key = 'A0Zr98j/3zY R~XHH!jmN]LWX/,?RT'
     app.run(host='0.0.0.0', debug=True, threaded=True)

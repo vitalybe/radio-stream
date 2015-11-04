@@ -9,7 +9,7 @@ export const SOUND_PAUSE = 'SOUND_PAUSE';
 export const SOUND_FINISHED = 'SOUND_FINISHED';
 
 const SERVER_ADDRESS = window.location.protocol + "//" + window.location.hostname+":5000";
-const MUSIC_ADDRESS = window.location.protocol + "//" + window.location.hostname+"16768";
+const MUSIC_ADDRESS = window.location.protocol + "//" + window.location.hostname+":16768";
 
 soundManager.setup({
     url: require("file!../lib/swf/soundmanager2.swf"),
@@ -23,7 +23,7 @@ function _fetchNextSongDetails(playlistName, dispatch) {
     dispatch({type: FETCH_NEXT_SONG_DETAILS_ASYNC, inProgress: true});
 
     let fullUrl = SERVER_ADDRESS + "/playlist/" + playlistName + "/next";
-    return fetch(fullUrl)
+    return fetch(fullUrl, {credentials: 'include'})
         .then(response => response.json().then(json => ({json, response})))
         .then(({ json, response }) => {
             dispatch({type: FETCH_NEXT_SONG_DETAILS_ASYNC, ok: response.ok, json})
