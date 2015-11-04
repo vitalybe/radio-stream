@@ -73,14 +73,14 @@ def init_users():
 
 # Authentication per: https://github.com/thedekel/flask-auth/blob/master/examples/no_db_persistence.py
 @app.route('/access-token', methods=["POST", "OPTIONS"])
-@crossdomain(origin='http://localhost:3000')
+@crossdomain(origin='http://whoisvitaly.ddns.net:3000')
 def request_access_token():
     success = g.users['admin'].authenticate(request.get_json()['password'])
     
     return flask.jsonify(success=success)
 
 @app.route('/playlist/<name>')
-@crossdomain(origin='http://localhost:3000')
+@crossdomain(origin='http://whoisvitaly.ddns.net:3000')
 def playlist(name):
     tracks = itunes.playlist_tracks(name)
     if tracks is None:
@@ -93,7 +93,7 @@ def playlist(name):
 
 
 @app.route('/playlist/<name>/next')
-@crossdomain(origin='http://localhost:3000')
+@crossdomain(origin='http://whoisvitaly.ddns.net:3000')
 @login_required()
 def next_song(name):
     tracks = itunes.playlist_tracks(name)
@@ -109,7 +109,7 @@ def next_song(name):
     return resp
 
 @app.route('/song/<id>/last-played', methods=["POST"])
-@crossdomain(origin='http://localhost:3000')
+@crossdomain(origin='http://whoisvitaly.ddns.net:3000')
 def update_last_played(id):
     track = itunes.track_by_id(id)
     track.play_count += 1
