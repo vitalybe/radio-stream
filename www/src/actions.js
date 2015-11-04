@@ -8,8 +8,8 @@ export const SOUND_PLAY = 'SOUND_PLAY';
 export const SOUND_PAUSE = 'SOUND_PAUSE';
 export const SOUND_FINISHED = 'SOUND_FINISHED';
 
-const SERVER_ADDRESS = "http://localhost:5000";
-const MUSIC_ADDRESS = "http://localhost:16768";
+const SERVER_ADDRESS = window.location.protocol + "//" + window.location.hostname+":5000";
+const MUSIC_ADDRESS = window.location.protocol + "//" + window.location.hostname+"16768";
 
 soundManager.setup({
     url: require("file!../lib/swf/soundmanager2.swf"),
