@@ -9,9 +9,12 @@ import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
 import { ReduxRouter } from 'redux-router';
 import configureStore from './store_config';
 import { App, PlaylistPage, LoginPage } from './containers';
-import { Silly } from './components';
+import { dispatchContainer } from './dispatch'
 
 const store = configureStore();
+// The following allows us to dispatch actions everywhere
+// Following the advice on this thread: https://github.com/rackt/redux/issues/806
+dispatchContainer.dispatch = store.dispatch;
 
 React.render(
   <Provider store={store}>

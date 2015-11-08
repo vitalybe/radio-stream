@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
+import { pushState } from 'redux-router';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { Counter } from './components';
 import * as actions from './actions';
+import dispatchContainer from './dispatch'
 
 export class App extends Component {
+
+    constructor(props, context) {
+        super(props, context);
+    }
+
     render() {
         return (
             <div>
@@ -72,8 +79,8 @@ export class PlaylistPage extends Component {
                 <button onClick={() => this.props.dispatch(actions.playPlaylist(this.props.playlistName))}
                         disabled={!nextSongAsync.song}>Play playlist
                 </button>
-                <button onClick={() => this.props.dispatch(actions.fastForward(currentSong.id))}
-                        disabled={!currentSong.playing}>
+                <button onClick={() => this.props.dispatch(pushState(null, '/login'))}
+                        >
                     Fast forward
                 </button>
             </div>

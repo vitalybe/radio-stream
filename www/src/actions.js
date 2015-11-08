@@ -1,5 +1,8 @@
-import fetch from 'isomorphic-fetch'
 import { soundManager } from 'soundmanager2';
+import { pushState } from 'redux-router';
+import ajaxConstructor from './ajax'
+
+import { dispatchContainer } from './dispatch'
 
 export const FETCH_NEXT_SONG_DETAILS_ASYNC = 'FETCH_NEXT_SONG_DETAILS_ASYNC';
 
@@ -19,88 +22,20 @@ soundManager.setup({
     html5PollingInterval: 50
 });
 
-
-
-function ajax(apiAddress, userConfig) {
-    var config = {
-        credentials: 'include',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    };
-
-    config = _.assign(config, userConfig);
-    if(config.body) {
-        config.body = JSON.stringify(config.body);
+let ajax = ajaxConstructor(SERVER_ADDRESS, function (response) {
+    if(response.status == 401) {
+        dispatchContainer.dispatch(pushState(null, '/login'))
     }
 
-    return fetch(SERVER_ADDRESS + apiAddress, config)
-        .then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Bad response from server");
-            }
-
-            return response;
-        });
-}
-
-function post(apiAddress, userConfig) {
-    return ajax(apiAddress, _.assign({method: "post"}, userConfig))
-}
-
-function get(apiAddress, userConfig) {
-    return ajax(apiAddress, _.assign({method: "get"}, userConfig))
-}
-
-function patch(apiAddress, userConfig) {
-    return ajax(apiAddress, _.assign({method: "patch"}, userConfig))
-}
-
-function put(apiAddress, userConfig) {
-    return ajax(apiAddress, _.assign({method: "put"}, userConfig))
-}
+    return response;
+});
 
 export function login(password) {
 
-    return post("/access-token", {body: {password}}).
+    return ajax.post("/access-token", {body: {password}}).
         then(response => response.json().then(json => json))
 
 };
-
-function _fetchNextSongDetails(playlistName, dispatch) {
-    dispatch({type: FETCH_NEXT_SONG_DETAILS_ASYNC, inProgress: true});
-
-    let fullUrl = SERVER_ADDRESS + "/playlist/" + playlistName + "/next";
-    return fetch(fullUrl, {credentials: 'include'})
-        .then(response => response.json().then(json => ({json, response})))
-        .then(({ json, response }) => {
-            dispatch({type: FETCH_NEXT_SONG_DETAILS_ASYNC, ok: response.ok, json})
-            return json.next;
-        })
-        .catch((ex) => {
-            dispatch({type: FETCH_NEXT_SONG_DETAILS_ASYNC, ok: false, json: {error: "Connection error"}})
-        });
-}
-
-// TODO: Remove this function
-export function fetchNextSongDetails(playlistName) {
-    return function (dispatch) {
-        _fetchNextSongDetails(playlistName, dispatch);
-    }
-}
-
-function _markSongAsPlayed(songId, dispatch) {
-    let fullUrl = SERVER_ADDRESS + `/song/${songId}/last-played`;
-    console.log(`IN PRROGESS song ${songId}: mark as played`);
-    return fetch(fullUrl, {method: "POST"})
-        .then(response => {
-            console.log(`SUCCESS song ${songId}: mark as played`)
-        })
-        .catch((ex) => {
-            console.log(`ERROR song ${songId}: mark as played: ${ex}`);
-        });
-}
 
 function _loadSound(dispatch, song) {
     // TODO: Handle failures
@@ -135,6 +70,37 @@ function _loadSound(dispatch, song) {
             }
         })
     })
+}
+
+function _fetchNextSongDetails(playlistName, dispatch) {
+    dispatch({type: FETCH_NEXT_SONG_DETAILS_ASYNC, inProgress: true});
+
+    return ajax.get(`/playlist/${playlistName}/next`)
+        .then(response => response.json().then(json => ({json, response})))
+        .then(({ json, response }) => {
+            dispatch({type: FETCH_NEXT_SONG_DETAILS_ASYNC, ok: response.ok, json})
+            return json.next;
+        })
+        .catch((ex) => {
+            dispatch({type: FETCH_NEXT_SONG_DETAILS_ASYNC, ok: false, json: {error: "Connection error"}})
+        });
+}
+
+export function fetchNextSongDetails(playlistName) {
+    return function (dispatch) {
+        _fetchNextSongDetails(playlistName, dispatch);
+    }
+}
+
+function _markSongAsPlayed(songId, dispatch) {
+    console.log(`IN PRROGESS song ${songId}: mark as played`);
+    return ajax.post(`/song/${songId}/last-played`)
+        .then(response => {
+            console.log(`SUCCESS song ${songId}: mark as played`)
+        })
+        .catch((ex) => {
+            console.log(`ERROR song ${songId}: mark as played: ${ex}`);
+        });
 }
 
 export function fastForward(songId) {
