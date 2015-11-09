@@ -1,7 +1,6 @@
 import { soundManager } from 'soundmanager2';
 import { pushState } from 'redux-router';
 import ajaxConstructor from './ajax'
-
 import { dispatchContainer } from './dispatch'
 
 export const FETCH_NEXT_SONG_DETAILS_ASYNC = 'FETCH_NEXT_SONG_DETAILS_ASYNC';
@@ -10,6 +9,7 @@ export const SOUND_LOADING = 'SOUND_LOADING';
 export const SOUND_PLAY = 'SOUND_PLAY';
 export const SOUND_PAUSE = 'SOUND_PAUSE';
 export const SOUND_FINISHED = 'SOUND_FINISHED';
+export const SOUND_PLAY_ERROR = 'SOUND_PLAY_ERROR';
 
 const SERVER_ADDRESS = window.location.protocol + "//" + window.location.hostname+":5000";
 const MUSIC_ADDRESS = window.location.protocol + "//" + window.location.hostname+":16768";
@@ -29,13 +29,6 @@ let ajax = ajaxConstructor(SERVER_ADDRESS, function (response) {
 
     return response;
 });
-
-export function login(password) {
-
-    return ajax.post("/access-token", {body: {password}}).
-        then(response => response.json().then(json => json))
-
-};
 
 function _loadSound(dispatch, song) {
     // TODO: Handle failures
@@ -86,14 +79,8 @@ function _fetchNextSongDetails(playlistName, dispatch) {
         });
 }
 
-export function fetchNextSongDetails(playlistName) {
-    return function (dispatch) {
-        _fetchNextSongDetails(playlistName, dispatch);
-    }
-}
-
 function _markSongAsPlayed(songId, dispatch) {
-    console.log(`IN PRROGESS song ${songId}: mark as played`);
+    console.log(`IN PROGESS song ${songId}: mark as played`);
     return ajax.post(`/song/${songId}/last-played`)
         .then(response => {
             console.log(`SUCCESS song ${songId}: mark as played`)
@@ -103,15 +90,8 @@ function _markSongAsPlayed(songId, dispatch) {
         });
 }
 
-export function fastForward(songId) {
-    console.log('fastForward');
-    let sound = soundManager.getSoundById(songId);
-    sound.setPosition(sound.duration - 10000);
-
-    return {type: "N/A"};
-}
-
-function _getSoundForSong(dispatch, song) {
+// Tries to get the sound from SoundManager, if fails, tries to load it
+function _getOrLoadSound(dispatch, song) {
     // TODO: Handle failures
     let songId = song.id;
 
@@ -129,7 +109,7 @@ function _getSoundForSong(dispatch, song) {
 function _playToggle(dispatch, song, playOptions) {
     let songId = song.id;
 
-    return _getSoundForSong(dispatch, song)
+    return _getOrLoadSound(dispatch, song)
         .then(function (sound) {
             if (!sound.loaded) {
                 throw new Error("Sound should be loadded at this point: " + sound.id)
@@ -142,13 +122,12 @@ function _playToggle(dispatch, song, playOptions) {
                 sound.pause();
                 dispatch({type: SOUND_PAUSE, songId: songId})
             }
-        });
-}
+        })
+        .catch(function(err) {
+            dispatch({type: SOUND_PLAY_ERROR, songId: songId})
 
-export function playToggle(song, playOptions) {
-    return function (dispatch) {
-        _playToggle(dispatch, song, playOptions);
-    }
+            throw err;
+        });
 }
 
 function _playPlaylist(dispatch, playlistName) {
@@ -159,7 +138,7 @@ function _playPlaylist(dispatch, playlistName) {
                     _playPlaylist(dispatch, playlistName);
                 }
             }).catch(function (err) {
-                console.log(`ERROR failed to play song ${nextSong.id}: Will mark it as read and proceed to next oen`);
+                console.log(`ERROR failed to play song ${nextSong.id}: Will mark it as read and proceed to next one`);
                 _markSongAsPlayed(nextSong.id, dispatch).then(function() {
                     console.log(`Marked as read - Continue to play playlist: ${playlistName}`);
                     _playPlaylist(dispatch, playlistName);
@@ -169,8 +148,37 @@ function _playPlaylist(dispatch, playlistName) {
         })
 }
 
+export function playToggle(song, playOptions) {
+    return function (dispatch) {
+        _playToggle(dispatch, song, playOptions).catch(function(err) {
+            console.error(`ERROR - Failed to play sound: ${err}`);
+        });
+    }
+}
+
+export function fastForward(songId) {
+    console.log('fastForward');
+    let sound = soundManager.getSoundById(songId);
+    sound.setPosition(sound.duration - 10000);
+
+    return {type: "N/A"};
+}
+
 export function playPlaylist(playlistName) {
     return function (dispatch) {
         _playPlaylist(dispatch, playlistName);
     }
 }
+
+export function fetchNextSongDetails(playlistName) {
+    return function (dispatch) {
+        _fetchNextSongDetails(playlistName, dispatch);
+    }
+}
+
+export function login(password) {
+
+    return ajax.post("/access-token", {body: {password}}).
+        then(response => response.json().then(json => json))
+
+};
