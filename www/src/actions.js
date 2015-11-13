@@ -97,8 +97,10 @@ function _playToggle(wrappedSound, playOptions) {
 }
 
 function _playPlaylist(playlistName) {
+    let nextSong = null;
     _fetchNextSongDetails(playlistName)
-        .then(function (nextSong) {
+        .then(function (nextSongArg) {
+            nextSong = nextSongArg;
             return _getOrLoadSound(nextSong);
         })
         .then(function (wrappedSound) {
@@ -124,8 +126,8 @@ function _playPlaylist(playlistName) {
                 }
             })
         }).catch(function () {
-            logger.info(`ERROR failed to play song ${wrappedSound.song.id}: Will mark it as read and proceed to next one`);
-            _markSongAsPlayed(wrappedSound.song.id).then(function () {
+            logger.info(`ERROR failed to play song ${nextSong.id}: Will mark it as read and proceed to next one`);
+            _markSongAsPlayed(nextSong.id).then(function () {
                 logger.info(`Marked as read - Continue to play playlist: ${playlistName}`);
                 _playPlaylist(playlistName);
             });
