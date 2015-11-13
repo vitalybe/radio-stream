@@ -80,26 +80,20 @@ function _getOrLoadSound(song) {
 // resolves to the played/paused sound on success
 function _playToggle(wrappedSound, playOptions) {
 
-    try {
-        if (!wrappedSound.loaded) {
-            throw new Error("Sound should be loaded at this point: " + wrappedSound.song.id)
-        }
-
-        if (wrappedSound.playState == 0 || wrappedSound.paused) {
-            wrappedSound.play(playOptions);
-            dispatchContainer.dispatch({type: SOUND_PLAY, songId: wrappedSound.song.id})
-        } else {
-            wrappedSound.pause();
-            dispatchContainer.dispatch({type: SOUND_PAUSE, songId: wrappedSound.song.id})
-        }
-
-        return wrappedSound.song.id;
+    if (!wrappedSound.loaded) {
+        throw new Error("Sound should be loaded at this point: " + wrappedSound.song.id)
     }
-    catch (err) {
-        dispatchContainer.dispatch({type: SOUND_PLAY_ERROR, songId: wrappedSound.song.id});
 
-        throw err;
+    if (wrappedSound.playState == 0 || wrappedSound.paused) {
+        wrappedSound.play(playOptions);
+        dispatchContainer.dispatch({type: SOUND_PLAY, songId: wrappedSound.song.id})
+    } else {
+        wrappedSound.pause();
+        dispatchContainer.dispatch({type: SOUND_PAUSE, songId: wrappedSound.song.id})
     }
+
+    return wrappedSound.song.id;
+
 }
 
 function _playPlaylist(playlistName) {
@@ -130,12 +124,12 @@ function _playPlaylist(playlistName) {
                 }
             })
         }).catch(function () {
-        logger.info(`ERROR failed to play song ${wrappedSound.song.id}: Will mark it as read and proceed to next one`);
-        _markSongAsPlayed(wrappedSound.song.id).then(function () {
-            logger.info(`Marked as read - Continue to play playlist: ${playlistName}`);
-            _playPlaylist(playlistName);
-        });
-    })
+            logger.info(`ERROR failed to play song ${wrappedSound.song.id}: Will mark it as read and proceed to next one`);
+            _markSongAsPlayed(wrappedSound.song.id).then(function () {
+                logger.info(`Marked as read - Continue to play playlist: ${playlistName}`);
+                _playPlaylist(playlistName);
+            });
+        })
 }
 
 export function playToggle(song, playOptions) {
@@ -144,6 +138,7 @@ export function playToggle(song, playOptions) {
             _playToggle(wrappedSound, playOptions);
         }).catch(function (err) {
             logger.error(`ERROR - Failed to play sound: ${err}`);
+            dispatchContainer.dispatch({type: SOUND_PLAY_ERROR, songId: song.id});
         });
     }
 }
@@ -171,6 +166,6 @@ export function fetchNextSongDetails(playlistName) {
 export function login(password) {
 
     return ajax.post("/access-token", {body: {password}}).
-    then(response => response.json().then(json => json))
+        then(response => response.json().then(json => json))
 
 }

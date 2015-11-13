@@ -51,19 +51,24 @@ export function loadSound(song) {
                     delete loadingSongs[songId];
 
                     logger.info(`SoundManager loadSound finished. Success: ${success}`);
+                    let error = null;
                     if (this.duration == 0) {
-                        reject(new Error(`Song ${songId} duration after load was 0`))
+                        error = new Error(`Song ${songId} duration after load was 0`);
                     }
 
                     if (!this.loaded) {
-                        reject(new Error(`Song ${songId} loaded is false`))
+                        error = new Error(`Song ${songId} loaded is false`);
                     }
 
-                    logger.info(`SUCCESS song ${songId}: loaded`);
-                    resolve(new WrappedSound(song, this));
-
+                    if (!error) {
+                        logger.info(`SUCCESS song ${songId}: loaded`);
+                        resolve(new WrappedSound(song, this));
+                    } else {
+                        soundManager.destroySound(songId);
+                        reject(error);
+                    }
                 }
-            })
+            });
         });
 
         loadingSongs[songId] = loadingPromise;
