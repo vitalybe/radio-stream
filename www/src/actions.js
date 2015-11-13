@@ -3,6 +3,8 @@ import { pushState } from 'redux-router';
 import ajaxConstructor from './ajax'
 import { dispatchContainer } from './dispatch'
 import { getSoundBySong, loadSound, WrappedSound } from './wrapped_sound_manager'
+import rootLogger from './logger'
+const logger = rootLogger.prefix("actions");
 
 export const FETCH_NEXT_SONG_DETAILS_ASYNC = 'FETCH_NEXT_SONG_DETAILS_ASYNC';
 
@@ -51,13 +53,13 @@ function _fetchNextSongDetails(playlistName) {
 }
 
 function _markSongAsPlayed(songId) {
-    console.log(`IN PROGESS song ${songId}: mark as played`);
+    logger.info(`IN PROGESS song ${songId}: mark as played`);
     return ajax.post(`/song/${songId}/last-played`)
         .then(() => {
-            console.log(`SUCCESS song ${songId}: mark as played`)
+            logger.info(`SUCCESS song ${songId}: mark as played`)
         })
         .catch((ex) => {
-            console.log(`ERROR song ${songId}: mark as played: ${ex}`);
+            logger.info(`ERROR song ${songId}: mark as played: ${ex}`);
         });
 }
 
@@ -110,27 +112,27 @@ function _playPlaylist(playlistName) {
                 onPosition: {
                     position: wrappedSound.duration - 5000,
                     callback: () => {
-                        console.log(`SUCCESS song ${wrappedSound.song.id}: almost finished. marking as played and preloading next song`);
+                        logger.info(`SUCCESS song ${wrappedSound.song.id}: almost finished. marking as played and preloading next song`);
                         return _markSongAsPlayed(wrappedSound.song.id)
                             .then(function () {
                                 return _fetchNextSongDetails(playlistName)
                             }).then(function (preloadedSong) {
-                                console.log(`next song is ${preloadedSong.id}. Preloading...`);
+                                logger.info(`next song is ${preloadedSong.id}. Preloading...`);
                                 return _getOrLoadSound(preloadedSong);
                             }).then(function (preloadedSound) {
-                                console.log(`preloaded sound for song: ${preloadedSound.song.id}`);
+                                logger.info(`preloaded sound for song: ${preloadedSound.song.id}`);
                             })
                     }
                 },
                 onfinish: () => {
-                    console.log(`song finished: ${wrappedSound.song.id}. starting playlist: ${playlistName}`);
+                    logger.info(`song finished: ${wrappedSound.song.id}. starting playlist: ${playlistName}`);
                     _playPlaylist(playlistName);
                 }
             })
         }).catch(function () {
-        console.log(`ERROR failed to play song ${wrappedSound.song.id}: Will mark it as read and proceed to next one`);
+        logger.info(`ERROR failed to play song ${wrappedSound.song.id}: Will mark it as read and proceed to next one`);
         _markSongAsPlayed(wrappedSound.song.id).then(function () {
-            console.log(`Marked as read - Continue to play playlist: ${playlistName}`);
+            logger.info(`Marked as read - Continue to play playlist: ${playlistName}`);
             _playPlaylist(playlistName);
         });
     })
@@ -141,13 +143,13 @@ export function playToggle(song, playOptions) {
         _getOrLoadSound(song).then(function (wrappedSound) {
             _playToggle(wrappedSound, playOptions);
         }).catch(function (err) {
-            console.error(`ERROR - Failed to play sound: ${err}`);
+            logger.error(`ERROR - Failed to play sound: ${err}`);
         });
     }
 }
 
 export function fastForward(songId) {
-    console.log('fastForward');
+    logger.info('fastForward');
     let sound = soundManager.getSoundById(songId);
     sound.setPosition(sound.duration - 10000);
 

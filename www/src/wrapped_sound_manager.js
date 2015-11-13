@@ -1,8 +1,10 @@
 import { soundManager } from 'soundmanager2';
+import rootLogger from './logger'
+const logger = rootLogger.prefix("wrappedSoundManager");
 
 const MUSIC_ADDRESS = window.location.protocol + "//" + window.location.hostname + ":16768";
 
-console.info(`running soundManager setup`);
+logger.info(`running soundManager setup`);
 soundManager.setup({
     url: require("file!../lib/swf/soundmanager2.swf"),
     flashVersion: 9, // optional: shiny features (default = 8)
@@ -29,14 +31,14 @@ let loadingSongs = {};
 // resolves to WrappedSound
 export function loadSound(song) {
     let songId = song.id;
-    console.info(`request to load song: ${songId}`)
+    logger.info(`request to load song: ${songId}`)
 
     let loadingPromise = null;
     if(loadingSongs[songId]) {
-        console.info(`sound is already being created, returning existing promise: ${songId}`)
+        logger.info(`sound is already being created, returning existing promise: ${songId}`)
         loadingPromise = loadingSongs[songId];
     } else {
-        console.info(`starting createSound for song: ${songId}`);
+        logger.info(`starting createSound for song: ${songId}`);
         loadingPromise = new Promise(function (resolve, reject) {
             soundManager.createSound({
                 id: songId, // optional: provide your own unique id
@@ -48,7 +50,7 @@ export function loadSound(song) {
                 onload: function (success) {
                     delete loadingSongs[songId];
 
-                    console.info(`SoundManager loadSound finished. Success: ${success}`);
+                    logger.info(`SoundManager loadSound finished. Success: ${success}`);
                     if (this.duration == 0) {
                         reject(new Error(`Song ${songId} duration after load was 0`))
                     }
@@ -57,7 +59,7 @@ export function loadSound(song) {
                         reject(new Error(`Song ${songId} loaded is false`))
                     }
 
-                    console.log(`SUCCESS song ${songId}: loaded`);
+                    logger.info(`SUCCESS song ${songId}: loaded`);
                     resolve(new WrappedSound(song, this));
 
                 }
@@ -86,7 +88,7 @@ export class WrappedSound {
 
             let {position, callback} = options.onPosition;
 
-            console.info(`adding a callback on position: ${position}`);
+            logger.info(`adding a callback on position: ${position}`);
             // clears all callbacks on this position, prevents duplicates callbacks on play/pause
             this.sound.clearOnPosition(position);
             this.sound.onPosition(position, callback);
