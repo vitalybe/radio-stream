@@ -86,17 +86,19 @@ export class WrappedSound {
     }
 
     // options:
-    // onPosition - {position: X, callback: Y}. Called when playing reaches this position. Callback is discarded when the song is paused/stopped.
-    // Other options are avialable per docs of soundManager sound.play function.
+    // on75PercentPlayed - callback. Called when playing reaches specified percent.
+    //                     Callback is discarded when the song is paused/stopped.
+    // Other options are available per docs of soundManager sound.play function.
     play(options = {}) {
-        if(options.onPosition) {
+        if(options.on75PercentPlayed) {
 
-            let {position, callback} = options.onPosition;
+            let callback = options.on75PercentPlayed;
+            let targetPosition = this.sound.duration * 0.75;
 
-            logger.info(`adding a callback on position: ${position}`);
+            logger.info(`adding a callback on position: ${targetPosition}`);
             // clears all callbacks on this position, prevents duplicates callbacks on play/pause
-            this.sound.clearOnPosition(position);
-            this.sound.onPosition(position, callback);
+            this.sound.clearOnPosition(targetPosition);
+            this.sound.onPosition(targetPosition, callback);
 
             delete options.onPosition;
         }

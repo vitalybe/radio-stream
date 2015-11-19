@@ -105,20 +105,17 @@ function _playPlaylist(playlistName) {
         })
         .then(function (wrappedSound) {
             return _playToggle(wrappedSound, {
-                onPosition: {
-                    position: wrappedSound.duration - 5000,
-                    callback: () => {
-                        logger.info(`SUCCESS song ${wrappedSound.song.id}: almost finished. marking as played and preloading next song`);
-                        return _markSongAsPlayed(wrappedSound.song.id)
-                            .then(function () {
-                                return _fetchNextSongDetails(playlistName)
-                            }).then(function (preloadedSong) {
-                                logger.info(`next song is ${preloadedSong.id}. Preloading...`);
-                                return _getOrLoadSound(preloadedSong);
-                            }).then(function (preloadedSound) {
-                                logger.info(`preloaded sound for song: ${preloadedSound.song.id}`);
-                            })
-                    }
+                on75PercentPlayed: () => {
+                    logger.info(`song ${wrappedSound.song.id}: almost finished. marking as played and preloading next song`);
+                    return _markSongAsPlayed(wrappedSound.song.id)
+                        .then(function () {
+                            return _fetchNextSongDetails(playlistName)
+                        }).then(function (preloadedSong) {
+                            logger.info(`next song is ${preloadedSong.id}. Preloading...`);
+                            return _getOrLoadSound(preloadedSong);
+                        }).then(function (preloadedSound) {
+                            logger.info(`preloaded sound for song: ${preloadedSound.song.id}`);
+                        })
                 },
                 onfinish: () => {
                     logger.info(`song finished: ${wrappedSound.song.id}. starting playlist: ${playlistName}`);
@@ -126,20 +123,20 @@ function _playPlaylist(playlistName) {
                 }
             })
         }).catch(function () {
-            logger.info(`ERROR failed to play song ${nextSong.id}: Will mark it as read and proceed to next one`);
+            logger.error(`failed to play song ${nextSong.id}: Will mark it as read and proceed to next one`);
             _markSongAsPlayed(nextSong.id).then(function () {
-                logger.info(`Marked as read - Continue to play playlist: ${playlistName}`);
+                logger.info(`marked as read - Continue to play playlist: ${playlistName}`);
                 _playPlaylist(playlistName);
             });
         })
 }
 
-export function playToggle(song, playOptions) {
+export function playToggleSong(song, playOptions) {
     return function () {
         _getOrLoadSound(song).then(function (wrappedSound) {
             _playToggle(wrappedSound, playOptions);
         }).catch(function (err) {
-            logger.error(`ERROR - Failed to play sound: ${err}`);
+            logger.error(`failed to play sound: ${err}`);
             dispatchContainer.dispatch({type: SOUND_PLAY_ERROR, songId: song.id});
         });
     }

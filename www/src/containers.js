@@ -40,7 +40,7 @@ export class PlaylistPage extends Component {
             throw new Error("Song ID is invalid: " + song.id);
         }
 
-        this.props.dispatch(actions.playToggle(song));
+        this.props.dispatch(actions.playToggleSong(song));
     }
 
     render() {
