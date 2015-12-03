@@ -3,45 +3,91 @@ import * as actions from './actions';
 import { combineReducers } from 'redux';
 import { routerStateReducer } from 'redux-router';
 
+class AsyncState {
+    inProgress = true;
+    error = null;
+    data = null;
 
-function nextSongAsync(state = {}, action = null) {
-    switch (action.type) {
-        case actions.FETCH_NEXT_SONG_DETAILS_ASYNC:
-            if(action.inProgress) return {inProgress: action.inProgress};
-            if(action.ok) return {inProgress: action.inProgress, song: action.json.next };
-            if(!action.ok) return {inProgress: action.inProgress, error: "Next song fetch failed" };
-        default:
-            return state;
+    constructor(initialValues) {
+        Object.assign(this, initialValues)
     }
 }
 
-let currentSongData = new Freezer({id: null, loading: false, playing: false});
-function currentSong(state = currentSongData.get(), action = null) {
+
+function isRatingUpdating(state = new AsyncState(), action = null) {
 
     switch (action.type) {
-        case actions.SOUND_LOADING:
-            state.set({loading: true, playing: false, id: action.songId});
+        case actions.RATING_UPDATE_PROGRESS:
+            state = true;
             break;
-        case actions.SOUND_PLAY:
-            state.set({loading: false, playing: true, id: action.songId});
+        case actions.RATING_UPDATE_COMPLETE:
+            state = false;
             break;
-        case actions.SOUND_PLAY_ERROR:
-            state.set({loading: false, playing: false, id: action.songId});
-            break;
-        case actions.SOUND_PAUSE:
-            state.set({loading: false, playing: false, id: action.songId});
-            break;
-        case actions.SOUND_FINISHED:
-            state.set({loading: false, playing: false, id: action.songId});
+        case actions.RATING_UPDATE_ERROR:
+            state = false;
             break;
     }
 
-    return currentSongData.get();
+    return state;
+}
+
+function isPlaying(state = false, action = null) {
+
+    switch (action.type) {
+        case actions.SONG_PLAY:
+            state = true;
+            break;
+        case actions.SONG_PAUSE:
+            state = false;
+            break;
+    }
+
+    return state;
+}
+
+
+function currentSongAsync(state = new AsyncState(), action = null) {
+
+    switch (action.type) {
+        case actions.SONG_LOAD_PROGRESS:
+            state = new AsyncState({inProgress: true});
+            break;
+        case actions.SONG_LOAD_COMPLETE:
+        case actions.SONG_UPDATED:
+            state = new AsyncState({inProgress: false, data: action.songData});
+            break;
+        case actions.SONG_LOAD_ERROR:
+            state = new AsyncState({error: true});
+            break;
+    }
+
+    return state;
+}
+
+
+function playlistsAsync(state = new AsyncState(), action = null) {
+
+    switch (action.type) {
+        case actions.PLAYLISTS_LOAD_PROGRESS:
+            state = new AsyncState({inProgress: true});
+            break;
+        case actions.PLAYLISTS_LOAD_COMPLETE:
+            state = new AsyncState({data: action.playlists});
+            break;
+        case actions.PLAYLISTS_LOAD_ERROR:
+            state = new AsyncState({error: true});
+            break;
+    }
+
+    return state;
 }
 
 const rootReducer = combineReducers({
-    nextSongAsync,
-    currentSong,
+    isRatingUpdating,
+    isPlaying,
+    currentSongAsync,
+    playlistsAsync,
+
     router: routerStateReducer
 });
 

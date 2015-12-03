@@ -1,4 +1,6 @@
 import { soundManager } from 'soundmanager2';
+import WrappedSound from './wrapped_sound.js'
+
 import rootLogger from './logger'
 const logger = rootLogger.prefix("wrappedSoundManager");
 
@@ -6,7 +8,7 @@ const MUSIC_ADDRESS = window.location.protocol + "//" + window.location.hostname
 
 logger.info(`running soundManager setup`);
 soundManager.setup({
-    url: require("file!../lib/swf/soundmanager2.swf"),
+    url: require("file!../../lib/swf/soundmanager2.swf"),
     flashVersion: 9, // optional: shiny features (default = 8)
     // optional: ignore Flash where possible, use 100% HTML5 mode
     preferFlash: false,
@@ -75,41 +77,4 @@ export function loadSound(song) {
     }
 
     return loadingPromise;
-}
-
-// wraps SoundManager2 sound object
-export class WrappedSound {
-
-    constructor(song, sound) {
-        this.song = song;
-        this.sound = sound;
-    }
-
-    // options:
-    // on75PercentPlayed - callback. Called when playing reaches specified percent.
-    //                     Callback is discarded when the song is paused/stopped.
-    // Other options are available per docs of soundManager sound.play function.
-    play(options = {}) {
-        if(options.on75PercentPlayed) {
-
-            let callback = options.on75PercentPlayed;
-            let targetPosition = this.sound.duration * 0.75;
-
-            logger.info(`adding a callback on position: ${targetPosition}`);
-            // clears all callbacks on this position, prevents duplicates callbacks on play/pause
-            this.sound.clearOnPosition(targetPosition);
-            this.sound.onPosition(targetPosition, callback);
-
-            delete options.onPosition;
-        }
-
-        this.sound.play(options);
-    }
-
-    pause() { this.sound.pause(); }
-    get loaded() { return this.sound.loaded; }
-    get playState() { return this.sound.playState; }
-    get paused() { return this.sound.paused; }
-    get duration() { return this.sound.duration; }
-
 }

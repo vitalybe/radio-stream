@@ -8,8 +8,10 @@ import { IndexRoute, Route, Link } from 'react-router';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
 import { ReduxRouter } from 'redux-router';
 import configureStore from './store_config';
-import { App, PlaylistPage, LoginPage } from './containers';
-import { dispatchContainer } from './dispatch'
+import { LoginPage } from './containers/login_page';
+import { StartupPage } from './containers/startup_page';
+import { PlaylistPage } from './containers/playlist_page';
+import { dispatchContainer } from './utils/dispatch'
 
 const store = configureStore();
 // The following allows us to dispatch actions everywhere
@@ -21,10 +23,10 @@ React.render(
     {() =>
     <div>
         <ReduxRouter>
-          <Route path="/" component={App}>
-            <Route path="login" component={LoginPage}/>
-            <Route path="playlist/:playlistName" component={PlaylistPage}/>
-          </Route>
+            <Route path="/" component={StartupPage}/>
+            <Route path="/playlist/:playlistName" component={PlaylistPage}/>
+
+            <Route path="/login" component={LoginPage}/>
         </ReduxRouter>
         <DebugPanel top right bottom>
             <DevTools store={store}

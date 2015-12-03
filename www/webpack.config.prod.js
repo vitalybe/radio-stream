@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var Promise = require('es6-promise').Promise;
 
 module.exports = {
   devtool: 'source-map',
@@ -32,7 +33,8 @@ module.exports = {
       loader: 'babel',
       include: path.join(__dirname, 'src'),
       query: {
-        "stage": 0
+        "stage": 0,
+        "plugins": ["jsx-control-statements/babel"]
       }
     }]
   }

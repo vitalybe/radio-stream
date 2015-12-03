@@ -4,4 +4,5 @@ server/output.log
 www2
 www3
 www/.idea/
+www/node_modules
 .idea/
