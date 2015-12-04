@@ -27,6 +27,10 @@ module.exports = {
       _: "lodash",
     })
   ],
+  context: __dirname,
+  node: {
+      __filename: true
+  },
   module: {
     loaders: [{
       test: /\.js$/,

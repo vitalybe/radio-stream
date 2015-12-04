@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 import { Navigation } from '../components/navigation.js'
-import * as actions from '../actions';
+import * as musicActions from '../actions/music';
 
 
 @connect(state => {
@@ -19,16 +19,7 @@ export class PlaylistPage extends Component {
 
     constructor(props, context) {
         super(props, context);
-        this.props.dispatch(actions.playPlaylist(this.props.playlistName));
-    }
-
-    _play() {
-        let song = this.props.currentSongAsync.data;
-        if (!song.id) {
-            throw new Error("Song has no ID");
-        }
-
-        this.props.dispatch(actions.playToggleSong(song));
+        this.props.dispatch(musicActions.playTogglePlaylistAction(this.props.playlistName));
     }
 
     render() {

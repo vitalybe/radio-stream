@@ -69,6 +69,11 @@ var LoggingService = function() {
         return proxy;
     };
 
+    // if the given filename is an absoluet path, only the last part is used
+    inst.prefixFile = function (filename) {
+        return inst.prefix(filename.substring(filename.lastIndexOf("\\")+1));
+    };
+
     inst.formatException = function(exception) {
         var errorMessage = exception ? exception.toString() : "No error message";
         var stackTrace = window.printStackTrace({ e: exception });

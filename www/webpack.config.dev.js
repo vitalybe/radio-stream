@@ -20,6 +20,10 @@ module.exports = {
             _: "lodash",
         })
     ],
+    context: __dirname,
+    node: {
+        __filename: true
+    },
     module: {
         loaders: [
             { test: /\.less$/, loader: "style!css!less" },

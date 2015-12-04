@@ -1,5 +1,5 @@
 import Freezer from 'freezer-js';
-import * as actions from './actions';
+import * as actionTypes from './actions/types';
 import { combineReducers } from 'redux';
 import { routerStateReducer } from 'redux-router';
 
@@ -17,13 +17,13 @@ class AsyncState {
 function isRatingUpdating(state = new AsyncState(), action = null) {
 
     switch (action.type) {
-        case actions.RATING_UPDATE_PROGRESS:
+        case actionTypes.RATING_UPDATE_PROGRESS:
             state = true;
             break;
-        case actions.RATING_UPDATE_COMPLETE:
+        case actionTypes.RATING_UPDATE_COMPLETE:
             state = false;
             break;
-        case actions.RATING_UPDATE_ERROR:
+        case actionTypes.RATING_UPDATE_ERROR:
             state = false;
             break;
     }
@@ -34,10 +34,10 @@ function isRatingUpdating(state = new AsyncState(), action = null) {
 function isPlaying(state = false, action = null) {
 
     switch (action.type) {
-        case actions.SONG_PLAY:
+        case actionTypes.SONG_PLAY:
             state = true;
             break;
-        case actions.SONG_PAUSE:
+        case actionTypes.SONG_PAUSE:
             state = false;
             break;
     }
@@ -49,14 +49,14 @@ function isPlaying(state = false, action = null) {
 function currentSongAsync(state = new AsyncState(), action = null) {
 
     switch (action.type) {
-        case actions.SONG_LOAD_PROGRESS:
+        case actionTypes.SONG_LOAD_PROGRESS:
             state = new AsyncState({inProgress: true});
             break;
-        case actions.SONG_LOAD_COMPLETE:
-        case actions.SONG_UPDATED:
+        case actionTypes.SONG_LOAD_COMPLETE:
+        case actionTypes.SONG_UPDATED:
             state = new AsyncState({inProgress: false, data: action.songData});
             break;
-        case actions.SONG_LOAD_ERROR:
+        case actionTypes.SONG_LOAD_ERROR:
             state = new AsyncState({error: true});
             break;
     }
@@ -68,13 +68,13 @@ function currentSongAsync(state = new AsyncState(), action = null) {
 function playlistsAsync(state = new AsyncState(), action = null) {
 
     switch (action.type) {
-        case actions.PLAYLISTS_LOAD_PROGRESS:
+        case actionTypes.PLAYLISTS_LOAD_PROGRESS:
             state = new AsyncState({inProgress: true});
             break;
-        case actions.PLAYLISTS_LOAD_COMPLETE:
+        case actionTypes.PLAYLISTS_LOAD_COMPLETE:
             state = new AsyncState({data: action.playlists});
             break;
-        case actions.PLAYLISTS_LOAD_ERROR:
+        case actionTypes.PLAYLISTS_LOAD_ERROR:
             state = new AsyncState({error: true});
             break;
     }
