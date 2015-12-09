@@ -23,35 +23,17 @@ export class PlaylistPage extends Component {
     }
 
     render() {
+        let playPauseClass = this.props.isPlaying ? "fa-pause" : "fa-play";
         let currentSongAsync = this.props.currentSongAsync;
-        let mainContent = null;
-        if (currentSongAsync.inProgress) {
-            mainContent = <div className="loader hexdots-loader"></div>
-        } else if (currentSongAsync.error) {
-            mainContent = <div className="error">Fa-Error</div>
-        } else {
-            let trackName = currentSongAsync.data.name;
-            let trackArtist = currentSongAsync.data.artist;
+        let ratingStars = null;
+        if (currentSongAsync.data) {
 
             let starCount = currentSongAsync.data.rating / 20;
-            let ratingStars = _.range(5).map(starIndex => {
+            ratingStars = _.range(5).map(starIndex => {
                 let starClass = starCount > starIndex ? "fa-star" : "fa-star-o";
-                return <i className={classNames(["fa", starClass])} />;
+                return <i className={classNames(["fa", starClass])}/>;
             });
 
-            let playPauseClass = this.props.isPlaying ? "fa-pause" : "fa-play";
-
-            mainContent = (
-                <div className="player">
-                    <h1 className="track-name">{trackName}</h1>
-                    <h2 className="track-artist">{trackArtist}</h2>
-                    <div className="stars">{ratingStars}</div>
-                    <div className="control-buttons">
-                        <i className={classNames(["play-pause", "fa", playPauseClass])} />
-                        <i className="next fa fa-fast-forward" />
-                    </div>
-                </div>
-            );
         }
 
         return (
@@ -60,7 +42,35 @@ export class PlaylistPage extends Component {
                     <Navigation playlistsAsync={this.props.playlistsAsync} activePlaylist={this.props.playlistName}/>
                 </div>
                 <div className="main">
-                    {mainContent}
+                    <If condition={currentSongAsync.inProgress}>
+
+                        /********* Loader **********/
+                        <div className="loader hexdots-loader"></div>
+
+                        <Else/>
+
+                        <If condition={currentSongAsync.error}>
+
+                            /********* Error **********/
+                            <div className="critical-error">Fa-Error</div>
+
+                            <Else/>
+
+                            /********* Player **********/
+                            <div className="player">
+                                <h1 className="track-name">{currentSongAsync.data.name}</h1>
+                                <h2 className="track-artist">{currentSongAsync.data.artist}</h2>
+                                <div className="stars">{ratingStars}</div>
+                                <div className="control-buttons">
+                                    <i className={classNames(["play-pause", "fa", playPauseClass])}/>
+                                    <i className="next fa fa-fast-forward"/>
+                                </div>
+                            </div>
+
+                        </If>
+
+
+                    </If>
                 </div>
             </div>
         );
