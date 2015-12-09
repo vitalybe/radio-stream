@@ -1,0 +1,39 @@
+@import "../../lib/styles/hexdots.css";
+@import "../../lib/styles/prefixer.less";
+
+.background {
+  color: yellow;
+}
+
+.playlist-page {
+
+  @sidebar-width: 300px;
+
+  .sidebar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: @sidebar-width;
+
+    .loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+    }
+  }
+
+  .main {
+    position: absolute;
+    left: @sidebar-width;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    .loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+    }
+  }
+}

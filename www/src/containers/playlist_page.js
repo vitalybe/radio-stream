@@ -26,7 +26,7 @@ export class PlaylistPage extends Component {
         let currentSongAsync = this.props.currentSongAsync;
         let mainContent = null;
         if (currentSongAsync.inProgress) {
-            mainContent = <div className="spinner">Fa-Spinner</div>
+            mainContent = <div className="loader hexdots-loader"></div>
         } else if (currentSongAsync.error) {
             mainContent = <div className="error">Fa-Error</div>
         } else {
@@ -55,7 +55,7 @@ export class PlaylistPage extends Component {
         }
 
         return (
-            <div>
+            <div className="playlist-page">
                 <div className="sidebar">
                     <Navigation playlistsAsync={this.props.playlistsAsync} activePlaylist={this.props.playlistName}/>
                 </div>
