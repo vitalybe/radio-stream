@@ -35,11 +35,11 @@ export class PlaylistPage extends Component {
 
             let starCount = currentSongAsync.data.rating / 20;
             let ratingStars = _.range(5).map(starIndex => {
-                let starClass = starCount > starIndex ? "full-star" : "empty-star";
-                return <i className={starClass}>Star</i>;
+                let starClass = starCount > starIndex ? "fa-star" : "fa-star-o";
+                return <i className={classNames(["fa", starClass])} />;
             });
 
-            let playPauseClass = this.props.isPlaying ? "pause" : "play";
+            let playPauseClass = this.props.isPlaying ? "fa-pause" : "fa-play";
 
             mainContent = (
                 <div className="player">
@@ -47,8 +47,8 @@ export class PlaylistPage extends Component {
                     <h2 className="track-artist">{trackArtist}</h2>
                     <div className="stars">{ratingStars}</div>
                     <div className="control-buttons">
-                        <i className={classNames(["play-pause", playPauseClass])}>Play/Pause</i>
-                        <i className="next">Next</i>
+                        <i className={classNames(["play-pause", "fa", playPauseClass])} />
+                        <i className="next fa fa-fast-forward" />
                     </div>
                 </div>
             );
