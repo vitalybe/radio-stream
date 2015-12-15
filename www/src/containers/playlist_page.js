@@ -32,6 +32,11 @@ export class PlaylistPage extends Component {
         this.props.dispatch(action);
     }
 
+    onChangeRating(newRating) {
+        var action = musicActions.changeRating(this.props.currentSongAsync.data, newRating);
+        this.props.dispatch(action);
+    }
+
     render() {
         let playPauseClass = this.props.isPlaying ? "fa-pause" : "fa-play";
         let currentSongAsync = this.props.currentSongAsync;
@@ -40,7 +45,8 @@ export class PlaylistPage extends Component {
             let starCount = currentSongAsync.data.rating / 20;
             ratingStars = _.range(5).map(starIndex => {
                 let starClass = starCount > starIndex ? "fa-star" : "fa-star-o";
-                return <i className={classNames(["fa", starClass])}/>;
+                let newRating = (starIndex + 1) * 20;
+                return <i className={classNames(["fa", starClass])} onClick={() => this.onChangeRating(newRating)}/>;
             });
         }
 

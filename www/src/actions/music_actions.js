@@ -184,8 +184,26 @@ export function playNextSongAction(playlistName, currentSong) {
                 return markSongAsPlayed(currentSong);
             })
             .then(function () {
-                logger.debug(`marked as read - Continue to play playlist: ${playlistName}`);
+                logger.debug(`Marked as read - Continue to play playlist: ${playlistName}`);
                 return playNextSongInPlaylist(playlistName);
+            });
+    }
+}
+
+export function changeRating(currentSong, newRating) {
+    let flogger = loggerCreator(changeRating.name, logger);
+    flogger.debug(`${formatSong(currentSong)} new rating: ${newRating}`);
+
+    return function () {
+        storeContainer.store.dispatch({type: actionTypes.RATING_UPDATE_PROGRESS});
+        backendMetadataApi.updateRating(currentSong.id, newRating)
+            .then(() => {
+                flogger.debug(`Success`);
+                storeContainer.store.dispatch({type: actionTypes.RATING_UPDATE_COMPLETE, newRating});
+            })
+            .catch(err => {
+                flogger.error(`Failed: ${err}`);
+                storeContainer.store.dispatch({type: actionTypes.RATING_UPDATE_ERROR});
             });
     }
 }

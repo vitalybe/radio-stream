@@ -60,6 +60,15 @@ def update_last_played(id):
     return "", 200
 
 
+@app.route('/song/<id>/rating', methods=["PUT"])
+def update_rating(id):
+    track = itunes.track_by_id(id)
+    track.rating = request.get_json()["newRating"]
+    logger.info("Updating track '%s' rating to: %s", track, track.rating)
+
+    return "", 200
+
+
 if __name__ == '__main__':
     app.secret_key = 'A0Zra98j/3zYaR~XHaH!jmN]LWX/,?RT'
     app.run(host='0.0.0.0', debug=True, threaded=True)

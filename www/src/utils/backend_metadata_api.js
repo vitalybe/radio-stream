@@ -31,6 +31,11 @@ export function updateLastPlayed(songId) {
     }, 500));
 }
 
+export function updateRating(songId, newRating) {
+    return ajax.put(`/song/${songId}/rating`, {body: {newRating}});
+}
+
 export function authenticate(password) {
     return ajax.post("/access-token", {body: {password}});
 }
+

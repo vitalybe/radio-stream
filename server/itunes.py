@@ -29,6 +29,10 @@ class Track(object):
     def rating(self):
         return self.com_obj.Rating
 
+    @rating.setter
+    def rating(self, value):
+        self.com_obj.Rating = value
+
     @property
     def play_count(self):
         return self.com_obj.PlayedCount

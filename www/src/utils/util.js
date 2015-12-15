@@ -1,3 +1,7 @@
 export function formatSong(song) {
-    return `|${song.artist} - ${song.name}|`
+    if(song) {
+        return `|${song.artist} - ${song.name}|`;
+    } else {
+        return "NULL-SONG";
+    }
 }

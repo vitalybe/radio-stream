@@ -64,8 +64,10 @@ function currentSongAsync(state = new AsyncState(), action = null) {
             state = new AsyncState({inProgress: true});
             break;
         case actionTypes.SONG_LOAD_COMPLETE:
-        case actionTypes.SONG_UPDATED:
             state = new AsyncState({inProgress: false, data: extractSongDataFromJson(action.songData)});
+            break;
+        case actionTypes.RATING_UPDATE_COMPLETE:
+            return _.merge({}, state, {data: {rating: action.newRating}});
             break;
         case actionTypes.SONG_LOAD_ERROR:
             state = new AsyncState({error: true});
