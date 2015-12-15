@@ -15,7 +15,7 @@ function getNextSongInPlaylist(playlistName, currentPlaylist) {
     let playlistSongsPromise = null;
     let nextSongIndex = null;
     // if next song goes beyond the maximum index
-    if (playlistName != currentPlaylist.name || currentPlaylist.index + 1 >= currentPlaylist.songs.length - 1) {
+    if (playlistName != currentPlaylist.name || currentPlaylist.index >= currentPlaylist.songs.length - 1) {
         logger.debug("Re-fetching songs in playlist.");
         playlistSongsPromise = backendMetadataApi.playlistSongs(playlistName).then(playlistSongs => {
             storeContainer.store.dispatch({type: actionTypes.PLAYLIST_SONGS_UPDATED, playlistSongs, playlistName});
