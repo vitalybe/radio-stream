@@ -57,8 +57,8 @@ module.exports = clim = function (prefix, parent, patch) {
 // By default write all logs to stderr
 clim.logWrite = function (level, prefixes, msg) {
     var line = clim.getTime();
-    if (prefixes.length > 0) line += " " + prefixes.join(" ");
-    line += " " + level.toUpperCase();
+    line += " - " + level.toUpperCase();
+    if (prefixes.length > 0) line += " - " + prefixes.join(" ");
     line += " " + msg;
     console[level].call(console, line);
 };

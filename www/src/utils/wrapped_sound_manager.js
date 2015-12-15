@@ -1,5 +1,6 @@
 import { soundManager } from 'soundmanager2';
 import WrappedSound from './wrapped_sound.js'
+import { formatSong } from '../utils/util'
 
 import loggerCreator from './logger'
 //noinspection JSUnresolvedVariable
@@ -8,7 +9,7 @@ var logger = loggerCreator(__filename);
 
 const MUSIC_ADDRESS = window.location.protocol + "//" + window.location.hostname + ":16768";
 
-logger.info(`running soundManager setup`);
+logger.debug(`Running soundManager setup`);
 soundManager.setup({
     url: require("file!../../lib/swf/soundmanager2.swf"),
     flashVersion: 9, // optional: shiny features (default = 8)
@@ -19,11 +20,15 @@ soundManager.setup({
 });
 
 export function getSoundBySong(song) {
-    let songId = song.id;
+    let flogger = loggerCreator(getSoundBySong.name, logger);
+    flogger.debug(formatSong(song));
 
-    let sound = soundManager.getSoundById(songId);
-    if(sound) {
+    let sound = soundManager.getSoundById(song.id);
+    if (sound) {
+        flogger.debug(`Sound found`);
         sound = new WrappedSound(sound);
+    } else {
+        flogger.debug(`Sound not found`)
     }
 
     return sound;
@@ -35,48 +40,53 @@ let loadingSongs = {};
 // returns promise.
 // resolves to WrappedSound
 export function loadSound(song) {
-    let songId = song.id;
-    logger.info(`request to load song: ${songId}`)
+    let flogger = loggerCreator(loadSound.name, logger);
+    flogger.debug(formatSong(song));
 
     let loadingPromise = null;
-    if(loadingSongs[songId]) {
-        logger.info(`sound is already being created, returning existing promise: ${songId}`)
-        loadingPromise = loadingSongs[songId];
+    if (loadingSongs[song.id]) {
+        flogger.debug(`Sound is already being created, returning existing promise`);
+        loadingPromise = loadingSongs[song.id];
     } else {
-        logger.info(`starting createSound for song: ${songId}`);
+        flogger.debug(`Starting createSound for song...`);
         loadingPromise = new Promise(function (resolve, reject) {
             soundManager.createSound({
-                id: songId, // optional: provide your own unique id
+                id: song.id, // optional: provide your own unique id
                 url: MUSIC_ADDRESS + "/" + song.location,
                 autoLoad: true,
                 // Every song that was loaded, should have the following events
                 // NOTE: This is a bit of a leaky abstraciton. It is tricky to decouple onfinish from this function since
                 // events can be subscribed to only on creation or during play.
                 onload: function (success) {
-                    delete loadingSongs[songId];
+                    delete loadingSongs[song.id];
 
-                    logger.info(`SoundManager loadSound finished. Success: ${success}`);
+                    flogger.debug(`Callback 'onload' - Success: ${success}`);
                     let error = null;
                     if (this.duration == 0) {
-                        error = new Error(`Song ${songId} duration after load was 0`);
+                        let message = `Duration after load was 0`;
+                        flogger.error(message);
+                        error = new Error(message);
                     }
 
                     if (!this.loaded) {
-                        error = new Error(`Song ${songId} loaded is false`);
+                        let message = `Loaded is false`;
+                        flogger.error(message);
+                        error = new Error(message);
                     }
 
                     if (!error) {
-                        logger.info(`SUCCESS song ${songId}: loaded`);
+                        flogger.debug(`Sound loaded`);
                         resolve(new WrappedSound(this));
                     } else {
-                        soundManager.destroySound(songId);
+                        flogger.debug(`Sound destroyed`);
+                        soundManager.destroySound(song.id);
                         reject(error);
                     }
                 }
             });
         });
 
-        loadingSongs[songId] = loadingPromise;
+        loadingSongs[song.id] = loadingPromise;
     }
 
     return loadingPromise;
