@@ -12,7 +12,8 @@ soundManager.setup({
     flashVersion: 9, // optional: shiny features (default = 8)
     // optional: ignore Flash where possible, use 100% HTML5 mode
     preferFlash: false,
-    html5PollingInterval: 50
+    html5PollingInterval: 50,
+    debugMode: false
 });
 
 export function getSoundBySong(song) {
