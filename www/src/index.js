@@ -13,12 +13,12 @@ import configureStore from './store_config';
 import { LoginPage } from './containers/login_page';
 import { StartupPage } from './containers/startup_page';
 import { PlaylistPage } from './containers/playlist_page';
-import { dispatchContainer } from './utils/dispatch'
+import storeContainer from './utils/store_container'
 
 const store = configureStore();
 // The following allows us to dispatch actions everywhere
 // Following the advice on this thread: https://github.com/rackt/redux/issues/806
-dispatchContainer.dispatch = store.dispatch;
+storeContainer.store = store;
 
 React.render(
   <Provider store={store}>

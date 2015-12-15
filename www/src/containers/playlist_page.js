@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 import { Navigation } from '../components/navigation.js'
-import * as musicActions from '../actions/music';
+import * as musicActions from '../actions/music_actions';
 
 
 @connect(state => {
@@ -19,7 +19,17 @@ export class PlaylistPage extends Component {
 
     constructor(props, context) {
         super(props, context);
-        this.props.dispatch(musicActions.playTogglePlaylistAction(this.props.playlistName));
+        this.props.dispatch(musicActions.startPlayingPlaylistAction(this.props.playlistName));
+    }
+
+    onPlayPause() {
+        var action = musicActions.playTogglePlaylistAction(this.props.playlistName, this.props.currentSongAsync.data);
+        this.props.dispatch(action);
+    }
+
+    onNext() {
+        var action = musicActions.playNextSongAction(this.props.playlistName, this.props.currentSongAsync.data);
+        this.props.dispatch(action);
     }
 
     render() {
@@ -27,13 +37,11 @@ export class PlaylistPage extends Component {
         let currentSongAsync = this.props.currentSongAsync;
         let ratingStars = null;
         if (currentSongAsync.data) {
-
             let starCount = currentSongAsync.data.rating / 20;
             ratingStars = _.range(5).map(starIndex => {
                 let starClass = starCount > starIndex ? "fa-star" : "fa-star-o";
                 return <i className={classNames(["fa", starClass])}/>;
             });
-
         }
 
         return (
@@ -62,8 +70,10 @@ export class PlaylistPage extends Component {
                                 <h2 className="track-artist">{currentSongAsync.data.artist}</h2>
                                 <div className="stars">{ratingStars}</div>
                                 <div className="control-buttons">
-                                    <i className={classNames(["play-pause", "fa", playPauseClass])}/>
-                                    <i className="next fa fa-fast-forward"/>
+                                    <button onClick={this.onPlayPause.bind(this)}><i
+                                        className={classNames(["play-pause", "fa", playPauseClass])}/></button>
+                                    <button onClick={this.onNext.bind(this)}><i className="next fa fa-fast-forward"/>
+                                    </button>
                                 </div>
                             </div>
 

@@ -1,1 +1,0 @@
-export let dispatchContainer = { dispatch: null };

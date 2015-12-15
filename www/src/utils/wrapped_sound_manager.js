@@ -20,7 +20,7 @@ export function getSoundBySong(song) {
 
     let sound = soundManager.getSoundById(songId);
     if(sound) {
-        sound = new WrappedSound(song, sound);
+        sound = new WrappedSound(sound);
     }
 
     return sound;
@@ -64,7 +64,7 @@ export function loadSound(song) {
 
                     if (!error) {
                         logger.info(`SUCCESS song ${songId}: loaded`);
-                        resolve(new WrappedSound(song, this));
+                        resolve(new WrappedSound(this));
                     } else {
                         soundManager.destroySound(songId);
                         reject(error);

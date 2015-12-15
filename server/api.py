@@ -37,32 +37,18 @@ def request_access_token():
     
     return flask.jsonify(success=success)
 
-@app.route('/playlist/<name>')
+
+@app.route('/playlist/<name>', methods=["GET"])
 def playlist(name):
     tracks = itunes.playlist_tracks(name)
     if tracks is None:
         logger.warn("unknown playlist: %s", name)
         flask.abort(404)
 
-    tracksJson = [json.loads(tracks[0].__repr__()) for track in tracks]
+    tracks_json = [json.loads(track.__repr__()) for track in tracks]
 
-    return flask.jsonify(tracks=tracksJson)
+    return flask.jsonify(tracks=tracks_json)
 
-
-@app.route('/playlist/<name>/next', methods=["GET"])
-@login_required()
-def next_song(name):
-    tracks = itunes.playlist_tracks(name)
-    if tracks is None:
-        logger.warn("unknown playlist: %s", name)
-        flask.abort(404)
-
-    # This constant seed is used to always return the same next song, as long as the playlist didn't change
-    random.seed(42)
-    random.shuffle(tracks)
-
-    resp = make_response((flask.jsonify(next=json.loads(tracks[0].__repr__())), 200))
-    return resp
 
 @app.route('/song/<id>/last-played', methods=["POST"])
 def update_last_played(id):

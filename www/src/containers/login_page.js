@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import * as actions from '../actions/misc';
+import * as actions from '../actions/misc_actions';
 
 export class LoginPage extends Component {
 

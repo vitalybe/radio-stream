@@ -1,5 +1,5 @@
 import Freezer from 'freezer-js';
-import * as actionTypes from './actions/types';
+import * as actionTypes from './actions/action_types';
 import { combineReducers } from 'redux';
 import { routerStateReducer } from 'redux-router';
 
@@ -45,6 +45,17 @@ function isPlaying(state = false, action = null) {
     return state;
 }
 
+// Extracts from backend API json song data
+function extractSongDataFromJson(songJson) {
+    return {
+        id: songJson.id,
+        artist: songJson.artist,
+        name: songJson.name,
+        rating: songJson.rating,
+        playCount: songJson.play_count,
+        location: songJson.location
+    }
+}
 
 function currentSongAsync(state = new AsyncState(), action = null) {
 
@@ -54,7 +65,7 @@ function currentSongAsync(state = new AsyncState(), action = null) {
             break;
         case actionTypes.SONG_LOAD_COMPLETE:
         case actionTypes.SONG_UPDATED:
-            state = new AsyncState({inProgress: false, data: action.songData});
+            state = new AsyncState({inProgress: false, data: extractSongDataFromJson(action.songData)});
             break;
         case actionTypes.SONG_LOAD_ERROR:
             state = new AsyncState({error: true});
@@ -82,10 +93,52 @@ function playlistsAsync(state = new AsyncState(), action = null) {
     return state;
 }
 
+function currentPlaylistSongs(state = [], action = null) {
+    switch (action.type) {
+        case actionTypes.PLAYLIST_SONGS_UPDATED:
+            state = action.playlistSongs.map(extractSongDataFromJson);
+            break;
+    }
+
+    return state;
+}
+
+function currentPlaylistIndex(state = -1, action = null) {
+    switch (action.type) {
+        case actionTypes.PLAYLIST_SONGS_UPDATED:
+            state = -1; // Index is restarted on a new playlist
+            break;
+        case actionTypes.PLAYLIST_INDEX_INC:
+            state += 1;
+            break;
+    }
+
+    return state;
+}
+
+function currentPlaylistName(state = null, action = null) {
+    switch (action.type) {
+        case actionTypes.PLAYLIST_SONGS_UPDATED:
+            state = action.playlistName;
+            break;
+    }
+
+    return state;
+}
+
+// Updates the pagination data for different actions.
+const currentPlaylist = combineReducers({
+    name: currentPlaylistName,
+    songs: currentPlaylistSongs,
+    index: currentPlaylistIndex
+});
+
+
 const rootReducer = combineReducers({
     isRatingUpdating,
     isPlaying,
     currentSongAsync,
+    currentPlaylist,
     playlistsAsync,
 
     router: routerStateReducer

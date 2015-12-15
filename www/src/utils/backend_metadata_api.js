@@ -1,5 +1,5 @@
 import { pushState } from 'redux-router';
-import { dispatchContainer } from '../utils/dispatch'
+import storeContainer from './store_container'
 import ajaxConstructor from './ajax'
 
 
@@ -8,18 +8,27 @@ const SERVER_ADDRESS = window.location.protocol + "//" + window.location.hostnam
 // redirect to login page on any 401
 let ajax = ajaxConstructor(SERVER_ADDRESS, function (response) {
     if (response.status == 401) {
-        dispatchContainer.dispatch(pushState(null, '/login'))
+        storeContainer.store.dispatch(pushState(null, '/login'))
     }
 
     return response;
 });
 
-export function nextSongInPlaylist(playlistName) {
-    return ajax.get(`/playlist/${playlistName}/next`);
+export function playlistSongs(playlistName) {
+    return ajax.get(`/playlist/${playlistName}`)
+        .then(response => response.json().then(json => json))
+        .then((json) => {
+            return json.tracks;
+        });
 }
 
+
 export function updateLastPlayed(songId) {
-    ajax.post(`/song/${songId}/last-played`)
+    // return ajax.post(`/song/${songId}/last-played`);
+
+    return new Promise((resolve, reject) => setTimeout(function () {
+        resolve();
+    }, 500));
 }
 
 export function authenticate(password) {
