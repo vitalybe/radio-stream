@@ -1,95 +1,109 @@
+// Fork of: https://github.com/epeli/node-clim
 // Usage:
 //
-//  var logger = require('logger').prefix('sessionStore');
+//  var logger = require('logger')('sessionStore');
 //  logger.debug("Some debug messages");
 //
 
-console.log("initializing logging service");
+var util = require("util");
+var clim;
 
-var LoggingService = function() {
-
-    var LEVELS = ['trace', 'debug', 'info', 'warn', 'error'];
-
-    function prefixed (lvl, prefix, msg /*, ... */) {
-        var args = Array.prototype.slice.call(arguments, 3);
-        args.unshift('[' + prefix + '] ' + msg);
-        this[lvl].apply(this, args);
+module.exports = clim = function (prefix, parent, patch) {
+    var ob;
+    var noFormat = false;
+    // Fiddle optional arguments
+    patch = Array.prototype.slice.call(arguments, -1)[0];
+    if (typeof patch === 'object') {
+        noFormat = patch.noFormat;
+        patch = patch.patch;
+    }
+    if (typeof patch !== "boolean") patch = false;
+    if (typeof prefix === "object" && prefix !== null) {
+        parent = prefix;
+        prefix = undefined;
     }
 
-    function pad(num, size) {
-        var numString = num+"";
+    if (prefix.lastIndexOf("\\") >= 0) {
+        prefix = prefix.substring(prefix.lastIndexOf("\\") + 1);
+    }
 
-        while (numString.length < size) {
-             numString = "0" + numString;
+    if (patch && parent) {
+        // Modify given object when patching is requested
+        ob = parent;
+    }
+    else {
+        // Otherwise create new object
+        ob = {};
+        if (parent && parent._prefixes) {
+            // and inherit prefixes from the given object
+            ob._prefixes = parent._prefixes.slice();
         }
-
-        return numString;
     }
 
-    var inst = this;
-    inst.__captured__ = [];
+    // Append new prefix
+    if (!ob._prefixes) ob._prefixes = [];
+    if (prefix) ob._prefixes.push("[" + prefix + "]");
 
-    // Detect the minimum log level activated
-    var minLevel = 'debug';
-    minLevel = LEVELS.indexOf(minLevel.toLowerCase());
-    if (-1 === minLevel) {
-        throw new Error('Unknown log level "' + minLevel + '"');
-    }
+    ob.log = createLogger("log", ob._prefixes, noFormat);
+    ob.debug = createLogger("debug", ob._prefixes, noFormat);
+    ob.info = createLogger("info", ob._prefixes, noFormat);
+    ob.warn = createLogger("warn", ob._prefixes, noFormat);
+    ob.error = createLogger("error", ob._prefixes, noFormat);
+    consoleProxy(ob);
 
-    LEVELS.forEach(function (lvl, idx) {
-        if (idx < minLevel) {
-            inst[lvl] = function () {};
-            return;
-        }
-        inst[lvl] = function (message) {
-
-            // HACK: Capture every log message for bug reporting
-            if (inst.__captured__) {
-                inst.__captured__.push([lvl, Date.now(), message]);
-            }
-
-            // Prefix the message with a timestamp and the level
-            var d = new Date();
-            var hours = pad(d.getHours(), 2);
-            var minutes = pad(d.getMinutes(), 2);
-            var seconds = pad(d.getSeconds(), 2);
-            var milliseconds = pad(d.getMilliseconds(), 3);
-            message = `${hours}:${minutes}:${seconds}, ${milliseconds} - ${message}`;
-
-            console[lvl].apply(console, [message]);
-        };
-    });
-
-    // Handy method to provide an alias for logged messages
-    inst.prefix = function (prefix) {
-        var proxy = {};
-        LEVELS.forEach(function (lvl) {
-            proxy[lvl] = prefixed.bind(inst, lvl, prefix);
-        });
-        return proxy;
-    };
-
-    // if the given filename is an absoluet path, only the last part is used
-    inst.prefixFile = function (filename) {
-        return inst.prefix(filename.substring(filename.lastIndexOf("\\")+1));
-    };
-
-    inst.formatException = function(exception) {
-        var errorMessage = exception ? exception.toString() : "No error message";
-        var stackTrace = window.printStackTrace({ e: exception });
-
-        return errorMessage + '\n\t' + stackTrace.join('\n\t');
-    };
-
-    inst.formatCaptured = function () {
-        return inst.__captured__.map((logEvent) =>  logEvent[2]).join("\n");
-    };
-
-    inst.clearCaptured = function () {
-        inst.__captured__ = [];
-    };
-
-    return inst;
+    return ob;
 };
 
-export default new LoggingService();
+// By default write all logs to stderr
+clim.logWrite = function (level, prefixes, msg) {
+    var line = clim.getTime();
+    if (prefixes.length > 0) line += " " + prefixes.join(" ");
+    line += " " + level.toUpperCase();
+    line += " " + msg;
+    console[level].call(console, line);
+};
+
+
+function pad(num, size) {
+    var numString = num + "";
+
+    while (numString.length < size) {
+        numString = "0" + numString;
+    }
+
+    return numString;
+}
+
+clim.getTime = function () {
+    var d = new Date();
+    var hours = pad(d.getHours(), 2);
+    var minutes = pad(d.getMinutes(), 2);
+    var seconds = pad(d.getSeconds(), 2);
+    var milliseconds = pad(d.getMilliseconds(), 3);
+
+    return `${hours}:${minutes}:${seconds},${milliseconds}`;
+};
+
+
+// Just proxy methods we don't care about to original console object
+function consoleProxy(ob) {
+    // list from http://nodejs.org/api/stdio.html
+    var methods = ["dir", "time", "timeEnd", "trace", "assert"];
+    methods.forEach(function (method) {
+        if (ob[method]) return;
+        ob[method] = function () {
+            return console[method].apply(console, arguments);
+        };
+    });
+}
+
+function createLogger(method, prefixes, noFormat) {
+    return function () {
+        // Handle formatting and circular objects like in the original
+        var msg = noFormat ?
+            Array.prototype.slice.call(arguments)
+            : util.format.apply(this, arguments);
+
+        clim.logWrite(method, prefixes, msg);
+    };
+}

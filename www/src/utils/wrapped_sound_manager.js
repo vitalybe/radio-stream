@@ -1,8 +1,10 @@
 import { soundManager } from 'soundmanager2';
 import WrappedSound from './wrapped_sound.js'
 
-import rootLogger from './logger'
-const logger = rootLogger.prefix("wrappedSoundManager");
+import loggerCreator from './logger'
+//noinspection JSUnresolvedVariable
+var logger = loggerCreator(__filename);
+
 
 const MUSIC_ADDRESS = window.location.protocol + "//" + window.location.hostname + ":16768";
 

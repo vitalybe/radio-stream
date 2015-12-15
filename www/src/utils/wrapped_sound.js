@@ -1,6 +1,6 @@
 import loggerCreator from './logger'
 //noinspection JSUnresolvedVariable
-var logger = loggerCreator.prefixFile(__filename);
+var logger = loggerCreator(__filename);
 
 // wraps SoundManager2 sound object
 export default class WrappedSound {

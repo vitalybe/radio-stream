@@ -1,6 +1,6 @@
 import loggerCreator from '../utils/logger'
 //noinspection JSUnresolvedVariable
-var logger = loggerCreator.prefixFile(__filename);
+var logger = loggerCreator(__filename);
 
 import storeContainer from '../utils/store_container'
 import { getSoundBySong, loadSound } from '../utils/wrapped_sound_manager'
@@ -8,7 +8,7 @@ import * as backendMetadataApi from '../utils/backend_metadata_api'
 import * as actionTypes from './action_types'
 
 function getNextSongInPlaylist(playlistName, currentPlaylist) {
-    logger.info(`Getting next song in ${playlistName}`);
+    logger.info(`[getNextSongInPlaylist] Getting next song in ${playlistName}`);
 
     logger.debug(`Current playlist: ${currentPlaylist.name}. In it ${currentPlaylist.songs.length} songs. Current index: ${currentPlaylist.index}.`);
 
