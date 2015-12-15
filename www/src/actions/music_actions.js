@@ -140,7 +140,7 @@ export function playNextSongAction(playlistName, currentSong) {
     return function () {
         getOrLoadSound(currentSong)
             .then(function(sound) {
-                sound.pause();
+                sound.stop();
 
                 return markSongAsPlayed(currentSong.id);
             })
