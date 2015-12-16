@@ -1,7 +1,7 @@
 import Freezer from 'freezer-js';
 import * as actionTypes from './actions/action_types';
 import { combineReducers } from 'redux';
-import { routeReducer } from 'redux-simple-router'
+import { routerStateReducer } from 'redux-router';
 
 class AsyncState {
     inProgress = true;
@@ -142,7 +142,7 @@ const rootReducer = combineReducers({
     currentPlaylist,
     playlistsAsync,
 
-    routing: routeReducer
+    router: routerStateReducer
 });
 
 export default rootReducer;
