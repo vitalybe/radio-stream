@@ -20,6 +20,17 @@ export class PlaylistPage extends Component {
     constructor(props, context) {
         super(props, context);
         this.props.dispatch(musicActions.startPlayingPlaylistAction(this.props.playlistName));
+        if (!this.props.playlistsAsync.data) {
+            this.props.dispatch(musicActions.loadAvailablePlaylists());
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        // This seems to be the correct way of handling that:
+        // Per: http://stackoverflow.com/questions/32846337/how-to-fetch-the-new-data-in-response-to-react-router-change-with-redux
+        if (nextProps.playlistName !== this.props.playlistName) {
+            this.props.dispatch(musicActions.startPlayingPlaylistAction(nextProps.playlistName));
+        }
     }
 
     onPlayPause() {
@@ -28,7 +39,7 @@ export class PlaylistPage extends Component {
     }
 
     onNext() {
-        var action = musicActions.playNextSongAction(this.props.playlistName, this.props.currentSongAsync.data);
+        var action = musicActions.playNextSongAction(this.props.playlistName);
         this.props.dispatch(action);
     }
 
@@ -53,7 +64,7 @@ export class PlaylistPage extends Component {
         return (
             <div className="playlist-page">
                 <div className="sidebar">
-                    <Navigation playlistsAsync={this.props.playlistsAsync} activePlaylist={this.props.playlistName}/>
+                    <Navigation playlistsAsync={this.props.playlistsAsync} currentPlaylist={this.props.playlistName}/>
                 </div>
                 <div className="main">
                     <If condition={currentSongAsync.inProgress}>

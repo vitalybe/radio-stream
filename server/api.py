@@ -38,8 +38,8 @@ def request_access_token():
     return flask.jsonify(success=success)
 
 
-@app.route('/playlist/<name>', methods=["GET"])
-def playlist(name):
+@app.route('/playlists/<name>', methods=["GET"])
+def get_playlist_by_name(name):
     tracks = itunes.playlist_tracks(name)
     if tracks is None:
         logger.warn("unknown playlist: %s", name)
@@ -49,6 +49,11 @@ def playlist(name):
 
     return flask.jsonify(tracks=tracks_json)
 
+
+@app.route('/playlists', methods=["GET"])
+def get_playlists():
+    playlists = [playlist for playlist in itunes.get_playlists() if playlist.startswith(".")]
+    return flask.jsonify(playlists=playlists)
 
 @app.route('/song/<id>/last-played', methods=["POST"])
 def update_last_played(id):

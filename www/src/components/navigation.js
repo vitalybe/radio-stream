@@ -1,4 +1,8 @@
 import React, { Component, PropTypes as T } from 'react';
+import { Link } from 'react-router'
+import classNames from 'classnames';
+
+import * as musicActions from '../actions/music_actions';
 
 export class Navigation extends Component {
 
@@ -8,8 +12,12 @@ export class Navigation extends Component {
             error: React.PropTypes.any,
             data: React.PropTypes.any
         }).isRequired,
-        activePlaylist: T.string
+        currentPlaylist: T.string
     };
+
+    constructor(props, context) {
+        super(props, context);
+    }
 
     render() {
 
@@ -26,8 +34,12 @@ export class Navigation extends Component {
                             <Else/>
 
                             <ul>
-                                {this.props.playlists.map(playlist => {
-                                    return <li>{playlist}</li>
+                                {this.props.playlistsAsync.data.map(playlist => {
+                                    return (
+                                        <li key={playlist}
+                                            className={classNames({"current": playlist == this.props.currentPlaylist})}>
+                                            <Link to={`/playlist/${playlist}`}>{playlist}</Link>
+                                        </li>)
                                 })}
                             </ul>
                         </If>

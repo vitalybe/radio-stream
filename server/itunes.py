@@ -121,12 +121,19 @@ def find_playlist(name):
         return None
 
 
+def get_playlists():
+    lib = get_lib()
+    playlists = [playlist.name for playlist in lib.Source.Playlists]
+    return playlists
+
+
 def playlist_tracks(name):
     playlist = find_playlist(name)
     if playlist:
         return [Track(track) for track in find_playlist(name).Tracks]
     else:
         return None
+
 
 def track_by_id(id):
     logger.debug("track_by_id: %s" % id)

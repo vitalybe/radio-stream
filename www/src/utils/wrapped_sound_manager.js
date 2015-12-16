@@ -91,3 +91,7 @@ export function loadSound(song) {
 
     return loadingPromise;
 }
+
+export function stopAll() {
+    soundManager.stopAll();
+}

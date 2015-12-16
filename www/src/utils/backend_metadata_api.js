@@ -15,16 +15,25 @@ let ajax = ajaxConstructor(SERVER_ADDRESS, function (response) {
 });
 
 export function playlistSongs(playlistName) {
-    return ajax.get(`/playlist/${playlistName}`)
+    return ajax.get(`/playlists/${playlistName}`)
         .then(response => response.json().then(json => json))
         .then((json) => {
             return json.tracks;
         });
 }
 
+export function playlists() {
+    return ajax.get(`/playlists`)
+        .then(response => response.json().then(json => json))
+        .then((json) => {
+            return json.playlists;
+        });
+}
+
 
 export function updateLastPlayed(songId) {
     // return ajax.post(`/song/${songId}/last-played`);
+
 
     return new Promise((resolve, reject) => setTimeout(function () {
         resolve();

@@ -3,7 +3,7 @@ import loggerCreator from '../utils/logger'
 var logger = loggerCreator(__filename);
 
 import storeContainer from '../utils/store_container'
-import { getSoundBySong, loadSound } from '../utils/wrapped_sound_manager'
+import { getSoundBySong, loadSound, stopAll } from '../utils/wrapped_sound_manager'
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 import * as actionTypes from './action_types'
 import { formatSong } from '../utils/util'
@@ -159,6 +159,7 @@ export function startPlayingPlaylistAction(playlistName) {
     flogger.debug(playlistName);
 
     return function () {
+        stopAll();
         return playNextSongInPlaylist(playlistName);
     }
 }
@@ -177,12 +178,8 @@ export function playNextSongAction(playlistName, currentSong) {
     flogger.debug(playlistName, formatSong(currentSong));
 
     return function () {
-        getOrLoadSound(currentSong)
-            .then(function (sound) {
-                sound.stop();
-
-                return markSongAsPlayed(currentSong);
-            })
+        stopAll();
+        markSongAsPlayed(currentSong)
             .then(function () {
                 logger.debug(`Marked as read - Continue to play playlist: ${playlistName}`);
                 return playNextSongInPlaylist(playlistName);
@@ -204,6 +201,24 @@ export function changeRating(currentSong, newRating) {
             .catch(err => {
                 flogger.error(`Failed: ${err}`);
                 storeContainer.store.dispatch({type: actionTypes.RATING_UPDATE_ERROR});
+            });
+    }
+}
+
+export function loadAvailablePlaylists() {
+    let fLogger = loggerCreator(loadAvailablePlaylists.name, logger);
+    fLogger.debug("Loading...");
+
+    return function () {
+        storeContainer.store.dispatch({type: actionTypes.PLAYLISTS_LOAD_PROGRESS});
+        backendMetadataApi.playlists()
+            .then((playlists) => {
+                fLogger.debug(`Success`);
+                storeContainer.store.dispatch({type: actionTypes.PLAYLISTS_LOAD_COMPLETE, playlists});
+            })
+            .catch(err => {
+                fLogger.error(`Failed: ${err}`);
+                storeContainer.store.dispatch({type: actionTypes.PLAYLISTS_LOAD_ERROR});
             });
     }
 }

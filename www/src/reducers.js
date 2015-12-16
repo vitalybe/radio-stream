@@ -77,7 +77,6 @@ function currentSongAsync(state = new AsyncState(), action = null) {
     return state;
 }
 
-
 function playlistsAsync(state = new AsyncState(), action = null) {
 
     switch (action.type) {
@@ -85,7 +84,7 @@ function playlistsAsync(state = new AsyncState(), action = null) {
             state = new AsyncState({inProgress: true});
             break;
         case actionTypes.PLAYLISTS_LOAD_COMPLETE:
-            state = new AsyncState({data: action.playlists});
+            state = new AsyncState({inProgress: false, data: action.playlists});
             break;
         case actionTypes.PLAYLISTS_LOAD_ERROR:
             state = new AsyncState({error: true});
