@@ -1,8 +1,30 @@
 @import "../../lib/styles/hexdots.css";
 @import "../../lib/styles/prefixer.less";
 
-.background {
-  color: yellow;
+.playlists {
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  .header {
+    text-align: center;
+  }
+
+  .playlist {
+
+    &.current {
+      color: blue;
+    }
+    .icon {
+      margin-right: 0.5em;
+    }
+  }
 }
 
 .playlist-page {
@@ -44,7 +66,8 @@
 
       .control-buttons {
         i.fa {
-          padding: 1em;
+          padding: 0.3em;
+          font-size: 2em;
         }
       }
     }

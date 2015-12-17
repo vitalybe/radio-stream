@@ -24,7 +24,7 @@ export class Navigation extends Component {
         return (
             <div>
                 <div className="playlists">
-                    <h1>Playlists</h1>
+                    <h1 className="header">Playlists</h1>
                     <div className="content">
                         <If condition={this.props.playlistsAsync.inProgress}>
                             <div className="hexdots-loader loader">
@@ -37,8 +37,23 @@ export class Navigation extends Component {
                                 {this.props.playlistsAsync.data.map(playlist => {
                                     return (
                                         <li key={playlist}
-                                            className={classNames({"current": playlist == this.props.currentPlaylist})}>
-                                            <Link to={`/playlist/${playlist}`}>{playlist}</Link>
+                                            className={classNames(["playlist"],{"current": playlist == this.props.currentPlaylist})}>
+                                            <If condition={playlist == this.props.currentPlaylist}>
+
+                                                <span>
+                                                    <i className="icon fa fa-volume-up"/>
+                                                    <span className="name">{playlist}</span>
+                                                </span>
+
+                                                <Else/>
+
+                                                <span>
+                                                    <i className="icon fa fa-music"/>
+                                                    <Link to={`/playlist/${playlist}`}>
+                                                        <span className="name">{playlist}</span>
+                                                    </Link>
+                                                </span>
+                                            </If>
                                         </li>)
                                 })}
                             </ul>

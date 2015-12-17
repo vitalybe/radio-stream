@@ -31,7 +31,7 @@ export class PlaylistPage extends Component {
         if (nextProps.playlistName !== this.props.playlistName) {
             this.props.dispatch(musicActions.startPlayingPlaylistAction(nextProps.playlistName));
         }
-    }
+    } 
 
     onPlayPause() {
         var action = musicActions.playTogglePlaylistAction(this.props.playlistName, this.props.currentSongAsync.data);
