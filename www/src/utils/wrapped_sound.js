@@ -16,6 +16,7 @@ export default class WrappedSound {
 
     pause() { this._sound.pause(); }
     stop() { this._sound.stop(); }
+    setPosition(duration) { return this._sound.setPosition(duration); }
 
     get loaded() { return this._sound.loaded; }
     get playState() { return this._sound.playState; }

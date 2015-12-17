@@ -95,3 +95,11 @@ export function loadSound(song) {
 export function stopAll() {
     soundManager.stopAll();
 }
+
+export function fastForward(song) {
+    let fLogger = loggerCreator(fastForward.name, logger);
+    fLogger.debug(formatSong(song));
+
+    let sound = getSoundBySong(song);
+    sound.setPosition(sound.duration - 10000);
+}
