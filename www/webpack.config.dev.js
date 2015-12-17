@@ -18,6 +18,9 @@ module.exports = {
         new webpack.NoErrorsPlugin(),
         new webpack.ProvidePlugin({
             _: "lodash",
+        }),
+        new webpack.DefinePlugin({
+            __PROD__: false
         })
     ],
     context: __dirname,

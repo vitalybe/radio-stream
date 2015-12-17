@@ -1,9 +1,9 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import { reduxReactRouter } from 'redux-router';
 import {createHistory} from 'history';
-import { devTools, persistState } from 'redux-devtools';
 import thunk from 'redux-thunk';
 import reducer from './reducers';
+import DevTools from './components/dev_tools_redux'
 
 const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 
@@ -11,10 +11,7 @@ export default function configureStore(initialState) {
     const store = compose(
         applyMiddleware(thunk),
         reduxReactRouter({createHistory}),
-        // Provides support for DevTools:
-        devTools(),
-        // Lets you write ?debug_session=<name> in address bar to persist debug sessions
-        persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))
+        DevTools.instrument()
     )(createStore)(reducer);
 
     if (module.hot) {
