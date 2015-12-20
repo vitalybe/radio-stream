@@ -8,7 +8,7 @@ import * as musicActions from '../actions/music_actions';
 
 @connect(state => {
     return {
-        playlistName: state.router.params.playlistName,
+        currentPlaylist: state.currentPlaylist,
         playlistsAsync: state.playlistsAsync,
 
         currentSongAsync: state.currentSongAsync,
@@ -19,7 +19,7 @@ export class PlaylistPage extends Component {
 
     constructor(props, context) {
         super(props, context);
-        this.props.dispatch(musicActions.startPlayingPlaylistAction(this.props.playlistName));
+        this.props.dispatch(musicActions.startPlayingPlaylistAction(this.props.params.playlistName));
         if (!this.props.playlistsAsync.data) {
             this.props.dispatch(musicActions.loadAvailablePlaylists());
         }
@@ -28,18 +28,18 @@ export class PlaylistPage extends Component {
     componentWillReceiveProps(nextProps) {
         // This seems to be the correct way of handling that:
         // Per: http://stackoverflow.com/questions/32846337/how-to-fetch-the-new-data-in-response-to-react-router-change-with-redux
-        if (nextProps.playlistName !== this.props.playlistName) {
-            this.props.dispatch(musicActions.startPlayingPlaylistAction(nextProps.playlistName));
+        if (nextProps.params.playlistName !== this.props.params.playlistName) {
+            this.props.dispatch(musicActions.startPlayingPlaylistAction(nextProps.params.playlistName));
         }
-    } 
+    }
 
     onPlayPause() {
-        var action = musicActions.playTogglePlaylistAction(this.props.playlistName, this.props.currentSongAsync.data);
+        var action = musicActions.playTogglePlaylistAction(this.props.params.playlistName, this.props.currentSongAsync.data);
         this.props.dispatch(action);
     }
 
     onNext() {
-        var action = musicActions.playNextSongAction(this.props.playlistName);
+        var action = musicActions.playNextSongAction(this.props.params.playlistName);
         this.props.dispatch(action);
     }
 
@@ -64,7 +64,7 @@ export class PlaylistPage extends Component {
         return (
             <div className="playlist-page">
                 <div className="sidebar">
-                    <Navigation playlistsAsync={this.props.playlistsAsync} currentPlaylist={this.props.playlistName}/>
+                    <Navigation playlistsAsync={this.props.playlistsAsync} currentPlaylist={this.props.params.playlistName}/>
                 </div>
                 <div className="main">
                     <If condition={currentSongAsync.inProgress}>

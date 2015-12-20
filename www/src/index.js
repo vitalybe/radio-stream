@@ -7,8 +7,8 @@ window.Promise = require('yaku');
 import React from 'react';
 import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
-import { IndexRoute, Route, Link } from 'react-router';
-import { ReduxRouter } from 'redux-router';
+import { Router, Route, Link } from 'react-router';
+import history from './utils/history'
 
 import configureStore from './store_config';
 import DevToolsRedux from './components/dev_tools_redux'
@@ -28,12 +28,12 @@ ReactDom.render(
         <div>
             <DevToolsRedux />
             <DevToolsProject />
-            <ReduxRouter>
+            <Router history={history}>
                 <Route path="/" component={StartupPage}/>
                 <Route path="/playlist/:playlistName" component={PlaylistPage}/>
 
                 <Route path="/login" component={LoginPage}/>
-            </ReduxRouter>
+            </Router>
         </div>
     </Provider>
 
