@@ -1,5 +1,6 @@
 {
   "name": "music-stream-www",
+  "productName": "music-stream-www",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
