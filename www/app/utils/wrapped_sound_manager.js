@@ -7,7 +7,7 @@ import loggerCreator from './logger'
 var logger = loggerCreator(__filename);
 
 
-const MUSIC_ADDRESS = window.location.protocol + "//" + window.location.hostname + ":16768";
+const MUSIC_ADDRESS = "http://" + "localhost" + ":16768";
 
 logger.debug(`Running soundManager setup`);
 soundManager.setup({

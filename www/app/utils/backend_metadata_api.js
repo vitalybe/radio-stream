@@ -2,7 +2,7 @@ import history from '../utils/history'
 import storeContainer from './store_container'
 import ajaxConstructor from './ajax'
 
-const SERVER_ADDRESS = window.location.protocol + "//" + window.location.hostname + ":5000";
+const SERVER_ADDRESS = "http://" + "localhost" + ":5000";
 
 // redirect to login page on any 401
 let ajax = ajaxConstructor(SERVER_ADDRESS, function (response) {
