@@ -1,12 +1,12 @@
 /* eslint strict: 0 */
 'use strict';
-
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
 const crashReporter = electron.crashReporter;
 const shell = electron.shell;
+const globalShortcut = electron.globalShortcut;
 let menu;
 let template;
 let mainWindow = null;
@@ -21,9 +21,23 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
+app.on('will-quit', function() {
+  // Unregister all shortcuts.
+  globalShortcut.unregisterAll();
+});
+
 
 app.on('ready', () => {
   mainWindow = new BrowserWindow({ width: 1024, height: 728 });
+
+  console.send = function (msg) {
+    mainWindow.webContents.send('send-console', msg);
+  };
+
+  var ret = globalShortcut.register('ctrl+shift+p', function() {
+    console.send('oh hai2');
+  });
+
 
   if (process.env.HOT) {
     mainWindow.loadURL(`file://${__dirname}/app/hot-dev-index.html`);

@@ -31,6 +31,10 @@ const store = configureStore();
 // Following the advice on this thread: https://github.com/rackt/redux/issues/806
 storeContainer.store = store;
 
+require('ipc').on('send-console', function(msg) {
+    console.log(msg);
+});
+
 ReactDom.render(
     <Provider store={store}>
         <div>
