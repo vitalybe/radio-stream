@@ -6,7 +6,7 @@ var config = require('./webpack.config.base.js')
 config.devtool = 'inline-source-map';
 config.entry = [
     'webpack-hot-middleware/client',
-    './src/index'
+    './app/index'
 ];
 
 config.plugins = config.plugins.concat([
@@ -20,7 +20,7 @@ config.plugins = config.plugins.concat([
 config.module.loaders.push({
     test: /\.js$/,
     loader: 'babel',
-    include: path.join(__dirname, 'src'),
+    include: path.join(__dirname, 'app'),
     query: {
         "stage": 0,
         "plugins": ["react-transform", "jsx-control-statements/babel"],

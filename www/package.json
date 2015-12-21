@@ -8,7 +8,7 @@
     "build": "npm run clean && npm run build:webpack",
     "prod": "npm run build && node prodServer.js",
     "start": "node devServer.js",
-    "lint": "eslint src"
+    "lint": "eslint app"
   },
   "keywords": [],
   "devDependencies": {
