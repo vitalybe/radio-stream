@@ -1,4 +1,10 @@
-import createBrowserHistory from 'history/lib/createBrowserHistory'
-const history = createBrowserHistory();
+let createHistory = null;
+if(__WEB__) {
+  createHistory = require('history/lib/createBrowserHistory');
+} else {
+  createHistory = require('history/lib/createHashHistory');
+}
+
+const history = createHistory();
 
 export default history;

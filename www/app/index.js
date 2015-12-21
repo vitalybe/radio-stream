@@ -4,6 +4,10 @@ require("../lib/styles/font-awesome/css/font-awesome.min.css");
 
 window.Promise = require('yaku');
 
+import loggerCreator from './utils/logger'
+//noinspection JSUnresolvedVariable
+var logger = loggerCreator(__filename);
+
 import React from 'react';
 import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
@@ -17,6 +21,10 @@ import { LoginPage } from './containers/login_page';
 import { StartupPage } from './containers/startup_page';
 import { PlaylistPage } from './containers/playlist_page';
 import storeContainer from './utils/store_container'
+
+logger.info("Compilation settings - __PROD__: " + __PROD__);
+logger.info("Compilation settings - __WEB__: " + __WEB__);
+
 
 const store = configureStore();
 // The following allows us to dispatch actions everywhere

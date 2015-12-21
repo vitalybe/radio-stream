@@ -1,12 +1,11 @@
 var path = require('path');
 var webpack = require('webpack');
-var Promise = require('es6-promise').Promise;
 
 var config = require('./webpack.config.base.js')
 config.devtool = 'inline-source-map';
-config.entry = [
-    './app/index'
-];  
+config.entry = './app/index';
+
+config.output.publicPath = '../dist/';
 
 config.plugins = config.plugins.concat([
     new webpack.optimize.OccurenceOrderPlugin(),

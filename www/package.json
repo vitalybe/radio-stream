@@ -2,55 +2,135 @@
   "name": "music-stream-www",
   "version": "1.0.0",
   "description": "",
+  "main": "main.js",
   "scripts": {
-    "clean": "rimraf dist",
-    "build:webpack": "set NODE_ENV=production && webpack --config webpack.config.prod.js",
-    "build": "npm run clean && npm run build:webpack",
-    "prod": "npm run build && node prodServer.js",
-    "start": "node devServer.js",
-    "lint": "eslint app"
+    "test": "better-npm-run test",
+    "test-watch": "npm test -- --watch",
+    "test-e2e:crdv": "chromedriver",
+    "test-e2e": "better-npm-run test-e2e",
+    "lint": "eslint app test *.js",
+    "hot-server-desktop": "node server-desktop.js",
+    "hot-server-web": "node server-web.js",
+    "build": "better-npm-run build",
+    "start": "NODE_ENV=production electron .",
+    "start-hot": "better-npm-run start-hot",
+    "package": "better-npm-run package",
+    "package-all": "npm run package -- --all",
+    "postinstall": "node node_modules/fbjs-scripts/node/check-dev-engines.js package.json"
+  },
+  "betterScripts": {
+    "start-hot": {
+      "command": "electron ./",
+      "env": {
+        "HOT": 1,
+        "NODE_ENV": "development"
+      }
+    },
+    "package": {
+      "command": "node package.js",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "build": {
+      "command": "webpack --config webpack.config.desktop.production.js --progress --profile --colors",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "test": {
+      "command": "mocha --compilers js:babel/register --recursive --require ./test/setup.js test/**/*.spec.js",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    },
+    "test-e2e": {
+      "command": "mocha --compilers js:babel/register --require ./test/setup.js --require co-mocha ./test/e2e.js",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    }
+  },
+  "bin": {
+    "electron": "./node_modules/.bin/electron"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chentsulin/electron-react-boilerplate.git"
   },
   "keywords": [],
   "devDependencies": {
-    "babel-core": "^5.4.7",
-    "babel-eslint": "^3.1.9",
-    "babel-loader": "^5.1.2",
+    "asar": "^0.8.0",
+    "babel": "^5.8.23",
+    "babel-core": "^5.8.23",
+    "babel-eslint": "^4.1.1",
+    "babel-loader": "^5.3.2",
     "babel-plugin-react-transform": "^1.1.1",
-    "connect-history-api-fallback": "^1.1.0",
+    "better-npm-run": "0.0.5",
+    "chai": "^3.3.0",
+    "chromedriver": "^2.19.0",
+    "co-mocha": "^1.1.2",
     "css-loader": "^0.23.0",
+    "css-modules-require-hook": "^2.0.2",
+    "del": "^2.0.1",
+    "electron-packager": "^5.1.1",
+    "electron-prebuilt": "^0.36.0",
+    "electron-rebuild": "^1.0.0",
     "eslint": "^1.3.1",
-    "eslint-plugin-react": "^2.3.0",
+    "eslint-config-airbnb": "^1.0.2",
+    "eslint-plugin-react": "^3.3.1",
     "express": "^4.13.3",
-    "file-loader": "^0.8.4",
-    "jsx-control-statements": "^1.1.2",
-    "less-loader": "^2.2.1",
+    "extract-text-webpack-plugin": "^0.9.1",
+    "fbjs-scripts": "^0.5.0",
+    "jsdom": "^7.0.2",
+    "less": "^2.5.3",
+    "less-loader": "^2.2.2",
+    "minimist": "^1.2.0",
+    "mocha": "^2.3.0",
+    "node-libs-browser": ">= 0.4.0 <=0.6.0",
+    "postcss": "^5.0.11",
+    "postcss-modules-extract-imports": "^1.0.0",
+    "postcss-modules-local-by-default": "^1.0.0",
+    "postcss-modules-scope": "^1.0.0",
+    "postcss-modules-values": "^1.1.1",
+    "react-addons-test-utils": "^0.14.2",
     "react-transform-catch-errors": "^1.0.0",
-    "react-transform-hmr": "^1.0.0",
-    "redbox-react": "^1.0.1",
+    "react-transform-hmr": "^1.0.1",
+    "redbox-react": "^1.1.1",
     "redux-devtools": "^3.0.0",
     "redux-devtools-dock-monitor": "^1.0.1",
     "redux-devtools-log-monitor": "^1.0.1",
-    "rimraf": "^2.4.3",
+    "redux-logger": "^2.0.4",
+    "selenium-webdriver": "^2.48.2",
+    "sinon": "^1.17.2",
     "style-loader": "^0.13.0",
-    "url-loader": "^0.5.6",
-    "webpack": "^1.12.2",
+    "webpack": "^1.12.1",
     "webpack-dev-middleware": "^1.2.0",
-    "webpack-hot-middleware": "^2.0.0"
+    "webpack-hot-middleware": "^2.4.1",
+    "webpack-target-electron-renderer": "^0.3.0"
   },
   "dependencies": {
     "classnames": "^2.2.1",
-    "es6-promise": "^3.0.2",
-    "freezer-js": "^0.8.2",
-    "history": "^1.13.1",
-    "isomorphic-fetch": "^2.1.1",
+    "electron-debug": "^0.5.1",
+    "file-loader": "^0.8.5",
+    "font-awesome": "^4.4.0",
+    "history": "~1.13.0",
+    "isomorphic-fetch": "^2.2.0",
+    "jsx-control-statements": "^1.1.2",
     "lodash": "^3.10.1",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
-    "react-redux": "^3.1.0",
-    "react-router": "^1.0.2",
-    "redux": "^3.0.2",
+    "react": "^0.14.2",
+    "react-dom": "^0.14.2",
+    "react-redux": "^4.0.0",
+    "react-router": "^1.0.0",
+    "redux": "^3.0.4",
+    "redux-promise": "^0.5.0",
     "redux-thunk": "^1.0.0",
-    "soundmanager2": "^2.97.20150601-a",
-    "yaku": "^0.11.4"
+    "soundmanager2": "^2.97.20150601",
+    "url-loader": "^0.5.7",
+    "yaku": "^0.11.7"
+  },
+  "devEngines": {
+    "node": "4.x || 5.x",
+    "npm": "2.x || 3.x"
   }
 }
