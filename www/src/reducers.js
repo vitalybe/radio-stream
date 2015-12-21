@@ -1,4 +1,3 @@
-import Freezer from 'freezer-js';
 import * as actionTypes from './actions/action_types';
 import { combineReducers } from 'redux';
 
