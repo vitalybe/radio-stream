@@ -132,7 +132,6 @@ const currentPlaylist = combineReducers({
     index: currentPlaylistIndex
 });
 
-
 const rootReducer = combineReducers({
     isRatingUpdating,
     isPlaying,

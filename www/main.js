@@ -1,5 +1,6 @@
 /* eslint strict: 0 */
 'use strict';
+const path = require('path');
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -49,6 +50,17 @@ app.on('ready', () => {
             mainWindow.setTitle(originalTitle);
         }
     });
+
+
+    var exec = require('child_process').exec;
+    var cmd = path.join("lib", "binary", "win32-GetIdleTime.exe");
+
+    setInterval(()=>{
+        exec(cmd, function (error, stdout, stderr) {
+            log(`Idle time: ${stdout}`);
+            mainWindow.webContents.send('idle', stdout);
+        });
+    }, 60000);
 
 
     if (process.env.HOT) {
