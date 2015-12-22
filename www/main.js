@@ -7,6 +7,8 @@ const Menu = electron.Menu;
 const crashReporter = electron.crashReporter;
 const shell = electron.shell;
 const globalShortcut = electron.globalShortcut;
+const ipcMain = electron.ipcMain;
+
 let menu;
 let template;
 let mainWindow = null;
@@ -29,15 +31,25 @@ app.on('will-quit', function () {
 
 app.on('ready', () => {
     mainWindow = new BrowserWindow({width: 1024, height: 728});
+    let originalTitle = "Music stream";
 
     function log(msg) {
         mainWindow.webContents.send('log', msg);
     }
 
-    globalShortcut.register('ctrl+shift+p', function () {
+    globalShortcut.register('Super+Alt+CmdOrCtrl+Shift+P', function () {
         log('play/pause toggle key pressed');
         mainWindow.webContents.send('playPauseToggle');
     });
+
+    ipcMain.on('song-changed', function (event, newSong) {
+        if(newSong) {
+            mainWindow.setTitle(`${newSong.name} - ${newSong.artist} - ${originalTitle}`);
+        } else {
+            mainWindow.setTitle(originalTitle);
+        }
+    });
+
 
     if (process.env.HOT) {
         mainWindow.loadURL(`file://${__dirname}/app/hot-dev-index.html`);

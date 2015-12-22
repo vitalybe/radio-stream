@@ -14,7 +14,7 @@ import { Provider } from 'react-redux';
 import { Router, Route, Link } from 'react-router';
 import history from './utils/history'
 
-require('./utils/desktop_ipc');
+import * as desktopIpc from './utils/desktop_ipc'
 import configureStore from './store_config';
 import DevToolsRedux from './components/dev_tools_redux'
 import DevToolsProject from './components/dev_tools_project'
@@ -32,6 +32,8 @@ const store = configureStore();
 // The following allows us to dispatch actions everywhere
 // Following the advice on this thread: https://github.com/rackt/redux/issues/806
 storeContainer.store = store;
+
+desktopIpc.connect();
 
 ReactDom.render(
     <Provider store={store}>
