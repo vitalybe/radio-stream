@@ -31,12 +31,12 @@ export function playlists() {
 
 
 export function updateLastPlayed(songId) {
-    // return ajax.post(`/song/${songId}/last-played`);
+    return ajax.post(`/song/${songId}/last-played`);
 
 
-    return new Promise((resolve, reject) => setTimeout(function () {
-        resolve();
-    }, 500));
+    //return new Promise((resolve, reject) => setTimeout(function () {
+    //    resolve();
+    //}, 500));
 }
 
 export function updateRating(songId, newRating) {

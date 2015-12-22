@@ -39,7 +39,7 @@ export class PlaylistPage extends Component {
     }
 
     onNext() {
-        var action = musicActions.playNextSongAction(this.props.params.playlistName);
+        var action = musicActions.playNextSongAction(this.props.params.playlistName, this.props.currentSongAsync.data);
         this.props.dispatch(action);
     }
 
