@@ -57,7 +57,7 @@ export class PlaylistPage extends Component {
             ratingStars = _.range(5).map(starIndex => {
                 let starClass = starCount > starIndex ? "fa-star" : "fa-star-o";
                 let newRating = (starIndex + 1) * 20;
-                return <i className={classNames(["fa", starClass])} onClick={() => this.onChangeRating(newRating)}/>;
+                return <i key={starIndex} className={classNames(["fa", starClass])} onClick={() => this.onChangeRating(newRating)}/>;
             });
         }
 
