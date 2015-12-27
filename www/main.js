@@ -66,7 +66,7 @@ app.on('ready', () => {
     if (process.env.HOT) {
         mainWindow.loadURL(`file://${__dirname}/app/hot-dev-index.html`);
     } else {
-        mainWindow.loadURL(`file://${__dirname}/app/index.html`);
+        mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
     }
 
     mainWindow.on('closed', () => {

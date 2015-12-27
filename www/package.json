@@ -5,50 +5,27 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "better-npm-run test",
-    "test-watch": "npm test -- --watch",
-    "test-e2e:crdv": "chromedriver",
-    "test-e2e": "better-npm-run test-e2e",
-    "lint": "eslint app test *.js",
-    "hot-server-desktop": "node server-desktop.js",
-    "hot-server-web": "node server-web.js",
-    "build": "better-npm-run build",
-    "start": "NODE_ENV=production electron .",
-    "start-hot": "better-npm-run start-hot",
-    "package": "better-npm-run package",
+    "server-web-dev": "node server.web.dev.js",
+    "server-desktop-dev": "node server.desktop.js",
+    "start-desktop-dev": "better-npm-run start-desktop",
+    "build-desktop-prod": "better-npm-run package-desktop-prod",
+    "build-web-prod": "webpack --config webpack.config.web.prod.js",
+    "server-web-prod": "node server.web.prod.js",
     "package-all": "npm run package -- --all",
     "postinstall": "node node_modules/fbjs-scripts/node/check-dev-engines.js package.json"
   },
   "betterScripts": {
-    "start-hot": {
+    "start-desktop": {
       "command": "electron ./",
       "env": {
         "HOT": 1,
-        "NODE_ENV": "development"
+        "NODE_ENV": "dev"
       }
     },
-    "package": {
-      "command": "node package.js",
+    "package-desktop-prod": {
+      "command": "node package.desktop.prod.js",
       "env": {
-        "NODE_ENV": "production"
-      }
-    },
-    "build": {
-      "command": "webpack --config webpack.config.desktop.production.js --progress --profile --colors",
-      "env": {
-        "NODE_ENV": "production"
-      }
-    },
-    "test": {
-      "command": "mocha --compilers js:babel/register --recursive --require ./test/setup.js test/**/*.spec.js",
-      "env": {
-        "NODE_ENV": "test"
-      }
-    },
-    "test-e2e": {
-      "command": "mocha --compilers js:babel/register --require ./test/setup.js --require co-mocha ./test/e2e.js",
-      "env": {
-        "NODE_ENV": "test"
+        "NODE_ENV": "prod"
       }
     }
   },

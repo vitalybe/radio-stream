@@ -4,7 +4,7 @@
 const path = require('path');
 const express = require('express');
 const webpack = require('webpack');
-const config = require('./webpack.config.desktop.development');
+const config = require('./webpack.config.web.dev');
 
 const app = express();
 const compiler = webpack(config);
@@ -24,7 +24,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'app', 'hot-dev-index.html'));
 });
 
-app.listen(PORT, 'localhost', err => {
+app.listen(PORT, err => {
   if (err) {
     console.log(err);
     return;

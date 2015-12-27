@@ -4,7 +4,7 @@
 const path = require('path');
 const express = require('express');
 const webpack = require('webpack');
-const config = require('./webpack.config.web.development');
+const config = require('./webpack.config.desktop.dev');
 
 const app = express();
 const compiler = webpack(config);

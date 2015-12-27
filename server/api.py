@@ -16,7 +16,7 @@ from flaskext.auth import Auth, AuthUser, login_required, logout
 music_dir = 'c:\Users\Vitaly\Dropbox\iTunes Media\Music'
 
 app = Flask(__name__)
-CORS(app, origins="http://localhost:3000", supports_credentials=True)
+CORS(app, origins="http://whoisvitaly.ddns.net:3000", supports_credentials=True)
 
 auth = Auth(app)
 app.auth.user_timeout = 0
