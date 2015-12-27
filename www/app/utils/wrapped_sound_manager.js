@@ -6,7 +6,7 @@ import loggerCreator from './logger'
 //noinspection JSUnresolvedVariable
 var logger = loggerCreator(__filename);
 
-
+// TODO - CREDS
 const MUSIC_ADDRESS = "http://" + "whoisvitaly.ddns.net" + ":16768";
 
 logger.debug(`Running soundManager setup`);

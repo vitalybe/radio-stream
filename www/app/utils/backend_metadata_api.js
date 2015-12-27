@@ -2,6 +2,7 @@ import history from '../utils/history'
 import storeContainer from './store_container'
 import ajaxConstructor from './ajax'
 
+// TODO - CREDS
 const SERVER_ADDRESS = "http://" + "whoisvitaly.ddns.net" + ":5000";
 
 // redirect to login page on any 401
