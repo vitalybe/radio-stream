@@ -50,13 +50,9 @@ export function loadSound(song) {
     } else {
         flogger.debug(`Starting createSound for song...`);
         loadingPromise = new Promise(function (resolve, reject) {
-            soundManager.createSound({
-                id: song.id, // optional: provide your own unique id
-                url: MUSIC_ADDRESS + "/" + song.location,
-                autoLoad: true,
-                // Every song that was loaded, should have the following events
-                // NOTE: This is a bit of a leaky abstraciton. It is tricky to decouple onfinish from this function since
-                // events can be subscribed to only on creation or during play.
+            let sound = soundManager.createSound({id: song.id, url: MUSIC_ADDRESS + "/" + song.location, stream: false});
+            sound.load({
+                stream: false,
                 onload: function (success) {
                     delete loadingSongs[song.id];
 
