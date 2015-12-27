@@ -21,9 +21,20 @@ function getNextSongInPlaylist(playlistName, currentPlaylist) {
         flogger.debug(`Re-fetching songs in playlist: ${playlistName}`);
         playlistSongsPromise = backendMetadataApi.playlistSongs(playlistName).then(playlistSongs => {
             flogger.debug(`Fetched ${playlistSongs.length} songs from ${playlistName}`);
-            storeContainer.store.dispatch({type: actionTypes.PLAYLIST_SONGS_UPDATED, playlistSongs, playlistName});
-            // The reduced version translates the JSON to internal interface
-            return storeContainer.store.getState().currentPlaylist.songs;
+
+            let remainingSongsId = currentPlaylist.songs.slice(currentPlaylist.index).map(song => song.id);
+            flogger.debug(`Remaining songs IDs: ${remainingSongsId}`);
+            let fetchedSongsId = playlistSongs.map(song => song.id);
+            flogger.debug(`Fetched songs IDs: ${remainingSongsId}`);
+            if(_.difference(fetchedSongsId, remainingSongsId).length > 0) {
+                flogger.debug(`Fetched song contains new songs`);
+                storeContainer.store.dispatch({type: actionTypes.PLAYLIST_SONGS_UPDATED, playlistSongs, playlistName});
+                // The reduced version translates the JSON to internal interface
+                return storeContainer.store.getState().currentPlaylist.songs;
+            } else {
+                flogger.debug(`No new songs in fetched playlist. Returning current songs`);
+                return null;
+            }
         });
         nextSongIndex = 0;
     } else {
@@ -34,7 +45,13 @@ function getNextSongInPlaylist(playlistName, currentPlaylist) {
 
     return playlistSongsPromise.then(playlistSongs => {
         flogger.debug(`Returning song ${nextSongIndex} in playlist`);
-        return playlistSongs[nextSongIndex];
+
+        if(playlistSongs) {
+            return playlistSongs[nextSongIndex];
+        } else {
+            flogger.debug(`No playlist songs were given - No next song is returned`);
+            return null;
+        }
     });
 }
 
@@ -118,7 +135,12 @@ function playNextSongInPlaylist(playlistName) {
             })
             .then((song) => {
                 flogger.debug(`Got song to preload: ${formatSong(song)}`);
-                return getOrLoadSound(song);
+                if(song) {
+                    return getOrLoadSound(song);
+                } else {
+                    flogger.debug(`No song was preloaded`);
+                    return null;
+                }
             })
             // NOTE: It is important to catch preload errors here, otherwise, the error would trigger a `playNextSongInPlaylist`
             .catch(err => {
