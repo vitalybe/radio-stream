@@ -2,11 +2,13 @@ import loggerCreator from '../utils/logger'
 //noinspection JSUnresolvedVariable
 var logger = loggerCreator(__filename);
 
+import * as lastFm from '../utils/backend_lastfm_api'
 import storeContainer from '../utils/store_container'
 import { getSoundBySong, loadSound, stopAll } from '../utils/wrapped_sound_manager'
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 import * as actionTypes from './action_types'
 import { formatSong } from '../utils/util'
+
 
 function getNextSongInPlaylist(playlistName, currentPlaylist) {
     let flogger = loggerCreator(getNextSongInPlaylist.name, logger);
@@ -26,7 +28,7 @@ function getNextSongInPlaylist(playlistName, currentPlaylist) {
             flogger.debug(`Remaining songs IDs: ${remainingSongsId}`);
             let fetchedSongsId = playlistSongs.map(song => song.id);
             flogger.debug(`Fetched songs IDs: ${remainingSongsId}`);
-            if(_.difference(fetchedSongsId, remainingSongsId).length > 0) {
+            if (_.difference(fetchedSongsId, remainingSongsId).length > 0) {
                 flogger.debug(`Fetched song contains new songs`);
                 storeContainer.store.dispatch({type: actionTypes.PLAYLIST_SONGS_UPDATED, playlistSongs, playlistName});
                 // The reduced version translates the JSON to internal interface
@@ -46,7 +48,7 @@ function getNextSongInPlaylist(playlistName, currentPlaylist) {
     return playlistSongsPromise.then(playlistSongs => {
         flogger.debug(`Returning song ${nextSongIndex} in playlist`);
 
-        if(playlistSongs) {
+        if (playlistSongs) {
             return playlistSongs[nextSongIndex];
         } else {
             flogger.debug(`No playlist songs were given - No next song is returned`);
@@ -97,8 +99,9 @@ function playToggle(song, playOptions) {
         if (wrappedSound.playState == 0 || wrappedSound.paused) {
             wrappedSound.play(playOptions);
             storeContainer.store.dispatch({type: actionTypes.SONG_PLAY});
-
             flogger.debug(`Play`);
+
+            lastFm.updateNowPlaying(song);
         } else {
             wrappedSound.pause();
             storeContainer.store.dispatch({type: actionTypes.SONG_PAUSE});
@@ -135,7 +138,7 @@ function playNextSongInPlaylist(playlistName) {
             })
             .then((song) => {
                 flogger.debug(`Got song to preload: ${formatSong(song)}`);
-                if(song) {
+                if (song) {
                     return getOrLoadSound(song);
                 } else {
                     flogger.debug(`No song was preloaded`);
@@ -172,6 +175,8 @@ function playTogglePlaylist(playlistName, song) {
                     flogger.debug(`Proceeding to next song in playlist '${playlistName}'`);
                     return playNextSongInPlaylist(playlistName)
                 });
+
+            lastFm.scrobble(song);
         }
     })
 }
