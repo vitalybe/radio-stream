@@ -38,7 +38,7 @@ app.on('ready', () => {
         mainWindow.webContents.send('log', msg);
     }
 
-    globalShortcut.register('Super+Alt+CmdOrCtrl+Shift+P', function () {
+    globalShortcut.register('Super+Alt+CmdOrCtrl+Shift+O', function () {
         log('play/pause toggle key pressed');
         mainWindow.webContents.send('playPauseToggle');
     });
