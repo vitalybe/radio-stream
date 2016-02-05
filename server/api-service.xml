@@ -1,0 +1,10 @@
+<service>
+  <id>music-stream api</id>
+  <name>music-stream api</name>
+  <description>API component</description>
+  <executable>c:\Python27\pythonw.exe</executable>
+  <startargument>api.py</startargument>
+  <logpath>.\</logpath>
+  <logmode>roll</logmode>
+  <depend></depend>
+</service>
