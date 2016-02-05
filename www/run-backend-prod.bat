@@ -1,2 +1,2 @@
 net start nginx
-net start "music-stream api"
+c:\Python27\pythonw.exe ..\server\api.py
