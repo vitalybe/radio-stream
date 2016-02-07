@@ -30,3 +30,21 @@ export function scrobble(song) {
         }
     });
 }
+
+export function getArtist(artist) {
+    let logger = loggerCreator(getArtist.name, moduleLogger);
+    logger.debug("Start");
+
+    var params = {artist, autocorrect: 1};
+    return new Promise(function (resolve, reject) {
+        lastFmSdk.artist.getInfo(params, {
+            success: function (data) {
+                logger.info("Done");
+                resolve(data.artist);
+            }, error: function (code, message) {
+                logger.error(`Failed - ${message}`);
+                reject(message);
+            }
+        });
+    });
+}

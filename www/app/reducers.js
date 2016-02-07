@@ -11,7 +11,7 @@ class AsyncState {
     }
 }
 
-
+7
 function isRatingUpdating(state = new AsyncState(), action = null) {
 
     switch (action.type) {
@@ -132,11 +132,26 @@ const currentPlaylist = combineReducers({
     index: currentPlaylistIndex
 });
 
+function currentArtist(state = null, action = null) {
+    switch (action.type) {
+        case actionTypes.ARTIST_LOAD_PROGRESS:
+            state = null;
+            break;
+        case actionTypes.ARTIST_LOAD_COMPLETE:
+            state = Object.assign({}, action.value);
+            break;
+    }
+
+    return state;
+}
+
+
 const rootReducer = combineReducers({
     isRatingUpdating,
     isPlaying,
     currentSongAsync,
     currentPlaylist,
+    currentArtist,
     playlistsAsync,
 });
 

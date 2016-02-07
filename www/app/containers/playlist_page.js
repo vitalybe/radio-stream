@@ -10,9 +10,9 @@ import * as musicActions from '../actions/music_actions';
     return {
         currentPlaylist: state.currentPlaylist,
         playlistsAsync: state.playlistsAsync,
-
         currentSongAsync: state.currentSongAsync,
-        isPlaying: state.isPlaying
+        isPlaying: state.isPlaying,
+        currentArtist: state.currentArtist
     };
 })
 export class PlaylistPage extends Component {
@@ -57,24 +57,26 @@ export class PlaylistPage extends Component {
             ratingStars = _.range(5).map(starIndex => {
                 let starClass = starCount > starIndex ? "fa-star" : "fa-star-o";
                 let newRating = (starIndex + 1) * 20;
-                return <i key={starIndex} className={classNames(["fa", starClass])} onClick={() => this.onChangeRating(newRating)}/>;
+                return <i key={starIndex} className={classNames(["fa", starClass])}
+                          onClick={() => this.onChangeRating(newRating)}/>;
             });
         }
 
         return (
             <div className="playlist-page">
                 <div className="sidebar">
-                    <Navigation playlistsAsync={this.props.playlistsAsync} currentPlaylist={this.props.params.playlistName}/>
+                    <Navigation playlistsAsync={this.props.playlistsAsync}
+                                currentPlaylist={this.props.params.playlistName}/>
                 </div>
                 <div className="main">
-                    <If condition={currentSongAsync.inProgress}>
+                    <If condition={this.props.currentSongAsync.inProgress}>
 
                         /********* Loader **********/
                         <div className="loader hexdots-loader"></div>
 
                         <Else/>
 
-                        <If condition={currentSongAsync.error}>
+                        <If condition={this.props.currentSongAsync.error}>
 
                             /********* Error **********/
                             <div className="critical-error">Fa-Error</div>
@@ -91,6 +93,11 @@ export class PlaylistPage extends Component {
                                         className={classNames(["play-pause", "fa", playPauseClass])}/></button>
                                     <button onClick={this.onNext.bind(this)}><i className="next fa fa-fast-forward"/>
                                     </button>
+                                </div>
+                                <div className="art">
+                                    <If condition={this.props.currentArtist && this.props.currentArtist.image.length > 0}>
+                                        <img src={this.props.currentArtist.image[2]["#text"]} alt=""/>
+                                    </If>
                                 </div>
                             </div>
 
