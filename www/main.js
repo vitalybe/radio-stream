@@ -23,10 +23,6 @@ function handleQuitting() {
     app.on('window-all-closed', () => {
         if (process.platform !== 'darwin') app.quit();
     });
-    app.on('will-quit', function () {
-        // Unregister all shortcuts.
-        globalShortcut.unregisterAll();
-    });
 }
 function handleTitleChanges() {
     let originalTitle = "Music stream";
@@ -54,9 +50,15 @@ function handleUseIdling() {
 }
 function handleGlobalShortcuts() {
     const globalShortcut = electron.globalShortcut;
-    globalShortcut.register('Super+Alt+CmdOrCtrl+Shift+O', function () {
+
+    globalShortcut.register('Ctrl+Home', function () {
         log('play/pause toggle key pressed');
         mainWindow.webContents.send('playPauseToggle');
+    });
+
+    app.on('will-quit', function () {
+        // Unregister all shortcuts.
+        globalShortcut.unregisterAll();
     });
 }
 
