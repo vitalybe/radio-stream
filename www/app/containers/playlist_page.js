@@ -19,10 +19,14 @@ export class PlaylistPage extends Component {
 
     constructor(props, context) {
         super(props, context);
-        this.props.dispatch(musicActions.startPlayingPlaylistAction(this.props.params.playlistName));
         if (!this.props.playlistsAsync.data) {
             this.props.dispatch(musicActions.loadAvailablePlaylists());
         }
+    }
+
+    componentDidMount() {
+        // For the first time the playlist page is shown
+        this.props.dispatch(musicActions.startPlayingPlaylistAction(this.props.params.playlistName));
     }
 
     componentWillReceiveProps(nextProps) {

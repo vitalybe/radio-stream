@@ -11,7 +11,6 @@ class AsyncState {
     }
 }
 
-7
 function isRatingUpdating(state = new AsyncState(), action = null) {
 
     switch (action.type) {

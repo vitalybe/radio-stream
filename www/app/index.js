@@ -1,6 +1,7 @@
 require('file?name=[name].[ext]!./index.html');
 require("./styles/index.less");
 require("../lib/styles/font-awesome/css/font-awesome.min.css");
+require('./utils/global_error_handling.js');
 
 window.Promise = require('yaku');
 
