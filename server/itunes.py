@@ -5,6 +5,7 @@ import pythoncom
 import logging
 from datetime import datetime
 import json
+import time
 
 logger = logging.getLogger('itunes')
 
@@ -72,7 +73,8 @@ class Track(object):
             "artist": self.artist,
             "name": self.name,
             "rating": self.rating,
-            "play_count": self.play_count,
+            "playCount": self.play_count,
+            "lastPlayed": time.mktime(self.last_played.timetuple()),
             "location": self.location
         })
 

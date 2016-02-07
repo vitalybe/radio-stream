@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import moment from 'moment';
 
 import { Navigation } from '../components/navigation.js'
 import * as musicActions from '../actions/music_actions';
@@ -98,6 +99,8 @@ export class PlaylistPage extends Component {
                                     <button onClick={this.onNext.bind(this)}><i className="next fa fa-fast-forward"/>
                                     </button>
                                 </div>
+                                <div>Last played: {moment.unix(this.props.currentSongAsync.data.lastPlayed).fromNow()}</div>
+                                <div>Play count: {this.props.currentSongAsync.data.playCount}</div>
                                 <div className="art">
                                     <If condition={this.props.currentArtist && this.props.currentArtist.image.length > 0}>
                                         <img src={this.props.currentArtist.image[2]["#text"]} alt=""/>

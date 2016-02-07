@@ -49,7 +49,8 @@ function extractSongDataFromJson(songJson) {
         artist: songJson.artist,
         name: songJson.name,
         rating: songJson.rating,
-        playCount: songJson.play_count,
+        playCount: songJson.playCount,
+        lastPlayed: songJson.lastPlayed,
         location: songJson.location
     }
 }
