@@ -97,6 +97,7 @@
     "jsx-control-statements": "^1.1.2",
     "lodash": "^3.10.1",
     "moment": "^2.11.2",
+    "node-notifier": "^4.4.0",
     "react": "^0.14.2",
     "react-dom": "^0.14.2",
     "react-redux": "^4.0.0",
