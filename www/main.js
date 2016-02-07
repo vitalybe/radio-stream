@@ -51,7 +51,7 @@ function handleUseIdling() {
 function handleGlobalShortcuts() {
     const globalShortcut = electron.globalShortcut;
 
-    globalShortcut.register('Ctrl+Home', function () {
+    globalShortcut.register('Alt+Ctrl+Home', function () {
         log('play/pause toggle key pressed');
         mainWindow.webContents.send('playPauseToggle');
     });
@@ -64,7 +64,7 @@ function handleGlobalShortcuts() {
 
 app.on('ready', () => {
     crashReporter.start();
-    mainWindow = new BrowserWindow({width: 1024, height: 728});
+    mainWindow = new BrowserWindow({width: 1024, height: 728, icon: "app/images/icon.ico"});
 
     handleTitleChanges();
     handleUseIdling();
