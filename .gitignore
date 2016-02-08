@@ -6,3 +6,4 @@ www3
 www/.idea/
 www/node_modules
 .idea/
+*.ipynb
