@@ -13,7 +13,7 @@ import * as musicActions from '../actions/music_actions';
         playlistsAsync: state.playlistsAsync,
         currentSongAsync: state.currentSongAsync,
         isPlaying: state.isPlaying,
-        currentArtist: state.currentArtist
+        currentArtistImage: state.currentArtistImage
     };
 })
 export class PlaylistPage extends Component {
@@ -102,8 +102,8 @@ export class PlaylistPage extends Component {
                                 <div>Last played: {moment.unix(this.props.currentSongAsync.data.lastPlayed).fromNow()}</div>
                                 <div>Play count: {this.props.currentSongAsync.data.playCount}</div>
                                 <div className="art">
-                                    <If condition={this.props.currentArtist && this.props.currentArtist.image.length > 0}>
-                                        <img src={this.props.currentArtist.image[2]["#text"]} alt=""/>
+                                    <If condition={this.props.currentArtistImage}>
+                                        <img src={this.props.currentArtistImage} alt=""/>
                                     </If>
                                 </div>
                             </div>

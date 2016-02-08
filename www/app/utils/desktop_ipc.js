@@ -42,8 +42,12 @@ export function connect() {
         });
 
         const ipcRenderer = require('electron').ipcRenderer;
-        observeStore(state => state.currentSongAsync.data, currentSong => {
-            ipcRenderer.send('song-changed', currentSong);
+        observeStore(state => ({currentSong: state.currentSongAsync.data, artistImage: state.currentArtistImage}), data => {
+            if(data.currentSong) {
+                ipcRenderer.send('song-changed', {...data.currentSong, artistImage: data.artistImage});
+            } else {
+                ipcRenderer.send('song-changed', null);
+            }
         });
 
     }

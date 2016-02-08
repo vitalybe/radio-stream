@@ -138,8 +138,6 @@ function loadArtistMetadata(artist) {
     let logger = loggerCreator(loadArtistMetadata.name, moduleLogger);
     logger.debug("Start");
 
-    storeContainer.store.dispatch({type: actionTypes.ARTIST_LOAD_PROGRESS});
-
     lastFm.getArtist(artist).then(artistData => {
         storeContainer.store.dispatch({type: actionTypes.ARTIST_LOAD_COMPLETE, value: artistData});
     }).catch(err => {

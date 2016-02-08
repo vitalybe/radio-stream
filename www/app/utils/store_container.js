@@ -10,7 +10,7 @@ export function observeStore(select, onChange) {
 
   function handleChange() {
     let nextState = select(storeContainer.store.getState());
-    if (nextState !== currentState) {
+    if (_.isEqual(nextState, currentState) === false) {
       currentState = nextState;
       onChange(currentState);
     }

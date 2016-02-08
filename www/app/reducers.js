@@ -1,3 +1,7 @@
+import loggerCreator from './utils/logger'
+//noinspection JSUnresolvedVariable
+var moduleLogger = loggerCreator(__filename);
+
 import * as actionTypes from './actions/action_types';
 import { combineReducers } from 'redux';
 
@@ -132,13 +136,21 @@ const currentPlaylist = combineReducers({
     index: currentPlaylistIndex
 });
 
-function currentArtist(state = null, action = null) {
+function currentArtistImage(state = null, action = null) {
+    let logger = loggerCreator(currentArtistImage.name, moduleLogger);
+
     switch (action.type) {
-        case actionTypes.ARTIST_LOAD_PROGRESS:
+        // Reset image when song changes
+        case actionTypes.SONG_LOAD_PROGRESS:
             state = null;
             break;
         case actionTypes.ARTIST_LOAD_COMPLETE:
-            state = Object.assign({}, action.value);
+            try {
+                state = action.value.image[2]["#text"];
+            } catch (e) {
+                logger.warn("failed to get artist image from: ", action)
+                state = null;
+            }
             break;
     }
 
@@ -151,8 +163,8 @@ const rootReducer = combineReducers({
     isPlaying,
     currentSongAsync,
     currentPlaylist,
-    currentArtist,
-    playlistsAsync,
+    currentArtistImage,
+    playlistsAsync
 });
 
 export default rootReducer;

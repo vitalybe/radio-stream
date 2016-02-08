@@ -58,6 +58,18 @@ function handleGlobalShortcuts() {
 
     ipcMain.on('song-changed', function (event, newSong) {
         currentSong = newSong;
+        if(!currentSong) {
+            return;
+        }
+
+        currentSong.artistImageBuffer = null;
+
+        // TODO: There might be a race condition in which it would show a picture of a previous artist
+        // once the song has changed
+        var request = require('request').defaults({encoding: null});
+        request.get(currentSong.artistImage, function (err, res, body) {
+            currentSong.artistImageBuffer = body;
+        });
     });
 
 
@@ -76,11 +88,12 @@ function handleGlobalShortcuts() {
             port: 23053
         });
 
-        if(currentSong) {
+        if (currentSong) {
             let lastPlayed = moment.unix(currentSong.lastPlayed).fromNow();
             notifier.notify({
                 title: `${currentSong.artist} - ${currentSong.name}`,
-                message: `Rating: ${currentSong.rating/20}\nLast played: ${lastPlayed}`,
+                message: `Rating: ${currentSong.rating / 20}\nLast played: ${lastPlayed}`,
+                icon: currentSong.artistImageBuffer
             });
         }
     });
