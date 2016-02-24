@@ -58,7 +58,7 @@ function handleGlobalShortcuts() {
 
     ipcMain.on('song-changed', function (event, newSong) {
         currentSong = newSong;
-        if(!currentSong) {
+        if (!currentSong) {
             return;
         }
 
@@ -90,9 +90,15 @@ function handleGlobalShortcuts() {
 
         if (currentSong) {
             let lastPlayed = moment.unix(currentSong.lastPlayed).fromNow();
+            var rating = currentSong.rating / 20;
+            var stars = "★".repeat(rating);
+            var noStars = "☆".repeat(5-rating);
+
             notifier.notify({
                 title: `${currentSong.artist} - ${currentSong.name}`,
-                message: `Rating: ${currentSong.rating / 20}\nLast played: ${lastPlayed}`,
+                message: `Rating: ${stars}${noStars}\n` +
+                `Play count: ${currentSong.playCount}\n` +
+                `Last played: ${lastPlayed}`,
                 icon: currentSong.artistImageBuffer
             });
         }
