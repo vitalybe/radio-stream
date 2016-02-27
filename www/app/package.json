@@ -1,0 +1,23 @@
+{
+  "name": "music-stream-www",
+  "productName": "music-stream-www",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "bin": {
+    "electron": "./node_modules/.bin/electron"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chentsulin/electron-react-boilerplate.git"
+  },
+  "keywords": [],
+  "dependencies": {
+    "moment": "^2.11.2",
+    "node-notifier": "^4.4.0"
+  },
+  "devEngines": {
+    "node": "4.x || 5.x",
+    "npm": "2.x || 3.x"
+  }
+}
