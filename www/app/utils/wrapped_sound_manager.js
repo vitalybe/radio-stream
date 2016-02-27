@@ -7,7 +7,7 @@ import loggerCreator from './logger'
 var logger = loggerCreator(__filename);
 
 // TODO - CREDS
-const MUSIC_ADDRESS = "http://" + "whoisvitaly2.ddns.net" + ":16768";
+const MUSIC_ADDRESS = "http://whoisvitaly2.ddns.net/239ca17c-b794-44e7-962e-dc31f57fca1f/music/";
 
 logger.debug(`Running soundManager setup`);
 soundManager.setup({

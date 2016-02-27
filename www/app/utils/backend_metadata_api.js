@@ -3,7 +3,7 @@ import storeContainer from './store_container'
 import ajaxConstructor from './ajax'
 
 // TODO - CREDS
-const SERVER_ADDRESS = "http://" + "whoisvitaly2.ddns.net" + ":5000";
+const SERVER_ADDRESS = "http://whoisvitaly2.ddns.net/239ca17c-b794-44e7-962e-dc31f57fca1f/api/";
 
 // redirect to login page on any 401
 let ajax = ajaxConstructor(SERVER_ADDRESS, function (response) {
