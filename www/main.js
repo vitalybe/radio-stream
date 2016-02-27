@@ -1,6 +1,6 @@
 /* eslint strict: 0 */
 'use strict';
-//require('electron-debug')();
+require('electron-debug')();
 const path = require('path');
 const electron = require('electron');
 const notifier = require('node-notifier');
@@ -78,25 +78,28 @@ function handleGlobalShortcuts() {
         mainWindow.webContents.send('playPauseToggle');
     });
 
-    globalShortcut.register('Ctrl+Cmd+Alt+Shift+M', function () {
+    globalShortcut.register('Alt+Ctrl+Shift+Home', function () {
         log('show info pressed');
-        const notifier = require('node-notifier');
-        const iconPath = __dirname + '/app/images/icon.icns';
-        log("icon: " + iconPath)
+        const Growl = require('node-notifier').Growl;
+
+        var notifier = new Growl({
+            name: 'Music Stream', // Defaults as 'Node'
+            host: 'localhost',
+            port: 23053
+        });
 
         if (currentSong) {
             let lastPlayed = moment.unix(currentSong.lastPlayed).fromNow();
             var rating = currentSong.rating / 20;
             var stars = "★".repeat(rating);
-            var noStars = "☆".repeat(5 - rating);
+            var noStars = "☆".repeat(5-rating);
 
             notifier.notify({
                 title: `${currentSong.artist} - ${currentSong.name}`,
                 message: `Rating: ${stars}${noStars}\n` +
                 `Play count: ${currentSong.playCount}\n` +
                 `Last played: ${lastPlayed}`,
-                'appIcon': iconPath,
-                'contentImage': __dirname + '/images/icon.icns'
+                icon: currentSong.artistImageBuffer
             });
         }
     });
@@ -118,7 +121,7 @@ app.on('ready', () => {
     handleQuitting();
 
     if (process.env.HOT) {
-        mainWindow.loadURL(`file://${__dirname}/hot-dev-index.html`);
+        mainWindow.loadURL(`file://${__dirname}/app/hot-dev-index.html`);
     } else {
         mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
     }
