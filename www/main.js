@@ -14,19 +14,30 @@ const ipcMain = electron.ipcMain;
 
 let mainWindow = null;
 
+
 function log(msg) {
     mainWindow.webContents.send('log', msg);
 }
 
 
 function handleQuitting() {
-    mainWindow.on('closed', () => {
-        mainWindow = null;
+    mainWindow.on('close', e => {
+        if (mainWindow.forceClose !== true) {
+            e.preventDefault();
+            // mainWindow.hide();
+        }
     });
 
     app.on('window-all-closed', () => {
         if (process.platform !== 'darwin') app.quit();
     });
+
+    app.on('before-quit', () => {
+        if (process.platform === 'darwin') {
+            mainWindow.forceClose = true;
+        }
+    });
+
 }
 function handleTitleChanges() {
     let originalTitle = "Music stream";
@@ -73,12 +84,12 @@ function handleGlobalShortcuts() {
     });
 
 
-    globalShortcut.register('Alt+Ctrl+Home', function () {
+    globalShortcut.register('F8', function () {
         log('play/pause toggle key pressed');
         mainWindow.webContents.send('playPauseToggle');
     });
 
-    globalShortcut.register('Ctrl+Cmd+Alt+Shift+M', function () {
+    globalShortcut.register('Ctrl+Cmd+Alt+Shift+F8', function () {
         log('show info pressed');
         const notifier = require('node-notifier');
         const iconPath = __dirname + '/app/images/icon.icns';
