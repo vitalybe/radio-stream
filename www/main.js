@@ -84,12 +84,12 @@ function handleGlobalShortcuts() {
     });
 
 
-    globalShortcut.register('F8', function () {
+    globalShortcut.register('Ctrl+Cmd+Alt+Shift+F8', function () {
         log('play/pause toggle key pressed');
         mainWindow.webContents.send('playPauseToggle');
     });
 
-    globalShortcut.register('Ctrl+Cmd+Alt+Shift+F8', function () {
+    globalShortcut.register('Ctrl+Cmd+Alt+Shift+F7', function () {
         log('show info pressed');
         const notifier = require('node-notifier');
         const iconPath = __dirname + '/app/images/icon.icns';
