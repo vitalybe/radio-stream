@@ -24,6 +24,7 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity implements PlaylistsFragment.OnPlaylistSelectedListener, MusicService.OnMusicEventsListener {
 
     public static final String INTENT_PARAM_PLAYLIST = "INTENT_PARAM_PLAYLIST";
+    private final Logger mLogger = Logger.getLogger();
 
     @InjectView(R.id.image_album)
     ImageView imageAlbum;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
 
     @Override
     protected void onStart() {
+        mLogger.d("Start");
         super.onStart();
 
         mMusicServiceIntent = new Intent(this, MusicService.class);
@@ -66,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            mLogger.d("Start");
+
             MusicService.MusicServiceBinder binder = (MusicService.MusicServiceBinder) service;
             mMusicService = binder.getService();
             mMusicService.subscribeToEvents(MainActivity.this);
@@ -76,12 +80,14 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            mLogger.d("Start");
             mMusicService = null;
         }
     };
 
     @Override
     protected void onResume() {
+        mLogger.d("Start");
         super.onResume();
 
         if (mMusicService != null) {
@@ -91,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
 
     @Override
     protected void onStop() {
+        mLogger.d("Start");
         if (mMusicService != null) {
             mMusicService.unsubscribeToEvents();
         }
@@ -100,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
 
     @Override
     protected void onDestroy() {
+        mLogger.d("Start");
         StopMusicService();
         super.onDestroy();
     }
@@ -107,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        mLogger.d("Start");
         getMenuInflater().inflate(R.menu.main, menu);
 
         return true;
@@ -114,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        mLogger.d("Start");
         switch (item.getItemId()) {
             case R.id.menu_quit:
                 StopMusicService();
@@ -125,12 +135,14 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
     }
 
     private void StopMusicService() {
+        mLogger.d("Start");
         stopService(mMusicServiceIntent);
         mMusicService = null;
     }
 
 
     private ImageView createImage(int imageId) {
+        mLogger.d("Start");
         ImageView imageView = new ImageView(this);
         imageView.setImageResource(imageId);
         imageView.setLayoutParams(new LinearLayout.LayoutParams(
@@ -141,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
     }
 
     private void addStars(int stars, int starImageId) {
+        mLogger.d("Start");
         for (int i = 0; i < stars; i++) {
             ImageView starImage = createImage(starImageId);
             this.stars.addView(starImage);
@@ -148,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
     }
 
     public void showSong(SongModel song) {
+        mLogger.d("Start");
         textArtist.setText(song.getArtist());
         textName.setText(song.getName());
 
@@ -158,18 +172,21 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
 
     @Override
     public void onPlaylistSelected(String playlist) {
+        mLogger.d("Start");
         layoutDrawer.closeDrawer(Gravity.LEFT);
         mMusicService.playPlaylist(playlist);
     }
 
     @Override
     public void OnSongPreloading(SongModel song) {
+        mLogger.d("Start");
         layoutSong.setVisibility(View.GONE);
         progressSong.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void OnSongPlaying(SongModel song) {
+        mLogger.d("Start");
         layoutSong.setVisibility(View.VISIBLE);
         progressSong.setVisibility(View.GONE);
         showSong(song);
@@ -179,11 +196,13 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
 
     @Override
     public void OnSongPaused(SongModel song) {
+        mLogger.d("Start");
         buttonPlayPause.setImageResource(R.mipmap.image_play);
     }
 
     @OnClick({R.id.button_play_pause, R.id.button_next_song})
     public void onClick(View view) {
+        mLogger.d("Start");
         switch (view.getId()) {
             case R.id.button_play_pause:
                 mMusicService.togglePlayPause();
