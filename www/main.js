@@ -14,30 +14,19 @@ const ipcMain = electron.ipcMain;
 
 let mainWindow = null;
 
-
 function log(msg) {
     mainWindow.webContents.send('log', msg);
 }
 
 
 function handleQuitting() {
-    mainWindow.on('close', e => {
-        if (mainWindow.forceClose !== true) {
-            e.preventDefault();
-            // mainWindow.hide();
-        }
+    mainWindow.on('closed', () => {
+        mainWindow = null;
     });
 
     app.on('window-all-closed', () => {
         if (process.platform !== 'darwin') app.quit();
     });
-
-    app.on('before-quit', () => {
-        if (process.platform === 'darwin') {
-            mainWindow.forceClose = true;
-        }
-    });
-
 }
 function handleTitleChanges() {
     let originalTitle = "Music stream";
@@ -69,7 +58,7 @@ function handleGlobalShortcuts() {
 
     ipcMain.on('song-changed', function (event, newSong) {
         currentSong = newSong;
-        if (!currentSong) {
+        if(!currentSong) {
             return;
         }
 
@@ -84,30 +73,27 @@ function handleGlobalShortcuts() {
     });
 
 
-    globalShortcut.register('Ctrl+Cmd+Alt+Shift+F8', function () {
+    globalShortcut.register('Alt+Ctrl+Home', function () {
         log('play/pause toggle key pressed');
         mainWindow.webContents.send('playPauseToggle');
     });
 
-    globalShortcut.register('Ctrl+Cmd+Alt+Shift+F7', function () {
+    globalShortcut.register('Alt+Ctrl+Shift+Home', function () {
         log('show info pressed');
-        const notifier = require('node-notifier');
-        const iconPath = __dirname + '/app/images/icon.icns';
-        log("icon: " + iconPath)
+        const Growl = require('node-notifier').Growl;
+
+        var notifier = new Growl({
+            name: 'Music Stream', // Defaults as 'Node'
+            host: 'localhost',
+            port: 23053
+        });
 
         if (currentSong) {
             let lastPlayed = moment.unix(currentSong.lastPlayed).fromNow();
-            var rating = currentSong.rating / 20;
-            var stars = "★".repeat(rating);
-            var noStars = "☆".repeat(5 - rating);
-
             notifier.notify({
                 title: `${currentSong.artist} - ${currentSong.name}`,
-                message: `Rating: ${stars}${noStars}\n` +
-                `Play count: ${currentSong.playCount}\n` +
-                `Last played: ${lastPlayed}`,
-                'appIcon': iconPath,
-                'contentImage': __dirname + '/images/icon.icns'
+                message: `Rating: ${currentSong.rating / 20}\nLast played: ${lastPlayed}`,
+                icon: currentSong.artistImageBuffer
             });
         }
     });

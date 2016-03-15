@@ -5,30 +5,17 @@ import logging
 import random
 import flask
 from flask import Flask, session, request, g
-from flask.ext.cors import CORS
 import itunes
 import json
 from datetime import timedelta
 from flask import make_response, request, current_app
 from functools import update_wrapper
-from flaskext.auth import Auth, AuthUser, login_required, logout
 
 music_dir = 'c:\Users\Vitaly\Dropbox\iTunes Media\Music'
 
 app = Flask(__name__)
-CORS(app, origins="http://whoisvitaly2.ddns.net:3000", supports_credentials=True)
 
-auth = Auth(app)
-app.auth.user_timeout = 0
 logger = logging.getLogger(__name__)
-
-@app.before_request
-def init_users():
-    print "initiating users"
-    admin = AuthUser(username='admin')
-    admin.set_and_encrypt_password('check this auth pass')
-    g.users = {'admin': admin}
-
 
 # Authentication per: https://github.com/thedekel/flask-auth/blob/master/examples/no_db_persistence.py
 @app.route('/access-token', methods=["POST"])
@@ -76,4 +63,4 @@ def update_rating(id):
 
 if __name__ == '__main__':
     app.secret_key = 'A0Zra98j/3zYaR~XHaH!jmN]LWX/,?RT'
-    app.run(host='0.0.0.0', debug=True, threaded=True)
+    app.run(host='0.0.0.0', debug=False, threaded=True)
