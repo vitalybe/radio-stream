@@ -1,2 +1,3 @@
-net start nginx
-start c:\Python27\pythonw.exe ..\server\api.py
+cd c:\Users\htpc2\Dropbox\Utils\nginx\
+start nginx.exe
+start pythonw c:\Users\htpc2\Dropbox\Projects\music-stream\server\api.py
