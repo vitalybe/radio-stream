@@ -19,7 +19,7 @@ Development
     1. `run-web.bat`
     1. Connect via browser to: ***REMOVED***:3000
 
-* Desktop: `run-desktop.bat`
+* Desktop: `osascript run-dev-osx.applescript`
 
 Production
 ----------

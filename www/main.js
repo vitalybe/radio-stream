@@ -33,7 +33,7 @@ function handleTitleChanges() {
 
     ipcMain.on('song-changed', function (event, newSong) {
         if (newSong) {
-            mainWindow.setTitle(`${newSong.name} - ${newSong.artist} - ${originalTitle}`);
+            mainWindow.setTitle(`${newSong.title} - ${newSong.artist} - ${originalTitle}`);
         } else {
             mainWindow.setTitle(originalTitle);
         }
@@ -89,10 +89,10 @@ function handleGlobalShortcuts() {
         });
 
         if (currentSong) {
-            let lastPlayed = moment.unix(currentSong.lastPlayed).fromNow();
+            let itunes_lastplayed = moment.unix(currentSong.itunes_lastplayed).fromNow();
             notifier.notify({
-                title: `${currentSong.artist} - ${currentSong.name}`,
-                message: `Rating: ${currentSong.rating / 20}\nLast played: ${lastPlayed}`,
+                title: `${currentSong.artist} - ${currentSong.title}`,
+                message: `Rating: ${currentSong.itunes_rating / 20}\nLast played: ${itunes_lastplayed}`,
                 icon: currentSong.artistImageBuffer
             });
         }

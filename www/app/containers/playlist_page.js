@@ -58,7 +58,7 @@ export class PlaylistPage extends Component {
         let currentSongAsync = this.props.currentSongAsync;
         let ratingStars = null;
         if (currentSongAsync.data) {
-            let starCount = currentSongAsync.data.rating / 20;
+            let starCount = currentSongAsync.data.itunes_rating / 20;
             ratingStars = _.range(5).map(starIndex => {
                 let starClass = starCount > starIndex ? "fa-star" : "fa-star-o";
                 let newRating = (starIndex + 1) * 20;
@@ -90,7 +90,7 @@ export class PlaylistPage extends Component {
 
                             /********* Player **********/
                             <div className="player">
-                                <h1 className="track-name">{currentSongAsync.data.name}</h1>
+                                <h1 className="track-name">{currentSongAsync.data.title}</h1>
                                 <h2 className="track-artist">{currentSongAsync.data.artist}</h2>
                                 <div className="stars">{ratingStars}</div>
                                 <div className="control-buttons">
@@ -99,8 +99,8 @@ export class PlaylistPage extends Component {
                                     <button onClick={this.onNext.bind(this)}><i className="next fa fa-fast-forward"/>
                                     </button>
                                 </div>
-                                <div>Last played: {moment.unix(this.props.currentSongAsync.data.lastPlayed).fromNow()}</div>
-                                <div>Play count: {this.props.currentSongAsync.data.playCount}</div>
+                                <div>Last played: {moment.unix(this.props.currentSongAsync.data.itunes_lastplayed).fromNow()}</div>
+                                <div>Play count: {this.props.currentSongAsync.data.itunes_playcount}</div>
                                 <div className="art">
                                     <If condition={this.props.currentArtistImage}>
                                         <img src={this.props.currentArtistImage} alt=""/>

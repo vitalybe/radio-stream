@@ -1,0 +1,1 @@
+export const BEETS_SERVER = "http://localhost:8337";

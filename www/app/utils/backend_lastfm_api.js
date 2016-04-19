@@ -8,7 +8,7 @@ export function updateNowPlaying(song) {
     let logger = loggerCreator(updateNowPlaying.name, moduleLogger);
     logger.debug("Updating...");
 
-    lastFmSdk.track.updateNowPlaying({artist: song.artist, track: song.name}, {
+    lastFmSdk.track.updateNowPlaying({artist: song.artist, track: song.title}, {
         success: function (data) {
             logger.info("Done");
         }, error: function (code, message) {
@@ -21,7 +21,7 @@ export function scrobble(song) {
     let logger = loggerCreator(scrobble.name, moduleLogger);
     logger.debug("Scrobbling...");
 
-    var scrobbledSong = {artist: song.artist, track: song.name, timestamp: (new Date()).getTime() / 1000};
+    var scrobbledSong = {artist: song.artist, track: song.title, timestamp: (new Date()).getTime() / 1000};
     lastFmSdk.track.scrobble(scrobbledSong, {
         success: function (data) {
             logger.info("Done");
