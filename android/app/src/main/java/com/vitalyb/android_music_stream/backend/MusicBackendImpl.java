@@ -72,7 +72,7 @@ public class MusicBackendImpl implements MusicBackend {
                     public void onResponse(String json) {
                         try {
                             JSONArray playlistTracksJson = null;
-                            playlistTracksJson = new JSONObject(json).getJSONArray("tracks");
+                            playlistTracksJson = new JSONObject(json).getJSONArray("results");
 
                             List<SongModel> songs = new ArrayList<>();
                             for (int i = 0; i < playlistTracksJson.length(); i++) {
@@ -98,7 +98,7 @@ public class MusicBackendImpl implements MusicBackend {
 
     @Override
     public void MarkAsPlayed(SongModel song) {
-        String url = Consts.URL_API + "/song/" + song.getId() + "/last-played";
+        String url = Consts.URL_API + "/item/" + song.getId() + "/last-played";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override

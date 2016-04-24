@@ -1,1 +1,1 @@
-export const BEETS_SERVER = "http://localhost:8337";
+export const BEETS_SERVER = "***REMOVED***/5f707e4f-97cc-438e-90d8-1e5e35bd558a";
