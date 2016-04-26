@@ -1,0 +1,1 @@
+taskkill /f /im nginx.exe & cd c:\Users\%username%\Dropbox\Utils\nginx\ & nginx
