@@ -13,6 +13,7 @@ public class SongModel {
     private int stars;
     private String albumUrl;
     private String id;
+    private String path;
 
     /* {
         artist: "System Of A Down",
@@ -27,6 +28,7 @@ public class SongModel {
         artist = source.getString("artist");
         name = source.getString("title");
         id = source.getString("id");
+        path = source.getString("path");
 
         int rating = source.getInt("itunes_rating");
         stars = rating/20;
@@ -48,7 +50,7 @@ public class SongModel {
         return albumUrl;
     }
 
-    public String getUrl() { return Consts.URL_API + "/item/" + id + "/file"; }
+    public String getUrl() { return Consts.URL_MUSIC + "/" + path; }
 
     public String getId() {
         return id;

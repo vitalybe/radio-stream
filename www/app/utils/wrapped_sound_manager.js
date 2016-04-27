@@ -2,7 +2,7 @@ import { soundManager } from 'soundmanager2';
 import WrappedSound from './wrapped_sound.js'
 import { formatSong } from '../utils/util'
 
-import { BEETS_SERVER } from './config'
+import { MUSIC_SERVER } from './config'
 
 import loggerCreator from './logger'
 //noinspection JSUnresolvedVariable
@@ -49,7 +49,7 @@ export function loadSound(song) {
     } else {
         flogger.debug(`Starting createSound for song...`);
         loadingPromise = new Promise(function (resolve, reject) {
-            let sound = soundManager.createSound({id: song.id, url: BEETS_SERVER + "/item/" + song.id + "/file", stream: false});
+            let sound = soundManager.createSound({id: song.id, url: MUSIC_SERVER + "/" + song.path, stream: false});
             sound.load({
                 stream: false,
                 onload: function (success) {

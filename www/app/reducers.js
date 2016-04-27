@@ -54,7 +54,8 @@ function extractSongDataFromJson(songJson) {
         title: songJson.title,
         itunes_rating: songJson.itunes_rating,
         itunes_playcount: songJson.itunes_playcount,
-        itunes_lastplayed: songJson.itunes_lastplayed
+        itunes_lastplayed: songJson.itunes_lastplayed,
+        path: songJson.path
     }
 }
 
