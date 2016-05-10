@@ -74,6 +74,7 @@ export class PlaylistPage extends Component {
         return (
             <div className="playlist-page">
                 <div className="main">
+                    <div className="background"></div>
                     <If condition={this.props.currentSongAsync.inProgress}>
 
                         /********* Loader **********/
@@ -90,7 +91,6 @@ export class PlaylistPage extends Component {
 
                             /********* Player **********/
                             <div className="player">
-                                <div className="background"></div>
                                 <div className="current-playlist">
                                   <Link to={`/`}>
                                     {this.props.params.playlistName}
