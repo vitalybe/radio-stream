@@ -52,6 +52,7 @@ function extractSongDataFromJson(songJson) {
         id: songJson.id,
         artist: songJson.artist,
         title: songJson.title,
+        album: songJson.album,
         itunes_rating: songJson.itunes_rating,
         itunes_playcount: songJson.itunes_playcount,
         itunes_lastplayed: songJson.itunes_lastplayed,
@@ -146,7 +147,7 @@ function currentArtistImage(state = null, action = null) {
             break;
         case actionTypes.ARTIST_LOAD_COMPLETE:
             try {
-                state = action.value.image[2]["#text"];
+                state = action.value.image[3]["#text"];
             } catch (e) {
                 logger.warn("failed to get artist image from: ", action)
                 state = null;

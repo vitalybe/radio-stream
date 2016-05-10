@@ -40,7 +40,6 @@ ReactDom.render(
     <Provider store={store}>
         <div>
             <DevToolsRedux />
-            <DevToolsProject />
             <Router history={history}>
                 <Route path="/" component={StartupPage}/>
                 <Route path="/playlist/:playlistName" component={PlaylistPage}/>
