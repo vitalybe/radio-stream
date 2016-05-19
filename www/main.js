@@ -41,11 +41,14 @@ function handleTitleChanges() {
 }
 function handleUseIdling() {
     var exec = require('child_process').exec;
-    var cmd = path.join("lib", "binary", "win32-GetIdleTime.exe");
+    // Windows:
+    // var cmd = path.join("lib", "binary", "win32-GetIdleTime.exe");
+    // OSX:
+    var cmd = "/usr/sbin/ioreg -c IOHIDSystem | /usr/bin/awk '/HIDIdleTime/ {print int($NF/1000000000); exit}'";
 
     setInterval(()=> {
         exec(cmd, function (error, stdout, stderr) {
-            log(`Idle time: ${stdout}`);
+            // log(`Idle time: ${stdout}`);
             mainWindow.webContents.send('idle', stdout);
         });
     }, 60000);
