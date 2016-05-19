@@ -46,6 +46,17 @@ function isPlaying(state = false, action = null) {
     return state;
 }
 
+function isMarkedAsPlayed(state = false, action = null) {
+
+    switch (action.type) {
+        case actionTypes.SONG_MARKED_AS_PLAYED:
+            state = true;
+    }
+
+    return state;
+}
+
+
 // Extracts from backend API json song data
 function extractSongDataFromJson(songJson) {
     return {
@@ -162,6 +173,7 @@ function currentArtistImage(state = null, action = null) {
 const rootReducer = combineReducers({
     isRatingUpdating,
     isPlaying,
+    isMarkedAsPlayed,
     currentSongAsync,
     currentPlaylist,
     currentArtistImage,

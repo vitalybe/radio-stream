@@ -17,7 +17,8 @@ import { Link } from 'react-router'
         playlistsAsync: state.playlistsAsync,
         currentSongAsync: state.currentSongAsync,
         isPlaying: state.isPlaying,
-        currentArtistImage: state.currentArtistImage
+        currentArtistImage: state.currentArtistImage,
+        isMarkedAsPlayed: state.isMarkedAsPlayed
     };
 })
 export class PlaylistPage extends Component {
@@ -102,6 +103,7 @@ export class PlaylistPage extends Component {
                                         <div><img className="info" src={infoImage} /></div>
                                         <div><b>Last played:</b> {moment.unix(this.props.currentSongAsync.data.itunes_lastplayed).fromNow()}</div>
                                         <div><b>Play count:</b> {this.props.currentSongAsync.data.itunes_playcount}</div>
+                                        <div><b>Marked as played:</b> {this.props.isMarkedAsPlayed ? "✔" : "x"}</div>
                                       </div>
                                       <If condition={this.props.currentArtistImage}>
                                           <img className="artist" src={this.props.currentArtistImage} alt=""/>

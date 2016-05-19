@@ -30,11 +30,11 @@ export function connect() {
         });
 
         require('ipc').on('idle', function (idleOutput) {
-            logger.debug("received idle: " + idleOutput);
+            // logger.debug("received idle: " + idleOutput);
             const idleSeconds = parseInt(idleOutput);
 
             var state = storeContainer.store.getState();
-            if (idleSeconds > 60 && state.isPlaying) {
+            if (idleSeconds > 180 && state.isPlaying) {
                 logger.debug("idle too long - pausing song");
                 playPauseToggle();
             }

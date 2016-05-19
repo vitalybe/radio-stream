@@ -22,5 +22,6 @@ export default class WrappedSound {
     get playState() { return this._sound.playState; }
     get paused() { return this._sound.paused; }
     get duration() { return this._sound.duration; }
+    get position() { return this._sound.position; }
 
 }

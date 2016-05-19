@@ -168,13 +168,8 @@ function playNextSongInPlaylist(playlistName) {
         .then(() => loadArtistMetadata(nextSong.artist))
         .then(() => preloadNextSong(playlistName))
         .catch(function (err) {
-            logger.error(`Failed to load song ${formatSong(nextSong)}: Will mark it as read and proceed to next one. Error: ${err}`);
-            markSongAsPlayed(nextSong)
-                .then(function () {
-                    logger.debug(`Marked as read. Getting next song.`);
-                    storeContainer.store.dispatch({type: actionTypes.PLAYLIST_INDEX_INC});
-                    return playNextSongInPlaylist(playlistName);
-                });
+            logger.error(`Failed to load song ${formatSong(nextSong)}: Proceeding to next one. Error: ${err}`);
+            return playNextSongInPlaylist(playlistName);
         })
 }
 
@@ -183,14 +178,31 @@ function playNextSongInPlaylist(playlistName) {
 function playTogglePlaylist(playlistName, song) {
     let logger = loggerCreator(playTogglePlaylist.name, moduleLogger);
 
+    var lastPosition = 0;
+    var markedAsPlayed = false;
+
     return playToggle(song, {
+        whileplaying: function() {
+            let positionSeconds = Math.floor(this.position/1000);
+
+            if(!markedAsPlayed && lastPosition < positionSeconds) {
+                lastPosition = positionSeconds;
+                // Mark song as played after 5%
+                if(lastPosition > this.duration/1000/100*5) {
+                    logger.debug(`Song played for ${lastPosition} seconds. Marking as played: ${formatSong(song)}.`);
+
+                    markedAsPlayed = true;
+                    markSongAsPlayed(song).then(() => {
+                        storeContainer.store.dispatch({type: actionTypes.SONG_MARKED_AS_PLAYED})
+                        logger.debug(`Marked as played: ${formatSong(song)}.`);
+                    })
+                }
+            }
+
+        },
         onfinish: () => {
-            logger.debug(`Song finished: ${formatSong(song)}. Marking as read`);
-            markSongAsPlayed(song)
-                .then(() => {
-                    logger.debug(`Proceeding to next song in playlist '${playlistName}'`);
-                    return playNextSongInPlaylist(playlistName)
-                });
+            logger.debug(`Proceeding to next song in playlist '${playlistName}'`);
+            playNextSongInPlaylist(playlistName)
 
             lastFm.scrobble(song);
         }
@@ -222,11 +234,7 @@ export function playNextSongAction(playlistName, currentSong) {
 
     return function () {
         stopAll();
-        markSongAsPlayed(currentSong)
-            .then(function () {
-                logger.debug(`Marked as read - Continue to play playlist: ${playlistName}`);
-                return playNextSongInPlaylist(playlistName);
-            });
+        return playNextSongInPlaylist(playlistName);
     }
 }
 
