@@ -30,8 +30,12 @@ public class SongModel {
         id = source.getString("id");
         path = source.getString("path");
 
-        int rating = source.getInt("itunes_rating");
-        stars = rating/20;
+        if(source.has("itunes_rating")) {
+            int rating = source.getInt("itunes_rating");
+            stars = rating / 20;
+        } else {
+            stars = 0;
+        }
     }
 
     public String getArtist() {
