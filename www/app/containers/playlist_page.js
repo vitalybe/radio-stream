@@ -7,6 +7,7 @@ import moment from 'moment';
 
 import { Navigation } from '../components/navigation.js'
 import * as musicActions from '../actions/music_actions';
+import * as idleRedirectListener from '../utils/idle_redirect_listener';
 
 import { Link } from 'react-router'
 
@@ -28,6 +29,8 @@ export class PlaylistPage extends Component {
         if (!this.props.playlistsAsync.data) {
             this.props.dispatch(musicActions.loadAvailablePlaylists());
         }
+
+        idleRedirectListener.start();
     }
 
     componentDidMount() {
@@ -41,6 +44,13 @@ export class PlaylistPage extends Component {
         if (nextProps.params.playlistName !== this.props.params.playlistName) {
             this.props.dispatch(musicActions.startPlayingPlaylistAction(nextProps.params.playlistName));
         }
+    }
+
+    componentWillUnmount() {
+        if(this.props.isPlaying) {
+            musicActions.playTogglePlaylistAction(this.props.params.playlistName, this.props.currentSongAsync.data);
+        }
+        idleRedirectListener.stop();
     }
 
     onPlayPause() {
@@ -92,11 +102,6 @@ export class PlaylistPage extends Component {
 
                             /********* Player **********/
                             <div className="player">
-                                <div className="current-playlist">
-                                  <Link to={`/`}>
-                                    {this.props.params.playlistName}
-                                  </Link>
-                                </div>
                                 <div className="centre-column">
                                   <div className="art">
                                       <div className="metadata">
@@ -119,6 +124,11 @@ export class PlaylistPage extends Component {
                                       <button className={classNames(["play-pause", playPauseClass])} onClick={this.onPlayPause.bind(this)}/>
                                       <button className="next" onClick={this.onNext.bind(this)}/>
                                   </div>
+                                </div>
+                                <div className="current-playlist">
+                                  <Link to={`/`}>
+                                    {this.props.params.playlistName}
+                                  </Link>
                                 </div>
                             </div>
 
