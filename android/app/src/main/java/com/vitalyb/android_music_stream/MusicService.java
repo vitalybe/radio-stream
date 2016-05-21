@@ -27,10 +27,12 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     private final Logger mLogger = Logger.getLogger();
     private String mPlaylistName;
 
+    public void forceInfoUpdate() {
+        updateActivityInfo();
+    }
+
     public interface OnMusicEventsListener {
-        void OnSongPreloading(SongModel song);
-        void OnSongPlaying(SongModel song);
-        void OnSongPaused(SongModel song);
+        void OnMusicStateChanged(boolean isPreparing, boolean isPlaying, SongModel song);
     }
 
     private final MusicServiceBinder mBinder = new MusicServiceBinder();
@@ -40,6 +42,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     private List<SongModel> mSongs;
     private int mSongNumber = 0;
     private OnMusicEventsListener mEventListener = null;
+    private boolean mIsPreparing = true;
 
     private final int NOTIFICATION_ID = 1;
     private final String PARAM_EXIT = "PARAM_EXIT";
@@ -60,10 +63,10 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         Intent activityIntent = new Intent(getApplication().getApplicationContext(), MainActivity.class);
         PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        // Quit intent
-        Intent quitIntent = new Intent(this, MusicService.class);
-        quitIntent.putExtra(PARAM_EXIT, true);
-        PendingIntent stopPendingIntent = PendingIntent.getService(this, 0, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Stop intent
+        Intent stopIntent = new Intent(this, MusicService.class);
+        stopIntent.putExtra(PARAM_EXIT, true);
+        PendingIntent stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplication().getApplicationContext());
         mBuilder.setSmallIcon(R.drawable.image_note)
@@ -149,15 +152,11 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         mLogger.i("Function start");
         if(mPlayer.isPlaying()) {
             mPlayer.pause();
-            if(mEventListener != null) {
-                mEventListener.OnSongPaused(getCurrentSong());
-            }
         } else {
             mPlayer.start();
-            if(mEventListener != null) {
-                mEventListener.OnSongPlaying(getCurrentSong());
-            }
         }
+
+        updateActivityInfo();
     }
 
     public void skipToNextSong() {
@@ -166,8 +165,12 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         playNextSong();
     }
 
-    private SongModel getCurrentSong() {
-        return mSongs.get(mSongNumber);
+    public SongModel getCurrentSong() {
+        if(mSongs != null) {
+            return mSongs.get(mSongNumber);
+        } else {
+            return null;
+        }
     }
 
     private void playNextSong() {
@@ -179,27 +182,31 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             String url = getCurrentSong().getUrl();
             mPlayer.setDataSource(url);
             mPlayer.prepareAsync();
+            mIsPreparing = true;
 
-            if(mEventListener != null) {
-                mEventListener.OnSongPreloading(getCurrentSong());
-            }
+            updateActivityInfo();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    private void updateActivityInfo() {
+        if(mEventListener != null) {
+            mEventListener.OnMusicStateChanged(mIsPreparing, mPlayer.isPlaying(), getCurrentSong());
+        }
+    }
+
     @Override
     public void onPrepared(MediaPlayer mp) {
         mLogger.i("Function start");
+        mIsPreparing = false;
+
         SongModel currentSong = getCurrentSong();
-
-        if(mEventListener != null) {
-            mEventListener.OnSongPlaying(currentSong);
-        }
-
         showServiceNotification(currentSong.getName(), currentSong.getArtist());
         mp.start();
+
+        updateActivityInfo();
     }
 
     @Override

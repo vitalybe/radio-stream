@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
 
         if (mMusicService != null) {
             mMusicService.subscribeToEvents(this);
+            mMusicService.forceInfoUpdate();
         }
     }
 
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
         mLogger.d("Start");
         switch (item.getItemId()) {
             case R.id.menu_quit:
-                StopMusicService();
+                stopMusicService();
                 System.exit(0);
                 break;
         }
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
         return super.onOptionsItemSelected(item);
     }
 
-    private void StopMusicService() {
+    private void stopMusicService() {
         mLogger.d("Start");
         stopService(mMusicServiceIntent);
         mMusicService = null;
@@ -195,29 +196,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
         layoutDrawer.closeDrawer(Gravity.LEFT);
         mMusicService.playPlaylist(playlist);
     }
-
-    @Override
-    public void OnSongPreloading(SongModel song) {
-        mLogger.d("Start");
-        layoutSong.setVisibility(View.GONE);
-        progressSong.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void OnSongPlaying(SongModel song) {
-        mLogger.d("Start");
-        layoutSong.setVisibility(View.VISIBLE);
-        progressSong.setVisibility(View.GONE);
-        showSong(song);
-
-        buttonPlayPause.setImageResource(R.mipmap.image_pause);
-    }
-
-    @Override
-    public void OnSongPaused(SongModel song) {
-        mLogger.d("Start");
-        buttonPlayPause.setImageResource(R.mipmap.image_play);
-    }
+	
 
     @OnClick({R.id.button_play_pause, R.id.button_next_song})
     public void onClick(View view) {
@@ -230,5 +209,24 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
                 mMusicService.skipToNextSong();
                 break;
         }
+    }
+
+    @Override
+    public void OnMusicStateChanged(boolean isPreparing, boolean isPlaying, SongModel song) {
+        if(isPreparing) {
+            layoutSong.setVisibility(View.GONE);
+            progressSong.setVisibility(View.VISIBLE);
+        } else {
+            layoutSong.setVisibility(View.VISIBLE);
+            progressSong.setVisibility(View.GONE);
+        }
+
+        if(isPlaying) {
+            buttonPlayPause.setImageResource(R.mipmap.image_pause);
+        } else {
+            buttonPlayPause.setImageResource(R.mipmap.image_play);
+        }
+
+        showSong(song);
     }
 }
