@@ -1,10 +1,14 @@
 package com.vitalyb.android_music_stream;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -17,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -24,6 +30,7 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity implements PlaylistsFragment.OnPlaylistSelectedListener, MusicService.OnMusicEventsListener {
 
     public static final String INTENT_PARAM_PLAYLIST = "INTENT_PARAM_PLAYLIST";
+    public static final String ACTION_STOP_MUSIC_ACTIVITY = "ACTION_STOP_MUSIC_ACTIVITY";
     private final Logger mLogger = Logger.getLogger();
 
     @InjectView(R.id.image_album)
@@ -45,6 +52,35 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
 
     Intent mMusicServiceIntent = null;
     MusicService mMusicService = null;
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(ACTION_STOP_MUSIC_ACTIVITY)) {
+                finish();
+            }
+        }
+    };
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mLogger.d("Start");
+
+            MusicService.MusicServiceBinder binder = (MusicService.MusicServiceBinder) service;
+            mMusicService = binder.getService();
+            mMusicService.subscribeToEvents(MainActivity.this);
+
+            String initialPlaylist = getIntent().getExtras().getString(INTENT_PARAM_PLAYLIST);
+            if(!Objects.equals(mMusicService.getPlaylistName(), initialPlaylist)) {
+                mMusicService.playPlaylist(initialPlaylist);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mLogger.d("Start");
+            mMusicService = null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
         ButterKnife.inject(this);
 
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMessageReceiver, new IntentFilter(ACTION_STOP_MUSIC_ACTIVITY));
     }
 
     @Override
@@ -64,26 +102,6 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
         bindService(mMusicServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         startService(mMusicServiceIntent);
     }
-
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mLogger.d("Start");
-
-            MusicService.MusicServiceBinder binder = (MusicService.MusicServiceBinder) service;
-            mMusicService = binder.getService();
-            mMusicService.subscribeToEvents(MainActivity.this);
-
-            String initialPlaylist = getIntent().getExtras().getString(INTENT_PARAM_PLAYLIST);
-            mMusicService.playPlaylist(initialPlaylist);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mLogger.d("Start");
-            mMusicService = null;
-        }
-    };
 
     @Override
     protected void onResume() {
@@ -101,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
         if (mMusicService != null) {
             mMusicService.unsubscribeToEvents();
         }
+        unbindService(mServiceConnection);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 
         super.onStop();
     }
@@ -108,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
     @Override
     protected void onDestroy() {
         mLogger.d("Start");
-        StopMusicService();
         super.onDestroy();
     }
 

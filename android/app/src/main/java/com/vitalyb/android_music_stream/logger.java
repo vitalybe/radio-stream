@@ -86,10 +86,11 @@ public class Logger {
         try{
             String className = Thread.currentThread().getStackTrace()[depth.getValue()].getClassName();
             sb.append(className.substring(className.lastIndexOf(".")+1));
-            sb.append("[");
+            sb.append("[!");
             sb.append(Thread.currentThread().getStackTrace()[depth.getValue()].getMethodName());
-            sb.append("] - ");
+            sb.append(":");
             sb.append(Thread.currentThread().getStackTrace()[depth.getValue()].getLineNumber());
+            sb.append("] ");
             return sb.toString();
         }catch (Exception ex){
             ex.printStackTrace();

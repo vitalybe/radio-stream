@@ -14,7 +14,7 @@
 
         <service android:name=".MusicService" />
 
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" android:launchMode="singleTop"></activity>
         <activity android:name=".ChoosePlaylistActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

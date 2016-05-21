@@ -1,5 +1,6 @@
 package com.vitalyb.android_music_stream;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -8,6 +9,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.NotificationCompat;
 
 import com.vitalyb.android_music_stream.backend.MusicBackend;
 import com.vitalyb.android_music_stream.backend.MusicBackendImpl;
@@ -20,6 +23,9 @@ import java.util.List;
  */
 public class MusicService extends Service implements MediaPlayer.OnCompletionListener,
         MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener {
+
+    private final Logger mLogger = Logger.getLogger();
+    private String mPlaylistName;
 
     public interface OnMusicEventsListener {
         void OnSongPreloading(SongModel song);
@@ -35,6 +41,9 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     private int mSongNumber = 0;
     private OnMusicEventsListener mEventListener = null;
 
+    private final int NOTIFICATION_ID = 1;
+    private final String PARAM_EXIT = "PARAM_EXIT";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -42,6 +51,29 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         mBackend = new MusicBackendImpl(this);
         mPlayer = new MediaPlayer();
         initMusicPlayer();
+        showServiceNotification("Music Stream", "Loading...");
+    }
+
+    private void showServiceNotification(String title, String contentText) {
+
+        // Open main UI activity
+        Intent activityIntent = new Intent(getApplication().getApplicationContext(), MainActivity.class);
+        PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Quit intent
+        Intent quitIntent = new Intent(this, MusicService.class);
+        quitIntent.putExtra(PARAM_EXIT, true);
+        PendingIntent stopPendingIntent = PendingIntent.getService(this, 0, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplication().getApplicationContext());
+        mBuilder.setSmallIcon(R.drawable.image_note)
+                .setContentTitle(title)
+                .setContentText(contentText)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(activityPendingIntent)
+                .addAction(R.drawable.image_stop, "Stop", stopPendingIntent);
+
+        startForeground(NOTIFICATION_ID, mBuilder.build());
     }
 
     void initMusicPlayer() {
@@ -53,6 +85,33 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         mPlayer.setOnErrorListener(this);
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        mLogger.i("Function start");
+        if(intent != null) {
+            boolean toExit = intent.getBooleanExtra(PARAM_EXIT, false);
+            mLogger.i("ToExit: " + toExit);
+            if (toExit) {
+                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(MainActivity.ACTION_STOP_MUSIC_ACTIVITY));
+                stopForeground(true);
+                stopSelf();
+
+                mLogger.i("Stopping service");
+            }
+        }
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        mLogger.i("Function start");
+        mPlayer.stop();
+        mPlayer.release();
+
+        super.onDestroy();
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -61,9 +120,6 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     @Override
     public boolean onUnbind(Intent intent) {
-        mPlayer.stop();
-        mPlayer.release();
-
         return false;
     }
 
@@ -76,6 +132,8 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     }
 
     public void playPlaylist(String name) {
+        mLogger.i("Function start: " + name);
+        mPlaylistName = name;
         mSongNumber = -1;
 
         mBackend.FetchPlaylistSongs(name, new MusicBackend.OnResultListener<List<SongModel>>() {
@@ -88,6 +146,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     }
 
     public void togglePlayPause() {
+        mLogger.i("Function start");
         if(mPlayer.isPlaying()) {
             mPlayer.pause();
             if(mEventListener != null) {
@@ -102,16 +161,17 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     }
 
     public void skipToNextSong() {
+        mLogger.i("Function start");
         mBackend.MarkAsPlayed(getCurrentSong());
         playNextSong();
     }
-
 
     private SongModel getCurrentSong() {
         return mSongs.get(mSongNumber);
     }
 
     private void playNextSong() {
+        mLogger.i("Function start");
         try {
             mSongNumber++;
 
@@ -131,15 +191,20 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        mLogger.i("Function start");
+        SongModel currentSong = getCurrentSong();
+
         if(mEventListener != null) {
-            mEventListener.OnSongPlaying(getCurrentSong());
+            mEventListener.OnSongPlaying(currentSong);
         }
 
+        showServiceNotification(currentSong.getName(), currentSong.getArtist());
         mp.start();
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
+        mLogger.i("Function start");
         mBackend.MarkAsPlayed(getCurrentSong());
         playNextSong();
     }
@@ -154,4 +219,10 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             return MusicService.this;
         }
     }
+
+    public String getPlaylistName() {
+        return mPlaylistName;
+    }
+
+
 }
