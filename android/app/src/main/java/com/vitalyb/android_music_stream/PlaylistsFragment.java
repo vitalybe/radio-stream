@@ -1,6 +1,7 @@
 package com.vitalyb.android_music_stream;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;

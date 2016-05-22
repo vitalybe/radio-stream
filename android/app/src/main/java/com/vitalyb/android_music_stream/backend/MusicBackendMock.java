@@ -1,5 +1,6 @@
 package com.vitalyb.android_music_stream.backend;
 
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -9,13 +10,20 @@ import com.vitalyb.android_music_stream.SongModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 public class MusicBackendMock implements MusicBackend {
 
     public static final int MOCK_DELAY = 3 * 1000;
     private static final Handler mHandler = new Handler(Looper.getMainLooper());
+
+    @Override
+    public void fetchArt(String artist, OnResultListener<Bitmap> listener) {
+
+    }
 
     @Override
     public void FetchPlaylists(final OnResultListener<List<String>> listener) {

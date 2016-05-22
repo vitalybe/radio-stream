@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -21,6 +23,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.vitalyb.android_music_stream.backend.MusicBackend;
+import com.vitalyb.android_music_stream.backend.MusicBackendImpl;
+
+import java.io.InputStream;
 import java.util.Objects;
 
 import butterknife.ButterKnife;
@@ -52,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
 
     Intent mMusicServiceIntent = null;
     MusicService mMusicService = null;
+    MusicBackend mMusicBackend = null;
+
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -88,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+        mMusicBackend = new MusicBackendImpl(this);
 
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -189,6 +198,13 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
         stars.removeAllViews();
         addStars(song.getStars(), R.mipmap.image_star);
         addStars(5 - song.getStars(), R.mipmap.image_no_star);
+
+        mMusicBackend.fetchArt(song.getArtist(), new MusicBackend.OnResultListener<Bitmap>() {
+            @Override
+            public void OnResult(Bitmap bitmap) {
+                imageAlbum.setImageBitmap(bitmap);
+            }
+        });
     }
 
     @Override

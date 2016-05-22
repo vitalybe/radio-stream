@@ -1,7 +1,9 @@
 package com.vitalyb.android_music_stream.backend;
 
+import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -10,13 +12,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.vitalyb.android_music_stream.Consts;
-import com.vitalyb.android_music_stream.MockData;
 import com.vitalyb.android_music_stream.SongModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +32,10 @@ import java.util.List;
 public class MusicBackendImpl implements MusicBackend {
 
     RequestQueue mRequestQueue;
+    private Context mContext;
 
     public MusicBackendImpl(Context context) {
+        mContext = context;
         mRequestQueue = Volley.newRequestQueue(context);
     }
 
@@ -113,5 +121,60 @@ public class MusicBackendImpl implements MusicBackend {
                 });
 
         mRequestQueue.add(stringRequest);
+    }
+
+    @Override
+    public void fetchArt(String artist, final OnResultListener<Bitmap> listener) {
+        // TODO: Creds
+        try {
+            String encodedArtist = URLEncoder.encode(artist, "UTF-8");
+            String url = "http://ws.audioscrobbler.com/2.0/?artist="+encodedArtist+"&autocorrect=1&method=artist.getInfo&api_key=9e46560f972eb8300c78c0fc837d1c13&format=json";
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String jsonString) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(jsonString);
+                                JSONObject value = jsonObject.getJSONObject("artist");
+                                final String artistArtUrl = value.getJSONArray("image").getJSONObject(3).getString("#text");
+
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            InputStream in = new java.net.URL(artistArtUrl).openStream();
+                                            final Bitmap bitmap = BitmapFactory.decodeStream(in);
+
+                                            ((Activity)mContext).runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    listener.OnResult(bitmap);
+                                                }
+                                            });
+
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }.start();
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    });
+
+            mRequestQueue.add(stringRequest);
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 }
