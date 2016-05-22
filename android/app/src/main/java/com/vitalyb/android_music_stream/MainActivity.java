@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
             MusicService.MusicServiceBinder binder = (MusicService.MusicServiceBinder) service;
             mMusicService = binder.getService();
             mMusicService.subscribeToEvents(MainActivity.this);
+            mMusicService.forceInfoUpdate();
 
             String initialPlaylist = getIntent().getExtras().getString(INTENT_PARAM_PLAYLIST);
             if(!Objects.equals(mMusicService.getPlaylistName(), initialPlaylist)) {
@@ -227,6 +228,8 @@ public class MainActivity extends AppCompatActivity implements PlaylistsFragment
             buttonPlayPause.setImageResource(R.mipmap.image_play);
         }
 
-        showSong(song);
+        if(song != null) {
+            showSong(song);
+        }
     }
 }
