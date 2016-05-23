@@ -51,6 +51,10 @@ function isMarkedAsPlayed(state = false, action = null) {
     switch (action.type) {
         case actionTypes.SONG_MARKED_AS_PLAYED:
             state = true;
+            break;
+        case actionTypes.SONG_LOAD_COMPLETE:
+            state = false;
+            break;
     }
 
     return state;
@@ -113,6 +117,9 @@ function currentPlaylistSongs(state = [], action = null) {
         case actionTypes.PLAYLIST_SONGS_UPDATED:
             state = action.playlistSongs.map(extractSongDataFromJson);
             break;
+        case actionTypes.PLAYLIST_SONGS_CLEAR:
+            state = [];
+            break;
     }
 
     return state;
@@ -120,6 +127,7 @@ function currentPlaylistSongs(state = [], action = null) {
 
 function currentPlaylistIndex(state = -1, action = null) {
     switch (action.type) {
+        case actionTypes.PLAYLIST_SONGS_CLEAR:
         case actionTypes.PLAYLIST_SONGS_UPDATED:
             state = -1; // Index is restarted on a new playlist
             break;
@@ -135,6 +143,9 @@ function currentPlaylistName(state = null, action = null) {
     switch (action.type) {
         case actionTypes.PLAYLIST_SONGS_UPDATED:
             state = action.playlistName;
+            break;
+        case actionTypes.PLAYLIST_SONGS_CLEAR:
+            state = null;
             break;
     }
 

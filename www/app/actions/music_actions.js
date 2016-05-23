@@ -202,7 +202,7 @@ function playTogglePlaylist(playlistName, song) {
         },
         onfinish: () => {
             logger.debug(`Proceeding to next song in playlist '${playlistName}'`);
-            playNextSongInPlaylist(playlistName)
+            playNextSongInPlaylist(playlistName);
 
             lastFm.scrobble(song);
         }
@@ -272,4 +272,11 @@ export function loadAvailablePlaylists() {
                 storeContainer.store.dispatch({type: actionTypes.PLAYLISTS_LOAD_ERROR});
             });
     }
+}
+
+export function stopPlaylist() {
+  return function () {
+    stopAll();
+    storeContainer.store.dispatch({type: actionTypes.PLAYLIST_SONGS_CLEAR});
+  }
 }

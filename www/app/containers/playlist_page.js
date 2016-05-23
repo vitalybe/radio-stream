@@ -26,15 +26,10 @@ export class PlaylistPage extends Component {
 
     constructor(props, context) {
         super(props, context);
-        if (!this.props.playlistsAsync.data) {
-            this.props.dispatch(musicActions.loadAvailablePlaylists());
-        }
-
-        idleRedirectListener.start();
     }
 
     componentDidMount() {
-        // For the first time the playlist page is shown
+        idleRedirectListener.start();
         this.props.dispatch(musicActions.startPlayingPlaylistAction(this.props.params.playlistName));
     }
 
@@ -48,7 +43,7 @@ export class PlaylistPage extends Component {
 
     componentWillUnmount() {
         if(this.props.isPlaying) {
-            musicActions.playTogglePlaylistAction(this.props.params.playlistName, this.props.currentSongAsync.data);
+            this.props.dispatch(musicActions.stopPlaylist());
         }
         idleRedirectListener.stop();
     }
