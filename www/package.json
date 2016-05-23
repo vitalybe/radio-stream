@@ -5,12 +5,10 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "server-web-dev": "node server.web.dev.js",
+    "iterm-desktop-dev": "osascript iterm-desktop-dev.applescript",
     "server-desktop-dev": "node server.desktop.js",
     "start-desktop-dev": "better-npm-run start-desktop",
-    "build-desktop-prod": "better-npm-run package-desktop-prod",
-    "build-web-prod": "webpack --config webpack.config.web.prod.js",
-    "server-web-prod": "node server.web.prod.js"
+    "build-desktop-prod": "better-npm-run package-desktop-prod"
   },
   "betterScripts": {
     "start-desktop": {
