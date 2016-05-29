@@ -2,7 +2,12 @@ package com.vitalyb.android_music_stream;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -18,12 +23,13 @@ import com.vitalyb.android_music_stream.backend.MusicBackendImpl;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by vitaly on 14/03/2016.
  */
-public class MusicService extends Service implements MediaPlayer.OnCompletionListener,
-        MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener {
+public class MusicService extends Service implements
+        MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener {
 
     private final Logger mLogger = Logger.getLogger();
     private String mPlaylistName;
@@ -48,6 +54,21 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     private final int NOTIFICATION_ID = 1;
     private final String PARAM_EXIT = "PARAM_EXIT";
 
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mLogger.i("Intent received");
+            if(Objects.equals(intent.getAction(), BluetoothDevice.ACTION_ACL_DISCONNECTED)) {
+                BluetoothDevice btDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (btDevice.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.AUDIO_VIDEO) {
+                    if(mPlayer.isPlaying()) {
+                        togglePlayPause();
+                    }
+                }
+            }
+        }
+    };
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -56,6 +77,10 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         mPlayer = new MediaPlayer();
         initMusicPlayer();
         showServiceNotification("Music Stream", "Loading...");
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        registerReceiver(mReceiver, intentFilter);
     }
 
     private void showServiceNotification(String title, String contentText) {
@@ -112,6 +137,8 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         mLogger.i("Function start");
         mPlayer.stop();
         mPlayer.release();
+        unregisterReceiver(mReceiver);
+
 
         super.onDestroy();
     }
