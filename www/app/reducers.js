@@ -38,6 +38,7 @@ function isPlaying(state = false, action = null) {
         case actionTypes.SONG_PLAY:
             state = true;
             break;
+        case actionTypes.PLAYLIST_SONGS_CLEAR:
         case actionTypes.SONG_PAUSE:
             state = false;
             break;

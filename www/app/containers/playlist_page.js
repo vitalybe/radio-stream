@@ -42,9 +42,7 @@ export class PlaylistPage extends Component {
     }
 
     componentWillUnmount() {
-        if(this.props.isPlaying) {
-            this.props.dispatch(musicActions.stopPlaylist());
-        }
+        this.props.dispatch(musicActions.stopPlaylist());
         idleRedirectListener.stop();
     }
 

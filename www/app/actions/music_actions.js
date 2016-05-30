@@ -275,8 +275,12 @@ export function loadAvailablePlaylists() {
 }
 
 export function stopPlaylist() {
+  let logger = loggerCreator(stopPlaylist.name, moduleLogger);
+  logger.debug("Start function");
+
   return function () {
     stopAll();
+    logger.debug("Dispatching PLAYLIST_SONGS_CLEAR");
     storeContainer.store.dispatch({type: actionTypes.PLAYLIST_SONGS_CLEAR});
   }
 }
