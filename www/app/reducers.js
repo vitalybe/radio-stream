@@ -79,6 +79,9 @@ function extractSongDataFromJson(songJson) {
 function currentSongAsync(state = new AsyncState(), action = null) {
 
     switch (action.type) {
+        case actionTypes.PLAYLIST_SONGS_CLEAR:
+            state = new AsyncState();
+            break;
         case actionTypes.SONG_LOAD_PROGRESS:
             state = new AsyncState({inProgress: true});
             break;

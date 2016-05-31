@@ -16,8 +16,11 @@ export function connect() {
             let currentPlaylist = state.currentPlaylist;
             let currentSong = state.currentSongAsync.data;
 
-            let action = musicActions.playTogglePlaylistAction(currentPlaylist.name, currentSong);
-            storeContainer.store.dispatch(action);
+            // Don't try to *start* playing if there is no playlist
+            if(currentPlaylist.name || state.isPlaying) {
+                let action = musicActions.playTogglePlaylistAction(currentPlaylist.name, currentSong);
+                storeContainer.store.dispatch(action);
+            }
         }
 
         require('ipc').on('log', function (msg) {
