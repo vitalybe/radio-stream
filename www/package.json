@@ -8,7 +8,8 @@
     "iterm-desktop-dev": "osascript iterm-desktop-dev.applescript",
     "server-desktop-dev": "node server.desktop.js",
     "start-desktop-dev": "better-npm-run start-desktop",
-    "build-desktop-prod": "better-npm-run package-desktop-prod"
+    "build-desktop-prod": "better-npm-run build-desktop-prod",
+    "deploy-desktop-prod": "better-npm-run deploy-desktop-prod"
   },
   "betterScripts": {
     "start-desktop": {
@@ -18,11 +19,14 @@
         "NODE_ENV": "dev"
       }
     },
-    "package-desktop-prod": {
+    "build-desktop-prod": {
       "command": "node package.desktop.prod.js",
       "env": {
         "NODE_ENV": "prod"
       }
+    },
+    "deploy-desktop-prod": {
+      "command": "rm -rf /Applications/music-stream-www.app && mv release/darwin-x64/music-stream-www-darwin-x64/music-stream-www.app /Applications/music-stream-www.app"
     }
   },
   "bin": {
