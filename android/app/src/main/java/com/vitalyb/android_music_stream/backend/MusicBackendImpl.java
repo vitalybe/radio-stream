@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -12,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.vitalyb.android_music_stream.Consts;
+import com.vitalyb.android_music_stream.Logger;
 import com.vitalyb.android_music_stream.SongModel;
 
 import org.json.JSONArray;
@@ -32,6 +35,8 @@ import java.util.List;
 public class MusicBackendImpl implements MusicBackend {
 
     RequestQueue mRequestQueue;
+    private final Logger mLogger = Logger.getLogger();
+
     private Context mContext;
 
     public MusicBackendImpl(Context context) {
@@ -106,20 +111,26 @@ public class MusicBackendImpl implements MusicBackend {
 
     @Override
     public void MarkAsPlayed(SongModel song) {
-        String url = Consts.URL_API + "/item/" + song.getId() + "/last-played";
+        final String url = Consts.URL_API + "/item/" + song.getId() + "/last-played";
+        mLogger.i("Marking as played via URL: " + url);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String json) {
+                        mLogger.i("Success!");
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        mLogger.e("Failed to post LastPlayed :(");
                         throw new RuntimeException(error);
                     }
                 });
 
+        mLogger.i("Setting retry policy");
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(7000, 3, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(stringRequest);
     }
 
