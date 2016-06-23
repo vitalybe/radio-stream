@@ -169,6 +169,7 @@ function playNextSongInPlaylist(playlistName) {
         .then(() => preloadNextSong(playlistName))
         .catch(function (err) {
             logger.error(`Failed to load song ${formatSong(nextSong)}: Proceeding to next one. Error: ${err}`);
+            storeContainer.store.dispatch({type: actionTypes.PLAYLIST_INDEX_INC});
             return playNextSongInPlaylist(playlistName);
         })
 }
