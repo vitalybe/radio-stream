@@ -124,7 +124,7 @@ public class MusicBackendImpl implements MusicBackend {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        mLogger.e("Failed to post LastPlayed :(");
+                        mLogger.e("Failed to post LastPlayed :(" + error.toString());
                         throw new RuntimeException(error);
                     }
                 });

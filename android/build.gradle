@@ -15,9 +15,13 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url "https://mint.splunk.com/gradle/"
+        }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
