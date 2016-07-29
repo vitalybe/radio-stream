@@ -7,8 +7,8 @@ var checkInterval = null;
 
 var moduleLogger = loggerCreator(__filename);
 
-const REDIRECT_AFTER = 30*60*1000;
-const CHECK_EVERY = 10*1000;
+const REDIRECT_AFTER = 120*60*1000;
+const CHECK_EVERY = 60*1000;
 
 export function start() {
   observer = observeStore(state => ({isPlaying: state.isPlaying}), data => {
