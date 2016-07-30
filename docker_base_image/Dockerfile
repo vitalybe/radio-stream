@@ -10,17 +10,13 @@ RUN echo "http://dl-4.alpinelinux.org/alpine/v3.3/main" >> /etc/apk/repositories
 
 # Install SSH
 RUN apk update && \
-    apk add openssh bash && \
+    apk add openssh bash ca-certificates && \
     mkdir -p ~root/.ssh && chmod 700 ~root/.ssh/ && \
     echo -e "Port 22\n" >> /etc/ssh/sshd_config && \
     cp -a /etc/ssh /etc/ssh.cache && \
     rm -rf /var/cache/apk/*
 
 COPY entry.sh /entry.sh
-
-# Set beets as startup folder (for SSH)
-# For local execution do: docker run -w /root/beets ... /bin/sh 
-RUN mkdir /root/beets && echo "cd /root/beets" >> /etc/profile
 
 # Expose and run
 
