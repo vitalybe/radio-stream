@@ -30,7 +30,7 @@ fi
 
 # Warn if no config
 if [ ! -e ~/.ssh/authorized_keys ]; then
-  echo "WARNING: No SSH authorized_keys found for root"
+  echo "NOTE: No SSH authorized_keys found for root - SSH will not be available"
 fi
 
 # NGINX
@@ -42,6 +42,7 @@ nginx
 
 # Settings beets default config location per: http://beets.readthedocs.io/en/latest/reference/config.html#environment-variable
 echo "export BEETSDIR=/radio-stream/data/" >> /etc/profile
+source /etc/profile
 
 # Beets config template
 if [ ! -e /radio-stream/data/config.yaml ]; then
@@ -50,6 +51,8 @@ if [ ! -e /radio-stream/data/config.yaml ]; then
     rm /radio-stream/data/config_template.yaml
 fi
 
+echo "Running radio-stream..."
+beet radio &
 
 # CMD
 #####
