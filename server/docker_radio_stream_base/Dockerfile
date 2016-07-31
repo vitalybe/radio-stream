@@ -15,13 +15,3 @@ RUN apk update && \
     echo -e "Port 22\n" >> /etc/ssh/sshd_config && \
     cp -a /etc/ssh /etc/ssh.cache && \
     rm -rf /var/cache/apk/*
-
-COPY entry.sh /entry.sh
-
-# Expose and run
-
-EXPOSE 80 22
-
-ENTRYPOINT ["/entry.sh"]
-
-CMD ["/usr/sbin/sshd", "-D", "-f", "/etc/ssh/sshd_config"]

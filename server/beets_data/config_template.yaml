@@ -1,0 +1,3 @@
+directory: music/
+library: library.db
+plugins: metasync duplicates radio_stream

@@ -4,6 +4,9 @@ set -e
 
 [ "$DEBUG" == 'true' ] && set -x
 
+# SSH related
+#############
+
 DAEMON=sshd
 
 # Copy default config from cache
@@ -30,25 +33,20 @@ if [ ! -e ~/.ssh/authorized_keys ]; then
   echo "WARNING: No SSH authorized_keys found for root"
 fi
 
-stop() {
-    echo "Received SIGINT or SIGTERM. Shutting down $DAEMON"
-    # Get PID
-    pid=$(cat /var/run/$DAEMON/$DAEMON.pid)
-    # Set TERM
-    kill -SIGTERM "${pid}"
-    # Wait for exit
-    wait "${pid}"
-    # All done.
-    echo "Done."
-}
+# Beets
+#######
 
-echo "Running $@"
-if [ "$(basename $1)" == "$DAEMON" ]; then
-    trap stop SIGINT SIGTERM
-    $@ &
-    pid="$!"
-    mkdir -p /var/run/$DAEMON && echo "${pid}" > /var/run/$DAEMON/$DAEMON.pid
-    wait "${pid}" && exit $?
-else
-    exec "$@"
+# Settings beets default config location per: http://beets.readthedocs.io/en/latest/reference/config.html#environment-variable
+echo "export BEETSDIR=/radio-stream/data/" >> /etc/profile
+
+# Beets config template
+if [ ! -e /radio-stream/data/config.yaml ]; then
+    echo "Beets config not found - Creating config"
+    cp /radio-stream/data/config_template.yaml /radio-stream/data/config.yaml
+    rm /radio-stream/data/config_template.yaml
 fi
+
+
+# CMD
+#####
+exec "$@"
