@@ -33,6 +33,10 @@ if [ ! -e ~/.ssh/authorized_keys ]; then
   echo "WARNING: No SSH authorized_keys found for root"
 fi
 
+# NGINX
+
+nginx
+
 # Beets
 #######
 
