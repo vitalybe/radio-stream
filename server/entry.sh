@@ -51,6 +51,15 @@ if [ ! -e /radio-stream/data/config.yaml ]; then
     rm /radio-stream/data/config_template.yaml
 fi
 
+# SQLite workaround
+echo "export BEETSDIR=/radio-stream/tmp/" >> /etc/profile
+source /etc/profile
+
+mkdir /radio-stream/tmp/
+cp /radio-stream/data/* /radio-stream/tmp/
+
+inotifycp /radio-stream/data/ /radio-stream/tmp/ &
+inotifycp /radio-stream/tmp/ /radio-stream/data/ &
 
 # CMD
 #####
