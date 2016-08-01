@@ -1,0 +1,3 @@
+[submodule "server/beets"]
+	path = server/beets
+	url = https://github.com/vitalybe/beets.git
