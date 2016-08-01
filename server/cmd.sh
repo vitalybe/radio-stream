@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+# beets
+#######
+
+echo "Running radio-stream..."
+beet radio &
+
+# SSH server
+############
+
 DAEMON=sshd
 
 stop() {

@@ -51,8 +51,6 @@ if [ ! -e /radio-stream/data/config.yaml ]; then
     rm /radio-stream/data/config_template.yaml
 fi
 
-echo "Running radio-stream..."
-beet radio &
 
 # CMD
 #####

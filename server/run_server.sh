@@ -6,5 +6,5 @@ MUSIC=~/Dropbox/Projects/music-stream/server/beets/test/rsrc
 docker run -it -p 80:80  -p 2222:22\
     -v "$SSH_PUB":/root/.ssh/authorized_keys:ro\
 	-v "$DATA":/radio-stream/data\
-	-v "$MUSIC":/radio-stream/data/music\
-	vitalybe/radio-stream
+	-v "$MUSIC":/radio-stream/music\
+	vitalybe/radio-stream $*
