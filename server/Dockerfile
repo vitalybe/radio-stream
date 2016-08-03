@@ -17,9 +17,6 @@ RUN pip install flask flask-cors
 # beet in PATH
 RUN chmod +x /radio-stream/beets/beet && ln -s /radio-stream/beets/beet /usr/local/bin/beet
 
-# Data file
-COPY beets_data/config_template.yaml /radio-stream/data/
-
 # Nginx
 #######
 
@@ -35,9 +32,9 @@ RUN chmod +x /usr/local/bin/inotifycp
 # Auto execution
 ################
 
-COPY entry.sh /entry.sh
+COPY scripts/entry.sh /entry.sh
 
-COPY cmd.sh /cmd.sh
+COPY scripts/cmd.sh /cmd.sh
 
 # Expose and run
 

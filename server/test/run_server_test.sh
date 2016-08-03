@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 SSH_PUB=~/Dropbox/Application\ Settings/radio-stream/ssh-key/authorized_keys
-DATA=~/Dropbox/Application\ Settings/radio-stream/beets-data
-MUSIC=~/Dropbox/Projects/music-stream/server/beets/test/rsrc
+DATA=$DIR/beets-data
+MUSIC=$DIR/music
 
 docker run -it -p 80:80  -p 22123:22\
     -v "$SSH_PUB":/root/.ssh/authorized_keys:ro\

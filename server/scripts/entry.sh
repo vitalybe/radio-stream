@@ -44,13 +44,6 @@ nginx
 echo "export BEETSDIR=/radio-stream/data/" >> /etc/profile
 source /etc/profile
 
-# Beets config template
-if [ ! -e /radio-stream/data/config.yaml ]; then
-    echo "Beets config not found - Creating config"
-    cp /radio-stream/data/config_template.yaml /radio-stream/data/config.yaml
-    rm /radio-stream/data/config_template.yaml
-fi
-
 # SQLite workaround
 echo "export BEETSDIR=/radio-stream/tmp/" >> /etc/profile
 source /etc/profile
