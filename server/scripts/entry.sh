@@ -42,6 +42,7 @@ nginx
 
 # Settings beets default config location per: http://beets.readthedocs.io/en/latest/reference/config.html#environment-variable
 echo "export BEETSDIR=/radio-stream/data/" >> /etc/profile
+echo "export EDITOR=vi" >> /etc/profile
 source /etc/profile
 
 # SQLite workaround
