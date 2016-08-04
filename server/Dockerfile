@@ -8,14 +8,11 @@ MAINTAINER Vitaly Belman <vitalyb+dockerfile@gmail.com>
 COPY beets /radio-stream/beets
 
 # HACK: Install the dependencies
-RUN cd /radio-stream/beets && python setup.py install && pip uninstall -y beets
+RUN cd /radio-stream/beets && pip install -e .
 
 # Install additional dependencies for plugins :|
 # Per https://github.com/beetbox/beets/issues/2136
 RUN pip install flask flask-cors
-
-# beet in PATH
-RUN chmod +x /radio-stream/beets/beet && ln -s /radio-stream/beets/beet /usr/local/bin/beet
 
 # Nginx
 #######
