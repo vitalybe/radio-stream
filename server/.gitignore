@@ -1,1 +1,3 @@
-server/test/beets-data/library.db
+test/beets-data
+test/music
+test/new-music
