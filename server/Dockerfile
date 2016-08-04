@@ -28,6 +28,7 @@ COPY nginx/nginx.conf /etc/nginx/nginx.conf
 RUN pip install pyinotify
 COPY scripts/inotifycp.py /usr/local/bin/inotifycp
 RUN chmod +x /usr/local/bin/inotifycp
+RUN mkdir /radio-stream/log
 
 # Auto execution
 ################

@@ -51,8 +51,8 @@ source /etc/profile
 mkdir /radio-stream/tmp/
 cp /radio-stream/data/* /radio-stream/tmp/
 
-inotifycp /radio-stream/data/ /radio-stream/tmp/ &
-inotifycp /radio-stream/tmp/ /radio-stream/data/ &
+inotifycp /radio-stream/data/ /radio-stream/tmp/ > /radio-stream/log/inotifycp-data-tmp.log &
+inotifycp /radio-stream/tmp/ /radio-stream/data/ > /radio-stream/log/inotifycp-tmp-data.log &
 
 # CMD
 #####
