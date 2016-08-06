@@ -8,7 +8,6 @@ const moment = require('moment');
 
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-const crashReporter = electron.crashReporter;
 const ipcMain = electron.ipcMain;
 
 
@@ -109,7 +108,6 @@ function handleGlobalShortcuts() {
 }
 
 app.on('ready', () => {
-    crashReporter.start();
     mainWindow = new BrowserWindow({width: 1024, height: 728, icon: "app/images/icon.ico"});
 
     handleTitleChanges();
