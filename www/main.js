@@ -107,6 +107,10 @@ function handleGlobalShortcuts() {
     });
 }
 
+function handleMenu() {
+
+}
+
 app.on('ready', () => {
     mainWindow = new BrowserWindow({width: 1024, height: 728, icon: "app/images/icon.ico"});
 
@@ -114,6 +118,7 @@ app.on('ready', () => {
     handleUseIdling();
     handleGlobalShortcuts();
     handleQuitting();
+    handleMenu();
 
     if (process.env.HOT) {
         mainWindow.loadURL(`file://${__dirname}/app/hot-dev-index.html`);
