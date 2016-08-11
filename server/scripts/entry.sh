@@ -35,6 +35,7 @@ fi
 
 # NGINX
 
+echo "Running nginx..."
 nginx
 
 # Beets
@@ -46,15 +47,17 @@ echo "export EDITOR=vi" >> /etc/profile
 source /etc/profile
 
 # SQLite workaround
+echo "Preparing SQLite workaround..."
 echo "export BEETSDIR=/radio-stream/tmp/" >> /etc/profile
 source /etc/profile
 
 mkdir /radio-stream/tmp/
-cp /radio-stream/data/* /radio-stream/tmp/
+cp /radio-stream/data/library.db /radio-stream/tmp/
+cp /radio-stream/data/config.yaml /radio-stream/tmp/
 
-inotifycp /radio-stream/data/ /radio-stream/tmp/ > /radio-stream/log/inotifycp-data-tmp.log &
 inotifycp /radio-stream/tmp/ /radio-stream/data/ > /radio-stream/log/inotifycp-tmp-data.log &
 
 # CMD
 #####
+echo "Running: $@"
 exec "$@"
