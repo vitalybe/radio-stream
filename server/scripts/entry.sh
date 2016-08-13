@@ -42,7 +42,7 @@ nginx
 #######
 
 # Settings beets default config location per: http://beets.readthedocs.io/en/latest/reference/config.html#environment-variable
-echo "PATH=$PATH:/radio-stream/scripts/bundled:/radio-stream/scripts/user" >> /etc/profile
+echo "PATH=$PATH:/radio-stream/scripts/user:/radio-stream/scripts/bundled" >> /etc/profile
 echo "export BEETSDIR=/radio-stream/data/" >> /etc/profile
 echo "export EDITOR=vi" >> /etc/profile
 source /etc/profile

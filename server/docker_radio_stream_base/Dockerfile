@@ -19,5 +19,8 @@ RUN apk add openssh bash ca-certificates && \
 # Various useful linux utilities
 RUN apk add util-linux ffmpeg
 
+# Useful pip utilities
+RUN pip install youtube_dl
+
 # Clear APK cache
 RUN rm -rf /var/cache/apk/*
