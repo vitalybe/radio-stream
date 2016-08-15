@@ -66,7 +66,7 @@ export class PlaylistPage extends Component {
         let currentSongAsync = this.props.currentSongAsync;
         let ratingStars = null;
         if (currentSongAsync.data) {
-            let starCount = currentSongAsync.data.itunes_rating / 20;
+            let starCount = currentSongAsync.data.rating / 20;
             ratingStars = _.range(5).map(starIndex => {
                 let starClass = starCount > starIndex ? "star-full" : "star-empty";
                 let newRating = (starIndex + 1) * 20;
@@ -99,8 +99,8 @@ export class PlaylistPage extends Component {
                                   <div className="art">
                                       <div className="metadata">
                                         <div><img className="info" src={infoImage} /></div>
-                                        <div><b>Last played:</b> {moment.unix(this.props.currentSongAsync.data.itunes_lastplayed).fromNow()}</div>
-                                        <div><b>Play count:</b> {this.props.currentSongAsync.data.itunes_playcount}</div>
+                                        <div><b>Last played:</b> {moment.unix(this.props.currentSongAsync.data.lastplayed).fromNow()}</div>
+                                        <div><b>Play count:</b> {this.props.currentSongAsync.data.playcount}</div>
                                         <div><b>Marked as played:</b> {this.props.isMarkedAsPlayed ? "✔" : "x"}</div>
                                       </div>
                                       <If condition={this.props.currentArtistImage}>

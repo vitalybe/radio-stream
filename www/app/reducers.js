@@ -69,9 +69,9 @@ function extractSongDataFromJson(songJson) {
         artist: songJson.artist,
         title: songJson.title,
         album: songJson.album,
-        itunes_rating: songJson.itunes_rating,
-        itunes_playcount: songJson.itunes_playcount,
-        itunes_lastplayed: songJson.itunes_lastplayed,
+        rating: songJson.rating,
+        playcount: songJson.playcount,
+        lastplayed: songJson.lastplayed,
         path: songJson.path
     }
 }
@@ -89,7 +89,7 @@ function currentSongAsync(state = new AsyncState(), action = null) {
             state = new AsyncState({inProgress: false, data: extractSongDataFromJson(action.songData)});
             break;
         case actionTypes.RATING_UPDATE_COMPLETE:
-            return _.merge({}, state, {data: {itunes_rating: action.newRating}});
+            return _.merge({}, state, {data: {rating: action.newRating}});
             break;
         case actionTypes.SONG_LOAD_ERROR:
             state = new AsyncState({error: true});

@@ -91,10 +91,9 @@ function handleGlobalShortcuts() {
         });
 
         if (currentSong) {
-            let itunes_lastplayed = moment.unix(currentSong.itunes_lastplayed).fromNow();
             notifier.notify({
                 title: `${currentSong.artist} - ${currentSong.title}`,
-                message: `Rating: ${currentSong.itunes_rating / 20}\nLast played: ${itunes_lastplayed}`,
+                message: `Rating: ${currentSong.rating / 20}\nLast played: ${lastplayed}`,
                 icon: currentSong.artistImageBuffer
             });
         }
