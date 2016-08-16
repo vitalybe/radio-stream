@@ -257,24 +257,6 @@ export function changeRating(currentSong, newRating) {
     }
 }
 
-export function loadAvailablePlaylists() {
-    let logger = loggerCreator(loadAvailablePlaylists.name, moduleLogger);
-    logger.debug("Loading...");
-
-    return function () {
-        storeContainer.store.dispatch({type: actionTypes.PLAYLISTS_LOAD_PROGRESS});
-        backendMetadataApi.playlists()
-            .then((playlists) => {
-                logger.debug(`Success`);
-                storeContainer.store.dispatch({type: actionTypes.PLAYLISTS_LOAD_COMPLETE, playlists});
-            })
-            .catch(err => {
-                logger.error(`Failed: ${err}`);
-                storeContainer.store.dispatch({type: actionTypes.PLAYLISTS_LOAD_ERROR});
-            });
-    }
-}
-
 export function stopPlaylist() {
   let logger = loggerCreator(stopPlaylist.name, moduleLogger);
   logger.debug("Start function");

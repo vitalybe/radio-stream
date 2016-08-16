@@ -2,17 +2,18 @@ import React, { Component, PropTypes as T } from 'react';
 import { Link } from 'react-router'
 import classNames from 'classnames';
 
+import { observer } from "mobx-react"
 import * as musicActions from '../actions/music_actions';
+
 
 export class Navigation extends Component {
 
     static propTypes = {
-        playlistsAsync: React.PropTypes.shape({
-            inProgress: React.PropTypes.bool.isRequired,
+        playlists: React.PropTypes.shape({
+            loading: React.PropTypes.bool.isRequired,
             error: React.PropTypes.any,
-            data: React.PropTypes.any
-        }).isRequired,
-        currentPlaylist: T.string
+            value: React.PropTypes.any
+        }).isRequired
     };
 
     constructor(props, context) {
@@ -26,7 +27,7 @@ export class Navigation extends Component {
                 <div className="playlists">
                     <h1 className="header">Playlists</h1>
                     <div className="content">
-                        <If condition={this.props.playlistsAsync.inProgress}>
+                        <If condition={this.props.playlists.loading}>
                             <div className="hexdots-loader loader">
                                 Loading...
                             </div>
@@ -34,26 +35,15 @@ export class Navigation extends Component {
                             <Else/>
 
                             <ul>
-                                {this.props.playlistsAsync.data.map(playlist => {
+                                {this.props.playlists.value.map(playlist => {
                                     return (
-                                        <li key={playlist}
-                                            className={classNames(["playlist"],{"current": playlist == this.props.currentPlaylist})}>
-                                            <If condition={playlist == this.props.currentPlaylist}>
+                                        <li key={playlist.name}
+                                            className={classNames(["playlist"])}>
 
-                                                <span>
-                                                    <i className="icon fa fa-volume-up"/>
-                                                    <span className="name">{playlist}</span>
-                                                </span>
-
-                                                <Else/>
-
-                                                <span>
-                                                    <i className="icon fa fa-music"/>
-                                                    <Link to={`/playlist/${playlist}`}>
-                                                        <span className="name">{playlist}</span>
-                                                    </Link>
-                                                </span>
-                                            </If>
+                                            <i className="icon fa fa-music"/>
+                                            <Link to={`/playlist/${playlist.name}`}>
+                                                <span className="name">{playlist.name}</span>
+                                            </Link>
                                         </li>)
                                 })}
                             </ul>

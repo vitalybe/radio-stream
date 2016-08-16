@@ -97,6 +97,8 @@
     "isomorphic-fetch": "^2.2.0",
     "jsx-control-statements": "^1.1.2",
     "lodash": "^3.10.1",
+    "mobx": "^2.4.3",
+    "mobx-react": "^3.5.5",
     "moment": "^2.11.2",
     "node-notifier": "^4.4.0",
     "react": "^0.14.2",

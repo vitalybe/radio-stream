@@ -2,21 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { Navigation } from '../components/navigation.js'
-import * as musicActions from '../actions/music_actions';
+import { observer } from "mobx-react"
+import store from "../stores/store_mobx"
 
-/**
- * Created by Vitaly on 01/12/2015.
- */
-@connect(state => {
-    return {
-        playlistsAsync: state.playlistsAsync
-    };
-})
+@observer
 export class StartupPage extends Component {
     constructor(props, context) {
         super(props, context);
-        if (!this.props.playlistsAsync.data) {
-            this.props.dispatch(musicActions.loadAvailablePlaylists());
+        if (!store.playlistsMetadata.loaded) {
+            store.playlistsMetadata.loadAvailablePlaylists();
         }
     }
 
@@ -24,7 +18,7 @@ export class StartupPage extends Component {
         return (
             <div>
                 <h1>Music stream</h1>
-                <Navigation playlistsAsync={this.props.playlistsAsync}/>
+                <Navigation playlists={store.playlistsMetadata}/>
             </div>
         );
     }
