@@ -25,8 +25,8 @@ config.module.loaders.push({
     loader: 'babel',
     include: path.join(__dirname, 'app'),
     query: {
-    "stage": 0,
-    "plugins": ["jsx-control-statements/babel"]
+        presets: ['es2015', 'react', "stage-0"],
+        "plugins": [["jsx-control-statements"], ["transform-decorators-legacy"]]
     }
 });
 
