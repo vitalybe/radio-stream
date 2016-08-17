@@ -23,17 +23,16 @@ export class Navigation extends Component {
     render() {
 
         return (
-            <div>
-                <div className="playlists">
-                    <h1 className="header">Playlists</h1>
-                    <div className="content">
-                        <If condition={this.props.playlists.loading}>
+            <div className="playlists">
+                <h1 className="header">Playlists</h1>
+                <div className="content">
+                    <Choose>
+                        <When condition={this.props.playlists.loading}>
                             <div className="hexdots-loader loader">
                                 Loading...
                             </div>
-
-                            <Else/>
-
+                        </When>
+                        <Otherwise>
                             <ul>
                                 {this.props.playlists.value.map(playlist => {
                                     return (
@@ -47,8 +46,8 @@ export class Navigation extends Component {
                                         </li>)
                                 })}
                             </ul>
-                        </If>
-                    </div>
+                        </Otherwise>
+                    </Choose>
                 </div>
             </div>
         );
