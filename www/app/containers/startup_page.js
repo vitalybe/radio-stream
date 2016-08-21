@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { Navigation } from '../components/navigation.js'
 import { observer } from "mobx-react"
-import store from "../stores/store_mobx"
+import store from "../stores/store"
 
 @observer
 export class StartupPage extends Component {

@@ -12,7 +12,7 @@ export class Navigation extends Component {
         playlists: React.PropTypes.shape({
             loading: React.PropTypes.bool.isRequired,
             error: React.PropTypes.any,
-            value: React.PropTypes.any
+            items: React.PropTypes.any
         }).isRequired
     };
 
@@ -34,7 +34,7 @@ export class Navigation extends Component {
                         </When>
                         <Otherwise>
                             <ul>
-                                {this.props.playlists.value.map(playlist => {
+                                {this.props.playlists.items.map(playlist => {
                                     return (
                                         <li key={playlist.name}
                                             className={classNames(["playlist"])}>
