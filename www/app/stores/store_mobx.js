@@ -46,19 +46,6 @@ class PlaylistsMetadata {
     }
 }
 
-class PlayPercentCallbackData {
-    callback = null;
-    percent = 0;
-    triggered = false;
-
-    constructor(callback, percent) {
-        this.callback = callback;
-        this.percent = percent;
-
-        this.triggered = false;
-    }
-}
-
 class Song {
     id = null;
     title = null;
@@ -70,7 +57,6 @@ class Song {
     path = null;
 
     @observable soundLoaded = false;
-    @observable markedAsPlayed = false;
 
     constructor(songData) {
         this.title = songData.title;
@@ -84,25 +70,19 @@ class Song {
         this.soundLoaded = false;
 
         this._onFinishCallback = null;
-        this._onPercentPlayedCallbackData = null;
+
+        this._onPlayProgressCallback = null;
+        this._lastPositionSeconds = 0;
     }
 
-    _onWhilePlaying(sound) {
-        if(this._onPercentPlayedCallbackData && !this._onPercentPlayedCallbackData.triggered) {
+    _onPlayProgress(sound) {
+        if(this._onPlayProgressCallback) {
             let positionSeconds = Math.floor(sound.position/1000);
 
-            if(!markedAsPlayed && lastPosition < positionSeconds) {
-                lastPosition = positionSeconds;
-                // Mark song as played after 5%
-                if(lastPosition > sound.duration/1000/100*5) {
-                    logger.debug(`Song played for ${lastPosition} seconds. Marking as played: ${formatSong(song)}.`);
+            if(this._lastPositionSeconds < positionSeconds) {
+                this._lastPositionSeconds = positionSeconds;
 
-                    markedAsPlayed = true;
-                    markSongAsPlayed(song).then(() => {
-                        storeContainer.store.dispatch({type: actionTypes.SONG_MARKED_AS_PLAYED})
-                        logger.debug(`Marked as played: ${formatSong(song)}.`);
-                    })
-                }
+                this._onPlayProgressCallback(positionSeconds);
             }
         }
     }
@@ -110,9 +90,9 @@ class Song {
     @action loadSound() {
         let logger = loggerCreator(this.loadSound.name, moduleLogger);
 
-        logger.debug(`${song.toString()}`);
+        logger.debug(`${this.toString()}`);
         // NOTE: This will not load sound again it was loaded before
-        return wrappedSoundManager.loadSound(song)
+        return wrappedSoundManager.loadSound(this)
             .then(function (sound) {
                 assert(sound && sound.loaded, "sound was not loaded");
                 return sound;
@@ -123,8 +103,8 @@ class Song {
             });
     }
 
-    onPercentPlayed(percent, callback) {
-        this._onPercentPlayedCallbackData = new PlayPercentCallbackData(callback, percent);
+    onPlayProgress(callback) {
+        this._onPlayProgressCallback = callback;
     }
 
     onFinish(callback) {
@@ -142,11 +122,11 @@ class Song {
                 options.onfinish = this._onFinishCallback
             }
 
-            if (this._onPercentPlayedCallbackData) {
+            if (this._onPlayProgressCallback) {
                 options.whileplaying = function () {
                     // NOTE: callback functions of soundmanager provide the sound in "this" parameter
                     // so we can't alter "this"
-                    that._onWhilePlaying(this)
+                    that._onPlayProgress(this)
                 };
             }
 
@@ -166,8 +146,12 @@ class CurrentPlaylist {
     songs = [];
     currentIndex = -1;
 
+    constructor(name) {
+        this.name = name;
+    }
+
     _loadSongs() {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             if (this.songs.length > 0 && this.currentIndex + 1 < this.songs.length) {
                 // playlist songs already loaded
                 resolve();
@@ -199,6 +183,11 @@ class Player {
     @observable isPlaying = false;
     @observable playlist = null;
     @observable song = null;
+    @observable markedAsPlayed = false;
+
+    constructor(playlistName) {
+        this.playlist = new CurrentPlaylist(playlistName)
+    }
 
     _markAsPlayed(song) {
         let logger = loggerCreator(this._markAsPlayed.name, moduleLogger);
@@ -210,13 +199,20 @@ class Player {
         });
     }
 
+    _onPlayProgress(seconds) {
+        if(this.markedAsPlayed == false && seconds >= config.MARK_PLAYED_AFTER_SECONDS) {
+            this.markedAsPlayed = true;
+            this._markAsPlayed(this.song)
+        }
+    }
+
     _changeSong(song) {
         assert(this.song, "song is required");
 
         if (this.song != song || this.song == null) {
             this.song = song;
             this.song.onFinish(this.next.bind(this));
-            this.song.onPercentPlayed(config.MARK_PLAYED_PERCENT, this._markAsPlayed.bind(this, song));
+            this.song.onPlayProgress(this._onPlayProgress.bind(this));
         }
     }
 
@@ -258,6 +254,11 @@ class Player {
 
 class Store {
     @observable playlistsMetadata = new PlaylistsMetadata();
+    @observable player = null;
+
+    createPlayer(playlistName) {
+        this.player = new Player(playlistName);
+    }
 
 }
 
