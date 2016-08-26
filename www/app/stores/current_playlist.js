@@ -5,6 +5,7 @@ var moduleLogger = loggerCreator(__filename);
 import { observable, action } from "mobx";
 
 import { Song } from "./song"
+import * as backendMetadataApi from '../utils/backend_metadata_api'
 
 export class CurrentPlaylist {
     @observable name = null;
