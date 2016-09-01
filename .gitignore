@@ -7,3 +7,4 @@ www/.idea/
 www/node_modules
 .idea/
 *.ipynb
+npm-debug.log

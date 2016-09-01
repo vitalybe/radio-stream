@@ -23,11 +23,7 @@ config.plugins = config.plugins.concat([
 config.module.loaders.push({
     test: /\.js$/,
     loader: 'babel',
-    include: path.join(__dirname, 'app'),
-    query: {
-        presets: ['es2015', 'react', "stage-0"],
-        "plugins": [["jsx-control-statements"], ["transform-decorators-legacy"]]
-    }
+    include: path.join(__dirname, 'app')
 });
 
 module.exports = config;

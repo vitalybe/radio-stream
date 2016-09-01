@@ -21,25 +21,7 @@ config.output.publicPath = 'http://localhost:3000/dist/';
 config.module.loaders.push({
   test: /\.js$/,
   loader: 'babel',
-  include: path.join(__dirname, 'app'),
-  query: {
-      presets: ['es2015', 'react', "stage-0"],
-      "plugins": [
-          ["jsx-control-statements"],
-          ["transform-decorators-legacy"],
-          ['react-transform', {
-              transforms: [
-                  {
-                      transform: 'react-transform-hmr',
-                      imports: ['react'],
-                      locals: ['module']
-                  }, {
-                      transform: 'react-transform-catch-errors',
-                      imports: ['react', 'redbox-react']
-                  },
-              ],
-          }]]
-  }
+  include: path.join(__dirname, 'app')
 });
 
 config.plugins.push(
