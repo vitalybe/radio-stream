@@ -1,4 +1,4 @@
-import history from '../utils/history'
+import getHistory from '../utils/history'
 import storeContainer from './store_container'
 import ajaxConstructor from './ajax'
 
@@ -7,7 +7,7 @@ import { BEETS_SERVER } from './config'
 // redirect to login page on any 401
 let ajax = ajaxConstructor(BEETS_SERVER, function (response) {
     if (response.status == 401) {
-        history.pushState(null, '/login');
+        getHistory().pushState(null, '/login');
     }
 
     return response;

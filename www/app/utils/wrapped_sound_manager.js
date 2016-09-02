@@ -8,15 +8,17 @@ import loggerCreator from './logger'
 //noinspection JSUnresolvedVariable
 var logger = loggerCreator(__filename);
 
-logger.debug(`Running soundManager setup`);
-soundManager.setup({
-    url: require("file!../../lib/swf/soundmanager2.swf"),
-    flashVersion: 9, // optional: shiny features (default = 8)
-    // optional: ignore Flash where possible, use 100% HTML5 mode
-    preferFlash: false,
-    html5PollingInterval: 50,
-    debugMode: false
-});
+export function setup() {
+    logger.debug(`Running soundManager setup`);
+    soundManager.setup({
+        url: require("file!../../lib/swf/soundmanager2.swf"),
+        flashVersion: 9, // optional: shiny features (default = 8)
+        // optional: ignore Flash where possible, use 100% HTML5 mode
+        preferFlash: false,
+        html5PollingInterval: 50,
+        debugMode: false
+    });
+}
 
 export function getSoundBySong(song) {
     let flogger = loggerCreator(getSoundBySong.name, logger);

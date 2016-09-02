@@ -1,10 +1,17 @@
-let createHistory = null;
-if(__WEB__) {
-  createHistory = require('history/lib/createBrowserHistory');
-} else {
-  createHistory = require('history/lib/createHashHistory');
+let history = null;
+
+export default function getHistory() {
+    if (!history) {
+        let createHistoryFunc = null;
+        if (__WEB__) {
+            createHistoryFunc = require('history/lib/createBrowserHistory');
+        } else {
+            createHistoryFunc = require('history/lib/createHashHistory');
+        }
+
+        history = createHistoryFunc();
+    }
+
+    return history
 }
 
-const history = createHistory();
-
-export default history;

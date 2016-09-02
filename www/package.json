@@ -12,6 +12,9 @@
     "deploy-desktop-prod": "better-npm-run deploy-desktop-prod",
     "test": "jest"
   },
+  "jest": {
+    "automock": true
+  },
   "betterScripts": {
     "start-desktop": {
       "command": "electron ./",
