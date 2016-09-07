@@ -36,10 +36,10 @@ export class Song {
     }
 
     _onPlayProgress(sound) {
-        if(this._onPlayProgressCallback) {
-            let positionSeconds = Math.floor(sound.position/1000);
+        if (this._onPlayProgressCallback) {
+            let positionSeconds = Math.floor(sound.position / 1000);
 
-            if(this._lastPositionSeconds < positionSeconds) {
+            if (this._lastPositionSeconds < positionSeconds) {
                 this._lastPositionSeconds = positionSeconds;
 
                 this._onPlayProgressCallback(positionSeconds);
@@ -98,5 +98,9 @@ export class Song {
         this.loadSound().then(sound => {
             sound.pause()
         })
+    }
+
+    toString() {
+        return `Song[Artist=${this.artist} Title=${this.title}]`;
     }
 }
