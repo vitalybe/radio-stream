@@ -23,8 +23,12 @@ module.exports = clim = function (prefix, parent, patch) {
         prefix = undefined;
     }
 
-    if (prefix.lastIndexOf("\\") >= 0) {
-        prefix = prefix.substring(prefix.lastIndexOf("\\") + 1);
+    // if method is a path, take the last section (file name)
+    let lastSlashWin = prefix.lastIndexOf("\\");
+    let lastSlashUnix = prefix.lastIndexOf("/");
+    let lastSlash = lastSlashWin > -1 ? lastSlashWin : lastSlashUnix;
+    if(lastSlash > -1) {
+        prefix = prefix.substr(lastSlash+1)
     }
 
     if (patch && parent) {
@@ -98,6 +102,7 @@ function consoleProxy(ob) {
 }
 
 function createLogger(method, prefixes, noFormat) {
+
     return function () {
         // Handle formatting and circular objects like in the original
         var msg = noFormat ?
