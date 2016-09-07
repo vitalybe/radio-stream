@@ -19,7 +19,7 @@ class Ajax {
         return fetch(this.rootAddress + apiAddress, config)
             .then(this.responseMiddleware)
             .then(function (response) {
-                if (response.status >= 400) {
+                if (response.status < 200 || response.status >= 300) {
                     throw new Error("Bad response from server");
                 }
 
