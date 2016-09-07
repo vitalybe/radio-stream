@@ -10,10 +10,10 @@
     "start-desktop-dev": "better-npm-run start-desktop",
     "build-desktop-prod": "better-npm-run build-desktop-prod",
     "deploy-desktop-prod": "better-npm-run deploy-desktop-prod",
-    "test": "jest"
+    "test": "NODE_ENV=development jest"
   },
   "jest": {
-    "automock": true
+    "automock": false
   },
   "betterScripts": {
     "start-desktop": {
