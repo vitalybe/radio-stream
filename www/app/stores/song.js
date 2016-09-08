@@ -19,6 +19,9 @@ export class Song {
     @observable soundLoaded = false;
 
     constructor(songData) {
+        let logger = loggerCreator(this.constructor.name, loggerCreator);
+        logger.info(`start`);
+
         this.title = songData.title;
         this.id = songData.id;
         this.artist = songData.artist;
@@ -33,6 +36,8 @@ export class Song {
 
         this._onPlayProgressCallback = null;
         this._lastPositionSeconds = 0;
+        
+        logger.info(`new song: ${this.toString()}`);
     }
 
     _onPlayProgress(sound) {
@@ -48,16 +53,15 @@ export class Song {
     }
 
     @action loadSound() {
-        let logger = loggerCreator(this.loadSound.name, moduleLogger);
+        let logger = loggerCreator(this.loadSound.name, loggerCreator);
+        logger.info(`start - ${this.toString()}`);
 
-        logger.debug(`${this.toString()}`);
         // NOTE: This will not load sound again it was loaded before
         return wrappedSoundManager.loadSound(this)
             .then(function (sound) {
                 assert(sound && sound.loaded, "sound was not loaded");
-                return sound;
-            })
-            .then(sound => {
+                logger.info(`loaded successfully`);
+
                 this.soundLoaded = true;
                 return sound;
             });
@@ -72,17 +76,24 @@ export class Song {
     }
 
     playSound() {
+        let logger = loggerCreator(this.playSound.name, loggerCreator);
+        logger.info(`start`);
+
         let that = this;
 
         this.loadSound().then(sound => {
 
+            logger.info(`loaded`);
+
             let options = {};
 
             if (this._onFinishCallback) {
+                logger.info(`providing onfinish callback`);
                 options.onfinish = this._onFinishCallback
             }
 
             if (this._onPlayProgressCallback) {
+                logger.info(`providing whileplaying callback`);
                 options.whileplaying = function () {
                     // NOTE: callback functions of soundmanager provide the sound in "this" parameter
                     // so we can't alter "this"
@@ -90,11 +101,15 @@ export class Song {
                 };
             }
 
+            logger.info(`playing sound`);
             sound.play(options);
         });
     }
 
     pauseSound() {
+        let logger = loggerCreator(this.pauseSound.name, loggerCreator);
+        logger.info(`start`);
+
         this.loadSound().then(sound => {
             sound.pause()
         })
