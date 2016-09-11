@@ -13,7 +13,6 @@
     "test": "NODE_ENV=development jest"
   },
   "jest": {
-    "automock": false
   },
   "betterScripts": {
     "start-desktop": {

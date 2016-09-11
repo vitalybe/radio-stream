@@ -19,7 +19,7 @@ export class Song {
     @observable soundLoaded = false;
 
     constructor(songData) {
-        let logger = loggerCreator(this.constructor.name, loggerCreator);
+        let logger = loggerCreator(this.constructor.name, moduleLogger);
         logger.info(`start`);
 
         this.title = songData.title;
@@ -53,7 +53,7 @@ export class Song {
     }
 
     @action loadSound() {
-        let logger = loggerCreator(this.loadSound.name, loggerCreator);
+        let logger = loggerCreator(this.loadSound.name, moduleLogger);
         logger.info(`start - ${this.toString()}`);
 
         // NOTE: This will not load sound again it was loaded before
@@ -76,7 +76,7 @@ export class Song {
     }
 
     playSound() {
-        let logger = loggerCreator(this.playSound.name, loggerCreator);
+        let logger = loggerCreator(this.playSound.name, moduleLogger);
         logger.info(`start`);
 
         let that = this;
@@ -107,7 +107,7 @@ export class Song {
     }
 
     pauseSound() {
-        let logger = loggerCreator(this.pauseSound.name, loggerCreator);
+        let logger = loggerCreator(this.pauseSound.name, moduleLogger);
         logger.info(`start`);
 
         this.loadSound().then(sound => {

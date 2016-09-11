@@ -5,26 +5,27 @@ var moduleLogger = loggerCreator(__filename);
 import { observable, action } from "mobx";
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
-class PlaylistMetadata {
+export class PlaylistMetadata {
     @observable name = null;
 }
 
-class PlaylistsMetadata {
+export class PlaylistMetadataCollection {
     @observable items = [];
     @observable loading = false;
     @observable error = false;
 
     @action
-    loadAvailablePlaylists() {
-        let logger = loggerCreator(this.loadAvailablePlaylists.name, loggerCreator);
-        logger.debug("Loading...");
+    load() {
+        let logger = loggerCreator(this.load.name, moduleLogger);
+        logger.info(`start`);
 
         this.items.clear();
         this.loading = true;
         this.error = false;
-        backendMetadataApi.playlists()
+        logger.info(`loading playlists`);
+        return backendMetadataApi.playlists()
             .then(action((playlists) => {
-                logger.debug(`Success`);
+                logger.info(`got playlists: ${playlists}`);
 
                 let newPlaylists = playlists.map(playlistName => {
                     let playlistMetadata = new PlaylistMetadata();
@@ -36,9 +37,10 @@ class PlaylistsMetadata {
                 this.loading = false;
             }))
             .catch(action(err => {
-                logger.error(`Failed: ${err}`);
                 this.error = true;
                 this.loading = false;
+
+                throw err;
             }));
     }
 }
