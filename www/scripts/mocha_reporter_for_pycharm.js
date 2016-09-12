@@ -1,3 +1,7 @@
+let fs = require("fs");
+let path = require("path");
+let process = require("process");
+
 var Tree = require('./mochaIntellijTree')
   , util = require('./mochaIntellijUtil')
   , treeUtil = require('./mochaTreeUtil')
@@ -85,6 +89,18 @@ function extractErrInfo(err) {
       message: message
     }
   }
+
+  // replace relative with absolute path for pycharm
+  var re = /\(([\w\/]+\.js)(:\d+:\d+)\)/g;
+  stack = stack.replace(re, function(match, filename, lineNumbers) {
+    console.log(`filename: ${filename}`)
+
+    let absolute_filename = path.join(process.cwd(), filename);
+    console.log(`absolute: ${absolute_filename}`)
+
+    return "\n"+absolute_filename+lineNumbers;
+});
+
   var index = stack.indexOf(message);
   if (index >= 0) {
     message = stack.slice(0, index + message.length);
@@ -96,7 +112,7 @@ function extractErrInfo(err) {
   }
   return {
     message : message,
-    stack : stack
+    stack : stack // fs.readdirSync(".").toString()
   }
 }
 
