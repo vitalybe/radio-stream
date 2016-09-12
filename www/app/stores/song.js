@@ -4,7 +4,7 @@ var moduleLogger = loggerCreator(__filename);
 
 import { observable, action } from "mobx";
 import assert from "../utils/assert"
-import * as wrappedSoundManager from '../utils/wrapped_sound_manager'
+let wrappedSoundManager = require('../utils/wrapped_sound_manager')
 
 export class Song {
     id = null;
