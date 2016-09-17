@@ -1,24 +1,49 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import classNames from 'classnames';
 
-import { Navigation } from '../components/navigation.js'
 import { observer } from "mobx-react"
-import store from "../stores/store"
 
 @observer
 export class StartupPage extends Component {
     constructor(props, context) {
         super(props, context);
-        if (!store.playlistsMetadata.loaded) {
-            store.playlistsMetadata.loadAvailablePlaylists();
-        }
+    }
+
+    //noinspection JSUnusedGlobalSymbols
+    componentDidMount() {
+        this.props.playlists.load();
     }
 
     render() {
+        let playlists = this.props.playlists;
+
         return (
-            <div>
-                <h1>Music stream</h1>
-                <Navigation playlists={store.playlistsMetadata}/>
+            <div className="playlists">
+                <h1 className="header">Playlists</h1>
+                <div className="content">
+                    <Choose>
+                        <When condition={playlists.loading}>
+                            <div className="hexdots-loader loader">
+                                Loading...
+                            </div>
+                        </When>
+                        <Otherwise>
+                            <ul>
+                                {playlists.items.map(playlist => {
+                                    return (
+                                        <li key={playlist.name}
+                                            className={classNames(["playlist"])}>
+
+                                            <i className="icon fa fa-music"/>
+                                            <a href="#" onClick={() => playlists.selectPlaylist(playlist)}>
+                                                {playlist.name}
+                                            </a>
+                                        </li>)
+                                })}
+                            </ul>
+                        </Otherwise>
+                    </Choose>
+                </div>
             </div>
         );
     }

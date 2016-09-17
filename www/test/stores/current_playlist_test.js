@@ -13,7 +13,7 @@ const TITLE_2 = "T2";
 const ARTIST_2 = "A2";
 const ALBUM_2 = "M2";
 
-describe('CurrentPlaylist', () => {
+describe('Playlist', () => {
 
     jsdom();
     let self = {};
@@ -31,15 +31,15 @@ describe('CurrentPlaylist', () => {
         }));
 
         // SUT
-        let CurrentPlaylistModule = proxyquire("../../app/stores/current_playlist.js", {
+        let PlaylistModule = proxyquire("../../app/stores/playlist.js", {
             "../utils/backend_metadata_api": self.backendMetadataApiStub}
         );
 
-        self.CurrentPlaylist = CurrentPlaylistModule.CurrentPlaylist;
+        self.Playlist = PlaylistModule.default;
     });
 
     it('next songs returns and reloads correctly', () => {
-        let playlist = new self.CurrentPlaylist();
+        let playlist = new self.Playlist();
 
         return playlist.nextSong()
             .then(song => {
@@ -64,7 +64,7 @@ describe('CurrentPlaylist', () => {
     });
 
     it('peek song returns the current song', () => {
-        let playlist = new self.CurrentPlaylist();
+        let playlist = new self.Playlist();
 
         return playlist.peekNextSong()
             .then(song => {

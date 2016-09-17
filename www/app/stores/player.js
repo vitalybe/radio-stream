@@ -2,21 +2,22 @@ import loggerCreator from '../utils/logger'
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator(__filename);
 
-import { observable, action } from "mobx";
+import { observable, action, computed } from "mobx";
 import assert from "../utils/assert"
 import * as config from "../utils/config"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
-
-import { CurrentPlaylist } from "./current_playlist"
 
 export class Player {
     @observable isPlaying = false;
     @observable currentPlaylist = null;
     @observable song = null;
-    @observable markedAsPlayed = false;
+    @observable isMarkedAsPlayed = false;
 
-    constructor(playlistName) {
-        this.currentPlaylist = new CurrentPlaylist(playlistName)
+    onStopCallback = null;
+
+    constructor(playlist, onStopCallback) {
+        this.currentPlaylist = playlist;
+        this.onStopCallback = onStopCallback;
     }
 
     _markAsPlayed(song) {
@@ -24,25 +25,15 @@ export class Player {
 
         logger.debug(`${song.toString()} in progress`);
         return backendMetadataApi.updateLastPlayed(song.id).then(() => {
-            song.markedAsPlayed = true;
+            song.isMarkedAsPlayed = true;
             logger.debug(`${song.toString()} complete`);
         });
     }
 
     _onPlayProgress(seconds) {
-        if(this.markedAsPlayed == false && seconds >= config.MARK_PLAYED_AFTER_SECONDS) {
-            this.markedAsPlayed = true;
+        if (this.isMarkedAsPlayed == false && seconds >= config.MARK_PLAYED_AFTER_SECONDS) {
+            this.isMarkedAsPlayed = true;
             this._markAsPlayed(this.song)
-        }
-    }
-
-    _changeSong(song) {
-        assert(this.song, "song is required");
-
-        if (this.song != song || this.song == null) {
-            this.song = song;
-            this.song.onFinish(this.next.bind(this));
-            this.song.onPlayProgress(this._onPlayProgress.bind(this));
         }
     }
 
@@ -64,20 +55,46 @@ export class Player {
         }
     }
 
+    @action togglePlayPause() {
+        if(this.isPlaying) {
+            this.pause();
+        } else {
+            this.play();
+        }
+    }
+
     @action next() {
-        assert(this.song && this.currentPlaylist, "invalid state");
+        assert(this.currentPlaylist, "invalid state");
 
         this.currentPlaylist.nextSong()
             .then(action(nextSong => {
-                this._changeSong(nextSong);
-                return this.song.play();
+                if (this.song != nextSong || this.song == null) {
+                    this.song = nextSong;
+                    this.song.subscribePlayProgress(this._onPlayProgress.bind(this));
+                    this.song.subscribeFinish(this.next.bind(this));
+                }
+
+                return this.song.playSound();
             }))
             .then(() => {
                 return this.currentPlaylist.peekNextSong();
             })
             .then((peekedSong) => {
-                peekedSong.loadSound();
+                peekedSong.load();
             })
 
+    }
+
+    @action stop() {
+        this.pause();
+        this.onStopCallback()
+    }
+
+    @computed get isLoading() {
+        if (this.song && this.song.soundLoaded) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

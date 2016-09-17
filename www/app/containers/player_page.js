@@ -1,0 +1,116 @@
+import loggerCreator from '../utils/logger'
+//noinspection JSUnresolvedVariable
+var moduleLogger = loggerCreator(__filename);
+
+const infoImage = require("../images/info.png");
+
+import React, { Component } from 'react';
+import { observer } from "mobx-react"
+import classNames from 'classnames';
+import moment from 'moment';
+
+import assert from "../utils/assert"
+
+import * as idleRedirectListener from '../utils/idle_redirect_listener';
+
+@observer
+export class PlayerPage extends Component {
+
+    constructor(props, context) {
+        super(props, context);
+    }
+
+    //noinspection JSUnusedGlobalSymbols
+    componentDidMount() {
+        // TODO: Move idleRedirectListener to view independent service
+        idleRedirectListener.start();
+    }
+
+    //noinspection JSUnusedGlobalSymbols
+    componentWillUnmount() {
+    }
+
+    onPlayPause() {
+        let player = this.props.player;
+        player.togglePlayPause();
+    }
+
+    onNext() {
+        this.props.player.next();
+    }
+
+    onChangeRating(newRating) {
+        let logger = loggerCreator(this.onChangeRating.name, moduleLogger);
+        logger.info(`start`);
+
+        let song = this.props.player.song;
+        if(song) {
+            song.changeRating(newRating);
+        } else {
+            logger.error("song doesn't exist")
+        }
+    }
+
+    render() {
+        let player = this.props.player;
+        let song = player.song;
+
+        let playPauseClass = player.isPlaying ? "pause" : "play";
+        let ratingStars = null;
+        if (song) {
+            let starCount = song.rating / 20;
+            ratingStars = _.range(5).map(starIndex => {
+                let starClass = starCount > starIndex ? "star-full" : "star-empty";
+                let newRating = (starIndex + 1) * 20;
+                return <i key={starIndex} className={classNames([starClass])}
+                          onClick={() => this.onChangeRating(newRating)}/>;
+            });
+        }
+
+        return (
+            <div className="playlist-page">
+                <div className="main">
+                    <div className="background"></div>
+                    <Choose>
+                        <When condition={player.isLoading}>
+                            <div className="loader hexdots-loader"></div>
+                        </When>
+                        <Otherwise>
+                            <div className="player">
+                                <div className="centre-column">
+                                    <div className="art">
+                                        <div className="metadata">
+                                            <div><img className="info" src={infoImage}/></div>
+                                            <div><b>Last
+                                                played:</b> {moment.unix(song.lastplayed).fromNow()}
+                                            </div>
+                                            <div><b>Play count:</b> {song.playcount}</div>
+                                            <div><b>Marked as played:</b> {player.isMarkedAsPlayed ? "✔" : "x"}
+                                            </div>
+                                        </div>
+                                        <If condition={song.imageUrl}>
+                                            <img className="artist" src={song.imageUrl} alt=""/>
+                                        </If>
+                                    </div>
+                                    <div className="stars">{ratingStars}</div>
+                                    <div className="names">
+                                        <div>{song.title}</div>
+                                        <div className="artist-name">{song.artist}</div>
+                                        <div>{song.album}</div>
+                                    </div>
+                                    <div className="control-buttons">
+                                        <button className={classNames(["play-pause", playPauseClass])}
+                                                onClick={this.onPlayPause.bind(this)}/>
+                                        <button className="next" onClick={this.onNext.bind(this)}/>
+                                    </div>
+                                </div>
+                                <div className="current-playlist" onClick={() => {player.stop()}}>
+                                </div>
+                            </div>
+                        </Otherwise>
+                    </Choose>
+                </div>
+            </div>
+        );
+    }
+}

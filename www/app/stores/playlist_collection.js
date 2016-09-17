@@ -3,16 +3,19 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator(__filename);
 
 import { observable, action } from "mobx";
+import Playlist from "./playlist"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
-export class PlaylistMetadata {
-    @observable name = null;
-}
-
-export class PlaylistMetadataCollection {
+export class PlaylistCollection {
     @observable items = [];
     @observable loading = false;
     @observable error = false;
+
+    _onPlaylistSelectedCallback = null;
+
+    constructor(onPlaylistSelectedCallback) {
+        this._onPlaylistSelectedCallback = onPlaylistSelectedCallback;
+    }
 
     @action
     load() {
@@ -28,9 +31,7 @@ export class PlaylistMetadataCollection {
                 logger.info(`got playlists: ${playlists}`);
 
                 let newPlaylists = playlists.map(playlistName => {
-                    let playlistMetadata = new PlaylistMetadata();
-                    playlistMetadata.name = playlistName;
-                    return playlistMetadata;
+                    return new Playlist(playlistName);
                 });
 
                 this.items = observable(newPlaylists);
@@ -42,5 +43,9 @@ export class PlaylistMetadataCollection {
 
                 throw err;
             }));
+    }
+
+    selectPlaylist(playlistName) {
+        this._onPlaylistSelectedCallback(playlistName)
     }
 }

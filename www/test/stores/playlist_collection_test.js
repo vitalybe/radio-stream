@@ -6,7 +6,7 @@ var jsdom = require('mocha-jsdom');
 const PLAYLIST_1 = "PLAYLIST_1";
 const PLAYLIST_2 = "PLAYLIST_2";
 
-describe('PlaylistMetadataCollection', () => {
+describe('PlaylistCollection', () => {
 
     jsdom();
     let self = {};
@@ -23,21 +23,21 @@ describe('PlaylistMetadataCollection', () => {
         }));
 
         // SUT
-        let PlaylistMetadataModule = proxyquire("../../app/stores/playlist_metadata", {
+        let PlaylistCollectionModule = proxyquire("../../app/stores/playlist_collection", {
             "../utils/backend_metadata_api": self.backendMetadataApiStub}
         );
 
-        self.PlaylistMetadataCollection = PlaylistMetadataModule.PlaylistMetadataCollection;
+        self.PlaylistCollection = PlaylistCollectionModule.PlaylistCollection;
     });
 
     it('returns playlist names', () => {
-        let playlistMetadataCollection = new self.PlaylistMetadataCollection();
+        let playlistCollection = new self.PlaylistCollection();
 
-        return playlistMetadataCollection.load()
+        return playlistCollection.load()
             .then( () => {
-                expect(playlistMetadataCollection.items.length).to.be.equal(2);
-                expect(playlistMetadataCollection.items[0].name).to.be.equal(PLAYLIST_1);
-                expect(playlistMetadataCollection.items[1].name).to.be.equal(PLAYLIST_2);
+                expect(playlistCollection.items.length).to.be.equal(2);
+                expect(playlistCollection.items[0].name).to.be.equal(PLAYLIST_1);
+                expect(playlistCollection.items[1].name).to.be.equal(PLAYLIST_2);
             })
     });
 

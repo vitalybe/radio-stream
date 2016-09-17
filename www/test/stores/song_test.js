@@ -12,7 +12,7 @@ const ALBUM = "M1";
 describe('Song', () => {
 
     jsdom();
-    let self = {}
+    let self = {};
 
     beforeEach(() => {
         self.Song = proxyquire('../../app/stores/song.js', { '../utils/wrapped_sound_manager': {} }).Song;

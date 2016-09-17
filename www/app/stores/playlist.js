@@ -7,7 +7,7 @@ import { observable, action } from "mobx";
 import { Song } from "./song"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
-export class CurrentPlaylist {
+export default class Playlist {
     @observable name = null;
     songs = [];
     currentIndex = 0;
@@ -28,7 +28,7 @@ export class CurrentPlaylist {
                 resolve();
             } else {
                 logger.info(`reloading songs`);
-                return backendMetadataApi.playlistSongs().then(songsData => {
+                return backendMetadataApi.playlistSongs(this.name).then(songsData => {
                     logger.info(`loaded songs: ${songsData.length}`);
                     this.songs = songsData.map(songData => new Song(songData));
                     this.currentIndex = 0;

@@ -1,6 +1,5 @@
 import { soundManager } from 'soundmanager2';
 import WrappedSound from './wrapped_sound.js'
-import { formatSong } from '../utils/util'
 
 import { MUSIC_SERVER } from './config'
 
@@ -22,7 +21,7 @@ export function setup() {
 
 export function getSoundBySong(song) {
     let flogger = loggerCreator(getSoundBySong.name, logger);
-    flogger.debug(formatSong(song));
+    flogger.debug(song.toString());
 
     let sound = soundManager.getSoundById(song.id);
     if (sound) {
@@ -42,7 +41,7 @@ let loadingSongs = {};
 // resolves to WrappedSound
 export function loadSound(song) {
     let flogger = loggerCreator(loadSound.name, logger);
-    flogger.debug(formatSong(song));
+    flogger.debug(song.toString());
 
     let loadingPromise = null;
     if (loadingSongs[song.id]) {
@@ -95,7 +94,7 @@ export function stopAll() {
 
 export function fastForward(song) {
     let fLogger = loggerCreator(fastForward.name, logger);
-    fLogger.debug(formatSong(song));
+    fLogger.debug(song.toString());
 
     let sound = getSoundBySong(song);
     sound.setPosition(sound.duration - 10000);

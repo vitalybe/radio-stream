@@ -31,8 +31,8 @@ export function scrobble(song) {
     });
 }
 
-export function getArtist(artist) {
-    let logger = loggerCreator(getArtist.name, moduleLogger);
+export function getArtistImage(artist) {
+    let logger = loggerCreator(getArtistImage.name, moduleLogger);
     logger.debug("Start");
 
     var params = {artist, autocorrect: 1};
@@ -40,7 +40,7 @@ export function getArtist(artist) {
         lastFmSdk.artist.getInfo(params, {
             success: function (data) {
                 logger.info("Done");
-                resolve(data.artist);
+                resolve(data.artist.image[3]["#text"]);
             }, error: function (code, message) {
                 logger.error(`Failed - ${message}`);
                 reject(message);

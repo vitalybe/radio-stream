@@ -1,5 +1,4 @@
 import history from './history'
-import storeContainer, { observeStore } from './store_container';
 import loggerCreator from './logger'
 
 var observer = null;
@@ -11,26 +10,27 @@ const REDIRECT_AFTER = 180*60*1000;
 const CHECK_EVERY = 60*1000;
 
 export function start() {
-  observer = observeStore(state => ({isPlaying: state.isPlaying}), data => {
-    let logger = loggerCreator("observer", moduleLogger);
-    if (!data.isPlaying) {
-      logger.debug("player stopped - starting interval");
-      var lastPlayStopDate = new Date();
-
-      checkInterval = setInterval(() => {
-        let logger = loggerCreator("interval", moduleLogger);
-        var now = new Date();
-        if (lastPlayStopDate && now - lastPlayStopDate > REDIRECT_AFTER) {
-          logger.debug("player was paused for too long - redirecting to index");
-          history.pushState(null, '/');
-        }
-      }, CHECK_EVERY);
-    } else {
-      logger.debug("player started - clearing interval");
-      clearInterval(checkInterval);
-      checkInterval = null;
-    }
-  });
+  // TODO: Merge with idle pause
+  //observer = observeStore(state => ({isPlaying: state.isPlaying}), data => {
+  //  let logger = loggerCreator("observer", moduleLogger);
+  //  if (!data.isPlaying) {
+  //    logger.debug("player stopped - starting interval");
+  //    var lastPlayStopDate = new Date();
+  //
+  //    checkInterval = setInterval(() => {
+  //      let logger = loggerCreator("interval", moduleLogger);
+  //      var now = new Date();
+  //      if (lastPlayStopDate && now - lastPlayStopDate > REDIRECT_AFTER) {
+  //        logger.debug("player was paused for too long - redirecting to index");
+  //        history.pushState(null, '/');
+  //      }
+  //    }, CHECK_EVERY);
+  //  } else {
+  //    logger.debug("player started - clearing interval");
+  //    clearInterval(checkInterval);
+  //    checkInterval = null;
+  //  }
+  //});
 
 }
 
