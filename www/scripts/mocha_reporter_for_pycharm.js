@@ -91,12 +91,12 @@ function extractErrInfo(err) {
   }
 
   // replace relative with absolute path for pycharm
-  var re = /\(([\w\/]+\.js)(:\d+:\d+)\)/g;
+  var re = /[\(]?([\w\/]+\.js)(:\d+:\d+)[\)]?/g;
   stack = stack.replace(re, function(match, filename, lineNumbers) {
-    console.log(`filename: ${filename}`)
+    //console.log(`filename: ${filename}`)
 
     let absolute_filename = path.join(process.cwd(), filename);
-    console.log(`absolute: ${absolute_filename}`)
+    //console.log(`absolute: ${absolute_filename}`)
 
     return "\n"+absolute_filename+lineNumbers;
 });

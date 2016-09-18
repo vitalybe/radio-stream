@@ -1,4 +1,4 @@
-var proxyquire = require('proxyquire');
+var proxyquire = require('proxyquire').noCallThru();
 var sinon = require('sinon');
 var expect = require('chai').expect;
 var jsdom = require('mocha-jsdom');
