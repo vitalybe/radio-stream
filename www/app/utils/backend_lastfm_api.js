@@ -33,7 +33,7 @@ export function scrobble(song) {
 
 export function getArtistImage(artist) {
     let logger = loggerCreator(getArtistImage.name, moduleLogger);
-    logger.debug("Start");
+    logger.info("Start");
 
     var params = {artist, autocorrect: 1};
     return new Promise(function (resolve, reject) {

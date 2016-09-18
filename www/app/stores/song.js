@@ -6,7 +6,7 @@ import { observable, action } from "mobx";
 import assert from "../utils/assert"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 import * as backendLastFm from '../utils/backend_lastfm_api'
-let wrappedSoundManager = require('../utils/wrapped_sound_manager');
+import * as wrappedSoundManager from '../utils/wrapped_sound_manager'
 
 export class Song {
     id = null;
@@ -16,12 +16,10 @@ export class Song {
     playcount = null;
     lastplayed = null;
     path = null;
-
     @observable rating = null;
 
-    @observable soundLoaded = false;
-
-    @observable imageUrl = null;
+    @observable loadedSound = null;
+    @observable loadedImageUrl = null;
 
     constructor(songData) {
         let logger = loggerCreator(this.constructor.name, moduleLogger);
@@ -36,7 +34,6 @@ export class Song {
         this.playcount = songData.playcount;
         this.lastplayed = songData.lastplayed;
         this.path = songData.path;
-        this.soundLoaded = false;
 
         this._onFinishCallback = null;
         this._onPlayProgressCallback = null;
@@ -76,8 +73,7 @@ export class Song {
                 assert(sound && sound.loaded, "sound was not loaded");
                 logger.info(`loaded successfully`);
 
-                this.soundLoaded = true;
-                return sound;
+                this.loadedSound = sound;
             });
     }
 
@@ -89,22 +85,20 @@ export class Song {
             return Promise.resolve();
         } else {
             return backendLastFm.getArtistImage(this.artist).then(imageUrl => {
-                this.imageUrl = imageUrl;
+                this.loadedImageUrl = imageUrl;
             });
         }
 
 
     }
 
-    @action load() {
+    load() {
         let logger = loggerCreator(this.load.name, moduleLogger);
         logger.info(`start`);
 
-        return this._loadSound().then(sound => {
+        return this._loadSound().then(() => {
             return this._loadImage().catch(err => {
                 logger.error(`failed to load image: ${err}`);
-            }).then(() => {
-                return sound;
             })
         })
     }
@@ -115,7 +109,7 @@ export class Song {
 
         let that = this;
 
-        this.load().then(sound => {
+        return this.load().then(() => {
 
             logger.info(`loaded`);
 
@@ -136,7 +130,7 @@ export class Song {
             }
 
             logger.info(`playing sound`);
-            sound.play(options);
+            this.loadedSound.play(options);
         });
     }
 
@@ -144,8 +138,8 @@ export class Song {
         let logger = loggerCreator(this.pauseSound.name, moduleLogger);
         logger.info(`start`);
 
-        this.load().then(sound => {
-            sound.pause()
+        this.load().then(() => {
+            this.loadedSound.pause()
         })
     }
 

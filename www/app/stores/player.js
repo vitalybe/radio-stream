@@ -91,7 +91,7 @@ export class Player {
     }
 
     @computed get isLoading() {
-        if (this.song && this.song.soundLoaded) {
+        if (this.song && this.song.loadedSound) {
             return false;
         } else {
             return true;

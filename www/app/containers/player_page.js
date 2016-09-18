@@ -88,8 +88,8 @@ export class PlayerPage extends Component {
                                             <div><b>Marked as played:</b> {player.isMarkedAsPlayed ? "✔" : "x"}
                                             </div>
                                         </div>
-                                        <If condition={song.imageUrl}>
-                                            <img className="artist" src={song.imageUrl} alt=""/>
+                                        <If condition={song.loadedImageUrl}>
+                                            <img className="artist" src={song.loadedImageUrl} alt=""/>
                                         </If>
                                     </div>
                                     <div className="stars">{ratingStars}</div>

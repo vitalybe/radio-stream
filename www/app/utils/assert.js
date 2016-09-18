@@ -1,5 +1,5 @@
 export default function assert(condition, message) {
     if (!condition) {
-        throw message || "Assertion failed";
+        throw Error(message || "Assertion failed");
     }
 }
