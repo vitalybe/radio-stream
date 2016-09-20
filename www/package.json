@@ -10,7 +10,7 @@
     "start-desktop-dev": "better-npm-run start-desktop",
     "build-desktop-prod": "better-npm-run build-desktop-prod",
     "deploy-desktop-prod": "better-npm-run deploy-desktop-prod",
-    "test": "mocha --compilers js:babel-register"
+    "test": "mocha --compilers js:babel-register --recursive"
   },
   "betterScripts": {
     "start-desktop": {
