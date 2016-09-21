@@ -3,7 +3,7 @@ var sinon = require('sinon');
 var expect = require('chai').expect;
 var jsdom = require('mocha-jsdom');
 
-import { generateMockSong } from '../../__tests_shared__/mock_data'
+import { generateMockSong } from '../_shared/mock_data'
 
 const TITLE_1 = "T1";
 const ARTIST_1 = "A1";

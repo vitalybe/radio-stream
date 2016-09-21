@@ -4,7 +4,7 @@ var mobx = require('mobx');
 var expect = require('chai').expect;
 var jsdom = require('mocha-jsdom');
 
-import { generateMockSong } from '../../__tests_shared__/mock_data'
+import { generateMockSong } from '../_shared/mock_data'
 
 const TITLE = "T1";
 const ARTIST = "A1";
