@@ -38,16 +38,20 @@ describe('Song', () => {
         };
 
         // SUT
-        let SongModule = proxyquire('../../app/stores/song.js', {
-            '../utils/wrapped_sound_manager': self.stubWrappedSoundManager,
-            '../utils/backend_lastfm_api': self.stubBackendLastFm
-        });
-        self.Song = SongModule.Song;
+        self.sutNewSong = (...args) => {
+            let module = proxyquire('../../app/stores/song.js', {
+                '../utils/wrapped_sound_manager': self.stubWrappedSoundManager,
+                '../utils/backend_lastfm_api': self.stubBackendLastFm
+            });
+
+            return new module.Song(...args);
+        }
     });
 
     it('initialization', () => {
         console.log("song initialization");
-        let song = new self.Song(generateMockSong(ARTIST, ALBUM, TITLE));
+        let song = self.sutNewSong(generateMockSong(ARTIST, ALBUM, TITLE));
+
         expect(song.title).to.equal(TITLE);
         expect(song.artist).to.equal(ARTIST);
         expect(song.album).to.equal(ALBUM)
@@ -55,7 +59,7 @@ describe('Song', () => {
 
     describe("playsound", () => {
         it('happy path', () => {
-            let song = new self.Song(generateMockSong(ARTIST, ALBUM, TITLE));
+            let song = self.sutNewSong(generateMockSong(ARTIST, ALBUM, TITLE));
             return song.playSound().then(() => {
                 expect(self.stubWrappedSoundManager.loadSound.callCount).to.equal(1);
                 expect(self.stubBackendLastFm.getArtistImage.callCount).to.equal(1);
@@ -64,19 +68,19 @@ describe('Song', () => {
         });
 
         it('loadSound fails', () => {
-            self.stubWrappedSoundManager.loadSound = sinon.stub().returns(Promise.reject(new Error()));
+            let ERROR = new Error();
+            self.stubWrappedSoundManager.loadSound = sinon.stub().returns(Promise.reject(ERROR));
 
-            let song = new self.Song(generateMockSong(ARTIST, ALBUM, TITLE));
-
+            let song = self.sutNewSong(generateMockSong(ARTIST, ALBUM, TITLE));
             return song.playSound().then(() => {
-                expect(self.stubWrappedSoundManager.loadSound.callCount).to.equal(1);
-                expect(self.stubBackendLastFm.getArtistImage.callCount).to.equal(1);
-                expect(self.stubWrappedSound.play.callCount).to.equal(1);
+                assert.fail(0, 1, 'Exception not thrown');
+            }).catch(err => {
+                expect(err).to.equal(ERROR)
             });
         });
 
         it('subscribe finish', () => {
-            let song = new self.Song(generateMockSong(ARTIST, ALBUM, TITLE));
+            let song = self.sutNewSong(generateMockSong(ARTIST, ALBUM, TITLE));
             let finishCallbackStub = sinon.stub();
             song.subscribeFinish(finishCallbackStub);
             return song.playSound().then(() => {
@@ -90,7 +94,7 @@ describe('Song', () => {
         });
 
         it('subscribe progress', () => {
-            let song = new self.Song(generateMockSong(ARTIST, ALBUM, TITLE));
+            let song = self.sutNewSong(generateMockSong(ARTIST, ALBUM, TITLE));
             let progressCallbackStub = sinon.stub();
             song.subscribePlayProgress(progressCallbackStub);
             return song.playSound().then(() => {
