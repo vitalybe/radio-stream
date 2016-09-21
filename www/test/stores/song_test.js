@@ -68,14 +68,24 @@ describe('Song', () => {
         });
 
         it('loadSound fails', () => {
-            let ERROR = new Error();
-            self.stubWrappedSoundManager.loadSound = sinon.stub().returns(Promise.reject(ERROR));
+            let STUB_ERROR = new Error();
+            self.stubWrappedSoundManager.loadSound = sinon.stub().returns(Promise.reject(STUB_ERROR));
 
             let song = self.sutNewSong(generateMockSong(ARTIST, ALBUM, TITLE));
             return song.playSound().then(() => {
-                assert.fail(0, 1, 'Exception not thrown');
+                throw "Exception not thrown"
             }).catch(err => {
-                expect(err).to.equal(ERROR)
+                expect(err).to.equal(STUB_ERROR)
+            });
+        });
+
+        it('getArtistImage fails', () => {
+            let STUB_ERROR = "IMAGE_ERROR";
+            self.stubBackendLastFm.getArtistImage = sinon.stub().returns(Promise.reject(STUB_ERROR));
+
+            let song = self.sutNewSong(generateMockSong(ARTIST, ALBUM, TITLE));
+            return song.playSound().then(() => {
+                expect(true).to.equal(true);
             });
         });
 
