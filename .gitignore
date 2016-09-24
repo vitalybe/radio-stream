@@ -1,10 +1,6 @@
 server/.idea
 server/output.log
 *.pyc
-www2
-www3
-www/.idea/
-www/node_modules
 .idea/
 *.ipynb
 npm-debug.log
