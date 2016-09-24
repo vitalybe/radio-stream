@@ -38,7 +38,7 @@ export class Player {
     }
 
     @action pause() {
-        assert(this.song && this.isPlaying && this.currentPlaylist, "invalid state");
+        assert(this.song && this.currentPlaylist, "invalid state");
 
         this.isPlaying = false;
         this.song.pauseSound();
