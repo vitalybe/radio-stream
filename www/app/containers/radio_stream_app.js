@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { observer } from "mobx-react"
 import store from "../stores/store"
 
-import { StartupPage } from './startup_page';
+import { PlaylistsPage } from './playlists_page';
 import { PlayerPage } from './player_page';
 
 @observer
@@ -22,7 +22,7 @@ export default class RadioStreamApp extends Component {
                         <PlayerPage player={this.store.player} />
                     </When>
                     <Otherwise>
-                        <StartupPage playlists={this.store.playlistMetadataCollection} />
+                        <PlaylistsPage playlists={this.store.playlistMetadataCollection} />
                     </Otherwise>
                 </Choose>
             </div>

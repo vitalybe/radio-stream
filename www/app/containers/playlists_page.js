@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { observer } from "mobx-react"
 
 @observer
-export class StartupPage extends Component {
+export class PlaylistsPage extends Component {
     constructor(props, context) {
         super(props, context);
     }
