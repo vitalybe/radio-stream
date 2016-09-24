@@ -28,7 +28,7 @@ function handleQuitting() {
     });
 }
 function handleTitleChanges() {
-    let originalTitle = "Music stream";
+    let originalTitle = "Personal Radio Stream";
 
     ipcMain.on('song-changed', function (event, newSong) {
         if (newSong) {
@@ -85,7 +85,7 @@ function handleGlobalShortcuts() {
         const Growl = require('node-notifier').Growl;
 
         var notifier = new Growl({
-            name: 'Music Stream', // Defaults as 'Node'
+            name: 'Personal Radio Stream', // Defaults as 'Node'
             host: 'localhost',
             port: 23053
         });
