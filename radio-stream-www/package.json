@@ -1,6 +1,6 @@
 {
-  "name": "music-stream-www",
-  "productName": "music-stream-www",
+  "name": "RadioStream",
+  "productName": "Radio Stream",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -17,17 +17,17 @@
       "command": "electron ./",
       "env": {
         "HOT": 1,
-        "NODE_ENV": "dev"
+        "NODE_ENV": "development"
       }
     },
     "build-desktop-prod": {
       "command": "node package.desktop.prod.js",
       "env": {
-        "NODE_ENV": "prod"
+        "NODE_ENV": "production"
       }
     },
     "deploy-desktop-prod": {
-      "command": "rm -rf /Applications/music-stream-www.app && mv release/darwin-x64/music-stream-www-darwin-x64/music-stream-www.app /Applications/music-stream-www.app"
+      "command": "rm -rf /Applications/Radio Stream.app && mv release/darwin-x64/Radio Stream-darwin-x64/Radio Stream.app /Applications/Radio Stream.app"
     }
   },
   "bin": {
@@ -39,7 +39,7 @@
   },
   "keywords": [],
   "devDependencies": {
-    "asar": "^0.8.0",
+    "asar": "^0.12.3",
     "babel": "^5.8.23",
     "babel-core": "^6.13.2",
     "babel-eslint": "^6.1.2",
@@ -87,7 +87,7 @@
     "webpack": "^1.12.1",
     "webpack-dev-middleware": "^1.2.0",
     "webpack-hot-middleware": "^2.4.1",
-    "webpack-target-electron-renderer": "^0.3.0"
+    "webpack-target-electron-renderer": "^0.4.0"
   },
   "dependencies": {
     "better-npm-run": "0.0.10",
