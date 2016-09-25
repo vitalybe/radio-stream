@@ -3,187 +3,197 @@
 
 body {
   font-family: system, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Lucida Grande", sans-serif;
+  font-size: 2em;
 }
 
-.playlists {
+@cyan-dark: #335d66;
+@cyan-bright: #71cfe2;
+@semi-white: #e2e2e2;
 
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  ul {
-    list-style: none;
-  }
-
-  .header {
-    text-align: center;
-  }
-
-  .playlist {
-
-    &.current {
-      color: blue;
-    }
-    .icon {
-      margin-right: 0.5em;
-    }
-  }
+.button-mixin {
+  background: fade(@cyan-dark, 50%);
+  color: @cyan-bright;
+  border: 1px solid @cyan-bright;
 }
 
-.playlist-page {
+.main {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+  font-size: 1rem;
 
-  .main {
+  .background {
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    overflow: hidden;
-    .background {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      background-image: url("../images/background.jpg");
-      background-size: cover;
-      -webkit-filter: brightness(80%) blur(10px);
-      margin: -15px;
-      z-index: -1;
+    background-image: url("../images/background.jpg");
+    background-size: cover;
+    -webkit-filter: brightness(80%) blur(10px);
+    margin: -15px;
+    z-index: -1;
+  }
+
+  .loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opacity: 0.3;
+  }
+
+  .playlists-page {
+
+    margin: 0 auto;
+    width: 960px;
+    text-align: center;
+
+    img.logo {
+      margin-bottom: 1em;
     }
 
-    .loader {
+    button.playlist {
+      .button-mixin;
+
+      display: block;
+      margin: 1em auto;
+
+      padding: 1em 1em;
+      width: 15em;
+      border-radius: 5px;
+
+      font-size: 1rem;
+
+      cursor: pointer;
+    }
+  }
+
+  .player-page {
+
+    .current-playlist {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      opacity: 0.3;
+      left: 20px;
+      top: 20px;
+
+      a {
+        color: white;
+        font-size: 30px;
+        text-decoration: none;
+      }
+
+      &:before {
+        content: '';
+        display: inline-block;
+        width: 25px;
+        height: 25px;
+        background-image: url("../images/playlists.png");
+        background-size: cover;
+        margin-right: 10px;
+      }
     }
 
-    .player {
+    .centre-column {
+      width: 100%;
+      color: white;
+      position: absolute;
+      top: 40%;
+      transform: translateY(-40%);
+      text-align: center;
 
-      .current-playlist {
-        position: absolute;
-        left: 20px;
-        top: 20px;
+      .art {
+        width: 300px;
+        height: 300px;
+        box-shadow: 0 0 20px 3px rgba(52, 100, 111, 1);
+        display: inline-block;
+        position: relative;
+        text-align: left;
 
-        a {
-          color: white;
-          font-size: 30px;
-          text-decoration: none;
+        img.artist {
+          width: 100%;
+          height: 100%;
         }
 
-        &:before {
-          content: '';
-          display: inline-block;
-          width: 25px;
-          height: 25px;
-          background-image: url("../images/playlists.png");
-          background-size: cover;
-          margin-right: 10px;
+        .metadata {
+          position: absolute;
+          right: -30px;
+          transform: translateX(100%);
         }
       }
 
-      .centre-column {
-        width: 100%;
-        color: white;
-        position: absolute;
-        top: 40%;
-        transform: translateY(-40%);
-        text-align: center;
+      .star-full, .star-empty {
+        width: 53px;
+        height: 50px;
+        display: inline-block;
+        background-size: auto;
+        margin-top: 20px;
+        margin-right: 10px;
+        cursor: pointer;
+      }
 
-        .art {
-          width: 300px;
-          height: 300px;
-          box-shadow: 0 0 20px 3px rgba(52, 100, 111, 1);
-          display: inline-block;
-          position: relative;
-          text-align: left;
+      .star-full {
+        background-image: url("../images/star.png");
+        -webkit-filter: brightness(200%);
+      }
 
-          img.artist {
-            width: 100%;
-            height: 100%;
-          }
+      .star-empty {
+        background-image: url("../images/star.png");
+        opacity: 0.8;
+        -webkit-filter: grayscale(100%) brightness(50%);
+      }
 
-          .metadata {
-            position: absolute;
-            right: -30px;
-            transform: translateX(100%);
-          }
+      .names {
+        margin-top: 30px;
+        font-size: 30px;
+
+        & > div {
+          margin-top: 10px;
         }
 
-        .star-full, .star-empty {
-          width: 53px;
-          height: 50px;
-          display: inline-block;
-          background-size: auto;
-          margin-top: 20px;
-          margin-right: 10px;
+        .artist-name {
+          color: rgba(52, 100, 111, 1)
+        }
+      }
+
+      .control-buttons {
+        margin-top: 30px;
+
+        button {
+          border: 0;
+          outline: 0;
           cursor: pointer;
-        }
 
-        .star-full {
-          background-image: url("../images/star.png");
-          -webkit-filter: brightness(200%);
-        }
-
-        .star-empty {
-          background-image: url("../images/star.png");
-          opacity: 0.8;
-          -webkit-filter: grayscale(100%) brightness(50%);
-        }
-
-        .names {
-          margin-top: 30px;
-          font-size: 30px;
-
-          & > div {
-            margin-top: 10px;
-          }
-
-          .artist-name {
-            color: rgba(52, 100, 111, 1)
+          &:active {
+            -webkit-filter: brightness(150%);
           }
         }
 
-        .control-buttons {
-          margin-top: 30px;
+        button.play-pause {
+          height: 81px;
+          width: 81px;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
 
-          button {
-            border: 0;
-            outline: 0;
-            cursor: pointer;
-
-            &:active {
-              -webkit-filter: brightness(150%);
-            }
+          &.play {
+            background: url("../images/play.png")
           }
 
-          button.play-pause {
-            height: 81px;
-            width: 81px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-
-            &.play {
-              background: url("../images/play.png")
-            }
-
-            &.pause {
-              background: url("../images/pause.png")
-            }
+          &.pause {
+            background: url("../images/pause.png")
           }
+        }
 
-          button.next {
-            position: relative;
-            height: 60px;
-            width: 60px;
-            background: url("../images/next.png");
+        button.next {
+          position: relative;
+          height: 60px;
+          width: 60px;
+          background: url("../images/next.png");
 
-            top: 10px;
-            left: 90px;
-          }
+          top: 10px;
+          left: 90px;
         }
       }
     }

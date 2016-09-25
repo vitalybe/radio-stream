@@ -44,7 +44,7 @@ export function stop() {
   }
 
   if (checkInterval) {
-    logger.debug("clearing interval")
+    logger.debug("clearing interval");
     clearInterval(checkInterval);
     checkInterval = null;
   }

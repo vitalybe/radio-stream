@@ -16,13 +16,15 @@ export default class RadioStreamApp extends Component {
 
     render() {
         return (
-            <div>
+            <div className="main">
+                <div className="top-bar">Bye</div>
+                <div className="background"></div>
                 <Choose>
                     <When condition={this.store.player}>
-                        <PlayerPage player={this.store.player} />
+                        <PlayerPage player={this.store.player}/>
                     </When>
                     <Otherwise>
-                        <PlaylistsPage playlists={this.store.playlistMetadataCollection} />
+                        <PlaylistsPage playlists={this.store.playlistMetadataCollection}/>
                     </Otherwise>
                 </Choose>
             </div>

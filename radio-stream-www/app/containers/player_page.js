@@ -44,7 +44,7 @@ export class PlayerPage extends Component {
         logger.info(`start`);
 
         let song = this.props.player.song;
-        if(song) {
+        if (song) {
             song.changeRating(newRating);
         } else {
             logger.error("song doesn't exist")
@@ -68,48 +68,45 @@ export class PlayerPage extends Component {
         }
 
         return (
-            <div className="playlist-page">
-                <div className="main">
-                    <div className="background"></div>
-                    <Choose>
-                        <When condition={player.isLoading}>
-                            <div className="loader hexdots-loader"></div>
-                        </When>
-                        <Otherwise>
-                            <div className="player">
-                                <div className="centre-column">
-                                    <div className="art">
-                                        <div className="metadata">
-                                            <div><img className="info" src={infoImage}/></div>
-                                            <div><b>Last
-                                                played:</b> {moment.unix(song.lastplayed).fromNow()}
-                                            </div>
-                                            <div><b>Play count:</b> {song.playcount}</div>
-                                            <div><b>Marked as played:</b> {player.isMarkedAsPlayed ? "✔" : "x"}
-                                            </div>
+            <div className="player-page">
+                <Choose>
+                    <When condition={player.isLoading}>
+                        <div className="loader hexdots-loader"></div>
+                    </When>
+                    <Otherwise>
+                        <div className="player">
+                            <div className="centre-column">
+                                <div className="art">
+                                    <div className="metadata">
+                                        <div><img className="info" src={infoImage}/></div>
+                                        <div><b>Last
+                                            played:</b> {moment.unix(song.lastplayed).fromNow()}
                                         </div>
-                                        <If condition={song.loadedImageUrl}>
-                                            <img className="artist" src={song.loadedImageUrl} alt=""/>
-                                        </If>
+                                        <div><b>Play count:</b> {song.playcount}</div>
+                                        <div><b>Marked as played:</b> {player.isMarkedAsPlayed ? "✔" : "x"}
+                                        </div>
                                     </div>
-                                    <div className="stars">{ratingStars}</div>
-                                    <div className="names">
-                                        <div>{song.title}</div>
-                                        <div className="artist-name">{song.artist}</div>
-                                        <div>{song.album}</div>
-                                    </div>
-                                    <div className="control-buttons">
-                                        <button className={classNames(["play-pause", playPauseClass])}
-                                                onClick={this.onPlayPause.bind(this)}/>
-                                        <button className="next" onClick={this.onNext.bind(this)}/>
-                                    </div>
+                                    <If condition={song.loadedImageUrl}>
+                                        <img className="artist" src={song.loadedImageUrl} alt=""/>
+                                    </If>
                                 </div>
-                                <div className="current-playlist" onClick={() => {player.stop()}}>
+                                <div className="stars">{ratingStars}</div>
+                                <div className="names">
+                                    <div>{song.title}</div>
+                                    <div className="artist-name">{song.artist}</div>
+                                    <div>{song.album}</div>
+                                </div>
+                                <div className="control-buttons">
+                                    <button className={classNames(["play-pause", playPauseClass])}
+                                            onClick={this.onPlayPause.bind(this)}/>
+                                    <button className="next" onClick={this.onNext.bind(this)}/>
                                 </div>
                             </div>
-                        </Otherwise>
-                    </Choose>
-                </div>
+                            <div className="current-playlist" onClick={() => {player.stop()}}>
+                            </div>
+                        </div>
+                    </Otherwise>
+                </Choose>
             </div>
         );
     }

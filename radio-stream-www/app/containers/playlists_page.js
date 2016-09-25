@@ -3,6 +3,8 @@ import classNames from 'classnames';
 
 import { observer } from "mobx-react"
 
+const logoImage = require("../images/logo.png");
+
 @observer
 export class PlaylistsPage extends Component {
     constructor(props, context) {
@@ -18,8 +20,8 @@ export class PlaylistsPage extends Component {
         let playlists = this.props.playlists;
 
         return (
-            <div className="playlists">
-                <h1 className="header">Playlists</h1>
+            <div className="playlists-page">
+                <img className="logo" src={logoImage}/>
                 <div className="content">
                     <Choose>
                         <When condition={playlists.loading}>
@@ -28,19 +30,16 @@ export class PlaylistsPage extends Component {
                             </div>
                         </When>
                         <Otherwise>
-                            <ul>
+                            <div>
                                 {playlists.items.map(playlist => {
                                     return (
-                                        <li key={playlist.name}
-                                            className={classNames(["playlist"])}>
-
-                                            <i className="icon fa fa-music"/>
-                                            <a href="#" onClick={() => playlists.selectPlaylist(playlist)}>
-                                                {playlist.name}
-                                            </a>
-                                        </li>)
+                                        <button key={playlist.name}
+                                                className="playlist"
+                                                onClick={() => playlists.selectPlaylist(playlist)}>
+                                            {playlist.name}
+                                        </button>)
                                 })}
-                            </ul>
+                            </div>
                         </Otherwise>
                     </Choose>
                 </div>
