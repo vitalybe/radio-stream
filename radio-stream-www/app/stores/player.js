@@ -20,43 +20,41 @@ export class Player {
         this.onStopCallback = onStopCallback;
     }
 
-    _markAsPlayed(song) {
-        let logger = loggerCreator(this._markAsPlayed.name, moduleLogger);
-
-        logger.debug(`${song.toString()} in progress`);
-        return backendMetadataApi.updateLastPlayed(song.id).then(() => {
-            song.isMarkedAsPlayed = true;
-            logger.debug(`${song.toString()} complete`);
-        });
-    }
-
     _onPlayProgress(seconds) {
         if (this.isMarkedAsPlayed == false && seconds >= config.MARK_PLAYED_AFTER_SECONDS) {
+            let logger = loggerCreator(this._onPlayProgress.name, moduleLogger);
+            logger.info(`start`);
+
             this.isMarkedAsPlayed = true;
-            this._markAsPlayed(this.song)
+            logger.debug(`${this.song.toString()} in progress`);
+            return backendMetadataApi.updateLastPlayed(this.song.id).then(() => {
+                logger.debug(`${this.song.toString()} complete`);
+            });
+
         }
     }
 
     @action pause() {
-        assert(this.song && this.currentPlaylist, "invalid state");
-
         this.isPlaying = false;
-        this.song.pauseSound();
+        if (this.song) {
+            this.song.pauseSound();
+        }
     }
 
     @action play() {
         assert(this.currentPlaylist, "invalid state");
 
-        this.isPlaying = true;
         if (this.song) {
             this.song.playSound();
         } else {
             this.next()
         }
+
+        this.isPlaying = true;
     }
 
     @action togglePlayPause() {
-        if(this.isPlaying) {
+        if (this.isPlaying) {
             this.pause();
         } else {
             this.play();
@@ -66,10 +64,15 @@ export class Player {
     @action next() {
         assert(this.currentPlaylist, "invalid state");
 
+        if (this.song) {
+            this.song.pauseSound();
+        }
+
         this.currentPlaylist.nextSong()
             .then(action(nextSong => {
                 if (this.song != nextSong || this.song == null) {
                     this.song = nextSong;
+                    this.isMarkedAsPlayed = false;
                     this.song.subscribePlayProgress(this._onPlayProgress.bind(this));
                     this.song.subscribeFinish(this.next.bind(this));
                 }
