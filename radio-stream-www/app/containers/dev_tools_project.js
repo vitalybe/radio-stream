@@ -1,7 +1,6 @@
 require("../styles/dev_tools_project.less");
 import React, { Component, PropTypes as T } from 'react';
 
-import storeContainer from '../utils/store_container'
 import * as wrappedSoundManager from '../utils/wrapped_sound_manager'
 import lastFm, { API_KEY } from '../utils/lastfm_sdk'
 

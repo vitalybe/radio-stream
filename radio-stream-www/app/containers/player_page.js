@@ -2,8 +2,6 @@ import loggerCreator from '../utils/logger'
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator(__filename);
 
-const infoImage = require("../images/info.png");
-
 import React, { Component } from 'react';
 import { observer } from "mobx-react"
 import classNames from 'classnames';
@@ -12,6 +10,8 @@ import moment from 'moment';
 import assert from "../utils/assert"
 
 import * as idleRedirectListener from '../utils/idle_redirect_listener';
+
+const infoImage = require("../images/info.png");
 
 @observer
 export class PlayerPage extends Component {
@@ -49,6 +49,11 @@ export class PlayerPage extends Component {
         } else {
             logger.error("song doesn't exist")
         }
+    }
+
+    onStop() {
+        this.props.player.stop();
+        this.props.navigator.activatePlaylistCollection()
     }
 
     render() {
@@ -102,7 +107,7 @@ export class PlayerPage extends Component {
                                     <button className="next" onClick={this.onNext.bind(this)}/>
                                 </div>
                             </div>
-                            <div className="current-playlist" onClick={() => {player.stop()}}>
+                            <div className="current-playlist" onClick={this.onStop.bind(this)}>
                             </div>
                         </div>
                     </Otherwise>

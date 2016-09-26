@@ -1,5 +1,4 @@
 import getHistory from '../utils/history'
-import storeContainer from './store_container'
 import ajaxConstructor from './ajax'
 
 import { BEETS_SERVER } from './config'

@@ -1,30 +1,45 @@
 import React, { Component } from 'react';
 
 import { observer } from "mobx-react"
-import store from "../stores/store"
 
-import { PlaylistsPage } from './playlists_page';
+import Settings from '../stores/settings'
+import PlaylistCollection from '../stores/playlist_collection'
+import Player from '../stores/player'
+
+import { PlaylistCollectionPage } from './playlist_collection_page';
 import { PlayerPage } from './player_page';
+
 
 @observer
 export default class RadioStreamApp extends Component {
     constructor(props, context) {
         super(props, context);
 
-        this.store = this.props.store;
+        this.navigator = this.props.navigator;
     }
 
     render() {
+        let activeComponent = this.navigator.activeComponent;
+
         return (
             <div className="main">
-                <div className="top-bar">Bye</div>
                 <div className="background"></div>
                 <Choose>
-                    <When condition={this.store.player}>
-                        <PlayerPage player={this.store.player}/>
+                    <When condition={activeComponent instanceof Settings}>
+                        <SettingsPage player={activeComponent}
+                                      navigator={this.navigator}/>
+                    </When>
+                    <When condition={activeComponent instanceof PlaylistCollection}>
+                        <PlaylistCollectionPage playlists={activeComponent}
+                                                navigator={this.navigator}/>
+                    </When>
+                    <When condition={activeComponent instanceof Player}>
+                        <PlayerPage player={activeComponent}
+                                    navigator={this.navigator}/>
                     </When>
                     <Otherwise>
-                        <PlaylistsPage playlists={this.store.playlistMetadataCollection}/>
+                        {/* TODO: ERROR */}
+                        ERROR
                     </Otherwise>
                 </Choose>
             </div>

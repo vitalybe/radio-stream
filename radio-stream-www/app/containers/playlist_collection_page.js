@@ -7,7 +7,7 @@ const logoImage = require("../images/logo.png");
 const settingsImage = require("../images/settings.png");
 
 @observer
-export class PlaylistsPage extends Component {
+export class PlaylistCollectionPage extends Component {
     constructor(props, context) {
         super(props, context);
     }
@@ -39,7 +39,7 @@ export class PlaylistsPage extends Component {
                                     return (
                                         <button key={playlist.name}
                                                 className="playlist"
-                                                onClick={() => playlists.selectPlaylist(playlist)}>
+                                                onClick={() => this.props.navigator.activatePlayer(playlist) }>
                                             {playlist.name}
                                         </button>)
                                 })}

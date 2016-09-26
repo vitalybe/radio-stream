@@ -6,15 +6,12 @@ import { observable, action } from "mobx";
 import Playlist from "./playlist"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
-export class PlaylistCollection {
+export default class PlaylistCollection {
     @observable items = [];
     @observable loading = false;
     @observable error = false;
 
-    _onPlaylistSelectedCallback = null;
-
-    constructor(onPlaylistSelectedCallback) {
-        this._onPlaylistSelectedCallback = onPlaylistSelectedCallback;
+    constructor() {
     }
 
     @action
@@ -43,9 +40,5 @@ export class PlaylistCollection {
 
                 throw err;
             }));
-    }
-
-    selectPlaylist(playlistName) {
-        this._onPlaylistSelectedCallback(playlistName)
     }
 }
