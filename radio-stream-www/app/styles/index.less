@@ -11,9 +11,14 @@ body {
 @semi-white: #e2e2e2;
 
 .button-mixin {
-  background: fade(@cyan-dark, 50%);
+  background: fade(@cyan-dark, 25%);
   color: @cyan-bright;
   border: 1px solid @cyan-bright;
+  cursor: pointer;
+
+  &:hover {
+    background: fade(@cyan-dark, 50%);
+  }
 }
 
 .main {
@@ -55,6 +60,19 @@ body {
       margin-bottom: 1em;
     }
 
+    button.settings {
+      .button-mixin;
+
+      position: absolute;
+      right: 1em;
+      bottom: 1em;
+      padding: 0.5em;
+
+      img {
+        height: 3em;
+      }
+    }
+
     button.playlist {
       .button-mixin;
 
@@ -66,8 +84,6 @@ body {
       border-radius: 5px;
 
       font-size: 1rem;
-
-      cursor: pointer;
     }
   }
 

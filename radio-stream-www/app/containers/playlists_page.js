@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { observer } from "mobx-react"
 
 const logoImage = require("../images/logo.png");
+const settingsImage = require("../images/settings.png");
 
 @observer
 export class PlaylistsPage extends Component {
@@ -22,6 +23,9 @@ export class PlaylistsPage extends Component {
         return (
             <div className="playlists-page">
                 <img className="logo" src={logoImage}/>
+                <button className="settings">
+                    <img src={settingsImage}/>
+                </button>
                 <div className="content">
                     <Choose>
                         <When condition={playlists.loading}>
