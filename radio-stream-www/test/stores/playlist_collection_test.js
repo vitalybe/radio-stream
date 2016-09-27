@@ -27,7 +27,7 @@ describe('PlaylistCollection', () => {
             }
         );
 
-        self.PlaylistCollection = PlaylistCollectionModule.PlaylistCollection;
+        self.PlaylistCollection = PlaylistCollectionModule.default;
     });
 
     it('returns playlist names', () => {
