@@ -1,6 +1,6 @@
-let fs = require("fs");
-let path = require("path");
-let process = require("process");
+var fs = require("fs");
+var path = require("path");
+var process = require("process");
 
 var Tree = require('./mochaIntellijTree')
   , util = require('./mochaIntellijUtil')
@@ -95,7 +95,7 @@ function extractErrInfo(err) {
   stack = stack.replace(re, function(match, filename, lineNumbers) {
     //console.log(`filename: ${filename}`)
 
-    let absolute_filename = path.join(process.cwd(), filename);
+    var absolute_filename = path.join(process.cwd(), filename);
     //console.log(`absolute: ${absolute_filename}`)
 
     return "\n"+absolute_filename+lineNumbers;
