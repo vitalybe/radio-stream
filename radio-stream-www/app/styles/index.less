@@ -50,6 +50,25 @@ body {
     opacity: 0.3;
   }
 
+  .top-bar {
+
+    padding: 1em;
+
+    .back {
+      @back-image: "../images/back.png";
+
+      height: image-height(@back-image);
+      width: image-width(@back-image);
+      background-image: url(@back-image);
+
+      cursor: pointer;
+    }
+  }
+
+  .settings-modifications-page {
+    color: @semi-white;
+  }
+
   .playlists-page {
 
     margin: 0 auto;
@@ -89,28 +108,6 @@ body {
 
   .player-page {
 
-    .current-playlist {
-      position: absolute;
-      left: 20px;
-      top: 20px;
-
-      a {
-        color: white;
-        font-size: 30px;
-        text-decoration: none;
-      }
-
-      &:before {
-        content: '';
-        display: inline-block;
-        width: 25px;
-        height: 25px;
-        background-image: url("../images/playlists.png");
-        background-size: cover;
-        margin-right: 10px;
-      }
-    }
-
     .centre-column {
       width: 100%;
       color: white;
@@ -118,6 +115,9 @@ body {
       top: 40%;
       transform: translateY(-40%);
       text-align: center;
+
+      // allow the top bar to be above it
+      z-index: -1;
 
       .art {
         width: 300px;

@@ -32,10 +32,11 @@ export default class Player {
     }
 
     @action pause() {
-        this.isPlaying = false;
         if (this.song) {
             this.song.pauseSound();
         }
+
+        this.isPlaying = false;
     }
 
     @action play() {

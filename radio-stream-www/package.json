@@ -94,6 +94,7 @@
     "classnames": "^2.2.1",
     "electron-debug": "^1.0.1",
     "electron-prebuilt": "^0.36.8",
+    "electron-settings": "mcpo/electron-settings#transpiled",
     "file-loader": "^0.8.5",
     "font-awesome": "^4.4.0",
     "history": "^1.17.0",

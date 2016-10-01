@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 
 import { observer } from "mobx-react"
 
-import Settings from '../stores/settings'
+import Settings from '../stores/settings_modifications'
 import PlaylistCollection from '../stores/playlist_collection'
 import Player from '../stores/player'
 
 import { PlaylistCollectionPage } from './playlist_collection_page';
 import { PlayerPage } from './player_page';
+import { SettingsModificationsPage } from './settings_modifications_page'
 
+const backImage = require("../images/back.png");
 
 @observer
 export default class RadioStreamApp extends Component {
@@ -19,22 +21,27 @@ export default class RadioStreamApp extends Component {
     }
 
     render() {
-        let activeComponent = this.navigator.activeComponent;
+        let activeComponentStore = this.navigator.activeComponentStore;
 
         return (
             <div className="main">
                 <div className="background"></div>
+                <div className="top-bar">
+                    <If condition={activeComponentStore instanceof PlaylistCollection === false}>
+                        <div className="back" onClick={() => this.navigator.activatePlaylistCollection()}></div>
+                    </If>
+                </div>
                 <Choose>
-                    <When condition={activeComponent instanceof Settings}>
-                        <SettingsPage player={activeComponent}
-                                      navigator={this.navigator}/>
+                    <When condition={activeComponentStore instanceof Settings}>
+                        <SettingsModificationsPage settingsModifications={activeComponentStore}
+                                                   navigator={this.navigator}/>
                     </When>
-                    <When condition={activeComponent instanceof PlaylistCollection}>
-                        <PlaylistCollectionPage playlists={activeComponent}
+                    <When condition={activeComponentStore instanceof PlaylistCollection}>
+                        <PlaylistCollectionPage playlists={activeComponentStore}
                                                 navigator={this.navigator}/>
                     </When>
-                    <When condition={activeComponent instanceof Player}>
-                        <PlayerPage player={activeComponent}
+                    <When condition={activeComponentStore instanceof Player}>
+                        <PlayerPage player={activeComponentStore}
                                     navigator={this.navigator}/>
                     </When>
                     <Otherwise>

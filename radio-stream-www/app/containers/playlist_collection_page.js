@@ -23,9 +23,6 @@ export class PlaylistCollectionPage extends Component {
         return (
             <div className="playlists-page">
                 <img className="logo" src={logoImage}/>
-                <button className="settings">
-                    <img src={settingsImage}/>
-                </button>
                 <div className="content">
                     <Choose>
                         <When condition={playlists.loading}>
@@ -47,6 +44,9 @@ export class PlaylistCollectionPage extends Component {
                         </Otherwise>
                     </Choose>
                 </div>
+                <button className="settings" onClick={() => this.props.navigator.activateSettings()}>
+                    <img src={settingsImage}/>
+                </button>
             </div>
         );
     }

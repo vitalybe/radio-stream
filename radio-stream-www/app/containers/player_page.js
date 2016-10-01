@@ -28,6 +28,7 @@ export class PlayerPage extends Component {
 
     //noinspection JSUnusedGlobalSymbols
     componentWillUnmount() {
+        this.props.player.stop();
     }
 
     onPlayPause() {
@@ -49,11 +50,6 @@ export class PlayerPage extends Component {
         } else {
             logger.error("song doesn't exist")
         }
-    }
-
-    onStop() {
-        this.props.player.stop();
-        this.props.navigator.activatePlaylistCollection()
     }
 
     render() {
@@ -106,8 +102,6 @@ export class PlayerPage extends Component {
                                             onClick={this.onPlayPause.bind(this)}/>
                                     <button className="next" onClick={this.onNext.bind(this)}/>
                                 </div>
-                            </div>
-                            <div className="current-playlist" onClick={this.onStop.bind(this)}>
                             </div>
                         </div>
                     </Otherwise>

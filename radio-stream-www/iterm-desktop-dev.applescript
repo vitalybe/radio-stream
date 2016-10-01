@@ -6,7 +6,7 @@ tell application "iTerm"
 
 			-- creating columns
 			tell row1_col1
-				set row1_col2 to (split vertically with same profile)
+				set row1_col2 to (split vertically with default profile)
 			end tell
 			
 			-- running commands

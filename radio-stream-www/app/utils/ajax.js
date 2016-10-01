@@ -16,7 +16,8 @@ class Ajax {
             config.body = JSON.stringify(config.body);
         }
 
-        return fetch(this.rootAddress + apiAddress, config)
+        return Promise.resolve()
+            .then(() => fetch(this.rootAddress + apiAddress, config))
             .then(this.responseMiddleware)
             .then(function (response) {
                 if (response.status < 200 || response.status >= 300) {
@@ -24,8 +25,6 @@ class Ajax {
                 }
 
                 return response;
-            })
-            .catch(function(err) {
             });
     }
 
