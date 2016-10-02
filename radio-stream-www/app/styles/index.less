@@ -15,10 +15,16 @@ body {
   color: @cyan-bright;
   border: 1px solid @cyan-bright;
   cursor: pointer;
+  border-radius: 5px;
 
   &:hover {
     background: fade(@cyan-dark, 50%);
   }
+}
+
+* {
+  font-size: 1rem;
+  box-sizing: border-box;
 }
 
 .main {
@@ -28,7 +34,8 @@ body {
   top: 0;
   bottom: 0;
   overflow: hidden;
-  font-size: 1rem;
+
+  color: @semi-white;
 
   .background {
     position: absolute;
@@ -66,7 +73,42 @@ body {
   }
 
   .settings-modifications-page {
-    color: @semi-white;
+    width: 580px;
+    margin: 0 auto;
+
+    label {
+      width: 20%;
+      text-align: right;
+      display: inline-block;
+      padding: 1.5rem 1rem;
+    }
+
+    input {
+      width: 80%;
+      padding: 0.5rem;
+
+      color: @semi-white;
+      background: fade(@cyan-dark, 25%);
+      border: 1px solid @cyan-bright;
+      border-radius: 5px;
+    }
+
+    .test-state {
+      text-align: right;
+    }
+
+    .buttons {
+      text-align: right;
+      margin-top: 2rem;
+
+      button {
+        .button-mixin;
+
+        padding: 1rem;
+        width: 15em;
+      }
+
+    }
   }
 
   .playlists-page {
@@ -88,7 +130,7 @@ body {
       padding: 0.5em;
 
       img {
-        height: 3em;
+        height: 2em;
       }
     }
 
@@ -98,11 +140,8 @@ body {
       display: block;
       margin: 1em auto;
 
-      padding: 1em 1em;
+      padding: 1rem;
       width: 15em;
-      border-radius: 5px;
-
-      font-size: 1rem;
     }
   }
 
@@ -110,7 +149,6 @@ body {
 
     .centre-column {
       width: 100%;
-      color: white;
       position: absolute;
       top: 40%;
       transform: translateY(-40%);

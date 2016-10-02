@@ -34,15 +34,17 @@ export class SettingsModificationsPage extends Component {
 
         return (
             <div className="settings-modifications-page">
-                <label>Host</label>
-                <input type="text" value={settingsModifications.host}
+                <label>Host</label><input type="text" value={settingsModifications.host}
                        onChange={event => settingsModifications.host = event.target.value}/>
 
                 <label>Password</label>
                 <input type="password" value={settingsModifications.password}
                        onChange={event => settingsModifications.password = event.target.value}/>
                 <div className="test-state">{settingsModifications.testState}</div>
-                <button onClick={() => this.save()}>Save</button>
+
+                <div className="buttons">
+                    <button onClick={() => this.save()}>Save</button>
+                </div>
             </div>
         );
     }
