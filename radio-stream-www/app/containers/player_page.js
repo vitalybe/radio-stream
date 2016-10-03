@@ -1,5 +1,4 @@
 import loggerCreator from '../utils/logger'
-//noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator(__filename);
 
 import React, { Component } from 'react';

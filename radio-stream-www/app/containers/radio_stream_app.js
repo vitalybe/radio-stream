@@ -5,10 +5,12 @@ import { observer } from "mobx-react"
 import Settings from '../stores/settings_modifications'
 import PlaylistCollection from '../stores/playlist_collection'
 import Player from '../stores/player'
+import FatalError from '../stores/fatal_error'
 
 import { PlaylistCollectionPage } from './playlist_collection_page';
 import { PlayerPage } from './player_page';
 import { SettingsModificationsPage } from './settings_modifications_page'
+import { FatalErrorPage } from './fatal_error_page'
 
 const backImage = require("../images/back.png");
 
@@ -42,6 +44,10 @@ export default class RadioStreamApp extends Component {
                     </When>
                     <When condition={activeComponentStore instanceof Player}>
                         <PlayerPage player={activeComponentStore}
+                                    navigator={this.navigator}/>
+                    </When>
+                    <When condition={activeComponentStore instanceof FatalError}>
+                        <FatalErrorPage fatalError={activeComponentStore}
                                     navigator={this.navigator}/>
                     </When>
                     <Otherwise>

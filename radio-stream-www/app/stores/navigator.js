@@ -4,9 +4,11 @@ import assert from '../utils/assert'
 var moduleLogger = loggerCreator(__filename);
 
 import { observable, action, computed } from "mobx";
-import Player from "./player"
-import PlaylistCollection from "./playlist_collection"
-import SettingsModifications from "./settings_modifications"
+
+import Player from "../stores/player"
+import PlaylistCollection from "../stores/playlist_collection"
+import SettingsModifications from "../stores/settings_modifications"
+import FatalError from "../stores/fatal_error"
 
 import settings from '../utils/settings'
 
@@ -17,6 +19,7 @@ export default class Navigator {
     _player = null;
     _playlistCollection = null;
     _settingsModifications = null;
+    _fatalError = null;
 
     constructor() {
         this._playlistCollection = new PlaylistCollection();
@@ -51,5 +54,12 @@ export default class Navigator {
         logger.info(`start`);
 
         this.activeComponentStore = this._settingsModifications;
+    }
+
+    activateFatalError(errorType, errorMessage) {
+        let logger = loggerCreator(this.activateFatalError.name, moduleLogger);
+        logger.info(`start`);
+
+        this.activeComponentStore = new FatalError(errorType, errorMessage);
     }
 }
