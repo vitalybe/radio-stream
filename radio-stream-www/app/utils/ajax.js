@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+import NetworkError from '../utils/network_error'
 
 class Ajax {
 
@@ -21,7 +22,7 @@ class Ajax {
             .then(this.responseMiddleware)
             .then(function (response) {
                 if (response.status < 200 || response.status >= 300) {
-                    throw new Error("Bad response from server");
+                    throw new NetworkError(`Received status ${response.status} from the server`);
                 }
 
                 return response;
