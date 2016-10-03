@@ -17,7 +17,7 @@ export class SettingsModificationsPage extends Component {
     }
 
     componentWillUnmount() {
-        this.props.settingsModifications.load();
+        this.props.settingsModifications.reset();
     }
 
     save() {

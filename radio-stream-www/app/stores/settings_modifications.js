@@ -19,13 +19,13 @@ export default class SettingsModifications {
         let logger = loggerCreator(this.constructor.name, moduleLogger);
         logger.info(`start`);
 
+        this.reset();
+    }
+
+    reset() {
         this.testState = "";
         this.isError = false;
 
-        this.load();
-    }
-
-    load() {
         this.host = settings.host;
         this.password = settings.password;
     }
