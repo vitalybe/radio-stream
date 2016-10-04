@@ -6,8 +6,10 @@ import React, { Component } from 'react';
 import { observer } from "mobx-react"
 import classNames from 'classnames';
 import moment from 'moment';
-
 import assert from "../utils/assert"
+
+import store from '../stores/store'
+import navigator from '../actions/navigator'
 
 @observer
 export class SettingsModificationsPage extends Component {
@@ -17,20 +19,20 @@ export class SettingsModificationsPage extends Component {
     }
 
     componentWillUnmount() {
-        this.props.settingsModifications.reset();
+        store.settingsModifications.reset();
     }
 
     save() {
         let logger = loggerCreator(this.save.name, moduleLogger);
         logger.info(`start`);
 
-        this.props.settingsModifications.save()
-            .then(() => this.props.navigator.activatePlaylistCollection())
+        store.settingsModifications.save()
+            .then(() => navigator.activatePlaylistCollection())
             .catch(err => logger.warn(`save failed: ${err}`))
     }
 
     render() {
-        let settingsModifications = this.props.settingsModifications;
+        let settingsModifications = store.settingsModifications;
 
         return (
             <div className="settings-modifications-page">

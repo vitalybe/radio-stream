@@ -4,7 +4,7 @@ var moduleLogger = loggerCreator(__filename);
 import React, { Component } from 'react';
 import { observer } from "mobx-react"
 
-import FatalErrorStore from "../stores/fatal_error"
+import store from '../stores/store'
 
 @observer
 export class FatalErrorPage extends Component {
@@ -14,22 +14,10 @@ export class FatalErrorPage extends Component {
     }
 
     render() {
-
-        var fatalErrorStore = this.props.fatalError;
-
-        var header = "[Unknown error type]"
-        if(fatalErrorStore.errorType == FatalErrorStore.ERROR_LOGIC) {
-            header = "Unexpected error"
-        } else if(fatalErrorStore.errorType == FatalErrorStore.ERROR_NETWORK) {
-            header = "Network error"
-        }
-
-        var message = fatalErrorStore.errorMessage;
-
         return (
             <div className="fatal-error-page">
-                <h1>{header}</h1>
-                <div className="message">{message}</div>
+                <h1>Unexpected error</h1>
+                <div className="message">store.fatalErrorMessage</div>
             </div>
         )
     }

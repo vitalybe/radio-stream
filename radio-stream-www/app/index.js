@@ -13,10 +13,8 @@ import React from 'react';
 import ReactDom from 'react-dom';
 
 import * as desktopIpc from './utils/desktop_ipc'
-import RadioStreamApp from './containers/radio_stream_app'
+import Routing from './containers/routing'
 import * as wrappedSoundManager from './utils/wrapped_sound_manager'
-
-import Navigator from "./stores/navigator"
 
 logger.info("Compilation settings - __PROD__: " + __PROD__);
 logger.info("Compilation settings - __WEB__: " + __WEB__);
@@ -26,7 +24,4 @@ logger.info("Compilation settings - __WEB__: " + __WEB__);
 wrappedSoundManager.setup();
 desktopIpc.connect();
 
-ReactDom.render(
-    <RadioStreamApp navigator={new Navigator()} />
-
-    , document.getElementById('root'));
+ReactDom.render(<Routing />, document.getElementById('root'));

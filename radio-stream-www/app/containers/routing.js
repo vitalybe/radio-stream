@@ -5,50 +5,45 @@ import { observer } from "mobx-react"
 import Settings from '../stores/settings_modifications'
 import PlaylistCollection from '../stores/playlist_collection'
 import Player from '../stores/player'
-import FatalError from '../stores/fatal_error'
 
 import { PlaylistCollectionPage } from './playlist_collection_page';
 import { PlayerPage } from './player_page';
 import { SettingsModificationsPage } from './settings_modifications_page'
 import { FatalErrorPage } from './fatal_error_page'
 
-const backImage = require("../images/back.png");
+import store from '../stores/store'
+import navigator from '../actions/navigator'
 
+// Inspired by: https://github.com/mobxjs/mobx-contacts-list/blob/6c8e889f1bc84644d91ee0043b7c5e0a4482195c/src/app/stores/view-state.js
 @observer
-export default class RadioStreamApp extends Component {
+export default class Routing extends Component {
     constructor(props, context) {
         super(props, context);
-
-        this.navigator = this.props.navigator;
     }
 
     render() {
-        let activeComponentStore = this.navigator.activeComponentStore;
+        let activeComponentStore = store.activeComponentStore;
 
         return (
             <div className="main">
                 <div className="background"></div>
                 <div className="top-bar">
                     <If condition={activeComponentStore instanceof PlaylistCollection === false}>
-                        <div className="back" onClick={() => this.navigator.activatePlaylistCollection()}></div>
+                        <div className="back" onClick={() => navigator.activatePlaylistCollection()}></div>
                     </If>
                 </div>
                 <Choose>
                     <When condition={activeComponentStore instanceof Settings}>
-                        <SettingsModificationsPage settingsModifications={activeComponentStore}
-                                                   navigator={this.navigator}/>
+                        <SettingsModificationsPage />
                     </When>
                     <When condition={activeComponentStore instanceof PlaylistCollection}>
-                        <PlaylistCollectionPage playlists={activeComponentStore}
-                                                navigator={this.navigator}/>
+                        <PlaylistCollectionPage />
                     </When>
                     <When condition={activeComponentStore instanceof Player}>
-                        <PlayerPage player={activeComponentStore}
-                                    navigator={this.navigator}/>
+                        <PlayerPage />
                     </When>
                     <When condition={activeComponentStore instanceof FatalError}>
-                        <FatalErrorPage fatalError={activeComponentStore}
-                                    navigator={this.navigator}/>
+                        <FatalErrorPage />
                     </When>
                     <Otherwise>
                         {/* TODO: ERROR */}

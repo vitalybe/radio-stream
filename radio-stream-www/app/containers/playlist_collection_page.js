@@ -3,6 +3,9 @@ import classNames from 'classnames';
 
 import { observer } from "mobx-react"
 
+import store from '../stores/store'
+import navigator from '../actions/navigator'
+
 const logoImage = require("../images/logo.png");
 const settingsImage = require("../images/settings.png");
 
@@ -14,29 +17,29 @@ export class PlaylistCollectionPage extends Component {
 
     //noinspection JSUnusedGlobalSymbols
     componentDidMount() {
-        this.props.playlists.load();
+        store.playlistCollection.load();
     }
 
     render() {
-        let playlists = this.props.playlists;
+        let playlistCollection = store.playlistCollection;
 
         return (
             <div className="playlists-page">
                 <img className="logo" src={logoImage}/>
                 <div className="content">
                     <Choose>
-                        <When condition={playlists.loading}>
+                        <When condition={playlistCollection.loading}>
                             <div className="hexdots-loader loader">
                                 Loading...
                             </div>
                         </When>
                         <Otherwise>
                             <div>
-                                {playlists.items.map(playlist => {
+                                {playlistCollection.items.map(playlist => {
                                     return (
                                         <button key={playlist.name}
                                                 className="playlist"
-                                                onClick={() => this.props.navigator.activatePlayer(playlist) }>
+                                                onClick={() => navigator.activatePlayer(playlist) }>
                                             {playlist.name}
                                         </button>)
                                 })}
@@ -44,7 +47,7 @@ export class PlaylistCollectionPage extends Component {
                         </Otherwise>
                     </Choose>
                 </div>
-                <button className="settings" onClick={() => this.props.navigator.activateSettings()}>
+                <button className="settings" onClick={() => navigator.activateSettings()}>
                     <img src={settingsImage}/>
                 </button>
             </div>

@@ -2,7 +2,7 @@ import loggerCreator from '../utils/logger'
 //noinspection JSUnresolvedVariable
 var logger = loggerCreator(__filename);
 
-import store from "../stores/navigator"
+import store from "../stores/store"
 
 export function connect() {
 // For desktop mode only
