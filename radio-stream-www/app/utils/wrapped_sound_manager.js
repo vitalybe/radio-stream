@@ -14,7 +14,7 @@ export function setup() {
         flashVersion: 9, // optional: shiny features (default = 8)
         // optional: ignore Flash where possible, use 100% HTML5 mode
         preferFlash: false,
-        html5PollingInterval: 50,
+        html5PollingInterval: 1000,
         debugMode: false
     });
 }
@@ -28,7 +28,7 @@ export function getSoundBySong(song) {
         flogger.debug(`Sound found`);
         sound = new WrappedSound(sound);
     } else {
-        flogger.debug(`Sound not found`)
+        flogger.debug(`Sound not found`);
     }
 
     return sound;

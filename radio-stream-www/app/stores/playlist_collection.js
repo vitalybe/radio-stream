@@ -3,15 +3,32 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator(__filename);
 
 import { observable, action } from "mobx";
+import promiseRetry from "promise-retry";
+
 import Playlist from "./playlist"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
 export default class PlaylistCollection {
     @observable items = [];
+
     @observable loading = false;
-    @observable error = false;
+    @observable retryCount = 0;
 
     constructor() {
+    }
+
+    _fetchPlaylists() {
+        return promiseRetry((retry, number) => {
+            let logger = loggerCreator(this._fetchPlaylists.name, moduleLogger);
+            logger.info(`start. try number: ${number}`);
+
+            this.retryCount = retry;
+            return backendMetadataApi.playlists().catch(err => {
+                logger.warn(`fetch failed... retrying: ${err}`);
+                retry();
+            })
+
+        }, {retries: 100})
     }
 
     @action
@@ -23,8 +40,8 @@ export default class PlaylistCollection {
         this.loading = true;
         this.error = false;
         logger.info(`loading playlists`);
-        return backendMetadataApi.playlists()
-            .then(action((playlists) => {
+
+        return this._fetchPlaylists().then(action((playlists) => {
                 logger.info(`got playlists: ${playlists}`);
 
                 let newPlaylists = playlists.map(playlistName => {
@@ -33,12 +50,6 @@ export default class PlaylistCollection {
 
                 this.items = observable(newPlaylists);
                 this.loading = false;
-            }))
-            .catch(action(err => {
-                this.error = true;
-                this.loading = false;
-
-                throw err;
             }));
     }
 }

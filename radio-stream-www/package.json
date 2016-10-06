@@ -105,6 +105,7 @@
     "mobx-react": "^3.5.5",
     "moment": "^2.11.2",
     "node-notifier": "^4.4.0",
+    "promise-retry": "^1.1.1",
     "react": "^0.14.2",
     "react-dom": "^0.14.2",
     "react-redux": "^4.0.0",

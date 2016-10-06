@@ -11,7 +11,9 @@ export default class Player {
     @observable isPlaying = false;
     @observable currentPlaylist = null;
     @observable song = null;
+
     @observable isMarkedAsPlayed = false;
+    markingAsPlayedPromise = null;
 
     constructor(playlist) {
         this.currentPlaylist = playlist;
@@ -22,10 +24,15 @@ export default class Player {
             let logger = loggerCreator(this._onPlayProgress.name, moduleLogger);
             logger.info(`start`);
 
+            assert(this.markingAsPlayedPromise == null, "previous mark as played still in progress - unexpected");
+
             this.isMarkedAsPlayed = true;
             logger.debug(`${this.song.toString()} in progress`);
-            return backendMetadataApi.updateLastPlayed(this.song.id).then(() => {
+
+            this.markingAsPlayedPromise = backendMetadataApi.updateLastPlayed(this.song.id).then(() => {
                 logger.debug(`${this.song.toString()} complete`);
+
+                this.markingAsPlayedPromise = null;
             });
 
         }
@@ -64,9 +71,11 @@ export default class Player {
 
         if (this.song) {
             this.song.pauseSound();
+            this.song = null;
         }
 
-        this.currentPlaylist.nextSong()
+        Promise.resolve(this.markingAsPlayedPromise)
+            .then(() => this.currentPlaylist.nextSong())
             .then(action(nextSong => {
                 if (this.song != nextSong || this.song == null) {
                     this.song = nextSong;
