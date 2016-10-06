@@ -7,7 +7,7 @@ import { observable, action } from "mobx";
 import settings from '../utils/settings'
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
-export default class SettingsModifications {
+class SettingsModifications {
 
     @observable host;
     @observable password;
@@ -54,3 +54,5 @@ export default class SettingsModifications {
 
     }
 }
+
+export default new SettingsModifications();

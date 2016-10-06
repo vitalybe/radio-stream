@@ -7,7 +7,7 @@ import assert from "../utils/assert"
 import * as config from "../utils/config"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
-export default class Player {
+class Player {
     @observable isPlaying = false;
     @observable currentPlaylist = null;
     @observable song = null;
@@ -15,8 +15,7 @@ export default class Player {
     @observable isMarkedAsPlayed = false;
     markingAsPlayedPromise = null;
 
-    constructor(playlist) {
-        this.currentPlaylist = playlist;
+    constructor() {
     }
 
     _onPlayProgress(seconds) {
@@ -36,6 +35,11 @@ export default class Player {
             });
 
         }
+    }
+
+    @action changePlaylist(playlist) {
+        this.pause();
+        this.currentPlaylist = playlist;
     }
 
     @action pause() {
@@ -108,3 +112,5 @@ export default class Player {
         }
     }
 }
+
+export default new Player();

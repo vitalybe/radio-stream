@@ -3,8 +3,8 @@ import classNames from 'classnames';
 
 import { observer } from "mobx-react"
 
-import store from '../stores/store'
-import navigator from '../actions/navigator'
+import navigator from '../stores/navigator'
+import playlistCollection from '../stores/playlist_collection'
 
 const logoImage = require("../images/logo.png");
 const settingsImage = require("../images/settings.png");
@@ -17,12 +17,10 @@ export class PlaylistCollectionPage extends Component {
 
     //noinspection JSUnusedGlobalSymbols
     componentDidMount() {
-        store.playlistCollection.load();
+        playlistCollection.load();
     }
 
     render() {
-        let playlistCollection = store.playlistCollection;
-
         return (
             <div className="playlists-page">
                 <img className="logo" src={logoImage}/>

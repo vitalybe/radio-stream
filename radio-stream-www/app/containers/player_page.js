@@ -10,7 +10,7 @@ import assert from "../utils/assert"
 
 import * as idleRedirectListener from '../utils/idle_redirect_listener';
 
-import store from '../stores/store'
+import player from '../stores/player'
 
 const infoImage = require("../images/info.png");
 
@@ -29,23 +29,22 @@ export class PlayerPage extends Component {
 
     //noinspection JSUnusedGlobalSymbols
     componentWillUnmount() {
-        store.player.stop();
+        player.stop();
     }
 
     onPlayPause() {
-        let player = store.player;
         player.togglePlayPause();
     }
 
     onNext() {
-        store.player.next();
+        player.next();
     }
 
     onChangeRating(newRating) {
         let logger = loggerCreator(this.onChangeRating.name, moduleLogger);
         logger.info(`start`);
 
-        let song = store.player.song;
+        let song = player.song;
         if (song) {
             song.changeRating(newRating);
         } else {
@@ -54,7 +53,6 @@ export class PlayerPage extends Component {
     }
 
     render() {
-        let player = store.player;
         let song = player.song;
 
         let playPauseClass = player.isPlaying ? "pause" : "play";

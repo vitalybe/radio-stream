@@ -2,7 +2,7 @@ import loggerCreator from '../utils/logger'
 //noinspection JSUnresolvedVariable
 var logger = loggerCreator(__filename);
 
-import store from "../stores/store"
+import player from "../stores/player"
 
 export function connect() {
 // For desktop mode only
@@ -14,8 +14,8 @@ export function connect() {
 
         require('ipc').on('playPauseToggle', function () {
             logger.debug("received message: playPauseToggle");
-            if (store.player) {
-                store.player.togglePlayPause();
+            if (player) {
+                player.togglePlayPause();
             }
         });
 
@@ -23,9 +23,9 @@ export function connect() {
             // logger.debug("received idle: " + idleOutput);
             const idleSeconds = parseInt(idleOutput);
 
-            if (idleSeconds > 180 && store.player && store.player.isPlaying) {
+            if (idleSeconds > 180 && player && player.isPlaying) {
                 logger.debug("idle too long - pausing song");
-                store.player.pause();
+                player.pause();
             }
 
         });

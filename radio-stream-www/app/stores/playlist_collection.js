@@ -5,10 +5,10 @@ var moduleLogger = loggerCreator(__filename);
 import { observable, action } from "mobx";
 import promiseRetry from "promise-retry";
 
-import Playlist from "./playlist"
+import Playlist from "../domain/playlist"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
-export default class PlaylistCollection {
+class PlaylistCollection {
     @observable items = [];
 
     @observable loading = false;
@@ -53,3 +53,5 @@ export default class PlaylistCollection {
             }));
     }
 }
+
+export default new PlaylistCollection();

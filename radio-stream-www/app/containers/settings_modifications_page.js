@@ -8,8 +8,8 @@ import classNames from 'classnames';
 import moment from 'moment';
 import assert from "../utils/assert"
 
-import store from '../stores/store'
-import navigator from '../actions/navigator'
+import settingsModifications from '../stores/settings_modifications'
+import navigator from '../stores/navigator'
 
 @observer
 export class SettingsModificationsPage extends Component {
@@ -19,20 +19,19 @@ export class SettingsModificationsPage extends Component {
     }
 
     componentWillUnmount() {
-        store.settingsModifications.reset();
+        settingsModifications.reset();
     }
 
     save() {
         let logger = loggerCreator(this.save.name, moduleLogger);
         logger.info(`start`);
 
-        store.settingsModifications.save()
+        settingsModifications.save()
             .then(() => navigator.activatePlaylistCollection())
             .catch(err => logger.warn(`save failed: ${err}`))
     }
 
     render() {
-        let settingsModifications = store.settingsModifications;
 
         return (
             <div className="settings-modifications-page">

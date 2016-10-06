@@ -4,8 +4,6 @@ var moduleLogger = loggerCreator(__filename);
 import React, { Component } from 'react';
 import { observer } from "mobx-react"
 
-import store from '../stores/store'
-
 @observer
 export class FatalErrorPage extends Component {
 
@@ -17,7 +15,7 @@ export class FatalErrorPage extends Component {
         return (
             <div className="fatal-error-page">
                 <h1>Unexpected error</h1>
-                <div className="message">store.fatalErrorMessage</div>
+                <div className="message">Error has happened</div>
             </div>
         )
     }
