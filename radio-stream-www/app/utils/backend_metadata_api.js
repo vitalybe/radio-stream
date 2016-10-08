@@ -5,7 +5,7 @@ import settings from '../utils/settings'
 
 function getAjax() {
 
-    var beetsServer =  `http://${settings.host}/api`;
+    var beetsServer = `http://${settings.host}/api`;
 
     return ajaxConstructor(beetsServer, function (response) {
         if (response.status == 401) {
@@ -17,6 +17,7 @@ function getAjax() {
 }
 
 export function playlistSongs(playlistName) {
+
     return getAjax().get(`/playlists/${playlistName}`)
         .then(response => response.json().then(json => json))
         .then((json) => {
@@ -25,6 +26,7 @@ export function playlistSongs(playlistName) {
 }
 
 export function playlists() {
+
     return getAjax().get(`/playlists`)
         .then(response => response.json().then(json => json))
         .then((json) => {

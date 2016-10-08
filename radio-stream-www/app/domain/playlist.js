@@ -20,23 +20,19 @@ export default class Playlist {
         let logger = loggerCreator(this._reloadSongsIfNeeded.name, moduleLogger);
         logger.info("start");
 
-        return new Promise((resolve) => {
-            logger.info(`songs length: ${this.songs.length}. Current index: ${this.currentIndex}`);
-            if (this.songs.length > 0 && this.currentIndex < this.songs.length) {
-                // playlist songs already loaded
-                logger.info(`not reloading songs`);
-                resolve();
-            } else {
-                logger.info(`reloading songs`);
-                return backendMetadataApi.playlistSongs(this.name).then(songsData => {
-                    logger.info(`loaded songs: ${songsData.length}`);
-                    this.songs = songsData.map(songData => new Song(songData));
-                    this.currentIndex = 0;
-
-                    resolve();
-                });
-            }
-        });
+        logger.info(`songs length: ${this.songs.length}. Current index: ${this.currentIndex}`);
+        if (this.songs.length > 0 && this.currentIndex < this.songs.length) {
+            // playlist songs already loaded
+            logger.info(`not reloading songs`);
+            return Promise.resolve();
+        } else {
+            logger.info(`reloading songs`);
+            return backendMetadataApi.playlistSongs(this.name).then(songsData => {
+                logger.info(`loaded songs: ${songsData.length}`);
+                this.songs = songsData.map(songData => new Song(songData));
+                this.currentIndex = 0;
+            });
+        }
     };
 
     nextSong() {

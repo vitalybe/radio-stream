@@ -3,7 +3,7 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator(__filename);
 
 import { observable, action } from "mobx";
-import promiseRetry from "promise-retry";
+import retries from "../utils/retries"
 
 import Playlist from "../domain/playlist"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
@@ -17,20 +17,6 @@ class PlaylistCollection {
     constructor() {
     }
 
-    _fetchPlaylists() {
-        return promiseRetry((retry, number) => {
-            let logger = loggerCreator(this._fetchPlaylists.name, moduleLogger);
-            logger.info(`start. try number: ${number}`);
-
-            this.retryCount = retry;
-            return backendMetadataApi.playlists().catch(err => {
-                logger.warn(`fetch failed... retrying: ${err}`);
-                retry();
-            })
-
-        }, {retries: 100})
-    }
-
     @action
     load() {
         let logger = loggerCreator(this.load.name, moduleLogger);
@@ -41,7 +27,8 @@ class PlaylistCollection {
         this.error = false;
         logger.info(`loading playlists`);
 
-        return this._fetchPlaylists().then(action((playlists) => {
+        return retries.promiseRetry(backendMetadataApi.playlists)
+            .then(action((playlists) => {
                 logger.info(`got playlists: ${playlists}`);
 
                 let newPlaylists = playlists.map(playlistName => {

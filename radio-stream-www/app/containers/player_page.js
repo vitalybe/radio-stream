@@ -83,7 +83,7 @@ export class PlayerPage extends Component {
                                             played:</b> {moment.unix(song.lastplayed).fromNow()}
                                         </div>
                                         <div><b>Play count:</b> {song.playcount}</div>
-                                        <div><b>Marked as played:</b> {player.isMarkedAsPlayed ? "✔" : "x"}
+                                        <div><b>Marked as played:</b> {song.isMarkedAsPlayed ? "✔" : "x"}
                                         </div>
                                     </div>
                                     <If condition={song.loadedImageUrl}>

@@ -1,9 +1,16 @@
+import loggerCreator from '../utils/logger'
+//noinspection JSUnresolvedVariable
+var moduleLogger = loggerCreator(__filename);
+
 import fetch from 'isomorphic-fetch'
 import NetworkError from '../utils/network_error'
+
 
 class Ajax {
 
     _ajax(apiAddress, userConfig) {
+        let logger = loggerCreator(this._ajax.name, moduleLogger);
+
         var config = {
             credentials: 'include',
             headers: {
@@ -17,8 +24,11 @@ class Ajax {
             config.body = JSON.stringify(config.body);
         }
 
+        var url = this.rootAddress + apiAddress;
+
+        logger.info(`start: ${config.method} ${url}`);
         return Promise.resolve()
-            .then(() => fetch(this.rootAddress + apiAddress, config))
+            .then(() => fetch(url, config))
             .then(this.responseMiddleware)
             .then(function (response) {
                 if (response.status < 200 || response.status >= 300) {

@@ -4,6 +4,8 @@ var moduleLogger = loggerCreator(__filename);
 
 import { observable, action } from "mobx";
 import assert from "../utils/assert"
+import retries from "../utils/retries"
+
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 import * as backendLastFm from '../utils/backend_lastfm_api'
 import * as wrappedSoundManager from '../utils/wrapped_sound_manager'
@@ -17,6 +19,9 @@ export class Song {
     lastplayed = null;
     path = null;
     @observable rating = null;
+
+    @observable isMarkedAsPlayed = false;
+    _markingAsPlayedPromise = null;
 
     @observable loadedSound = null;
     @observable loadedImageUrl = null;
@@ -152,6 +157,23 @@ export class Song {
                 logger.info(`Success`);
                 this.rating = newRating;
             });
+    }
+
+    markAsPlayed() {
+        let logger = loggerCreator(this.markAsPlayed.name, moduleLogger);
+
+        logger.debug(`start: ${this.toString()}`);
+        if (!this._markingAsPlayedPromise) {
+            this._markingAsPlayedPromise = retries.promiseRetry(() => backendMetadataApi.updateLastPlayed(this.id))
+                .then(() => {
+                    logger.debug(`complete: ${this.toString()}`);
+
+                    this.isMarkedAsPlayed = true;
+                    this.markingAsPlayedPromise = null;
+                });
+        }
+
+        return this._markingAsPlayedPromise;
     }
 
     toString() {

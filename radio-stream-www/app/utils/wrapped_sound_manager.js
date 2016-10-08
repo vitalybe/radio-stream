@@ -15,7 +15,7 @@ export function setup() {
         // optional: ignore Flash where possible, use 100% HTML5 mode
         preferFlash: false,
         html5PollingInterval: 1000,
-        debugMode: false
+        debugMode: true
     });
 }
 

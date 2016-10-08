@@ -3,6 +3,8 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator(__filename);
 
 import { observable, action, computed } from "mobx";
+import retries from "../utils/retries"
+
 import assert from "../utils/assert"
 import * as config from "../utils/config"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
@@ -12,28 +14,15 @@ class Player {
     @observable currentPlaylist = null;
     @observable song = null;
 
-    @observable isMarkedAsPlayed = false;
-    markingAsPlayedPromise = null;
-
     constructor() {
     }
 
     _onPlayProgress(seconds) {
-        if (this.isMarkedAsPlayed == false && seconds >= config.MARK_PLAYED_AFTER_SECONDS) {
+        if (this.song && this.song.isMarkedAsPlayed == false && seconds >= config.MARK_PLAYED_AFTER_SECONDS) {
             let logger = loggerCreator(this._onPlayProgress.name, moduleLogger);
             logger.info(`start`);
 
-            assert(this.markingAsPlayedPromise == null, "previous mark as played still in progress - unexpected");
-
-            this.isMarkedAsPlayed = true;
-            logger.debug(`${this.song.toString()} in progress`);
-
-            this.markingAsPlayedPromise = backendMetadataApi.updateLastPlayed(this.song.id).then(() => {
-                logger.debug(`${this.song.toString()} complete`);
-
-                this.markingAsPlayedPromise = null;
-            });
-
+            return this.song.markAsPlayed();
         }
     }
 
@@ -71,30 +60,51 @@ class Player {
     }
 
     @action next() {
+        let logger = loggerCreator(this.next.name, moduleLogger);
+        logger.info(`start`);
+
+        let previousSong = this.song;
+        this.song = null;
+
         assert(this.currentPlaylist, "invalid state");
 
-        if (this.song) {
-            this.song.pauseSound();
-            this.song = null;
+        if (previousSong) {
+            logger.info(`pausing playing song: ${previousSong}`);
+            previousSong.pauseSound();
         }
 
-        Promise.resolve(this.markingAsPlayedPromise)
-            .then(() => this.currentPlaylist.nextSong())
-            .then(action(nextSong => {
-                if (this.song != nextSong || this.song == null) {
-                    this.song = nextSong;
-                    this.isMarkedAsPlayed = false;
-                    this.song.subscribePlayProgress(this._onPlayProgress.bind(this));
-                    this.song.subscribeFinish(this.next.bind(this));
+        Promise.resolve()
+            .then(() => {
+                if (previousSong) {
+                    logger.info(`making sure song was marked as played`);
+                    return previousSong.markAsPlayed()
                 }
+            }).then(() => retries.promiseRetry(() => {
+                return this.currentPlaylist.nextSong()
+                    .then(action(nextSong => {
 
-                return this.song.playSound();
+                        logger.info(`next song: ${nextSong}`);
+
+                        if (this.song != nextSong || this.song == null) {
+                            this.song = nextSong;
+                            this.isMarkedAsPlayed = false;
+                            this.song.subscribePlayProgress(this._onPlayProgress.bind(this));
+                            this.song.subscribeFinish(this.next.bind(this));
+                        }
+
+                        return this.song.playSound();
+                    }))
             }))
             .then(() => {
+                logger.info(`peeking next song`);
                 return this.currentPlaylist.peekNextSong();
             })
             .then((peekedSong) => {
-                peekedSong.load();
+                logger.info(`loading peeked song`);
+                return peekedSong.load();
+            })
+            .catch(err => {
+                logger.warn(`failed to peek the next song: ${err.stack}`);
             })
 
     }
