@@ -15,7 +15,7 @@ class Retries {
 
             return promiseReturningFunc().catch(err => {
                 logger.warn(`promise failed... retrying: ${err}`);
-                retry();
+                retry(err);
             })
         }, {retries: 1000})
     }

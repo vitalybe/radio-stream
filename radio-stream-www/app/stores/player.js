@@ -25,7 +25,7 @@ class Player {
         }
     }
 
-    @action changePlaylist(playlist) {
+    changePlaylist(playlist) {
         this.pause();
         this.currentPlaylist = playlist;
     }
@@ -72,17 +72,19 @@ class Player {
             previousSong.pauseSound();
         }
 
-        Promise.resolve()
+
+        return Promise.resolve()
             .then(() => {
                 if (previousSong) {
                     logger.info(`making sure song was marked as played`);
                     return previousSong.markAsPlayed()
                 }
             }).then(() => retries.promiseRetry(() => {
+
                 return this.currentPlaylist.nextSong()
                     .then(action(nextSong => {
 
-                        logger.info(`next song: ${nextSong}`);
+                        logger.info(`next song: ${nextSong.toString()}`);
 
                         if (this.song != nextSong || this.song == null) {
                             this.song = nextSong;
@@ -91,6 +93,7 @@ class Player {
                             this.song.subscribeFinish(this.next.bind(this));
                         }
 
+                        logger.info(`playing sound`);
                         return this.song.playSound();
                     }))
             }))
@@ -99,7 +102,7 @@ class Player {
                 return this.currentPlaylist.peekNextSong();
             })
             .then((peekedSong) => {
-                logger.info(`loading peeked song`);
+                logger.info(`loading peeked song: ${peekedSong.toString()}`);
                 return peekedSong.load();
             })
             .catch(err => {

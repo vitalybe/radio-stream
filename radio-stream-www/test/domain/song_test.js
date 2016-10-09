@@ -18,12 +18,12 @@ describe('Song', () => {
     beforeEach(() => {
 
         // Mocks
-        self.stubWrappedSound = {
-            // mobx hack - related issue: https://github.com/mobxjs/mobx/issues/421
-            play: mobx.asReference(sinon.stub()),
+        // mobx hack - related issue: https://github.com/mobxjs/mobx/issues/421
+        self.stubWrappedSound = Object.create({
+            play: sinon.stub(),
             pause: sinon.stub(),
             loaded: true
-        };
+        });
 
         self.stubWrappedSoundManager = {
             loadSound: sinon.stub().returns(new Promise(resolve => {
