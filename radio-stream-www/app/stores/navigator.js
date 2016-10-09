@@ -9,7 +9,7 @@ import player from "../stores/player"
 import playlistCollection from "../stores/playlist_collection"
 import settingsModifications from "../stores/settings_modifications"
 
-import settings from '../utils/settings'
+import getSettings from '../utils/settings'
 
 // Inspired by: https://github.com/mobxjs/mobx-contacts-list/blob/6c8e889f1bc84644d91ee0043b7c5e0a4482195c/src/app/stores/view-state.js
 class Navigator {
@@ -17,7 +17,7 @@ class Navigator {
     @observable activeComponentStore = null;
 
     constructor() {
-        if (settings.host && settings.password) {
+        if (getSettings().host && getSettings().password) {
             this.activeComponentStore = playlistCollection;
         } else {
             this.activeComponentStore = settingsModifications;

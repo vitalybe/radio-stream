@@ -27,11 +27,11 @@ describe('PlaylistCollection', () => {
             }
         );
 
-        self.PlaylistCollection = PlaylistCollectionModule.default;
+        self.playlistCollection = PlaylistCollectionModule.default;
     });
 
     it('returns playlist names', () => {
-        let playlistCollection = new self.PlaylistCollection();
+        let playlistCollection = self.playlistCollection;
 
         return playlistCollection.load()
             .then(() => {

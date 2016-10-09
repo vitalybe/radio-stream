@@ -31,7 +31,7 @@ describe('Playlist', () => {
         }));
 
         // SUT
-        let PlaylistModule = proxyquire("../../app/stores/playlist.js", {
+        let PlaylistModule = proxyquire("../../app/domain/playlist.js", {
             "../utils/backend_metadata_api": self.backendMetadataApiStub}
         );
 

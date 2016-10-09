@@ -4,7 +4,7 @@ var moduleLogger = loggerCreator(__filename);
 
 import { observable, action } from "mobx";
 
-import settings from '../utils/settings'
+import getSettings from '../utils/settings'
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
 class SettingsModifications {
@@ -26,28 +26,28 @@ class SettingsModifications {
         this.testState = "";
         this.isError = false;
 
-        this.host = settings.host;
-        this.password = settings.password;
+        this.host = getSettings().host;
+        this.password = getSettings().password;
     }
 
     save() {
-        settings.host = this.host;
-        settings.password = this.password;
+        getSettings().host = this.host;
+        getSettings().password = this.password;
 
-        this.testState = `Connecting to ${settings.host}...`
+        this.testState = `Connecting to ${getSettings().host}...`
         this.isError = false;
 
         return backendMetadataApi.playlists()
             .then(() => {
                 this.testState = "Connection is successful"
 
-                settings.save();
+                getSettings().save();
             })
             .catch(err => {
                 this.testState = "Connection failed"
                 this.isError = true;
 
-                settings.load();
+                getSettings().load();
 
                 throw err;
             })

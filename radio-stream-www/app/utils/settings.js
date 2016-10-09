@@ -3,13 +3,15 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator(__filename);
 
 import { observable, action } from "mobx";
-let electronSettings = require('electron-settings');
 
 class Settings {
 
     constructor() {
         let logger = loggerCreator(this.constructor.name, moduleLogger);
         logger.info(`start`);
+
+        // i am unable to get proxyquire, in tests, to require electron, so I have to hide it inside
+        this.electronSettings = require('electron-settings');
 
         this.host = null;
         this.password = null;
@@ -18,7 +20,7 @@ class Settings {
     }
 
     load() {
-        let values = electronSettings.getSync("values");
+        let values = this.electronSettings.getSync("values");
         if (values) {
             if (values.host) {
                 this.host = values.host;
@@ -31,8 +33,19 @@ class Settings {
     }
 
     save() {
-        return electronSettings.setSync("values", {host: this.host, password: this.password});
+        return this.electronSettings.setSync("values", {host: this.host, password: this.password});
     }
 }
 
-export default new Settings();
+var settingsInstance = null;
+
+function getSettings() {
+    if (!settingsInstance) {
+        settingsInstance = new Settings();
+    }
+
+    return settingsInstance;
+}
+
+// note: i am not just returning a new instance because due to electron requiring issues in proxyquire in tests
+export default getSettings;

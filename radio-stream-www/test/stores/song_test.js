@@ -39,9 +39,10 @@ describe('Song', () => {
 
         // SUT
         self.sutNewSong = (...args) => {
-            let module = proxyquire('../../app/stores/song.js', {
+            let module = proxyquire('../../app/domain/song.js', {
                 '../utils/wrapped_sound_manager': self.stubWrappedSoundManager,
-                '../utils/backend_lastfm_api': self.stubBackendLastFm
+                '../utils/backend_lastfm_api': self.stubBackendLastFm,
+                '../utils/backend_metadata_api': sinon.stub()
             });
 
             return new module.Song(...args);

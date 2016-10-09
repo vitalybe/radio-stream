@@ -1,11 +1,11 @@
 import getHistory from '../utils/history'
 import ajaxConstructor from './ajax'
 
-import settings from '../utils/settings'
+import getSettings from '../utils/settings'
 
 function getAjax() {
 
-    var beetsServer = `http://${settings.host}/api`;
+    var beetsServer = `http://${getSettings().host}/api`;
 
     return ajaxConstructor(beetsServer, function (response) {
         if (response.status == 401) {

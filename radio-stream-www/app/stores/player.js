@@ -7,7 +7,6 @@ import retries from "../utils/retries"
 
 import assert from "../utils/assert"
 import * as config from "../utils/config"
-import * as backendMetadataApi from '../utils/backend_metadata_api'
 
 class Player {
     @observable isPlaying = false;
