@@ -3,6 +3,9 @@
 require('electron-debug')();
 const path = require('path');
 const electron = require('electron');
+// shows devtools
+require('electron-debug')({enabled: true});
+
 const notifier = require('node-notifier');
 const moment = require('moment');
 
