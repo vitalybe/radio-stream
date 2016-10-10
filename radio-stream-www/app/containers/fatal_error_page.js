@@ -7,6 +7,8 @@ import { observer } from "mobx-react"
 import navigator from '../stores/navigator'
 import player from '../stores/player'
 
+const logoImage = require("../images/logo.png");
+
 @observer
 export class FatalErrorPage extends Component {
 
@@ -23,8 +25,10 @@ export class FatalErrorPage extends Component {
     render() {
         return (
             <div className="fatal-error-page">
+                <img className="logo" src={logoImage}/>
+
                 <h1>Unexpected error</h1>
-                <div className="message">{navigator.fatalErrorMessage}</div>
+                <p className="message">{navigator.fatalErrorMessage}</p>
             </div>
         )
     }
