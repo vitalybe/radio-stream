@@ -27,7 +27,7 @@ class TopBarComponent extends Component {
 
 // Inspired by: https://github.com/mobxjs/mobx-contacts-list/blob/6c8e889f1bc84644d91ee0043b7c5e0a4482195c/src/app/stores/view-state.js
 @observer
-export default class Routing extends Component {
+export default class NavigatorPage extends Component {
     constructor(props, context) {
         super(props, context);
     }
