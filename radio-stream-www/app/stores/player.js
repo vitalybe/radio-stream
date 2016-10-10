@@ -31,11 +31,15 @@ class Player {
     }
 
     @action pause() {
+        let promise = Promise.resolve();
+
         if (this.song) {
-            this.song.pauseSound();
+            promise = this.song.pauseSound();
         }
 
         this.isPlaying = false;
+
+        return promise;
     }
 
     @action play() {
@@ -72,7 +76,6 @@ class Player {
             previousSong.pauseSound();
         }
 
-
         return Promise.resolve()
             .then(() => {
                 if (previousSong) {
@@ -99,21 +102,22 @@ class Player {
             }))
             .then(() => {
                 logger.info(`peeking next song`);
-                return this.currentPlaylist.peekNextSong();
-            })
-            .then((peekedSong) => {
-                logger.info(`loading peeked song: ${peekedSong.toString()}`);
-                return peekedSong.load();
-            })
-            .catch(err => {
-                logger.warn(`failed to peek the next song: ${err.stack}`);
+                return this.currentPlaylist.peekNextSong()
+                    .then((peekedSong) => {
+                        logger.info(`loading peeked song: ${peekedSong.toString()}`);
+                        return peekedSong.load();
+                    })
+                    .catch(err => {
+                        logger.warn(`failed to peek the next song: ${err.stack}`);
+                    })
             })
 
     }
 
     @action stop() {
-        this.pause();
-        this.song = null;
+        return this.pause().then(() => {
+            this.song = null;
+        });
     }
 
     @computed get isLoading() {

@@ -4,6 +4,9 @@ var moduleLogger = loggerCreator(__filename);
 import React, { Component } from 'react';
 import { observer } from "mobx-react"
 
+import navigator from '../stores/navigator'
+import player from '../stores/player'
+
 @observer
 export class FatalErrorPage extends Component {
 
@@ -11,11 +14,17 @@ export class FatalErrorPage extends Component {
         super(props, context);
     }
 
+    componentDidMount() {
+        Promise.resolve()
+            .then(() => { player.stop() })
+            .catch(err => { console.warn("failed to pause song on error screen: " + err.stack) });
+    }
+
     render() {
         return (
             <div className="fatal-error-page">
                 <h1>Unexpected error</h1>
-                <div className="message">Error has happened</div>
+                <div className="message">{navigator.fatalErrorMessage}</div>
             </div>
         )
     }

@@ -68,11 +68,20 @@ describe('Player', () => {
     });
 
     it('keep retrying if playSound fails', () => {
-        self.stubSong.playSound = sinon.stub().returns(Promise.reject(new Error()))
+
+        let playSoundFails = true
+        self.stubSong.playSound = sinon.spy(() => {
+            if(playSoundFails) {
+                playSoundFails = false;
+                return Promise.reject(new Error());
+            } else {
+                return Promise.resolve();
+            }
+        })
 
         return self.player.next()
             .then(() => {
-                expect(self.stubSong.playSound.callCount).to.equal(RETRIES_COUNT+1);
+                expect(self.stubSong.playSound.callCount).to.equal(2);
             })
     });
 });

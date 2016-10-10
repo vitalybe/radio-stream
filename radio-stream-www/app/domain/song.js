@@ -143,7 +143,7 @@ export class Song {
         let logger = loggerCreator(this.pauseSound.name, moduleLogger);
         logger.info(`start`);
 
-        this.load().then(() => {
+        return this.load().then(() => {
             this.loadedSound.pause()
         })
     }

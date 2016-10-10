@@ -15,6 +15,7 @@ import getSettings from '../utils/settings'
 class Navigator {
 
     @observable activeComponentStore = null;
+    @observable fatalErrorMessage = null;
 
     constructor() {
         if (getSettings().host && getSettings().password) {
