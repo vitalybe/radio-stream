@@ -3,9 +3,14 @@ import ajaxConstructor from './ajax'
 
 import getSettings from '../stores/settings'
 
-function getAjax() {
+function getAjax(customSettings) {
 
-    var beetsServer = `http://${getSettings().host}/api`;
+    let settings = getSettings();
+    if(customSettings) {
+        settings = customSettings;
+    }
+
+    var beetsServer = `http://${settings.values.host}/api`;
 
     return ajaxConstructor(beetsServer, function (response) {
         if (response.status == 401) {
@@ -40,4 +45,8 @@ export function updateLastPlayed(songId) {
 
 export function updateRating(songId, newRating) {
     return getAjax().put(`/item/${songId}/rating`, {body: {newRating}});
+}
+
+export function testConnection(customSettings) {
+    return getAjax(customSettings).get(`/playlists`);
 }

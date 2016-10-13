@@ -18,7 +18,7 @@ class Navigator {
     @observable fatalErrorMessage = null;
 
     constructor() {
-        if (getSettings().host && getSettings().password) {
+        if (getSettings().values.host && getSettings().values.password) {
             this.activeComponentStore = playlistCollection;
         } else {
             this.activeComponentStore = settingsModifications;

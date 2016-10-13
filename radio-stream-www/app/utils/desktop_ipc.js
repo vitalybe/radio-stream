@@ -42,9 +42,9 @@ export function connect() {
 
         autorun(() => {
             let logger = loggerCreator("autorun-keyboard", moduleLogger);
-            logger.info(`changed key: ${getSettings().playPauseKey}`);
+            logger.info(`changed key: ${getSettings().values.playPauseKey}`);
 
-            ipcRenderer.send("onPlayPauseKeyChanged", getSettings().playPauseKey);
+            ipcRenderer.send("onPlayPauseKeyChanged", getSettings().values.playPauseKey);
         });
 
         autorun(() => {

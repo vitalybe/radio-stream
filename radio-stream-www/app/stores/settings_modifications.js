@@ -10,9 +10,11 @@ import * as backendMetadataApi from '../utils/backend_metadata_api'
 
 class SettingsModifications {
 
-    @observable host;
-    @observable password;
-    @observable playPauseKey;
+    @observable values = {
+        host: "",
+        password: "",
+        playPauseKey: ""
+    }
 
     @observable testState;
     @observable isError;
@@ -37,24 +39,18 @@ class SettingsModifications {
         this.testState = "";
         this.isError = false;
 
-        this.host = getSettings().host;
-        this.password = getSettings().password;
-        this.playPauseKey = getSettings().playPauseKey;
+        this.values = getSettings().values;
     }
 
     save() {
-        getSettings().host = this.host;
-        getSettings().password = this.password;
-        getSettings().playPauseKey = this.playPauseKey;
-
         this.testState = `Connecting to ${getSettings().host}...`
         this.isError = false;
 
-        return backendMetadataApi.playlists()
+        return backendMetadataApi.testConnection(this)
             .then(() => {
                 this.testState = "Connection is successful"
 
-                getSettings().save();
+                getSettings().save(this.values);
             })
             .catch(err => {
                 this.testState = "Connection failed"
@@ -95,7 +91,7 @@ class SettingsModifications {
             let key = keyParts.join("+")
 
             logger.info(`accelerator: ${key}`);
-            this.playPauseKey = key;
+            this.values.playPauseKey = key;
         } else {
             logger.info(`modifier key`);
         }
