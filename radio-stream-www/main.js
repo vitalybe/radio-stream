@@ -14,6 +14,7 @@ const BrowserWindow = electron.BrowserWindow;
 const ipcMain = electron.ipcMain;
 
 const globalShortcuts = require("./app/native/global_shortcuts")
+const titleHandler = require("./app/native/title_handler")
 const nativeLog = require("./app/native/native_log")
 
 let mainWindow = null;
@@ -26,19 +27,6 @@ function handleQuitting() {
 
     app.on('window-all-closed', () => {
         if (process.platform !== 'darwin') app.quit();
-    });
-}
-
-// TODO: Seperate
-function handleTitleChanges() {
-    let originalTitle = "Personal Radio Stream";
-
-    ipcMain.on('song-changed', function (event, newSong) {
-        if (newSong) {
-            mainWindow.setTitle(`${newSong.title} - ${newSong.artist} - ${originalTitle}`);
-        } else {
-            mainWindow.setTitle(originalTitle);
-        }
     });
 }
 
@@ -64,7 +52,7 @@ app.on('ready', () => {
     mainWindow = new BrowserWindow({width: 1024, height: 728, icon: "app/images/icon.ico"});
     nativeLog.setMainWindow(mainWindow);
 
-    handleTitleChanges();
+    titleHandler.register(app, mainWindow);
     handleUseIdling();
     handleQuitting();
     globalShortcuts.register(app, mainWindow);

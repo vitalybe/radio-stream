@@ -11,13 +11,12 @@ class Settings {
     host = null;
     password = null;
 
+    // i am unable to get proxyquire, in tests, to require electron, so I have to hide it inside
     _electronSettings = require('electron-settings');
 
     constructor() {
         let logger = loggerCreator(this.constructor.name, moduleLogger);
         logger.info(`start`);
-
-        // i am unable to get proxyquire, in tests, to require electron, so I have to hide it inside
 
         this.load();
     }

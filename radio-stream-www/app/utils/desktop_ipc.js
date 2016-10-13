@@ -12,12 +12,12 @@ export function connect() {
 // For desktop mode only
     if (!__WEB__) {
 
-        require('ipc').on('native-log', function (msg) {
+        ipcRenderer.on('native-log', function (msg) {
             let logger = loggerCreator("native-log", moduleLogger);
             logger.debug(msg);
         });
 
-        require('ipc').on('playPauseGlobalKey', function () {
+        ipcRenderer.on('playPauseGlobalKey', function () {
             let logger = loggerCreator("playPauseToggle", moduleLogger);
 
             logger.debug("received message: playPauseToggle");
@@ -26,7 +26,7 @@ export function connect() {
             }
         });
 
-        require('ipc').on('idle', function (idleOutput) {
+        ipcRenderer.on('idle', function (idleOutput) {
             let logger = loggerCreator("idle", moduleLogger);
 
             // logger.debug("received idle: " + idleOutput);
@@ -46,18 +46,11 @@ export function connect() {
             ipcRenderer.send("onPlayPauseKeyChanged", getSettings().playPauseKey);
         });
 
-        // TODO: replace/remove
-        //const ipcRenderer = require('electron').ipcRenderer;
-        //observeStore(state => ({
-        //    currentSong: state.currentSongAsync.data,
-        //    artistImage: state.currentArtistImage
-        //}), data => {
-        //    if (data.currentSong) {
-        //        ipcRenderer.send('song-changed', {...data.currentSong, artistImage: data.artistImage});
-        //    } else {
-        //        ipcRenderer.send('song-changed', null);
-        //    }
-        //});
+        autorun(() => {
+            let logger = loggerCreator("autorun-keyboard", moduleLogger);
+            logger.info(`changed song: ${player.song}`);
 
+            ipcRenderer.send("onPlayerSongChanged", player.song);
+        });
     }
 }
