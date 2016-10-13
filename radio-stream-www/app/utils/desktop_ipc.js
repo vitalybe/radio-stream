@@ -5,6 +5,7 @@ var moduleLogger = loggerCreator(__filename);
 import { ipcRenderer } from 'electron'
 
 import player from "../stores/player"
+import navigator from "../stores/navigator"
 import getSettings from "../stores/settings"
 import { autorun } from "mobx";
 
@@ -12,7 +13,7 @@ export function connect() {
 // For desktop mode only
     if (!__WEB__) {
 
-        ipcRenderer.on('native-log', function (msg) {
+        ipcRenderer.on('native-log', function (event, msg) {
             let logger = loggerCreator("native-log", moduleLogger);
             logger.debug(msg);
         });
@@ -26,15 +27,15 @@ export function connect() {
             }
         });
 
-        ipcRenderer.on('idle', function (idleOutput) {
+        ipcRenderer.on('idle', function (event, idleOutput) {
             let logger = loggerCreator("idle", moduleLogger);
 
-            // logger.debug("received idle: " + idleOutput);
+            logger.debug("received idle: " + idleOutput);
             const idleSeconds = parseInt(idleOutput);
 
-            if (idleSeconds > 180 && player && player.isPlaying) {
-                logger.debug("idle too long - pausing song");
-                player.pause();
+            if (idleSeconds > 3600 && player && player.isPlaying) {
+                logger.debug("idle too long");
+                navigator.activatePlaylistCollection();
             }
 
         });

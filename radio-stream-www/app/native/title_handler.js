@@ -1,7 +1,6 @@
 const nativeLog = require("../native/native_log")
 
 const electron = require("electron")
-const globalShortcut = electron.globalShortcut;
 const ipcMain = electron.ipcMain;
 
 module.exports.register = function (app, mainWindow) {
