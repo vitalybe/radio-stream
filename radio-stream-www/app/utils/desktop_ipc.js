@@ -1,25 +1,34 @@
 import loggerCreator from '../utils/logger'
 //noinspection JSUnresolvedVariable
-var logger = loggerCreator(__filename);
+var moduleLogger = loggerCreator(__filename);
+
+import { ipcRenderer } from 'electron'
 
 import player from "../stores/player"
+import getSettings from "../stores/settings"
+import { autorun } from "mobx";
 
 export function connect() {
 // For desktop mode only
     if (!__WEB__) {
 
-        require('ipc').on('log', function (msg) {
+        require('ipc').on('native-log', function (msg) {
+            let logger = loggerCreator("native-log", moduleLogger);
             logger.debug(msg);
         });
 
-        require('ipc').on('playPauseToggle', function () {
+        require('ipc').on('playPauseGlobalKey', function () {
+            let logger = loggerCreator("playPauseToggle", moduleLogger);
+
             logger.debug("received message: playPauseToggle");
-            if (player) {
+            if (player && player.currentPlaylist) {
                 player.togglePlayPause();
             }
         });
 
         require('ipc').on('idle', function (idleOutput) {
+            let logger = loggerCreator("idle", moduleLogger);
+
             // logger.debug("received idle: " + idleOutput);
             const idleSeconds = parseInt(idleOutput);
 
@@ -28,6 +37,13 @@ export function connect() {
                 player.pause();
             }
 
+        });
+
+        autorun(() => {
+            let logger = loggerCreator("autorun-keyboard", moduleLogger);
+            logger.info(`changed key: ${getSettings().playPauseKey}`);
+
+            ipcRenderer.send("onPlayPauseKeyChanged", getSettings().playPauseKey);
         });
 
         // TODO: replace/remove

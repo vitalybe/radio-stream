@@ -1,7 +1,7 @@
 import getHistory from '../utils/history'
 import ajaxConstructor from './ajax'
 
-import getSettings from '../utils/settings'
+import getSettings from '../stores/settings'
 
 function getAjax() {
 

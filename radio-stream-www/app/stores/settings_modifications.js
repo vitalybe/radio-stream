@@ -5,7 +5,7 @@ var moduleLogger = loggerCreator(__filename);
 import { observable, action } from "mobx";
 import keycode from "keycode";
 
-import getSettings from '../utils/settings'
+import getSettings from '../stores/settings'
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
 class SettingsModifications {

@@ -13,12 +13,10 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const ipcMain = electron.ipcMain;
 
+const globalShortcuts = require("./app/native/global_shortcuts")
+const nativeLog = require("./app/native/native_log")
 
 let mainWindow = null;
-
-function log(msg) {
-    mainWindow.webContents.send('log', msg);
-}
 
 
 function handleQuitting() {
@@ -30,6 +28,8 @@ function handleQuitting() {
         if (process.platform !== 'darwin') app.quit();
     });
 }
+
+// TODO: Seperate
 function handleTitleChanges() {
     let originalTitle = "Personal Radio Stream";
 
@@ -41,6 +41,8 @@ function handleTitleChanges() {
         }
     });
 }
+
+// TODO: Seperate
 function handleUseIdling() {
     var exec = require('child_process').exec;
     // Windows:
@@ -57,65 +59,15 @@ function handleUseIdling() {
 
 
 }
-function handleGlobalShortcuts() {
-    const globalShortcut = electron.globalShortcut;
-    let currentSong = null;
-
-    ipcMain.on('song-changed', function (event, newSong) {
-        currentSong = newSong;
-        if(!currentSong) {
-            return;
-        }
-
-        currentSong.artistImageBuffer = null;
-
-        // TODO: There might be a race condition in which it would show a picture of a previous artist
-        // once the song has changed
-        var request = require('request').defaults({encoding: null});
-        request.get(currentSong.artistImage, function (err, res, body) {
-            currentSong.artistImageBuffer = body;
-        });
-    });
-
-
-    globalShortcut.register('Alt+Ctrl+Home', function () {
-        log('play/pause toggle key pressed');
-        mainWindow.webContents.send('playPauseToggle');
-    });
-
-    globalShortcut.register('Alt+Ctrl+Shift+Home', function () {
-        log('show info pressed');
-        const Growl = require('node-notifier').Growl;
-
-        var notifier = new Growl({
-            name: 'Personal Radio Stream', // Defaults as 'Node'
-            host: 'localhost',
-            port: 23053
-        });
-
-        if (currentSong) {
-            notifier.notify({
-                title: `${currentSong.artist} - ${currentSong.title}`,
-                message: `Rating: ${currentSong.rating / 20}\nLast played: ${lastplayed}`,
-                icon: currentSong.artistImageBuffer
-            });
-        }
-    });
-
-
-    app.on('will-quit', function () {
-        // Unregister all shortcuts.
-        globalShortcut.unregisterAll();
-    });
-}
 
 app.on('ready', () => {
     mainWindow = new BrowserWindow({width: 1024, height: 728, icon: "app/images/icon.ico"});
+    nativeLog.setMainWindow(mainWindow);
 
     handleTitleChanges();
     handleUseIdling();
-    handleGlobalShortcuts();
     handleQuitting();
+    globalShortcuts.register(app, mainWindow);
 
     if (process.env.HOT) {
         mainWindow.loadURL(`file://${__dirname}/app/hot-dev-index.html`);
