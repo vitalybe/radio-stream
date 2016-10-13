@@ -8,8 +8,6 @@ import moment from 'moment';
 
 import assert from "../utils/assert"
 
-import * as idleRedirectListener from '../utils/idle_redirect_listener';
-
 import player from '../stores/player'
 
 const infoImage = require("../images/info.png");
@@ -23,8 +21,6 @@ export class PlayerPage extends Component {
 
     //noinspection JSUnusedGlobalSymbols
     componentDidMount() {
-        // TODO: Move idleRedirectListener to view independent service
-        idleRedirectListener.start();
     }
 
     //noinspection JSUnusedGlobalSymbols
