@@ -15,6 +15,7 @@ class Settings {
 
         this.host = null;
         this.password = null;
+        this.playPauseKey = null;
 
         this.load();
     }
@@ -29,11 +30,19 @@ class Settings {
             if (values.password) {
                 this.password = values.password;
             }
+
+            if (values.playPauseKey) {
+                this.playPauseKey = values.playPauseKey;
+            }
         }
     }
 
     save() {
-        return this.electronSettings.setSync("values", {host: this.host, password: this.password});
+        return this.electronSettings.setSync("values", {
+            host: this.host,
+            password: this.password,
+            playPauseKey: this.playPauseKey
+        });
     }
 }
 
