@@ -16,7 +16,6 @@ const nativeLog = require("./app/native/native_log")
 
 const globalShortcuts = require("./app/native/global_shortcuts")
 const titleHandler = require("./app/native/title_handler")
-const idleHandler = require("./app/native/idle_handler")
 
 let mainWindow = null;
 
@@ -25,7 +24,6 @@ app.on('ready', () => {
     nativeLog.setMainWindow(mainWindow);
 
     titleHandler.register(app, mainWindow);
-    idleHandler.register(app, mainWindow);
     globalShortcuts.register(app, mainWindow);
 
     if (process.env.HOT) {
