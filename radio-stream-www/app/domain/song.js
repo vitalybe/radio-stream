@@ -86,10 +86,13 @@ export class Song {
         let logger = loggerCreator(this._loadImage.name, moduleLogger);
         logger.info(`start`);
 
-        if (this.image) {
+        if (this.loadedImageUrl) {
+            logger.info(`image already loaded`);
             return Promise.resolve();
         } else {
+            logger.info(`loading artist image`);
             return backendLastFm.getArtistImage(this.artist).then(imageUrl => {
+                logger.info(`image loaded`);
                 this.loadedImageUrl = imageUrl;
             });
         }
