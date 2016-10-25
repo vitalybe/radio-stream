@@ -55,6 +55,9 @@ class Player {
     }
 
     @action togglePlayPause() {
+        let logger = loggerCreator(this.togglePlayPause.name, moduleLogger);
+        logger.info(`start`);
+
         if (this.isPlaying) {
             this.pause();
         } else {
@@ -62,9 +65,40 @@ class Player {
         }
     }
 
+    _subscribeAndPlayNewSong(nextSong) {
+        let logger = loggerCreator(this._subscribeAndPlayNewSong.name, moduleLogger);
+        logger.info(`start: ${nextSong.toString()}`);
+
+        if (this.song != nextSong || this.song == null) {
+            this.song = nextSong;
+            this.song.subscribePlayProgress(this._onPlayProgress.bind(this));
+            this.song.subscribeFinish(this.next.bind(this));
+        }
+
+        logger.info(`playing sound`);
+        return this.song.playSound();
+    }
+
+    _preloadNextSong() {
+        let logger = loggerCreator(this._preloadNextSong.name, moduleLogger);
+
+        logger.info(`peeking next song`);
+        return this.currentPlaylist.peekNextSong()
+            .then((peekedSong) => {
+                logger.info(`loading peeked song: ${peekedSong.toString()}`);
+                return peekedSong.load();
+            })
+            .catch(err => {
+                logger.warn(`failed to peek the next song: ${err.stack}`);
+            })
+    }
+
     @action next() {
         let logger = loggerCreator(this.next.name, moduleLogger);
         logger.info(`start`);
+
+        // time since last player - toggle-pause.
+        // if too long, stop and clear playlist
 
         let previousSong = this.song;
         this.song = null;
@@ -83,35 +117,9 @@ class Player {
                     return previousSong.markAsPlayed()
                 }
             }).then(() => retries.promiseRetry(() => {
-
-                return this.currentPlaylist.nextSong()
-                    .then(action(nextSong => {
-
-                        logger.info(`next song: ${nextSong.toString()}`);
-
-                        if (this.song != nextSong || this.song == null) {
-                            this.song = nextSong;
-                            this.isMarkedAsPlayed = false;
-                            this.song.subscribePlayProgress(this._onPlayProgress.bind(this));
-                            this.song.subscribeFinish(this.next.bind(this));
-                        }
-
-                        logger.info(`playing sound`);
-                        return this.song.playSound();
-                    }))
+                return this.currentPlaylist.nextSong().then(this._subscribeAndPlayNewSong.bind(this))
             }))
-            .then(() => {
-                logger.info(`peeking next song`);
-                return this.currentPlaylist.peekNextSong()
-                    .then((peekedSong) => {
-                        logger.info(`loading peeked song: ${peekedSong.toString()}`);
-                        return peekedSong.load();
-                    })
-                    .catch(err => {
-                        logger.warn(`failed to peek the next song: ${err.stack}`);
-                    })
-            })
-
+            .then(this._preloadNextSong.bind(this))
     }
 
     @action stop() {
