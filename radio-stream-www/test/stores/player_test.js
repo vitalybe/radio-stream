@@ -1,3 +1,7 @@
+import loggerCreator from '../../app/utils/logger'
+//noinspection JSUnresolvedVariable
+var moduleLogger = loggerCreator(__filename);
+
 var proxyquire = require('proxyquire').noCallThru();
 var sinon = require('sinon');
 var expect = require('chai').expect;
@@ -68,13 +72,19 @@ describe('Player', () => {
     });
 
     it('keep retrying if playSound fails', () => {
+        let logger = loggerCreator("test", moduleLogger);
+
+        logger.info(`start`);
 
         let playSoundFails = true
         self.stubSong.playSound = sinon.spy(() => {
+            logger.info(`playSound spy called`);
             if(playSoundFails) {
+                logger.info(`rejecting`);
                 playSoundFails = false;
                 return Promise.reject(new Error());
             } else {
+                logger.info(`resolving`);
                 return Promise.resolve();
             }
         })

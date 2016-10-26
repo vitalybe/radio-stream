@@ -8,20 +8,49 @@ import { Song } from "./song"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
 export default class Playlist {
+    static RELOAD_PLAYLIST_AFTER_MINUTES = 60
+
     @observable name = null;
-    songs = [];
-    currentIndex = 0;
+
+    _songs = [];
+    _currentIndex = 0;
+    _lastReloadDate = null;
+
 
     constructor(name) {
         this.name = name;
+    }
+
+    _areSongsOutOfDate() {
+        let logger = loggerCreator(this._areSongsOutOfDate.name, moduleLogger);
+        logger.info(`start`);
+
+        let result = null;
+        if(!this._lastReloadDate) {
+            logger.info(`no reload date found`);
+            result = true;
+        } else {
+            let secondsSinceReload = new Date() - this._lastReloadDate;
+            logger.info(`seconds since reload ${secondsSinceReload}`);
+            let minutesSinceReload = secondsSinceReload / 1000 / 60
+            logger.info(`is minutes since reload ${minutesSinceReload} more than ${Playlist.RELOAD_PLAYLIST_AFTER_MINUTES}?`);
+
+            result = minutesSinceReload >= Playlist.RELOAD_PLAYLIST_AFTER_MINUTES;
+        }
+
+        logger.info(`returning: ${result}`);
+        return result;
     }
 
     _reloadSongsIfNeeded() {
         let logger = loggerCreator(this._reloadSongsIfNeeded.name, moduleLogger);
         logger.info("start");
 
-        logger.info(`songs length: ${this.songs.length}. Current index: ${this.currentIndex}`);
-        if (this.songs.length > 0 && this.currentIndex < this.songs.length) {
+        logger.info(`songs length: ${this._songs.length}. Current index: ${this._currentIndex}`);
+        var isEnoughSongsInList = this._songs.length > 0 && this._currentIndex < this._songs.length;
+        logger.info(`enough songs in list? ${isEnoughSongsInList}`);
+
+        if (isEnoughSongsInList && this._areSongsOutOfDate() === false) {
             // playlist songs already loaded
             logger.info(`not reloading songs`);
             return Promise.resolve();
@@ -29,8 +58,10 @@ export default class Playlist {
             logger.info(`reloading songs`);
             return backendMetadataApi.playlistSongs(this.name).then(songsData => {
                 logger.info(`loaded songs: ${songsData.length}`);
-                this.songs = songsData.map(songData => new Song(songData));
-                this.currentIndex = 0;
+                this._songs = songsData.map(songData => new Song(songData));
+                this._currentIndex = 0;
+
+                this._lastReloadDate = new Date();
             });
         }
     };
@@ -40,8 +71,8 @@ export default class Playlist {
         logger.info("start");
 
         return this.peekNextSong().then((song) => {
-            this.currentIndex++;
-            logger.info(`new index: ${this.currentIndex}`);
+            this._currentIndex++;
+            logger.info(`new index: ${this._currentIndex}`);
 
             return song;
         })
@@ -53,8 +84,8 @@ export default class Playlist {
 
         return this._reloadSongsIfNeeded()
             .then(() => {
-                logger.info(`returning song by index: ${this.currentIndex}`);
-                let song = this.songs[this.currentIndex];
+                logger.info(`returning song by index: ${this._currentIndex}`);
+                let song = this._songs[this._currentIndex];
                 logger.info(`returning song: ${song}`);
 
                 return song;
