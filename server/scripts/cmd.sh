@@ -6,6 +6,13 @@
 echo "Running radio-stream..."
 beet radio &
 
+echo "******************************************************************"
+echo " Radio Stream server is up and listening on: http://localhost:80"
+echo " User: radio"
+echo " Pass: $NGINX_PASSWORD"
+echo "******************************************************************"
+echo ""
+
 # SSH server
 ############
 

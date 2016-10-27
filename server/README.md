@@ -15,3 +15,7 @@ If you have the permission you can publish directly by running:
 
 `docker push vitalybe/radio-stream:latest`
 
+Running
+=======
+
+See file: `cli/README.md`

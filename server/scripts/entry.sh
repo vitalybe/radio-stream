@@ -34,7 +34,7 @@ if [ ! -e ~/.ssh/authorized_keys ]; then
 fi
 
 # NGINX
-
+echo "radio:$(echo "$NGINX_PASSWORD" | openssl passwd -stdin)" > /radio-stream/data/nginx_passwd
 echo "Running nginx..."
 nginx
 
