@@ -6,7 +6,11 @@ import { observable, action } from "mobx";
 
 class Settings {
 
-    @observable values = {};
+    @observable values = {
+        host: "",
+        password: "",
+        playPauseKey: ""
+    };
 
     // i am unable to get proxyquire, in tests, to require electron, so I have to hide it inside
     _electronSettings = require('electron-settings');
@@ -22,7 +26,8 @@ class Settings {
         this.values = this._electronSettings.getSync("values");
     }
 
-    save() {
+    save(newValues) {
+        this.values = _.clone(newValues)
         return this._electronSettings.setSync("values", this.values);
     }
 }

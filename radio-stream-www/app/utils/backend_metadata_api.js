@@ -1,23 +1,25 @@
 import getHistory from '../utils/history'
-import ajaxConstructor from './ajax'
+import Ajax from './ajax'
+import * as config from "../utils/config"
+
 
 import getSettings from '../stores/settings'
 
+// NOTE: Since the host might change, we create a new Ajax object every time
 function getAjax(customSettings) {
 
     let settings = getSettings();
-    if(customSettings) {
+    if (customSettings) {
         settings = customSettings;
     }
 
     var beetsServer = `http://${settings.values.host}/api`;
 
-    return ajaxConstructor(beetsServer, function (response) {
-        if (response.status == 401) {
-            getHistory().pushState(null, '/login');
+    var credentials = btoa(unescape(encodeURIComponent(config.USERNAME + ':' + settings.values.password)))
+    return new Ajax(beetsServer, {
+        'headers': {
+            'Authorization': "Basic " + credentials
         }
-
-        return response;
     });
 }
 
