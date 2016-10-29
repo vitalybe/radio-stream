@@ -6,7 +6,7 @@ import { observable, action, computed } from "mobx";
 import retries from "../utils/retries"
 
 import assert from "../utils/assert"
-import * as config from "../utils/config"
+import * as config from "../utils/constants"
 
 class Player {
     @observable isPlaying = false;

@@ -1,7 +1,6 @@
 import { soundManager } from 'soundmanager2';
 import WrappedSound from './wrapped_sound.js'
-
-import { MUSIC_SERVER } from './config'
+import getSettings from '../stores/settings'
 
 import loggerCreator from './logger'
 //noinspection JSUnresolvedVariable
@@ -50,7 +49,8 @@ export function loadSound(song) {
     } else {
         flogger.debug(`Starting createSound for song...`);
         loadingPromise = new Promise(function (resolve, reject) {
-            let sound = soundManager.createSound({id: song.id, url: MUSIC_SERVER + "/" + song.path, stream: false});
+            var soundUrl = `http://${getSettings().values.host}/music/${song.path}`;
+            let sound = soundManager.createSound({id: song.id, url: soundUrl, stream: false});
             sound.load({
                 stream: false,
                 onload: function (success) {
