@@ -13,7 +13,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 
 import * as desktopIpc from './utils/desktop_ipc'
-import NavigatorPage from './containers/navigator_page'
+import NavigatorPage from './pages/navigator_page'
 import * as wrappedSoundManager from './utils/wrapped_sound_manager'
 
 logger.info("Compilation settings - __PROD__: " + __PROD__);
