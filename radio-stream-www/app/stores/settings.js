@@ -27,7 +27,7 @@ class Settings {
     }
 
     save(newValues) {
-        this.values = _.clone(newValues)
+        this.values = _.clone(newValues);
         return this._electronSettings.setSync("values", this.values);
     }
 }

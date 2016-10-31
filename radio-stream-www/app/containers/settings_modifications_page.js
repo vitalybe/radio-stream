@@ -36,7 +36,7 @@ export class SettingsModificationsPage extends Component {
         return (
             <div className="settings-modifications-page">
                 <label>Host</label><input type="text" value={settingsModifications.values.host}
-                       onChange={event => settingsModifications.values.host = event.target.value}/>
+                                          onChange={event => settingsModifications.values.host = event.target.value}/>
 
                 <label>Password</label>
                 <input type="password" value={settingsModifications.values.password}
@@ -44,8 +44,10 @@ export class SettingsModificationsPage extends Component {
                 <label>Play/Pause shortcut</label>
                 <input type="text" value={settingsModifications.values.playPauseKey}
                        onKeyDown={event => settingsModifications.values.modifyPlayPauseKey(event)}
-                       onChange={() => {/* avoid react warning: https://github.com/facebook/react/issues/1118 */}} />
-                <div className="test-state">{settingsModifications.values.testState}</div>
+                       onChange={() => {/* avoid react warning: https://github.com/facebook/react/issues/1118 */}}/>
+                <div className={classNames("test-state", {"error": settingsModifications.isTestError})}>
+                    {settingsModifications.testState}
+                </div>
 
                 <div className="buttons">
                     <button onClick={() => this.save()}>Save</button>

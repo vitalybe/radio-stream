@@ -14,10 +14,10 @@ class SettingsModifications {
         host: "",
         password: "",
         playPauseKey: ""
-    }
+    };
 
     @observable testState;
-    @observable isError;
+    @observable isTestError;
 
     _modifierKeys = null;
 
@@ -28,7 +28,7 @@ class SettingsModifications {
         this._modifierKeys = [
             keycode("left command"), keycode("right command"),
             keycode("shift"), keycode("ctrl"), keycode("alt")
-        ]
+        ];
 
         logger.info(`invalid keys: ${this._modifierKeys}`);
 
@@ -37,24 +37,24 @@ class SettingsModifications {
 
     reset() {
         this.testState = "";
-        this.isError = false;
+        this.isTestError = false;
 
         this.values = getSettings().values;
     }
 
     save() {
-        this.testState = `Connecting to ${getSettings().host}...`
-        this.isError = false;
+        this.testState = `Connecting to ${getSettings().host}...`;
+        this.isTestError = false;
 
         return backendMetadataApi.testConnection(this)
             .then(() => {
-                this.testState = "Connection is successful"
+                this.testState = "Connection is successful";
 
                 getSettings().save(this.values);
             })
             .catch(err => {
-                this.testState = "Connection failed"
-                this.isError = true;
+                this.testState = "Connection failed: " + err.toString();
+                this.isTestError = true;
 
                 getSettings().load();
 
