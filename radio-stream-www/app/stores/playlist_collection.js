@@ -13,7 +13,7 @@ class PlaylistCollection {
 
     @observable loading = false;
     @observable loadingAction = null;
-    @observable lastLoadingError = null;
+    @observable loadingError = null;
 
     constructor() {
     }
@@ -30,7 +30,7 @@ class PlaylistCollection {
 
         return retries.promiseRetry(lastError => {
             this.loadingAction = "Loading playlists";
-            this.lastLoadingError = lastError && lastError.toString();
+            this.loadingError = lastError && lastError.toString();
 
             return backendMetadataApi.playlists();
         }).then(action((playlists) => {

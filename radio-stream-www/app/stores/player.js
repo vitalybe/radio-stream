@@ -13,6 +13,9 @@ class Player {
     @observable currentPlaylist = null;
     @observable song = null;
 
+    @observable loadingAction = null;
+    @observable loadingError = null;
+
     constructor() {
     }
 
@@ -75,6 +78,7 @@ class Player {
             this.song.subscribeFinish(this.next.bind(this));
         }
 
+        this.loadingAction = `${nextSong.artist} - ${nextSong.title}: Loading sound...`;
         logger.info(`playing sound`);
         return this.song.playSound();
     }
@@ -114,9 +118,12 @@ class Player {
             .then(() => {
                 if (previousSong) {
                     logger.info(`making sure song was marked as played`);
+                    this.loadingAction = `${previousSong.artist} - ${previousSong.title}: Marking as played...`;
                     return previousSong.markAsPlayed()
                 }
-            }).then(() => retries.promiseRetry(() => {
+            }).then(() => retries.promiseRetry(lastError => {
+                this.loadingAction = `Loading next song...`;
+                this.loadingError = lastError && lastError.toString();
                 return this.currentPlaylist.nextSong().then(this._subscribeAndPlayNewSong.bind(this))
             }))
             .then(this._preloadNextSong.bind(this))

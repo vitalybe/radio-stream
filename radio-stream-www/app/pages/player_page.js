@@ -8,6 +8,8 @@ import moment from 'moment';
 
 import assert from "../utils/assert"
 
+import Spinner from '../components/spinner'
+
 import player from '../stores/player'
 
 const infoImage = require("../images/info.png");
@@ -67,7 +69,8 @@ export class PlayerPage extends Component {
             <div className="player-page">
                 <Choose>
                     <When condition={player.isLoading}>
-                        <div className="loader hexdots-loader"></div>
+                        <Spinner action={player.loadingAction}
+                                 error={player.loadingError}/>
                     </When>
                     <Otherwise>
                         <div className="player">
