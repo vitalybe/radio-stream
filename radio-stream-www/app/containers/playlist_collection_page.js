@@ -27,8 +27,15 @@ export class PlaylistCollectionPage extends Component {
                 <div className="content">
                     <Choose>
                         <When condition={playlistCollection.loading}>
-                            <div className="hexdots-loader loader">
-                                Loading...
+                            <div className="loader">
+                                <div className="hexdots-loader spinner"></div>
+                                <div className="status">{ playlistCollection.loadingAction }</div>
+                                <If condition={playlistCollection.lastLoadingError}>
+                                    <div className="last-error">
+                                        <span className="prefix">Last error: </span>
+                                        <span>{ playlistCollection.lastLoadingError }</span>
+                                    </div>
+                                </If>
                             </div>
                         </When>
                         <Otherwise>

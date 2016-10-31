@@ -12,7 +12,8 @@ class PlaylistCollection {
     @observable items = [];
 
     @observable loading = false;
-    @observable retryCount = 0;
+    @observable loadingAction = null;
+    @observable lastLoadingError = null;
 
     constructor() {
     }
@@ -27,17 +28,21 @@ class PlaylistCollection {
         this.error = false;
         logger.info(`loading playlists`);
 
-        return retries.promiseRetry(backendMetadataApi.playlists)
-            .then(action((playlists) => {
-                logger.info(`got playlists: ${playlists}`);
+        return retries.promiseRetry(lastError => {
+            this.loadingAction = "Loading playlists";
+            this.lastLoadingError = lastError && lastError.toString();
 
-                let newPlaylists = playlists.map(playlistName => {
-                    return new Playlist(playlistName);
-                });
+            return backendMetadataApi.playlists();
+        }).then(action((playlists) => {
+            logger.info(`got playlists: ${playlists}`);
 
-                this.items = observable(newPlaylists);
-                this.loading = false;
-            }));
+            let newPlaylists = playlists.map(playlistName => {
+                return new Playlist(playlistName);
+            });
+
+            this.items = observable(newPlaylists);
+            this.loading = false;
+        }));
     }
 }
 

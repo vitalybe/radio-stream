@@ -9,6 +9,7 @@ body {
 @cyan-dark: #335d66;
 @cyan-bright: #71cfe2;
 @semi-white: #e2e2e2;
+@red: #e25d24;
 
 .button-mixin {
   background: fade(@cyan-dark, 25%);
@@ -58,7 +59,21 @@ h1 {
     position: absolute;
     top: 50%;
     left: 50%;
-    opacity: 0.3;
+    transform: translateX(-50%);
+
+    .spinner {
+      margin-bottom: 3em;
+    }
+
+    .last-error {
+      padding: 1em;
+      span {
+        font-size: 0.8rem;
+      }
+      span.prefix {
+        color: @red;
+      }
+    }
   }
 
   .top-bar {
