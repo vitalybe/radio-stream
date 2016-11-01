@@ -12,7 +12,7 @@ RUN cd /radio-stream/beets && pip install -e .
 
 # Install additional dependencies for plugins :|
 # Per https://github.com/beetbox/beets/issues/2136
-RUN pip install flask flask-cors
+RUN pip install flask flask-cors pylast
 
 # Configuration merging
 RUN pip install hiyapyco

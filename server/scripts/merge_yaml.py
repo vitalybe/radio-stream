@@ -13,6 +13,6 @@ overrides = []
 if path.exists(override_yaml):
     overrides.append(override_yaml)
 
-merged = hiyapyco.load(source_yaml, *overrides)
+merged = hiyapyco.load(source_yaml, *overrides, method=hiyapyco.METHOD_MERGE)
 with open(merged_yaml, 'w') as file:
     file.write(hiyapyco.dump(merged))
