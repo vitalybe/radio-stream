@@ -34,7 +34,8 @@ if [ ! -e ~/.ssh/authorized_keys ]; then
 fi
 
 # NGINX
-echo "radio:$(echo "$NGINX_PASSWORD" | openssl passwd -stdin)" > /radio-stream/data/nginx_passwd
+mkdir /radio-stream/data/nginx/
+echo "radio:$(echo "$NGINX_PASSWORD" | openssl passwd -stdin)" > /radio-stream/data/nginx/nginx_passwd
 echo "Running nginx..."
 nginx
 
@@ -43,7 +44,7 @@ nginx
 
 # Settings beets default config location per: http://beets.readthedocs.io/en/latest/reference/config.html#environment-variable
 echo "PATH=$PATH:/radio-stream/scripts/user:/radio-stream/scripts/bundled" >> /etc/profile
-echo "export BEETSDIR=/radio-stream/data/" >> /etc/profile
+echo "export BEETSDIR=/radio-stream/data/beets/" >> /etc/profile
 echo "export EDITOR=vi" >> /etc/profile
 source /etc/profile
 
@@ -53,10 +54,10 @@ echo "export BEETSDIR=/radio-stream/tmp/" >> /etc/profile
 source /etc/profile
 
 mkdir /radio-stream/tmp/
-cp /radio-stream/data/library.db /radio-stream/tmp/
-cp /radio-stream/data/config.yaml /radio-stream/tmp/
+cp /radio-stream/data/beets/library.db /radio-stream/tmp/
+cp /radio-stream/data/beets/config.yaml /radio-stream/tmp/
 
-inotifycp /radio-stream/tmp/ /radio-stream/data/ > /radio-stream/log/inotifycp-tmp-data.log &
+inotifycp /radio-stream/tmp/ /radio-stream/data/beets/ > /radio-stream/log/inotifycp-tmp-data.log &
 
 # CMD
 #####
