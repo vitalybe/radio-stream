@@ -42,6 +42,9 @@ nginx
 # Beets
 #######
 
+# Merge configuration
+merge_yaml /radio-stream/config/config_source.yaml /radio-stream/config/config_user.yaml /radio-stream/data/beets/config.yaml
+
 # Settings beets default config location per: http://beets.readthedocs.io/en/latest/reference/config.html#environment-variable
 echo "PATH=$PATH:/radio-stream/scripts/user:/radio-stream/scripts/bundled" >> /etc/profile
 echo "export BEETSDIR=/radio-stream/data/beets/" >> /etc/profile

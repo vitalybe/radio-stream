@@ -14,6 +14,10 @@ RUN cd /radio-stream/beets && pip install -e .
 # Per https://github.com/beetbox/beets/issues/2136
 RUN pip install flask flask-cors
 
+# Configuration merging
+RUN pip install hiyapyco
+COPY scripts/merge_yaml.py /usr/local/bin/merge_yaml
+
 # Nginx
 #######
 
