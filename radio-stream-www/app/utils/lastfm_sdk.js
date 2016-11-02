@@ -1,9 +1,7 @@
 import { md5 } from './md5'
 
-// TODO: Creds
 export const API_KEY = '9e46560f972eb8300c78c0fc837d1c13';
 const API_SECRET = 'c07041797ec53a8220807663ae416ac9';
-const SESSION_KEY = '***REMOVED***';
 
 /*
  *
