@@ -4,7 +4,8 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableHighlight
+  TouchableHighlight,
+  Image
 } from 'react-native';
 import metadataBackendProxy from './native_proxy/metadata_backend_proxy'
 
@@ -17,6 +18,15 @@ export default class RadioStream extends Component {
 
     return (
       <View style={styles.container}>
+        <Image source={require("./images/background.jpg")}
+               style={{
+                position: "absolute",
+                // remove width and height to override fixed static size
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0
+              }}/>
         <Text style={styles.welcome}>
           Welcome to React Native!
         </Text>
@@ -29,10 +39,11 @@ export default class RadioStream extends Component {
         </Text>
         <TouchableHighlight onPress={() => {
           logger.info("fetching playlist");
+          console.log("WTF!!!");
           metadataBackendProxy.fetchPlaylists().then(result => {
             logger.info(result);
           })
-        }}><Text>Temp</Text>
+        }}><Text style={{color: "white"}}>Temp</Text>
         </TouchableHighlight>
       </View>
     );
