@@ -25,7 +25,7 @@ export default class RadioStream extends Component {
                 left: 0,
                 right: 0,
                 top: 0,
-                bottom: 0
+                bottom: 0,
               }}/>
         <Text style={styles.welcome}>
           Welcome to React Native!
@@ -39,10 +39,13 @@ export default class RadioStream extends Component {
         </Text>
         <TouchableHighlight onPress={() => {
           logger.info("fetching playlist");
-          console.log("WTF!!!");
           metadataBackendProxy.fetchPlaylists().then(result => {
             logger.info(result);
           })
+        }} style={{
+          backgroundColor: "rgba(51, 93, 102, 0.3)",
+          paddingHorizontal: 40,
+          paddingVertical: 10
         }}><Text style={{color: "white"}}>Temp</Text>
         </TouchableHighlight>
       </View>
