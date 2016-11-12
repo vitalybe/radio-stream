@@ -17,27 +17,28 @@ export default class RadioStream extends Component {
     let logger = loggerCreator(this.render.name, moduleLogger);
 
     return (
-      <View style={styles.container}>
         <Image source={require("./images/background.jpg")}
+               resizeMode="cover"
                style={{
-                position: "absolute",
-                // remove width and height to override fixed static size
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
-              }}/>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
-        <TouchableHighlight onPress={() => {
+                   flex: 1,
+                  // remove width and height to override fixed static size
+                  width: null,
+                  height: null,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+
+        }}>
+          <Text style={styles.welcome}>
+            Welcome to React Native!
+          </Text>
+          <Text style={styles.instructions}>
+            To get started, edit index.android.js
+          </Text>
+          <Text style={styles.instructions}>
+            Double tap R on your keyboard to reload,{'\n'}
+            Shake or press menu button for dev menu
+          </Text>
+          <TouchableHighlight onPress={() => {
           logger.info("fetching playlist");
           metadataBackendProxy.fetchPlaylists().then(result => {
             logger.info(result);
@@ -46,9 +47,10 @@ export default class RadioStream extends Component {
           backgroundColor: "rgba(51, 93, 102, 0.3)",
           paddingHorizontal: 40,
           paddingVertical: 10
-        }}><Text style={{color: "white"}}>Temp</Text>
-        </TouchableHighlight>
-      </View>
+        }}>
+            <Text style={{color: "white"}}>Temp</Text>
+          </TouchableHighlight>
+        </Image>
     );
   }
 }
