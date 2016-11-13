@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Color from 'color';
+import { COLORS } from './styles/styles'
 import {
   AppRegistry,
   StyleSheet,
@@ -8,6 +8,9 @@ import {
   TouchableHighlight,
   Image
 } from 'react-native';
+
+import Button from './components/button'
+
 import metadataBackendProxy from './native_proxy/metadata_backend_proxy'
 
 import loggerCreator from './utils/logger'
@@ -21,26 +24,18 @@ export default class RadioStream extends Component {
       <Image source={require("./images/background.jpg")}
              resizeMode="cover"
              style={styles.container}>
-        <TouchableHighlight style={styles.button}
-                            underlayColor={CYAN_DARK.clone().clearer(0.5).rgbString()}
-                            activeOpacity={1}
-                            onPress={() => {
+        <Button onPress={() => {
           logger.info("fetching playlist");
           metadataBackendProxy.fetchPlaylists().then(result => {
             logger.info(result);
           })
         }}>
           <Text style={styles.text}>Temp</Text>
-        </TouchableHighlight>
+        </Button>
       </Image>
     );
   }
 }
-
-const CYAN_DARK = Color("#335d66");
-const CYAN_BRIGHT = Color("#71cfe2");
-const SEMI_WHITE = Color("#e2e2e2");
-const RED = Color("#e25d24");
 
 const styles = StyleSheet.create({
   container: {
@@ -50,17 +45,8 @@ const styles = StyleSheet.create({
     height: null,
     alignItems: 'center',
   },
-  button: {
-    backgroundColor: CYAN_DARK.clone().clearer(0.8).rgbString(),
-    paddingHorizontal: 40,
-    paddingVertical: 10,
-    borderColor: CYAN_BRIGHT.rgbString(),
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRadius: 5,
-  },
   text: {
-    color: SEMI_WHITE.rgbString()
+    color: COLORS.SEMI_WHITE.rgbString()
   }
 });
 
