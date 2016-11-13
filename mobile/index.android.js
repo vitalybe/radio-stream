@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Color from 'color';
 import {
   AppRegistry,
   StyleSheet,
@@ -17,61 +18,50 @@ export default class RadioStream extends Component {
     let logger = loggerCreator(this.render.name, moduleLogger);
 
     return (
-        <Image source={require("./images/background.jpg")}
-               resizeMode="cover"
-               style={{
-                   flex: 1,
-                  // remove width and height to override fixed static size
-                  width: null,
-                  height: null,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-
-        }}>
-          <Text style={styles.welcome}>
-            Welcome to React Native!
-          </Text>
-          <Text style={styles.instructions}>
-            To get started, edit index.android.js
-          </Text>
-          <Text style={styles.instructions}>
-            Double tap R on your keyboard to reload,{'\n'}
-            Shake or press menu button for dev menu
-          </Text>
-          <TouchableHighlight onPress={() => {
+      <Image source={require("./images/background.jpg")}
+             resizeMode="cover"
+             style={styles.container}>
+        <TouchableHighlight style={styles.button}
+                            underlayColor={CYAN_DARK.clone().clearer(0.5).rgbString()}
+                            activeOpacity={1}
+                            onPress={() => {
           logger.info("fetching playlist");
           metadataBackendProxy.fetchPlaylists().then(result => {
             logger.info(result);
           })
-        }} style={{
-          backgroundColor: "rgba(51, 93, 102, 0.3)",
-          paddingHorizontal: 40,
-          paddingVertical: 10
         }}>
-            <Text style={{color: "white"}}>Temp</Text>
-          </TouchableHighlight>
-        </Image>
+          <Text style={styles.text}>Temp</Text>
+        </TouchableHighlight>
+      </Image>
     );
   }
 }
 
+const CYAN_DARK = Color("#335d66");
+const CYAN_BRIGHT = Color("#71cfe2");
+const SEMI_WHITE = Color("#e2e2e2");
+const RED = Color("#e25d24");
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    // remove width and height to override fixed static size
+    width: null,
+    height: null,
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  button: {
+    backgroundColor: CYAN_DARK.clone().clearer(0.8).rgbString(),
+    paddingHorizontal: 40,
+    paddingVertical: 10,
+    borderColor: CYAN_BRIGHT.rgbString(),
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRadius: 5,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  text: {
+    color: SEMI_WHITE.rgbString()
+  }
 });
 
 AppRegistry.registerComponent('RadioStream', () => RadioStream);
