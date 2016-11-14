@@ -9,8 +9,10 @@
   "dependencies": {
     "color": "^0.11.4",
     "jsx-control-statements": "^3.1.5",
+    "mobx": "^2.6.2",
     "react": "15.3.2",
-    "react-native": "0.37"
+    "react-native": "0.37",
+    "whatwg-fetch": "^1.0.0"
   },
   "jest": {
     "preset": "jest-react-native"
