@@ -6,7 +6,9 @@ import {
   Text,
   View,
   TouchableHighlight,
-  Image
+  Image,
+  ProgressBar,
+  ActivityIndicator
 } from 'react-native';
 
 import Button from './components/button'
@@ -17,21 +19,41 @@ import loggerCreator from './utils/logger'
 var moduleLogger = loggerCreator("index.android");
 
 export default class RadioStream extends Component {
+  _fetchPlaylists() {
+    let logger = loggerCreator(this._fetchPlaylists.name, moduleLogger);
+    logger.info("start");
+
+    metadataBackendProxy.fetchPlaylists().then(result => {
+      logger.info(`got results: ${result}`);
+      this.setState({playlists: result})
+    })
+
+  }
+
+  componentWillMount() {
+    this.state = {};
+    this._fetchPlaylists();
+  }
+
   render() {
     let logger = loggerCreator(this.render.name, moduleLogger);
+
+    var playlists;
+    if (this.state.playlists) {
+      playlists = (
+        <Button onPress={this._fetchPlaylists.bind(this)}>
+          <Text style={styles.text}>Temp</Text>
+        </Button>
+      );
+    } else {
+      playlists = <ActivityIndicator />;
+    }
 
     return (
       <Image source={require("./images/background.jpg")}
              resizeMode="cover"
              style={styles.container}>
-        <Button onPress={() => {
-          logger.info("fetching playlist");
-          metadataBackendProxy.fetchPlaylists().then(result => {
-            logger.info(result);
-          })
-        }}>
-          <Text style={styles.text}>Temp</Text>
-        </Button>
+        {playlists}
       </Image>
     );
   }

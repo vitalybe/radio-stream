@@ -5,4 +5,4 @@ export const COLORS = {
   CYAN_BRIGHT: Color("#71cfe2"),
   SEMI_WHITE: Color("#e2e2e2"),
   RED: Color("#e25d24"),
-}
+};
