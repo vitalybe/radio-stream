@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "*.js": "javascriptreact",
+    "*.jsx": "javascriptreact"
+  },
+  "javascript.validate.enable": true
+}
