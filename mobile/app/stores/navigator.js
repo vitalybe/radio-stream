@@ -21,4 +21,4 @@ export const routes = {
   PLAYER_PAGE: 'PLAYER_PAGE',
 };
 
-export default new Navigator();
+export const navigator = new Navigator();

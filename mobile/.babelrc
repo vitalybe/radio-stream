@@ -3,6 +3,7 @@
     "react-native"
   ],
   "plugins": [
-    "jsx-control-statements"
+    "jsx-control-statements",
+    "transform-decorators-legacy"
   ]
 }
