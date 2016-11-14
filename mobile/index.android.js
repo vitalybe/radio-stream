@@ -38,22 +38,20 @@ export default class RadioStream extends Component {
   render() {
     let logger = loggerCreator(this.render.name, moduleLogger);
 
-    var playlists;
-    if (this.state.playlists) {
-      playlists = (
-        <Button onPress={this._fetchPlaylists.bind(this)}>
-          <Text style={styles.text}>Temp</Text>
-        </Button>
-      );
-    } else {
-      playlists = <ActivityIndicator />;
-    }
-
     return (
       <Image source={require("./images/background.jpg")}
              resizeMode="cover"
              style={styles.container}>
-        {playlists}
+        <Choose>
+          <When condition={this.state.playlists}>
+            <Button onPress={this._fetchPlaylists.bind(this)}>
+              <Text style={styles.text}>Temp</Text>
+            </Button>
+          </When>
+          <Otherwise>
+            <ActivityIndicator />
+          </Otherwise>
+        </Choose>
       </Image>
     );
   }

@@ -203,7 +203,7 @@ babel-code-frame@^6.16.0:
     esutils "^2.0.2"
     js-tokens "^2.0.0"
 
-babel-core@^6.0.0, babel-core@^6.10.4, babel-core@^6.11.4, babel-core@^6.18.0, babel-core@^6.7.2:
+babel-core@^6.0.0, babel-core@^6.1.2, babel-core@^6.10.4, babel-core@^6.11.4, babel-core@^6.18.0, babel-core@^6.7.2:
   version "6.18.2"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.18.2.tgz#d8bb14dd6986fa4f3566a26ceda3964fa0e04e5b"
   dependencies:
@@ -380,7 +380,7 @@ babel-plugin-syntax-flow@^6.18.0, babel-plugin-syntax-flow@^6.5.0, babel-plugin-
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-flow/-/babel-plugin-syntax-flow-6.18.0.tgz#4c3ab20a2af26aa20cd25995c398c4eb70310c8d"
 
-babel-plugin-syntax-jsx@^6.5.0, babel-plugin-syntax-jsx@^6.8.0:
+babel-plugin-syntax-jsx@^6.1.18, babel-plugin-syntax-jsx@^6.5.0, babel-plugin-syntax-jsx@^6.8.0:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-jsx/-/babel-plugin-syntax-jsx-6.18.0.tgz#0af32a9a6e13ca7a3fd5069e62d7b0f58d0d8946"
 
@@ -690,7 +690,7 @@ babel-preset-jest@^16.0.0:
   dependencies:
     babel-plugin-jest-hoist "^16.0.0"
 
-babel-preset-react-native@^1.9.0, babel-preset-react-native@1.9.0:
+babel-preset-react-native, babel-preset-react-native@^1.9.0:
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/babel-preset-react-native/-/babel-preset-react-native-1.9.0.tgz#035fc06c65f4f2a02d0336a100b2da142f36dab1"
   dependencies:
@@ -2973,6 +2973,13 @@ jstransform@^11.0.3:
     esprima-fb "^15001.1.0-dev-harmony-fb"
     object-assign "^2.0.0"
     source-map "^0.4.2"
+
+jsx-control-statements:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/jsx-control-statements/-/jsx-control-statements-3.1.5.tgz#a9237aad3e5af6a133a1c3c1fcbbd360bbb5df7c"
+  dependencies:
+    babel-core "^6.1.2"
+    babel-plugin-syntax-jsx "^6.1.18"
 
 kind-of@^3.0.2:
   version "3.0.4"
