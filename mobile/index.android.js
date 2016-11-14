@@ -44,9 +44,16 @@ export default class RadioStream extends Component {
              style={styles.container}>
         <Choose>
           <When condition={this.state.playlists}>
-            <Button onPress={this._fetchPlaylists.bind(this)}>
-              <Text style={styles.text}>Temp</Text>
-            </Button>
+            {
+              this.state.playlists.map(playlist => {
+                return (
+                  <Button key={playlist}
+                          className="playlist"
+                          onPress={() => logger.info(`clicked playlist: ${playlist}`)}>
+                    <Text style={styles.text}>{playlist}</Text>
+                  </Button>)
+              })
+            }
           </When>
           <Otherwise>
             <ActivityIndicator />
