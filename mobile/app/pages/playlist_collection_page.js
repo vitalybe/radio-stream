@@ -51,7 +51,7 @@ export default class PlaylistCollectionPage extends Component {
                   <Button key={playlist} style={styles.playlistButton}
                           className="playlist"
                           onPress={() => logger.info(`clicked playlist: ${playlist}`)}>
-                    <Text style={styles.text}>{playlist}</Text>
+                    <Text style={styles.playlistText}>{playlist}</Text>
                   </Button>)
               })
             }
@@ -60,6 +60,10 @@ export default class PlaylistCollectionPage extends Component {
             <ActivityIndicator />
           </Otherwise>
         </Choose>
+        <Button style={styles.settingsButton}
+                onPress={() => logger.info(`clicked settings`)} >
+          <Image style={styles.settingsIcon} source={require("../images/settings.png")}/>
+        </Button>
       </View>
     );
   }
@@ -67,7 +71,12 @@ export default class PlaylistCollectionPage extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center"
+    flex: 1,
+    // remove width and height to override fixed static size
+    width: null,
+    height: null,
+    alignItems: "center",
+    alignSelf: "stretch"
   },
   logo: {
     width: 90,
@@ -79,7 +88,20 @@ const styles = StyleSheet.create({
     width: 150,
     marginBottom: 10,
   },
-  text: {
-    color: colors.SEMI_WHITE.rgbString()
-  }
+  playlistText: {
+    color: colors.SEMI_WHITE.rgbString(),
+    fontSize: 15,
+  },
+  settingsButton: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  settingsIcon: {
+    width: 30,
+    height: 30,
+    resizeMode: "contain"
+  },
 });
