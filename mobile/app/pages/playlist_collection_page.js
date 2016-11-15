@@ -39,13 +39,16 @@ export default class PlaylistCollectionPage extends Component {
     logger.info(`start`);
 
     return (
-      <View>
+      <View style={styles.container}>
+        <Image source={require("../images/logo.png")}
+               style={styles.logo}/>
+
         <Choose>
           <When condition={this.state.playlists}>
             {
               this.state.playlists.map(playlist => {
                 return (
-                  <Button key={playlist}
+                  <Button key={playlist} style={styles.playlistButton}
                           className="playlist"
                           onPress={() => logger.info(`clicked playlist: ${playlist}`)}>
                     <Text style={styles.text}>{playlist}</Text>
@@ -63,6 +66,19 @@ export default class PlaylistCollectionPage extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    alignItems: "center"
+  },
+  logo: {
+    width: 90,
+    height: 90,
+    marginVertical: 20,
+    resizeMode: "contain"
+  },
+  playlistButton: {
+    width: 150,
+    marginBottom: 10,
+  },
   text: {
     color: colors.SEMI_WHITE.rgbString()
   }
