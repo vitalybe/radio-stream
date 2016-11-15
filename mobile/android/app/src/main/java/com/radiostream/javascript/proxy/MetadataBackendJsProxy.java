@@ -20,15 +20,15 @@ import timber.log.Timber;
  */
 
 @DebugLog
-public class MetadataBackendProxy extends ReactContextBaseJavaModule {
+public class MetadataBackendJsProxy extends ReactContextBaseJavaModule {
 
-    public MetadataBackendProxy(ReactApplicationContext reactContext) {
+    public MetadataBackendJsProxy(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
     @Override
     public String getName() {
-        return "MetadataBackendProxy";
+        return "MetadataBackendJsProxy";
     }
 
     @Override

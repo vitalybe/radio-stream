@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ProxyPackage implements ReactPackage {
+public class JsProxyPackage implements ReactPackage {
 
     @Override
     public List<Class<? extends JavaScriptModule>> createJSModules() {
@@ -27,7 +27,7 @@ public class ProxyPackage implements ReactPackage {
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new MetadataBackendProxy(reactContext));
+        modules.add(new MetadataBackendJsProxy(reactContext));
 
         return modules;
     }
