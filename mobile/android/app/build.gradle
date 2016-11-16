@@ -150,10 +150,13 @@ dependencies {
     testCompile "org.mockito:mockito-core:2.+"
 
     // dagger 2
-    // apt command comes from the android-apt plugin
+    // apt command comes from the android-apt plugint
     apt 'com.google.dagger:dagger-compiler:2.7'
     compile 'com.google.dagger:dagger:2.7'
     provided 'javax.annotation:jsr250-api:1.0'
+
+    // jdeferred (promises)
+    compile 'org.jdeferred:jdeferred-android-aar:1.2.4'
 }
 
 // Run this once to be able to run the application with BUCK
