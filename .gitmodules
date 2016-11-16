@@ -1,3 +1,7 @@
 [submodule "server/beets"]
 	path = server/beets
 	url = https://github.com/vitalybe/beets.git
+
+[submodule "server/cli"]
+    path = server/cli
+    url = ssh://git@bitbucket.org/vitalyb/radio-stream-cli.git
