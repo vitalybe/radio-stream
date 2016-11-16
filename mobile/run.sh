@@ -3,4 +3,4 @@ adb logcat -c
 
 react-native run-android
 
-./logcat
+./logcat.sh
