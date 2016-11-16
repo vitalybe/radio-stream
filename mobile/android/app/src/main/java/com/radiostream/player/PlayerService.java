@@ -23,88 +23,88 @@ import hugo.weaving.DebugLog;
 @DebugLog
 public class PlayerService extends Service {
 
-  private final int NOTIFICATION_ID = 1;
+    private final int NOTIFICATION_ID = 1;
 
-  private final PlayerServiceBinder mBinder = new PlayerServiceBinder();
-  private final String PARAM_EXIT = "PARAM_EXIT";
+    private final PlayerServiceBinder mBinder = new PlayerServiceBinder();
+    private final String PARAM_EXIT = "PARAM_EXIT";
 
-  @Inject
-  Player mPlayer;
+    @Inject
+    Player mPlayer;
 
-  @Override
-  public void onCreate() {
-    super.onCreate();
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-    showServiceNotification("Radio Stream", "Loading...");
+        showServiceNotification("Radio Stream", "Loading...");
 
-    PlayerServiceComponent component = DaggerPlayerServiceComponent.builder()
-      .jsProxyComponent(PlayerJsProxy.JsProxyComponent())
-      .contextModule(new ContextModule(this))
-      .build();
+        PlayerServiceComponent component = DaggerPlayerServiceComponent.builder()
+            .jsProxyComponent(PlayerJsProxy.JsProxyComponent())
+            .contextModule(new ContextModule(this))
+            .build();
 
-    component.inject(this);
-  }
-
-  private void showServiceNotification(String title, String contentText) {
-
-    // Open main UI activity
-    Intent activityIntent = new Intent(getApplication().getApplicationContext(), MainActivity.class);
-    PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-    // Stop intent
-    Intent stopIntent = new Intent(this, PlayerService.class);
-    stopIntent.putExtra(PARAM_EXIT, true);
-    PendingIntent stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplication().getApplicationContext());
-    mBuilder.setSmallIcon(R.drawable.image_note)
-      .setContentTitle(title)
-      .setContentText(contentText)
-      .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-      .setContentIntent(activityPendingIntent)
-      .addAction(R.drawable.image_stop, "Stop", stopPendingIntent);
-
-    startForeground(NOTIFICATION_ID, mBuilder.build());
-  }
-
-  public Player getPlayer() {
-    return mPlayer;
-  }
-
-  @Override
-  public int onStartCommand(Intent intent, int flags, int startId) {
-    if (intent != null) {
-      boolean toExit = intent.getBooleanExtra(PARAM_EXIT, false);
-      if (toExit) {
-        stopForeground(true);
-        stopSelf();
-      }
+        component.inject(this);
     }
 
-    return super.onStartCommand(intent, flags, startId);
-  }
+    private void showServiceNotification(String title, String contentText) {
 
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
+        // Open main UI activity
+        Intent activityIntent = new Intent(getApplication().getApplicationContext(), MainActivity.class);
+        PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-    mPlayer.close();
-  }
+        // Stop intent
+        Intent stopIntent = new Intent(this, PlayerService.class);
+        stopIntent.putExtra(PARAM_EXIT, true);
+        PendingIntent stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-  @Nullable
-  @Override
-  public IBinder onBind(Intent intent) {
-    return mBinder;
-  }
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplication().getApplicationContext());
+        mBuilder.setSmallIcon(R.drawable.image_note)
+            .setContentTitle(title)
+            .setContentText(contentText)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(activityPendingIntent)
+            .addAction(R.drawable.image_stop, "Stop", stopPendingIntent);
 
-  @Override
-  public boolean onUnbind(Intent intent) {
-    return false;
-  }
-
-  public class PlayerServiceBinder extends Binder {
-    public PlayerService getService() {
-      return PlayerService.this;
+        startForeground(NOTIFICATION_ID, mBuilder.build());
     }
-  }
+
+    public Player getPlayer() {
+        return mPlayer;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            boolean toExit = intent.getBooleanExtra(PARAM_EXIT, false);
+            if (toExit) {
+                stopForeground(true);
+                stopSelf();
+            }
+        }
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mPlayer.close();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return false;
+    }
+
+    public class PlayerServiceBinder extends Binder {
+        public PlayerService getService() {
+            return PlayerService.this;
+        }
+    }
 }

@@ -35,73 +35,73 @@ import static android.content.Context.BIND_AUTO_CREATE;
 @DebugLog
 public class PlayerJsProxy extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
-  private static JsProxyComponent mJsProxyComponent = null;
-  private PlayerService mPlayerService = null;
+    private static JsProxyComponent mJsProxyComponent = null;
+    private PlayerService mPlayerService = null;
 
-  private ServiceConnection mServiceConnection = new ServiceConnection() {
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-      Timber.i("Function start");
-      PlayerService.PlayerServiceBinder binder = (PlayerService.PlayerServiceBinder) service;
-      mPlayerService = binder.getService();
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Timber.i("Function start");
+            PlayerService.PlayerServiceBinder binder = (PlayerService.PlayerServiceBinder) service;
+            mPlayerService = binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Timber.i("Function start");
+            mPlayerService = null;
+        }
+    };
+
+    public PlayerJsProxy(ReactApplicationContext reactContext) {
+        super(reactContext);
+
+        reactContext.addLifecycleEventListener(this);
+
+        mJsProxyComponent = DaggerJsProxyComponent.builder().reactContextModule(new ReactContextModule(reactContext)).build();
+        mJsProxyComponent.inject(this);
+    }
+
+    public static JsProxyComponent JsProxyComponent() {
+        if (mJsProxyComponent == null) {
+            throw new RuntimeException("Remote service was not initialized");
+        }
+
+        return mJsProxyComponent;
     }
 
     @Override
-    public void onServiceDisconnected(ComponentName name) {
-      Timber.i("Function start");
-      mPlayerService = null;
-    }
-  };
-
-  public PlayerJsProxy(ReactApplicationContext reactContext) {
-    super(reactContext);
-
-    reactContext.addLifecycleEventListener(this);
-
-    mJsProxyComponent = DaggerJsProxyComponent.builder().reactContextModule(new ReactContextModule(reactContext)).build();
-    mJsProxyComponent.inject(this);
-  }
-
-  public static JsProxyComponent JsProxyComponent() {
-    if (mJsProxyComponent == null) {
-      throw new RuntimeException("Remote service was not initialized");
+    public String getName() {
+        return "PlayerJsProxy";
     }
 
-    return mJsProxyComponent;
-  }
+    @Override
+    public Map<String, Object> getConstants() {
+        final Map<String, Object> constants = new HashMap<>();
+        return constants;
+    }
 
-  @Override
-  public String getName() {
-    return "PlayerJsProxy";
-  }
+    @ReactMethod
+    public void playPlaylist() {
+    }
 
-  @Override
-  public Map<String, Object> getConstants() {
-    final Map<String, Object> constants = new HashMap<>();
-    return constants;
-  }
+    @Override
+    public void onHostResume() {
+        Activity activity = this.getCurrentActivity();
+        Timber.i("activity: %s", activity.toString());
 
-  @ReactMethod
-  public void playPlaylist() {
-  }
+        Intent musicServiceIntent = new Intent(activity, PlayerService.class);
+        activity.bindService(musicServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        activity.startService(musicServiceIntent);
+    }
 
-  @Override
-  public void onHostResume() {
-    Activity activity = this.getCurrentActivity();
-    Timber.i("activity: %s", activity.toString());
+    @Override
+    public void onHostPause() {
+        this.getCurrentActivity().unbindService(mServiceConnection);
+    }
 
-    Intent musicServiceIntent = new Intent(activity, PlayerService.class);
-    activity.bindService(musicServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-    activity.startService(musicServiceIntent);
-  }
+    @Override
+    public void onHostDestroy() {
 
-  @Override
-  public void onHostPause() {
-    this.getCurrentActivity().unbindService(mServiceConnection);
-  }
-
-  @Override
-  public void onHostDestroy() {
-
-  }
+    }
 }
