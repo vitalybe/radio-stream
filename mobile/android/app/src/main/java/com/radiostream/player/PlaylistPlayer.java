@@ -1,8 +1,5 @@
 package com.radiostream.player;
 
-import com.radiostream.networking.models.PlaylistsResult;
-
-import org.jdeferred.DoneCallback;
 import org.jdeferred.DonePipe;
 import org.jdeferred.FailCallback;
 import org.jdeferred.Promise;
@@ -11,7 +8,7 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public class PlaylistPlayer implements Song.Events {
+public class PlaylistPlayer implements Song.EventsListener {
 
     private Playlist mPlaylist;
     private Song mCurrentSong;
@@ -42,7 +39,7 @@ public class PlaylistPlayer implements Song.Events {
     public Promise<Song, Exception, Void> nextSong() {
         return mPlaylist.load().then(new DonePipe<Void, Song, Exception, Void>() {
             @Override
-            public Promise<Song, Exception, Void> pipeDone(Void result) {
+            public Promise<Song, Exception, Void> pipeDone(Void unused) {
                 if(mCurrentSong != null) {
                     mCurrentSong.pause();
                     mCurrentSong.close();
@@ -77,7 +74,7 @@ public class PlaylistPlayer implements Song.Events {
     }
 
     void close() {
-        mPlaylist.close();
+        mCurrentSong.close();
         if(mCurrentSong != null) {
             mCurrentSong.close();
         }
