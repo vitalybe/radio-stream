@@ -1,0 +1,54 @@
+#!/bin/sh
+function prevent_text() {
+	# $1 - dir
+	# #2 - string
+
+	echo "scanning directory '$1' for '$2'"
+	results=$(ag --color -Q $2 $1)
+	exit_code=$?
+    echo $results
+	echo $exit_code
+
+	if [[ $exit_code -eq 0 ]]; then
+	    red='\033[0;31m'
+	    plain='\033[0m'
+	    echo "${red}[!] Found unwanted string: $2:${plain}"
+	    echo $results
+	    exit 1
+	fi
+}
+
+function web_hook() {
+	echo "Running pre-commit hook"
+	prevent_text radio-stream-www debugger;
+	prevent_text radio-stream-www/test \.only\(
+
+	echo "Running tests..."
+	node radio-stream-www/node_modules/mocha/bin/_mocha --compilers js:babel-register --ui bdd --recursive radio-stream-www/test
+	if [[ $? = 0 ]]
+	then
+	    echo "> Tests passed"
+	else
+	    echo "> Tests DID NOT pass"
+	    exit 1
+	fi
+}
+
+function any_changes_in_folder() {
+	# prevent from being returned
+	(>&2 echo "Scanning for changes in folder: $1")
+	
+	if git diff --cached --name-only | grep --quiet "$1"
+	then
+	  echo found
+	fi	
+}
+
+
+if [ $(any_changes_in_folder radio-stream-www) ]; then
+	echo "Found changes in web"
+	web_hook
+fi
+
+echo "Ready to commit"
+exit 0
