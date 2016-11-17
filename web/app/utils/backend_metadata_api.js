@@ -16,7 +16,8 @@ function getAjax(customSettings) {
     var credentials = btoa(unescape(encodeURIComponent(USERNAME + ':' + settings.values.password)))
     return new Ajax(beetsServer, {
         'headers': {
-            'Authorization': "Basic " + credentials
+            'Authorization': "Basic " + credentials,
+            'Content-Type': "application/json"
         }
     });
 }
