@@ -20,11 +20,11 @@ function prevent_text() {
 
 function web_hook() {
 	echo "Running pre-commit hook"
-	prevent_text radio-stream-www debugger;
-	prevent_text radio-stream-www/test \.only\(
+	prevent_text web debugger;
+	prevent_text web/test \.only\(
 
 	echo "Running tests..."
-	node radio-stream-www/node_modules/mocha/bin/_mocha --compilers js:babel-register --ui bdd --recursive radio-stream-www/test
+	node web/node_modules/mocha/bin/_mocha --compilers js:babel-register --ui bdd --recursive web/test
 	if [[ $? = 0 ]]
 	then
 	    echo "> Tests passed"
@@ -45,7 +45,7 @@ function any_changes_in_folder() {
 }
 
 
-if [ $(any_changes_in_folder radio-stream-www) ]; then
+if [ $(any_changes_in_folder web) ]; then
 	echo "Found changes in web"
 	web_hook
 fi
