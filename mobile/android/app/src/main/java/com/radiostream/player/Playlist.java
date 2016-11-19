@@ -22,4 +22,8 @@ public class Playlist {
     public Promise<Song, Exception, Void> peekSong() {
         return null;
     }
+
+    public void close() {
+
+    }
 }

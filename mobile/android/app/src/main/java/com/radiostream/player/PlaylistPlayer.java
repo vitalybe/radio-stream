@@ -1,46 +1,60 @@
 package com.radiostream.player;
 
+import org.jdeferred.AlwaysCallback;
 import org.jdeferred.DonePipe;
 import org.jdeferred.FailCallback;
 import org.jdeferred.Promise;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class PlaylistPlayer implements Song.EventsListener {
-
     private Playlist mPlaylist;
     private Song mCurrentSong;
 
+    private boolean mIsCurrentSongLoading = false;
+    private boolean mIsClosed = false;
+
     @Inject
-    public PlaylistPlayer() {
-
-    }
-
-    void playPlaylist(String playlistName) {
-        mPlaylist = new Playlist(playlistName);
-        this.nextSong();
+    public PlaylistPlayer(Playlist playlist) {
+        mPlaylist = playlist;
     }
 
     public void play() {
-        if(mCurrentSong != null) {
+        if (mCurrentSong != null) {
             mCurrentSong.subscribeToEvents(this);
             mCurrentSong.play();
+        } else if(!mIsCurrentSongLoading) {
+            nextSong();
+        } else {
+            throw new IllegalStateException("invalid request. song already loading");
         }
     }
 
     public void pause() {
-        if(mCurrentSong != null) {
+        if (!mIsCurrentSongLoading || mCurrentSong == null) {
+            throw new IllegalStateException("no song was loaded yet");
+        }
+
+        if (mCurrentSong != null) {
             mCurrentSong.pause();
         }
     }
 
-    public Promise<Song, Exception, Void> nextSong() {
-        return mPlaylist.load().then(new DonePipe<Void, Song, Exception, Void>() {
+    public void nextSong() {
+        if (mIsCurrentSongLoading) {
+            String message = String.format("invalid state. current song already loading");
+            throw new IllegalStateException(message);
+        }
+
+        mIsCurrentSongLoading = true;
+
+        mPlaylist.load().then(new DonePipe<Void, Song, Exception, Void>() {
             @Override
             public Promise<Song, Exception, Void> pipeDone(Void unused) {
-                if(mCurrentSong != null) {
+                if (mCurrentSong != null) {
                     mCurrentSong.pause();
                     mCurrentSong.close();
                 }
@@ -56,7 +70,12 @@ public class PlaylistPlayer implements Song.EventsListener {
             @Override
             public Promise<Song, Exception, Void> pipeDone(Song song) {
                 mCurrentSong = song;
-                PlaylistPlayer.this.play();
+                mIsCurrentSongLoading = false;
+
+                // We won't be playing any new music if playlistPlayer is closed
+                if(!mIsClosed) {
+                    PlaylistPlayer.this.play();
+                }
 
                 return mPlaylist.peekSong();
             }
@@ -70,12 +89,19 @@ public class PlaylistPlayer implements Song.EventsListener {
             public void onFail(Exception error) {
                 Timber.w("failed to preload song: %s", error.toString());
             }
+        }).always(new AlwaysCallback<Song, Exception>() {
+            @Override
+            public void onAlways(Promise.State state, Song resolved, Exception rejected) {
+                mIsCurrentSongLoading = false;
+            }
         });
     }
 
     void close() {
-        mCurrentSong.close();
-        if(mCurrentSong != null) {
+        mIsClosed = true;
+
+        mPlaylist.close();
+        if (mCurrentSong != null) {
             mCurrentSong.close();
         }
     }

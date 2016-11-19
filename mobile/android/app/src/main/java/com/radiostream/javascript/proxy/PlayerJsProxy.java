@@ -19,6 +19,7 @@ import com.radiostream.di.modules.ReactContextModule;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.PlaylistsResult;
 import com.radiostream.player.PlayerService;
+import com.radiostream.player.PlaylistControls;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
  */
 
 @DebugLog
-public class PlayerJsProxy extends ReactContextBaseJavaModule implements LifecycleEventListener {
+public class PlayerJsProxy extends ReactContextBaseJavaModule implements LifecycleEventListener, PlaylistControls {
 
     private static JsProxyComponent mJsProxyComponent = null;
     private PlayerService mPlayerService = null;
@@ -81,10 +82,6 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
         return constants;
     }
 
-    @ReactMethod
-    public void playPlaylist() {
-    }
-
     @Override
     public void onHostResume() {
         Activity activity = this.getCurrentActivity();
@@ -100,8 +97,32 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
         this.getCurrentActivity().unbindService(mServiceConnection);
     }
 
+    @ReactMethod
     @Override
     public void onHostDestroy() {
+
+    }
+
+    @ReactMethod
+    public void changePlaylist(String playlistName) {
+        mPlayerService.getPlayer().changePlaylist(playlistName);
+    }
+
+    @ReactMethod
+    @Override
+    public void play() {
+        mPlayerService.getPlayer().play();
+    }
+
+    @ReactMethod
+    @Override
+    public void pause() {
+        mPlayerService.getPlayer().pause();
+    }
+
+    @Override
+    public void nextSong() {
+        mPlayerService.getPlayer().nextSong();
 
     }
 }

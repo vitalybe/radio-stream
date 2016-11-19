@@ -29,7 +29,7 @@ public class PlayerService extends Service {
     private final String PARAM_EXIT = "PARAM_EXIT";
 
     @Inject
-    PlaylistPlayer mPlaylistPlayer;
+    Player mPlayer;
 
     @Override
     public void onCreate() {
@@ -67,8 +67,8 @@ public class PlayerService extends Service {
         startForeground(NOTIFICATION_ID, mBuilder.build());
     }
 
-    public PlaylistPlayer getPlaylistPlayer() {
-        return mPlaylistPlayer;
+    public Player getPlayer() {
+        return mPlayer;
     }
 
     @Override
@@ -88,7 +88,7 @@ public class PlayerService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
-        mPlaylistPlayer.close();
+        mPlayer.close();
     }
 
     @Nullable
