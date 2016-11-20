@@ -1,29 +1,25 @@
 package com.radiostream.player;
 
-import android.util.Log;
-
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
-import timber.log.Timber;
+import org.mockito.stubbing.VoidAnswer1;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({android.util.Log.class})
+/**
+ * Created by vitaly on 17/11/2016.
+ */
 public class PlaylistPlayerTest {
 
     @Mock
@@ -31,11 +27,6 @@ public class PlaylistPlayerTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-        Timber.plant(new Timber.DebugTree());
-    }
 
     public <D> Promise<D, Exception, Void> resolvedPromise(D result) {
         return new DeferredObject<D, Exception, Void>().resolve(result).promise();
@@ -58,7 +49,6 @@ public class PlaylistPlayerTest {
     }
 
     @Test
-    @PrepareForTest({android.util.Log.class})
     public void nextSong_playNextSong() throws Exception {
         Song mockSong = mock(Song.class);
         when(mockSong.preload()).thenReturn(resolvedPromise(mockSong));
