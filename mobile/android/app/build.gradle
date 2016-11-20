@@ -149,6 +149,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-core:2.+"
 
+    // roboelectric
+    testCompile "org.robolectric:robolectric:3.1.4"
+
     // dagger 2
     // apt command comes from the android-apt plugint
     apt 'com.google.dagger:dagger-compiler:2.7'

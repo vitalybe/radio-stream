@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
+@DebugLog
 public class PlaylistPlayer implements Song.EventsListener {
     private Playlist mPlaylist;
     private Song mCurrentSong;
