@@ -30,13 +30,22 @@ import static org.mockito.Mockito.when;
 public class PlaylistPlayerTest {
 
     @Mock
+    Song mockFirstSong;
+
+    @Mock
+    Song mockSecondSong;
+
+    @Mock
+    Playlist mockPlaylist;
+
+    @Mock
     PlaylistFactory mockPlaylistFactory;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUpClass() throws Exception {
         ShadowLog.stream = System.out;
     }
 
@@ -44,51 +53,49 @@ public class PlaylistPlayerTest {
         return new DeferredObject<D, Exception, Void>().resolve(result).promise();
     }
 
+    @Before
+    public void setUp() throws Exception {
+        when(mockFirstSong.preload()).thenReturn(resolvedPromise(mockFirstSong));
+        when(mockSecondSong.preload()).thenReturn(resolvedPromise(mockSecondSong));
+
+        when(mockPlaylist.load()).thenReturn(resolvedPromise((Void)null));
+        when(mockPlaylist.nextSong()).thenReturn(resolvedPromise(mockFirstSong));
+        when(mockPlaylist.peekSong()).thenReturn(resolvedPromise(mockSecondSong)); // a new song mock
+    }
+
     @Test
     public void play_playsNextSongIfNotSongAvailable() throws Exception {
-        Song mockSong = mock(Song.class);
-        when(mockSong.preload()).thenReturn(resolvedPromise(mockSong));
-
-        Playlist mockPlaylist = mock(Playlist.class);
-        when(mockPlaylist.load()).thenReturn(resolvedPromise((Void)null));
-        when(mockPlaylist.nextSong()).thenReturn(resolvedPromise(mockSong));
-        when(mockPlaylist.peekSong()).thenReturn(resolvedPromise(mockSong)); // a new song mock
-
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist);
         playlistPlayer.play();
 
-        verify(mockSong, times(1)).play();
+        verify(mockFirstSong, times(1)).play();
+    }
+
+    @Test
+    public void play_playSongIfSongAvailable() throws Exception {
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist);
+        playlistPlayer.play();
+
+        verify(mockPlaylist, times(1)).nextSong();
+        verify(mockFirstSong, times(1)).play();
+
+        playlistPlayer.play();
+        verify(mockPlaylist, times(1)).nextSong();
+        verify(mockFirstSong, times(2)).play();
     }
 
     @Test
     public void nextSong_playNextSong() throws Exception {
-        Song mockSong = mock(Song.class);
-        when(mockSong.preload()).thenReturn(resolvedPromise(mockSong));
-
-        Playlist mockPlaylist = mock(Playlist.class);
-        when(mockPlaylist.load()).thenReturn(resolvedPromise((Void)null));
-        when(mockPlaylist.nextSong()).thenReturn(resolvedPromise(mockSong));
-        when(mockPlaylist.peekSong()).thenReturn(resolvedPromise(mockSong)); // a new song mock
-
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist);
         playlistPlayer.nextSong();
 
-        verify(mockSong, times(1)).play();
+        verify(mockFirstSong, times(1)).play();
     }
 
-    @Test
-    public void play() throws Exception {
-
-    }
-
-    @Test
-    public void pause() throws Exception {
-
-    }
-
-    @Test
-    public void nextSong() throws Exception {
-
+    @Test(expected=IllegalStateException.class)
+    public void pause_throwsExceptionIfNoSong() throws Exception {
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist);
+        playlistPlayer.pause();
     }
 
     @Test
