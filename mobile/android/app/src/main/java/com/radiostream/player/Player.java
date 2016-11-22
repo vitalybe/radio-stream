@@ -43,12 +43,12 @@ public class Player implements PlaylistControls {
     }
 
     @Override
-    public void nextSong() {
+    public void playNext() {
         if(mCurrentPlaylistPlayer == null) {
             throw new IllegalStateException("playlist must be set");
         }
 
-        mCurrentPlaylistPlayer.nextSong();
+        mCurrentPlaylistPlayer.playNext();
     }
 
     public void close() {

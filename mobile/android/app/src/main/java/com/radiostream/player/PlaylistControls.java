@@ -8,5 +8,5 @@ public interface PlaylistControls {
 
     void pause();
 
-    void nextSong();
+    void playNext();
 }

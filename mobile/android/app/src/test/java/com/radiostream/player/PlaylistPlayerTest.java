@@ -9,17 +9,13 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.mockito.stubbing.VoidAnswer1;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -59,8 +55,12 @@ public class PlaylistPlayerTest {
         when(mockSecondSong.preload()).thenReturn(resolvedPromise(mockSecondSong));
 
         when(mockPlaylist.load()).thenReturn(resolvedPromise((Void)null));
-        when(mockPlaylist.nextSong()).thenReturn(resolvedPromise(mockFirstSong));
-        when(mockPlaylist.peekSong()).thenReturn(resolvedPromise(mockSecondSong)); // a new song mock
+
+        when(mockPlaylist.nextSong())
+            .thenReturn(resolvedPromise(mockFirstSong))
+            .thenReturn(resolvedPromise(mockSecondSong));
+        when(mockPlaylist.peekSong())
+            .thenReturn(resolvedPromise(mockSecondSong));
     }
 
     @Test
@@ -85,9 +85,20 @@ public class PlaylistPlayerTest {
     }
 
     @Test
-    public void nextSong_playNextSong() throws Exception {
+    public void playNext_playingSecondSong() throws Exception {
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist);
-        playlistPlayer.nextSong();
+        playlistPlayer.playNext();
+        playlistPlayer.playNext();
+
+        verify(mockFirstSong, times(1)).play();
+        verify(mockFirstSong, times(1)).close();
+        verify(mockSecondSong, times(1)).play();
+    }
+
+    @Test
+    public void playNext_playFirstSong() throws Exception {
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist);
+        playlistPlayer.playNext();
 
         verify(mockFirstSong, times(1)).play();
     }
@@ -99,8 +110,20 @@ public class PlaylistPlayerTest {
     }
 
     @Test
-    public void close() throws Exception {
+    public void close_closesPlaylist() throws Exception {
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist);
+        playlistPlayer.close();
 
+        verify(mockPlaylist, times(1)).close();
     }
 
+    @Test
+    public void close_closesSongIfExists() throws Exception {
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist);
+        playlistPlayer.play();
+        playlistPlayer.close();
+
+        verify(mockFirstSong, times(1)).close();
+        verify(mockPlaylist, times(1)).close();
+    }
 }

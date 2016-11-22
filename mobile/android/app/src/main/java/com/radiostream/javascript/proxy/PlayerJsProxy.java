@@ -6,18 +6,13 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
-import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.WritableArray;
 import com.radiostream.di.components.DaggerJsProxyComponent;
 import com.radiostream.di.components.JsProxyComponent;
 import com.radiostream.di.modules.ReactContextModule;
-import com.radiostream.networking.MetadataBackend;
-import com.radiostream.networking.models.PlaylistsResult;
 import com.radiostream.player.PlayerService;
 import com.radiostream.player.PlaylistControls;
 
@@ -121,8 +116,8 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     }
 
     @Override
-    public void nextSong() {
-        mPlayerService.getPlayer().nextSong();
+    public void playNext() {
+        mPlayerService.getPlayer().playNext();
 
     }
 }

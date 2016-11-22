@@ -28,7 +28,7 @@ public class PlaylistPlayer implements Song.EventsListener {
             mCurrentSong.subscribeToEvents(this);
             mCurrentSong.play();
         } else if(!mIsCurrentSongLoading) {
-            nextSong();
+            playNext();
         } else {
             throw new IllegalStateException("invalid request. song already loading");
         }
@@ -44,7 +44,7 @@ public class PlaylistPlayer implements Song.EventsListener {
         }
     }
 
-    public void nextSong() {
+    public void playNext() {
         if (mIsCurrentSongLoading) {
             String message = String.format("invalid state. current song already loading");
             throw new IllegalStateException(message);
@@ -109,6 +109,6 @@ public class PlaylistPlayer implements Song.EventsListener {
 
     @Override
     public void onSongFinish(Song song) {
-        this.nextSong();
+        this.playNext();
     }
 }
