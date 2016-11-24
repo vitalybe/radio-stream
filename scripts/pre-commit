@@ -38,7 +38,8 @@ function android_hook() {
 	echo "Running web pre-commit hook"
 	
 	echo "Running tests..."
-	mobile/android/gradlew test
+	cd mobile/android
+	./gradlew test
 	if [[ $? = 0 ]]
 	then
 	    echo "> Tests passed"
@@ -67,7 +68,7 @@ fi
 
 if [ $(any_changes_in_folder ^mobile/android) ]; then
 	echo "Found changes in mobile/android"
-	web_hook
+	android_hook
 fi
 
 echo "Ready to commit"
