@@ -11,7 +11,7 @@ import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 @DebugLog
-public class PlaylistPlayer implements Song.EventsListener {
+public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     private Playlist mPlaylist;
     private Song mCurrentSong;
 
@@ -23,6 +23,7 @@ public class PlaylistPlayer implements Song.EventsListener {
         mPlaylist = playlist;
     }
 
+    @Override
     public void play() {
         if (mCurrentSong != null) {
             mCurrentSong.subscribeToEvents(this);
@@ -34,6 +35,7 @@ public class PlaylistPlayer implements Song.EventsListener {
         }
     }
 
+    @Override
     public void pause() {
         if (!mIsCurrentSongLoading || mCurrentSong == null) {
             throw new IllegalStateException("no song was loaded yet");
@@ -44,6 +46,7 @@ public class PlaylistPlayer implements Song.EventsListener {
         }
     }
 
+    @Override
     public void playNext() {
         if (mIsCurrentSongLoading) {
             String message = String.format("invalid state. current song already loading");
@@ -78,7 +81,7 @@ public class PlaylistPlayer implements Song.EventsListener {
                     PlaylistPlayer.this.play();
                 }
 
-                return mPlaylist.peekSong();
+                return mPlaylist.peekNextSong();
             }
         }).then(new DonePipe<Song, Song, Exception, Void>() {
             @Override
@@ -101,7 +104,6 @@ public class PlaylistPlayer implements Song.EventsListener {
     void close() {
         mIsClosed = true;
 
-        mPlaylist.close();
         if (mCurrentSong != null) {
             mCurrentSong.close();
         }

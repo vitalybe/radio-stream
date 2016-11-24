@@ -16,6 +16,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 
+import static com.radiostream.player.Utils.resolvedPromise;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,10 +46,6 @@ public class PlaylistPlayerTest {
         ShadowLog.stream = System.out;
     }
 
-    public <D> Promise<D, Exception, Void> resolvedPromise(D result) {
-        return new DeferredObject<D, Exception, Void>().resolve(result).promise();
-    }
-
     @Before
     public void setUp() throws Exception {
         when(mockFirstSong.preload()).thenReturn(resolvedPromise(mockFirstSong));
@@ -59,7 +56,7 @@ public class PlaylistPlayerTest {
         when(mockPlaylist.nextSong())
             .thenReturn(resolvedPromise(mockFirstSong))
             .thenReturn(resolvedPromise(mockSecondSong));
-        when(mockPlaylist.peekSong())
+        when(mockPlaylist.peekNextSong())
             .thenReturn(resolvedPromise(mockSecondSong));
     }
 
@@ -113,8 +110,6 @@ public class PlaylistPlayerTest {
     public void close_closesPlaylist() throws Exception {
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist);
         playlistPlayer.close();
-
-        verify(mockPlaylist, times(1)).close();
     }
 
     @Test
@@ -124,6 +119,5 @@ public class PlaylistPlayerTest {
         playlistPlayer.close();
 
         verify(mockFirstSong, times(1)).close();
-        verify(mockPlaylist, times(1)).close();
     }
 }
