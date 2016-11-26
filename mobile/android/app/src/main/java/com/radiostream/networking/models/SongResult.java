@@ -9,4 +9,5 @@ public class SongResult {
     public int rating;
     public double lastplayed;
     public int playcount;
+    public String path;
 }

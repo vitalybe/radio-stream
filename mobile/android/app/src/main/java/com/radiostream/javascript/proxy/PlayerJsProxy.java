@@ -6,18 +6,29 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
+import com.radiostream.Settings;
 import com.radiostream.di.components.DaggerJsProxyComponent;
 import com.radiostream.di.components.JsProxyComponent;
 import com.radiostream.di.modules.ReactContextModule;
+import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.models.PlaylistListResult;
 import com.radiostream.player.PlayerService;
 import com.radiostream.player.PlaylistControls;
 
+import org.jdeferred.DoneCallback;
+import org.jdeferred.FailCallback;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
@@ -33,6 +44,9 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
 
     private static JsProxyComponent mJsProxyComponent = null;
     private PlayerService mPlayerService = null;
+
+    @Inject
+    Settings mSettings;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -96,6 +110,35 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     @Override
     public void onHostDestroy() {
 
+    }
+
+    @ReactMethod
+    public void fetchPlaylists(final Promise promise) {
+        MetadataBackend metadataBackend = new MetadataBackend(mSettings);
+        try {
+            metadataBackend.fetchAllPlaylist().then(new DoneCallback<PlaylistListResult>() {
+                @Override
+                public void onDone(PlaylistListResult playlistResult) {
+
+                    WritableArray result = Arguments.createArray();
+                    for(String playlist : playlistResult.playlists) {
+                        result.pushString(playlist);
+                    }
+
+                    promise.resolve(result);
+                }
+            }).fail(new FailCallback<Exception>() {
+                @Override
+                public void onFail(Exception error) {
+                    promise.reject("fetch playlist failed", error);
+                }
+            });
+
+
+        } catch (Exception e) {
+            Timber.e(e);
+            promise.reject("FetchPlaylists failed", e);
+        }
     }
 
     @ReactMethod

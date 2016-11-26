@@ -1,5 +1,6 @@
 package com.radiostream.networking;
 
+import com.radiostream.Settings;
 import com.radiostream.networking.models.PlaylistListResult;
 import com.radiostream.networking.models.PlaylistResult;
 import com.radiostream.networking.models.SongResult;
@@ -24,20 +25,18 @@ import retrofit2.http.Path;
 @DebugLog
 public class MetadataBackend {
 
-    // TOOD: baseUrl, user, pass from injected Settings class
-    String baseUrl = "***REMOVED***/5f707e4f-97cc-438e-90d8-1e5e35bd558a/";
-    String user = "radio";
-    String pass = "myman";
+    private Settings mSettings;
 
     @Inject
-    public MetadataBackend() {
+    public MetadataBackend(Settings settings) {
 
+        mSettings = settings;
     }
 
     public Promise<PlaylistListResult, Exception, Void> fetchAllPlaylist() throws IOException {
         final Deferred<PlaylistListResult, Exception, Void> deferred = new DeferredObject<>();
 
-        BackendMetadataClient client = HttpServiceFactory.createService(BackendMetadataClient.class, baseUrl, user, pass);
+        BackendMetadataClient client = getService();
         Call<PlaylistListResult> playlistsCall = client.allPlaylists();
         playlistsCall.enqueue(new Callback<PlaylistListResult>() {
             @Override
@@ -61,10 +60,15 @@ public class MetadataBackend {
         return deferred.promise();
     }
 
+    private BackendMetadataClient getService() {
+        return HttpServiceFactory.createService(BackendMetadataClient.class,
+            mSettings.getAddress(), mSettings.getUser(), mSettings.getPassword());
+    }
+
     public Promise<List<SongResult>, Exception, Void> fetchPlaylist(String playlistName) {
         final Deferred<List<SongResult>, Exception, Void> deferred = new DeferredObject<>();
 
-        BackendMetadataClient client = HttpServiceFactory.createService(BackendMetadataClient.class, baseUrl, user, pass);
+        BackendMetadataClient client = getService();
         Call<PlaylistResult> playlistCall = client.playlist(playlistName);
         playlistCall.enqueue(new Callback<PlaylistResult>() {
             @Override

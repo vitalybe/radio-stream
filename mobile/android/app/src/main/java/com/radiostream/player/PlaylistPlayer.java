@@ -113,4 +113,11 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     public void onSongFinish(Song song) {
         this.playNext();
     }
+
+    @Override
+    public void onSongError(Exception error) {
+        Timber.e("error occured in song '%s': %s", mCurrentSong, error);
+        // TODO: Error handling
+        throw new RuntimeException("TODO");
+    }
 }

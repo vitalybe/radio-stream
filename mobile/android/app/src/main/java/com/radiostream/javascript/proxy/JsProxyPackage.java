@@ -27,7 +27,7 @@ public class JsProxyPackage implements ReactPackage {
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new MetadataBackendJsProxy(reactContext));
+        modules.add(new PlayerJsProxy(reactContext));
 
         return modules;
     }
