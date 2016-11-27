@@ -2,6 +2,8 @@ package com.radiostream.player;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 /**
  * Created by vitaly on 18/11/2016.
  */
@@ -17,6 +19,8 @@ public class Player implements PlaylistControls {
     }
 
     public void changePlaylist(String playlistName) {
+        Timber.i("function start");
+
         if(mCurrentPlaylistPlayer != null) {
             mCurrentPlaylistPlayer.close();
         }
@@ -26,6 +30,8 @@ public class Player implements PlaylistControls {
 
     @Override
     public void play() {
+        Timber.i("function start");
+
         if(mCurrentPlaylistPlayer == null) {
             throw new IllegalStateException("playlist must be set");
         }
@@ -35,6 +41,8 @@ public class Player implements PlaylistControls {
 
     @Override
     public void pause() {
+        Timber.i("function start");
+
         if(mCurrentPlaylistPlayer == null) {
             throw new IllegalStateException("playlist must be set");
         }
@@ -44,6 +52,8 @@ public class Player implements PlaylistControls {
 
     @Override
     public void playNext() {
+        Timber.i("function start");
+
         if(mCurrentPlaylistPlayer == null) {
             throw new IllegalStateException("playlist must be set");
         }
@@ -52,6 +62,8 @@ public class Player implements PlaylistControls {
     }
 
     public void close() {
+        Timber.i("function start");
+
         if(mCurrentPlaylistPlayer != null) {
             mCurrentPlaylistPlayer.close();
         }

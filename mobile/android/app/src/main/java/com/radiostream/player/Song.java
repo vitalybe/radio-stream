@@ -18,7 +18,6 @@ import java.util.Locale;
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
-@DebugLog
 public class Song {
 
     private final Object mArtist;
@@ -30,6 +29,8 @@ public class Song {
     private EventsListener mEventsListener;
 
     public Song(SongResult songResult, MediaPlayer mediaPlayer, Context context, Settings settings) {
+        Timber.i("function start");
+
         this.mArtist = songResult.artist;
         this.mTitle = songResult.title;
         this.mPath = songResult.path;
@@ -43,21 +44,27 @@ public class Song {
     }
 
     public void subscribeToEvents(EventsListener eventsListener) {
+        Timber.i("function start");
         mEventsListener = eventsListener;
     }
+
     public Promise<Song,Exception,Void> preload() {
+        Timber.i("function start");
+
         final DeferredObject<Song,Exception,Void> deferredObject = new DeferredObject<>();
 
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
+                Timber.i("setOnPreparedListener callback for song: %s", Song.this.toString());
                 deferredObject.resolve(Song.this);
             }
         });
-
         mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
+                Timber.w("setOnErrorListener callback for song: %s", Song.this.toString());
+
                 String errorMessage = String.format(Locale.ENGLISH,
                     "MediaPlayer failed to preload song: %d/%d", what, extra);
                 deferredObject.reject(new NetworkErrorException(errorMessage));
@@ -104,6 +111,8 @@ public class Song {
     }
 
     public void close() {
+        Timber.i("function start");
+
         mMediaPlayer.pause();
         mMediaPlayer.release();
         mMediaPlayer = null;
