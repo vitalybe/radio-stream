@@ -11,6 +11,9 @@ import org.jdeferred.impl.DeferredObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import hugo.weaving.DebugLog;
+import timber.log.Timber;
+
 public class Playlist {
     private String mPlaylistName;
     private MetadataBackend mMetadataBackend;
@@ -25,28 +28,38 @@ public class Playlist {
         mSongFactory = songFactory;
     }
 
-    public Promise<Void, Exception, Void> load() {
-        mSongs.clear();
-        mIndex = -1;
+    private Promise<Void, Exception, Void> reloadIfNeededForNextSong() {
+        Timber.i("checking if reload is needed. songs count: %d Current index: %d", mSongs.size(), mIndex);
+        if(mIndex+1 >= mSongs.size()) {
+            Timber.i("reloading songs");
 
-        return mMetadataBackend.fetchPlaylist(mPlaylistName).then(new DoneFilter<List<SongResult>, Void>() {
-            @Override
-            public Void filterDone(List<SongResult> result) {
-                if(result.size() == 0) {
-                    throw new RuntimeException("Empty playlists are currently unhandled");
+            mSongs.clear();
+            mIndex = -1;
+
+            return mMetadataBackend.fetchPlaylist(mPlaylistName).then(new DoneFilter<List<SongResult>, Void>() {
+                @Override
+                public Void filterDone(List<SongResult> result) {
+                    if (result.size() == 0) {
+                        throw new RuntimeException("Empty playlists are currently unhandled");
+                    }
+
+                    for (SongResult songResult : result) {
+                        mSongs.add(mSongFactory.build(songResult));
+                    }
+
+                    return null;
                 }
-
-                for(SongResult songResult : result) {
-                    mSongs.add(mSongFactory.build(songResult));
-                }
-
-                return null;
-            }
-        });
+            });
+        } else {
+            Timber.i("no reload required");
+            return new DeferredObject<Void, Exception, Void>().resolve(null).promise();
+        }
     }
 
 
     public Promise<Song, Exception, Void> nextSong() {
+        Timber.i("function start");
+        
         return peekNextSong().then(new DoneFilter<Song, Song>() {
             @Override
             public Song filterDone(Song result) {
@@ -58,18 +71,16 @@ public class Playlist {
     }
 
     public Promise<Song, Exception, Void> peekNextSong() {
-        if(mIndex+1 < mSongs.size()) {
-            DeferredObject<Song, Exception, Void> deferredObject = new DeferredObject<>();
-
-            Song resolve = mSongs.get(mIndex + 1);
-            return deferredObject.resolve(resolve).promise();
-        } else {
-            return load().then(new DonePipe<Void, Song, Exception, Void>() {
-                @Override
-                public Promise<Song, Exception, Void> pipeDone(Void result) {
-                    return peekNextSong();
-                }
-            });
-        }
+        Timber.i("function start");
+        
+        return reloadIfNeededForNextSong().then(new DonePipe<Void, Song, Exception, Void>() {
+            @Override
+            public Promise<Song, Exception, Void> pipeDone(Void result) {
+                DeferredObject<Song, Exception, Void> deferredObject = new DeferredObject<>();
+                Song resolve = mSongs.get(mIndex + 1);
+                Timber.i("peeked next song: %s", resolve.toString());
+                return deferredObject.resolve(resolve).promise();
+            }
+        });
     }
 }

@@ -118,4 +118,9 @@ public class Song {
         void onSongFinish(Song song);
         void onSongError(Exception error);
     }
+
+    @Override
+    public String toString() {
+        return String.format("[%s - %s]", mArtist, mTitle);
+    }
 }

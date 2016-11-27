@@ -55,17 +55,12 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
         mIsCurrentSongLoading = true;
 
-        mPlaylist.load().then(new DonePipe<Void, Song, Exception, Void>() {
-            @Override
-            public Promise<Song, Exception, Void> pipeDone(Void unused) {
-                if (mCurrentSong != null) {
-                    mCurrentSong.pause();
-                    mCurrentSong.close();
-                }
+        if (mCurrentSong != null) {
+            mCurrentSong.pause();
+            mCurrentSong.close();
+        }
 
-                return mPlaylist.nextSong();
-            }
-        }).then(new DonePipe<Song, Song, Exception, Void>() {
+        mPlaylist.nextSong().then(new DonePipe<Song, Song, Exception, Void>() {
             @Override
             public Promise<Song, Exception, Void> pipeDone(Song song) {
                 return song.preload();

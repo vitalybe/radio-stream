@@ -33,7 +33,15 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
 
-    Timber.plant(new Timber.DebugTree());
+    Timber.plant(new Timber.DebugTree() {
+      @Override
+      protected String createStackElementTag(StackTraceElement element) {
+        return String.format("%s:%s",
+            super.createStackElementTag(element),
+            element.getMethodName()
+        );
+      }
+    });
   }
 
   @Override

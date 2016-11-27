@@ -19,6 +19,7 @@ import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,6 +58,8 @@ public class PlaylistTest {
 
     @Before
     public void setUp() throws Exception {
+        ShadowLog.stream = System.out;
+
         mockLoadedSongs1_Song1.title = "mockLoadedSongs1_Song1";
         mockLoadedSongs1_Song2.title = "mockLoadedSongs1_Song2";
         mockLoadedSongs2_Song1.title = "mockLoadedSongs2_Song1";
@@ -124,6 +127,27 @@ public class PlaylistTest {
     }
 
     @Test
+    public void reload_reloadsPlaylistIfFinished() throws Exception {
+        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
+        playlist.nextSong().then(new DoneCallback<Song>() {
+            @Override
+            public void onDone(Song result) {
+                assertEquals(result.getTitle(), mockLoadedSongs1_Song1.title);
+            }
+        });
+
+        playlist.nextSong();
+        playlist.nextSong();
+        playlist.nextSong().then(new DoneCallback<Song>() {
+            @Override
+            public void onDone(Song result) {
+                assertEquals(result.getTitle(), mockLoadedSongs2_Song2.title);
+            }
+        });
+        verify(mockMetadataBackend, times(2)).fetchPlaylist(mPlaylistName);
+    }
+
+    @Test
     public void peekNextSong_previewsNextSong() throws Exception {
         Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
         playlist.peekNextSong().then(new DoneCallback<Song>() {
@@ -139,6 +163,8 @@ public class PlaylistTest {
                 assertEquals(result.getTitle(), mockLoadedSongs1_Song1.title);
             }
         });
+
+        verify(mockMetadataBackend, times(1)).fetchPlaylist(mPlaylistName);
     }
 
 }
