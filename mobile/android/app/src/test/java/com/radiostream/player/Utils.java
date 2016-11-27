@@ -12,4 +12,7 @@ public class Utils {
         return new DeferredObject<D, Exception, Void>().resolve(result).promise();
     }
 
+    public static <D> Promise<D, Exception, Void> rejectedPromise(Exception error) {
+        return new DeferredObject<D, Exception, Void>().reject(error).promise();
+    }
 }

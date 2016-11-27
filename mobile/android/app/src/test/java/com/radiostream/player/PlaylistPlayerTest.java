@@ -16,6 +16,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 
+import static com.radiostream.player.Utils.rejectedPromise;
 import static com.radiostream.player.Utils.resolvedPromise;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -54,6 +55,7 @@ public class PlaylistPlayerTest {
         when(mockPlaylist.nextSong())
             .thenReturn(resolvedPromise(mockFirstSong))
             .thenReturn(resolvedPromise(mockSecondSong));
+
         when(mockPlaylist.peekNextSong())
             .thenReturn(resolvedPromise(mockSecondSong));
     }
@@ -117,5 +119,16 @@ public class PlaylistPlayerTest {
         playlistPlayer.close();
 
         verify(mockFirstSong, times(1)).close();
+    }
+
+    @Test
+    public void playNext_retriesOnFailure() throws Exception {
+        when(mockFirstSong.preload()).thenReturn(Utils.<Song>rejectedPromise(new Exception()));
+
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist);
+        playlistPlayer.playNext();
+
+        // second song will be loaded if preloading the first one failed
+        verify(mockSecondSong, times(1)).play();
     }
 }
