@@ -39,7 +39,7 @@ function android_hook() {
 	
 	echo "Running tests..."
 	cd mobile/android
-	./gradlew test
+	./gradlew testDebug
 	if [[ $? = 0 ]]
 	then
 	    echo "> Tests passed"
