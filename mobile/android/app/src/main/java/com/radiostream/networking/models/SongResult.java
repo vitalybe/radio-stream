@@ -5,6 +5,7 @@ package com.radiostream.networking.models;
  */
 public class SongResult {
     public String artist;
+    public String album;
     public String title;
     public int rating;
     public double lastplayed;

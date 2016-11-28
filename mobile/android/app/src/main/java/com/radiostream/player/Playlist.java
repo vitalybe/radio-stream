@@ -1,5 +1,8 @@
 package com.radiostream.player;
 
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
+import com.radiostream.javascript.bridge.PlaylistBridge;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
 
@@ -82,5 +85,12 @@ public class Playlist {
                 return deferredObject.resolve(resolve).promise();
             }
         });
+    }
+
+
+    public PlaylistBridge toBridgeObject() {
+        final PlaylistBridge playlistBridge = new PlaylistBridge();
+        playlistBridge.setName(mPlaylistName);
+        return playlistBridge;
     }
 }

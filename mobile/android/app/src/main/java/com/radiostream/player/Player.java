@@ -1,5 +1,8 @@
 package com.radiostream.player;
 
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
+
 import javax.inject.Inject;
 
 import timber.log.Timber;
@@ -48,6 +51,15 @@ public class Player implements PlaylistControls {
         }
 
         mCurrentPlaylistPlayer.pause();
+    }
+
+    @Override
+    public void playPause() {
+        if(mCurrentPlaylistPlayer == null) {
+            throw new IllegalStateException("playlist must be set");
+        }
+
+        mCurrentPlaylistPlayer.playPause();
     }
 
     @Override

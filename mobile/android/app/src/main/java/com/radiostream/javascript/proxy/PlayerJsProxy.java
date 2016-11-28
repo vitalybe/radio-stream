@@ -159,6 +159,11 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     }
 
     @Override
+    public void playPause() {
+        mPlayerService.getPlayer().playPause();
+    }
+
+    @Override
     public void playNext() {
         mPlayerService.getPlayer().playNext();
 

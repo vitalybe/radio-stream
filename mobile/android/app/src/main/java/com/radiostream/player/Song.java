@@ -6,7 +6,10 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.PowerManager;
 
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.radiostream.Settings;
+import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.networking.models.SongResult;
 
 import org.jdeferred.Promise;
@@ -15,13 +18,14 @@ import org.jdeferred.impl.DeferredObject;
 import java.io.IOException;
 import java.util.Locale;
 
-import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class Song {
 
-    private final Object mArtist;
+    private final String mArtist;
+    private final String mAlbum;
     private final String mTitle;
+
     private final String mPath;
 
     private MediaPlayer mMediaPlayer;
@@ -32,6 +36,7 @@ public class Song {
         Timber.i("function start");
 
         this.mArtist = songResult.artist;
+        this.mAlbum = songResult.album;
         this.mTitle = songResult.title;
         this.mPath = songResult.path;
 
@@ -118,9 +123,23 @@ public class Song {
         mMediaPlayer = null;
     }
 
+    public boolean isPlaying() {
+        return mMediaPlayer.isPlaying();
+    }
+
 
     public String getTitle() {
         return mTitle;
+    }
+
+    public SongBridge toBridgeObject() {
+        SongBridge bridge = new SongBridge();
+
+        bridge.setArtist(mArtist);
+        bridge.setAlbum(mAlbum);
+        bridge.setTitle(mTitle);
+
+        return bridge;
     }
 
     public interface EventsListener {
