@@ -1,5 +1,7 @@
 package com.radiostream.player;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.JavaOnlyMap;
 import com.radiostream.BuildConfig;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
@@ -11,15 +13,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowLog;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,14 +31,15 @@ import timber.log.Timber;
 
 import static com.radiostream.player.Utils.resolvedPromise;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Arguments.class, android.util.Log.class})
 public class PlaylistTest {
 
     private final String mPlaylistName = "X";
@@ -58,7 +61,8 @@ public class PlaylistTest {
 
     @Before
     public void setUp() throws Exception {
-        ShadowLog.stream = System.out;
+        Utils.initTestLogging();
+        Utils.mockAndroidStatics();
 
         mockLoadedSongs1_Song1.title = "mockLoadedSongs1_Song1";
         mockLoadedSongs1_Song2.title = "mockLoadedSongs1_Song2";
@@ -74,10 +78,10 @@ public class PlaylistTest {
         when(mockMetadataBackend.fetchPlaylist(anyString()))
             .thenReturn(loadedSongs1Promise).thenReturn(loadedSongs2Promise);
 
-        when(mockSongFactory.build((SongResult) ArgumentMatchers.any())).thenAnswer(new Answer<Song>() {
+        when(mockSongFactory.build((SongResult)any())).thenAnswer(new Answer<Song>() {
             @Override
             public Song answer(InvocationOnMock invocation) throws Throwable {
-                SongResult songResult = invocation.getArgument(0);
+                SongResult songResult = (SongResult)invocation.getArguments()[0];
 
                 Song mockSong = mock(Song.class);
                 when(mockSong.getTitle()).thenReturn(songResult.title);

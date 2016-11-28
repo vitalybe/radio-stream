@@ -22,7 +22,7 @@ public class PlayerEventsEmitter {
     }
 
     public void sendPlayerStatus(PlaylistPlayerBridge bridge) {
-        send("PLAYER_STATUS_EVENT", bridge);
+        send("PLAYER_STATUS_EVENT", bridge.asMap());
     }
 
     private void send(String event, Object params) {

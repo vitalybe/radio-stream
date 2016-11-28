@@ -1,38 +1,31 @@
  package com.radiostream.player;
 
-import android.media.MediaPlayer;
-
-import com.radiostream.BuildConfig;
+import com.facebook.react.bridge.Arguments;
 import com.radiostream.javascript.bridge.PlayerEventsEmitter;
+import com.radiostream.javascript.bridge.PlaylistBridge;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
+import com.radiostream.javascript.bridge.SongBridge;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatcher;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowLog;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.List;
 
 import static com.radiostream.player.Utils.resolvedPromise;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Arguments.class, android.util.Log.class})
 public class PlaylistPlayerTest {
 
     @Mock
@@ -50,16 +43,19 @@ public class PlaylistPlayerTest {
     @Mock
     PlayerEventsEmitter mockPlayerEventsEmitter;
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        ShadowLog.stream = System.out;
-    }
-
     @Before
     public void setUp() throws Exception {
+        Utils.initTestLogging();
+        Utils.mockAndroidStatics();
+
+        final SongBridge dummyFirstSongBridge = new SongBridge();
+        dummyFirstSongBridge.setTitle("mockFirstSong");
+        when(mockFirstSong.toBridgeObject()).thenReturn(dummyFirstSongBridge);
+
+        final SongBridge dummySecondSongBridge = new SongBridge();
+        dummyFirstSongBridge.setTitle("mockFirstSong");
+        when(mockSecondSong.toBridgeObject()).thenReturn(dummySecondSongBridge);
+
         when(mockFirstSong.preload()).thenReturn(resolvedPromise(mockFirstSong));
         when(mockSecondSong.preload()).thenReturn(resolvedPromise(mockSecondSong));
 
@@ -69,6 +65,10 @@ public class PlaylistPlayerTest {
 
         when(mockPlaylist.peekNextSong())
             .thenReturn(resolvedPromise(mockSecondSong));
+
+        final PlaylistBridge dummyPlaylistBridge = new PlaylistBridge();
+        dummyPlaylistBridge.setName("X");
+        when(mockPlaylist.toBridgeObject()).thenReturn(dummyPlaylistBridge);
     }
 
     @Test
@@ -83,9 +83,14 @@ public class PlaylistPlayerTest {
 
         final List<PlaylistPlayerBridge> bridges = captor.getAllValues();
 
-        assertEquals(bridges.get(0).getIsLoading(), true);
+        assertEquals(true, bridges.get(0).getIsLoading());
+        assertNull(bridges.get(0).getSong());
 
-        assertEquals(bridges.get(2).getIsLoading(), false);
+        assertEquals(true, bridges.get(1).getIsLoading());
+        assertNotNull(bridges.get(1).getSong());
+
+        assertEquals(false, bridges.get(2).getIsLoading());
+        assertNotNull(bridges.get(2).getSong());
 
     }
 

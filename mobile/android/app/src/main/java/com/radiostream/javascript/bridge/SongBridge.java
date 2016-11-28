@@ -1,35 +1,47 @@
 package com.radiostream.javascript.bridge;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 
-public class SongBridge extends WritableNativeMap {
+public class SongBridge {
+
     private final String fieldTitle = "title";
     private final String fieldArtist = "artist";
     private final String fieldAlbum = "album";
 
+    private final WritableMap mBackingMap;
+
+    public SongBridge() {
+        mBackingMap = Arguments.createMap();
+    }
+
     public String getTitle() {
-        return this.getString(fieldTitle);
+        return mBackingMap.getString(fieldTitle);
     }
 
     public void setTitle(String value) {
-        this.putString(fieldTitle, value);
+        mBackingMap.putString(fieldTitle, value);
     }
 
     public String getArtist() {
-        return this.getString(fieldArtist);
+        return mBackingMap.getString(fieldArtist);
     }
 
     public void setArtist(String value) {
-        this.putString(fieldArtist, value);
+        mBackingMap.putString(fieldArtist, value);
     }
 
     public String getAlbum() {
-        return this.getString(fieldAlbum);
+        return mBackingMap.getString(fieldAlbum);
     }
 
     public void setAlbum(String value) {
-        this.putString(fieldAlbum, value);
+        mBackingMap.putString(fieldAlbum, value);
     }
 
-
+    public WritableMap asMap() {
+        return mBackingMap;
+    }
 }

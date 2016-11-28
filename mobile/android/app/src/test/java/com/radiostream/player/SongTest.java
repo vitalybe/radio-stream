@@ -4,6 +4,7 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.media.MediaPlayer;
 
+import com.facebook.react.bridge.Arguments;
 import com.radiostream.BuildConfig;
 import com.radiostream.Settings;
 import com.radiostream.networking.MetadataBackend;
@@ -16,7 +17,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.util.MockUtil;
@@ -24,8 +25,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.net.NetworkInterface;
 import java.util.ArrayList;
@@ -35,15 +36,13 @@ import java.util.List;
 import static com.radiostream.player.Utils.resolvedPromise;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Arguments.class, android.util.Log.class})
 public class SongTest {
 
     private final String mPlaylistName = "X";
@@ -66,23 +65,26 @@ public class SongTest {
 
     @Before
     public void setUp() throws Exception {
+        Utils.initTestLogging();
+        Utils.mockAndroidStatics();
+
         when(mockSettings.getAddress()).thenReturn(settingsUrl);
 
         Mockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                dummyOnPreparedListener = invocation.getArgument(0);
+                dummyOnPreparedListener = (MediaPlayer.OnPreparedListener) invocation.getArguments()[0];
                 return null;
             }
-        }).when(mockMediaPlayer).setOnPreparedListener(ArgumentMatchers.<MediaPlayer.OnPreparedListener>any());
+        }).when(mockMediaPlayer).setOnPreparedListener(Matchers.<MediaPlayer.OnPreparedListener>any());
 
         Mockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                dummyOnErrorListener = invocation.getArgument(0);
+                dummyOnErrorListener = (MediaPlayer.OnErrorListener) invocation.getArguments()[0];
                 return null;
             }
-        }).when(mockMediaPlayer).setOnErrorListener(ArgumentMatchers.<MediaPlayer.OnErrorListener>any());
+        }).when(mockMediaPlayer).setOnErrorListener(Matchers.<MediaPlayer.OnErrorListener>any());
     }
 
     @Test
