@@ -1,27 +1,34 @@
 import loggerCreator from './utils/logger'
 var moduleLogger = loggerCreator("index.android");
 
-
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Image
-} from 'react-native';
+import { StyleSheet, Image } from 'react-native';
+import { observer } from "mobx-react"
 
 import PlaylistCollectionPage from './pages/playlist_collection_page'
+import PlayerPage from './pages/player_page'
+import Navigator from  './stores/navigator'
 
-import { navigator, routes } from  './stores/navigator'
-
+@observer
 export default class RadioStream extends Component {
+
+  componentWillMount() {
+    this.navigator = new Navigator();
+  }
+
   render() {
     let logger = loggerCreator(this.render.name, moduleLogger);
-    logger.info(`start. activate route: ${navigator.activeRoute}`);
+    logger.info(`start. activate route: ${this.navigator.activeRoute}`);
 
     let page = null;
+    var activeRoute = this.navigator.activeRoute;
 
-    switch (navigator.activeRoute) {
-      case routes.PLAYLIST_COLLECTION_PAGE:
-        page = <PlaylistCollectionPage />;
+    switch (activeRoute.address) {
+      case this.navigator.ROUTE_PLAYLIST_COLLECTION_PAGE:
+        page = <PlaylistCollectionPage navigator={this.navigator} />;
+        break;
+      case this.navigator.ROUTE_PLAYER_PAGE:
+        page = <PlayerPage playlistName={activeRoute.playlistName} />;
         break;
     }
 

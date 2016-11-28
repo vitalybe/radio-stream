@@ -3,22 +3,27 @@ import { observable, action } from "mobx";
 import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("navigator");
 
-class Navigator {
-  @observable activeRoute = routes.PLAYLIST_COLLECTION_PAGE;
+export default class Navigator {
 
-  navigateTo(route) {
-    if(route in routes == false) {
-      throw new Error(`invalid route ${route}`)
-    }
+  ROUTE_PLAYLIST_COLLECTION_PAGE = 'PLAYLIST_COLLECTION_PAGE';
+  ROUTE_SETTINGS_PAGE = 'SETTINGS_PAGE';
+  ROUTE_PLAYER_PAGE = 'PLAYER_PAGE';
 
-    this.activeRoute = route;
+  @observable activeRoute = null;
+
+  constructor() {
+    this.navigateToPlaylistCollection();
+  }
+
+  _navigateTo(address, params) {
+    this.activeRoute = observable(Object.assign({address: address}, params));
+  }
+
+  navigateToPlaylistCollection() {
+    this._navigateTo(this.ROUTE_PLAYLIST_COLLECTION_PAGE, null);
+  }
+
+  navigateToPlayer(playlistName) {
+    this._navigateTo(this.ROUTE_PLAYER_PAGE, {playlistName: playlistName});
   }
 }
-
-export const routes = {
-  PLAYLIST_COLLECTION_PAGE: 'PLAYLIST_COLLECTION_PAGE',
-  SETTINGS_PAGE: 'SETTINGS_PAGE',
-  PLAYER_PAGE: 'PLAYER_PAGE',
-};
-
-export const navigator = new Navigator();

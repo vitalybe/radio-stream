@@ -1,37 +1,36 @@
-import loggerCreator from '../utils/logger'
+ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("playlist_collection_page");
 
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableHighlight,
-  Image,
-  ProgressBar,
-  ActivityIndicator
-} from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, Image, ActivityIndicator } from 'react-native';
 
+import playerProxy from '../native_proxy/player_proxy'
 import { colors } from '../styles/styles'
 import Button from '../components/button'
-
-import metadataBackendProxy from '../native_proxy/metadata_backend_proxy'
+import Navigator from '../stores/navigator'
 
 export default class PlaylistCollectionPage extends Component {
-  _fetchPlaylists() {
-    let logger = loggerCreator(this._fetchPlaylists.name, moduleLogger);
+  fetchPlaylists() {
+    let logger = loggerCreator(this.fetchPlaylists.name, moduleLogger);
     logger.info("start");
 
-    metadataBackendProxy.fetchPlaylists().then(result => {
+    playerProxy.fetchPlaylists().then(result => {
       logger.info(`got results: ${result}`);
       this.setState({playlists: result})
     })
 
   }
 
+  onPlaylistClick(playlistName) {
+    let logger = loggerCreator(this.onPlaylistClick.name, moduleLogger);
+    logger.info(`start: ${playlistName}`);
+
+    this.props.navigator.navigateToPlayer(playlistName);
+  }
+
   componentWillMount() {
     this.state = {};
-    this._fetchPlaylists();
+    this.fetchPlaylists();
   }
 
   render() {
@@ -50,7 +49,7 @@ export default class PlaylistCollectionPage extends Component {
                 return (
                   <Button key={playlist} style={styles.playlistButton}
                           className="playlist"
-                          onPress={() => logger.info(`clicked playlist: ${playlist}`)}>
+                          onPress={() => this.onPlaylistClick(playlist)}>
                     <Text style={styles.playlistText}>{playlist}</Text>
                   </Button>)
               })
@@ -69,7 +68,11 @@ export default class PlaylistCollectionPage extends Component {
   }
 }
 
-const styles = StyleSheet.create({
+PlaylistCollectionPage.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator).isRequired
+};
+
+ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // remove width and height to override fixed static size
