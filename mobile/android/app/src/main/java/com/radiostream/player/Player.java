@@ -2,6 +2,7 @@ package com.radiostream.player;
 
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
+import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 
 import javax.inject.Inject;
 
@@ -78,6 +79,14 @@ public class Player implements PlaylistControls {
 
         if(mCurrentPlaylistPlayer != null) {
             mCurrentPlaylistPlayer.close();
+        }
+    }
+
+    public PlaylistPlayerBridge toBridgeObject() {
+        if(mCurrentPlaylistPlayer != null) {
+            return mCurrentPlaylistPlayer.toBridgeObject();
+        } else {
+            return null;
         }
     }
 }

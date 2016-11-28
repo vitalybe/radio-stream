@@ -17,10 +17,12 @@ import com.radiostream.Settings;
 import com.radiostream.di.components.DaggerJsProxyComponent;
 import com.radiostream.di.components.JsProxyComponent;
 import com.radiostream.di.modules.ReactContextModule;
+import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.PlaylistListResult;
 import com.radiostream.player.PlayerService;
 import com.radiostream.player.PlaylistControls;
+import com.radiostream.player.PlaylistPlayer;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
@@ -158,14 +160,30 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
         mPlayerService.getPlayer().pause();
     }
 
+    @ReactMethod
     @Override
     public void playPause() {
         mPlayerService.getPlayer().playPause();
     }
 
+    @ReactMethod
     @Override
     public void playNext() {
         mPlayerService.getPlayer().playNext();
 
+    }
+
+    @ReactMethod
+    public void getStatus(final Promise promise) {
+        try {
+            PlaylistPlayerBridge bridge = mPlayerService.getPlayer().toBridgeObject();
+            if(bridge != null) {
+                promise.resolve(bridge.asMap());
+            }  else {
+                promise.resolve(null);
+            }
+        } catch (Exception e) {
+            promise.reject(e);
+        }
     }
 }

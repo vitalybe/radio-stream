@@ -71,7 +71,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             getCurrentSong().subscribeToEvents(this);
             getCurrentSong().play();
 
-                mPlayerEventsEmitter.sendPlayerStatus(this.toBridgeObject());
+            mPlayerEventsEmitter.sendPlayerStatus(this.toBridgeObject());
         }
     }
 
