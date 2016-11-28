@@ -70,6 +70,8 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             Timber.i("playing paused song");
             getCurrentSong().subscribeToEvents(this);
             getCurrentSong().play();
+
+                mPlayerEventsEmitter.sendPlayerStatus(this.toBridgeObject());
         }
     }
 
@@ -82,6 +84,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         }
 
         getCurrentSong().pause();
+        mPlayerEventsEmitter.sendPlayerStatus(this.toBridgeObject());
     }
 
     private boolean getIsPlaying() {
