@@ -82,18 +82,21 @@ public class Song {
         Timber.i("loading song from url: %s", url);
         try {
             mMediaPlayer.setDataSource(url);
+            mMediaPlayer.prepareAsync();
         } catch (IOException e) {
             deferredObject.reject(new NetworkErrorException("Failed to set data source", e));
         }
-        mMediaPlayer.prepareAsync();
         return deferredObject.promise();
     }
 
 
     public void play() {
+        Timber.i("function start");
+        
         mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
+                Timber.e("song error - %d, %d", mp, what);
                 String errorMessage = String.format(Locale.ENGLISH, "Exception during playblack: %d/%d", what, extra);
                 mEventsListener.onSongError(new Exception(errorMessage));
 
@@ -108,6 +111,7 @@ public class Song {
             }
         });
 
+        Timber.i("starting song...");
         mMediaPlayer.start();
     }
 

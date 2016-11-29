@@ -41,7 +41,6 @@ import static android.content.Context.BIND_AUTO_CREATE;
  * Created by vitaly on 11/11/2016.
  */
 
-@DebugLog
 public class PlayerJsProxy extends ReactContextBaseJavaModule implements LifecycleEventListener, PlaylistControls {
 
     private static JsProxyComponent mJsProxyComponent = null;
@@ -105,6 +104,7 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
 
     @Override
     public void onHostPause() {
+
         this.getCurrentActivity().unbindService(mServiceConnection);
     }
 

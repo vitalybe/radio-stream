@@ -13,6 +13,9 @@ export default class PlayerPage extends Component {
 
   componentWillMount() {
     this.state = {};
+
+    playerProxy.changePlaylist(this.props.playlistName)
+    playerProxy.play();
   }
 
   render() {
