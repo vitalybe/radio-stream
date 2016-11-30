@@ -88,7 +88,7 @@ public class SongTest {
     }
 
     @Test
-    public void preload_preloadResolvesOnFinish() throws Exception {
+    public void preload_loadsAndResolvesPreloadedSong() throws Exception {
         String songPath = "artist/song.mp3";
 
         SongResult songResult = new SongResult();
@@ -142,5 +142,36 @@ public class SongTest {
         });
 
         assertTrue(failException[0] instanceof NetworkErrorException);
+    }
+
+    @Test
+    public void preload_doNotRunAgainIfPreloadedBefore() throws Exception {
+        String songPath = "artist/song.mp3";
+        SongResult songResult = new SongResult();
+        songResult.path = songPath;
+        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings);
+        song.preload();
+        song.preload();
+        verify(mockMediaPlayer, times(1)).prepareAsync();
+    }
+
+    @Test
+    public void preload_runAgainIfPreloadedFailed() throws Exception {
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                dummyOnErrorListener.onError(mockMediaPlayer, 0, 0);
+                return null;
+            }
+        }).when(mockMediaPlayer).prepareAsync();
+
+        String songPath = "artist/song.mp3";
+        SongResult songResult = new SongResult();
+        songResult.path = songPath;
+        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings);
+        song.preload();
+        song.preload();
+
+        verify(mockMediaPlayer, times(2)).prepareAsync();
     }
 }

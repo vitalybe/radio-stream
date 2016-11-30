@@ -27,14 +27,13 @@ public class Song {
     private final String mTitle;
 
     private final String mPath;
+    private Promise<Song,Exception,Void> mSongLoadingPromise = null;
 
     private MediaPlayer mMediaPlayer;
     private Settings mSettings;
     private EventsListener mEventsListener;
 
     public Song(SongResult songResult, MediaPlayer mediaPlayer, Context context, Settings settings) {
-        Timber.i("function start");
-
         this.mArtist = songResult.artist;
         this.mAlbum = songResult.album;
         this.mTitle = songResult.title;
@@ -46,6 +45,8 @@ public class Song {
         // NOTE: Wake lock will only be relevant when a song is playing
         mMediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        Timber.i("created new song: %s", this.toString());
     }
 
     public void subscribeToEvents(EventsListener eventsListener) {
@@ -56,37 +57,44 @@ public class Song {
     public Promise<Song,Exception,Void> preload() {
         Timber.i("function start");
 
-        final DeferredObject<Song,Exception,Void> deferredObject = new DeferredObject<>();
+        if(mSongLoadingPromise == null || mSongLoadingPromise.isRejected()) {
+            Timber.i("creating a new promise");
+            final DeferredObject<Song, Exception, Void> deferredObject = new DeferredObject<>();
+            mSongLoadingPromise = deferredObject.promise();
 
-        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                Timber.i("setOnPreparedListener callback for song: %s", Song.this.toString());
-                deferredObject.resolve(Song.this);
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    Timber.i("setOnPreparedListener callback for song: %s", Song.this.toString());
+                    deferredObject.resolve(Song.this);
+                }
+            });
+            mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Timber.w("setOnErrorListener callback for song: %s", Song.this.toString());
+
+                    String errorMessage = String.format(Locale.ENGLISH,
+                        "MediaPlayer failed to preload song: %d/%d", what, extra);
+                    deferredObject.reject(new NetworkErrorException(errorMessage));
+
+                    return true;
+                }
+            });
+
+            String url = mSettings.getAddress() + "music/" + this.mPath;
+            Timber.i("loading song from url: %s", url);
+            try {
+                mMediaPlayer.setDataSource(url);
+                mMediaPlayer.prepareAsync();
+            } catch (IOException e) {
+                deferredObject.reject(new NetworkErrorException("Failed to set data source", e));
             }
-        });
-        mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(MediaPlayer mp, int what, int extra) {
-                Timber.w("setOnErrorListener callback for song: %s", Song.this.toString());
-
-                String errorMessage = String.format(Locale.ENGLISH,
-                    "MediaPlayer failed to preload song: %d/%d", what, extra);
-                deferredObject.reject(new NetworkErrorException(errorMessage));
-
-                return true;
-            }
-        });
-
-        String url = mSettings.getAddress() + "music/" + this.mPath;
-        Timber.i("loading song from url: %s", url);
-        try {
-            mMediaPlayer.setDataSource(url);
-            mMediaPlayer.prepareAsync();
-        } catch (IOException e) {
-            deferredObject.reject(new NetworkErrorException("Failed to set data source", e));
+        } else {
+            Timber.i("preload for this song already started. returning existing promise");
         }
-        return deferredObject.promise();
+
+        return mSongLoadingPromise;
     }
 
 
@@ -96,7 +104,7 @@ public class Song {
         mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
-                Timber.e("song error - %d, %d", mp, what);
+                Timber.e("song error - %d, %d", what, extra);
                 String errorMessage = String.format(Locale.ENGLISH, "Exception during playblack: %d/%d", what, extra);
                 mEventsListener.onSongError(new Exception(errorMessage));
 
@@ -116,19 +124,29 @@ public class Song {
     }
 
     public void pause() {
-        mMediaPlayer.pause();
+        if(mMediaPlayer.isPlaying()) {
+            mMediaPlayer.pause();
+        }
     }
 
     public void close() {
         Timber.i("function start");
 
-        mMediaPlayer.pause();
+        pause();
+
+        Timber.i("resetting and releasing the media player");
+        mMediaPlayer.reset();
         mMediaPlayer.release();
         mMediaPlayer = null;
     }
 
     public boolean isPlaying() {
-        return mMediaPlayer.isPlaying();
+        if(mMediaPlayer != null) {
+            return mMediaPlayer.isPlaying();
+        } else {
+            // if released
+            return false;
+        }
     }
 
 

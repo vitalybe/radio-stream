@@ -26,7 +26,7 @@ public class PlayerEventsEmitter {
     }
 
     private void send(String event, Object params) {
-        Timber.i("function start");
+        Timber.i("function start - %s - %s", event, params.toString());
 
         if (mContext.hasActiveCatalystInstance()) {
             DeviceEventManagerModule.RCTDeviceEventEmitter jsModule;

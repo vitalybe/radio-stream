@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 
 import dagger.Module;
 import dagger.Provides;
+import timber.log.Timber;
 
 @Module
 public class ContextModule {
@@ -18,10 +19,5 @@ public class ContextModule {
   @Provides
   Context provideContext() {
     return mContext;
-  }
-
-  @Provides
-  MediaPlayer provideMediaPlayer() {
-    return new MediaPlayer();
   }
 }
