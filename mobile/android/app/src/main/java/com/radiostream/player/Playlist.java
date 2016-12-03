@@ -1,7 +1,5 @@
 package com.radiostream.player;
 
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeMap;
 import com.radiostream.javascript.bridge.PlaylistBridge;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
@@ -14,7 +12,6 @@ import org.jdeferred.impl.DeferredObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class Playlist {
@@ -23,7 +20,7 @@ public class Playlist {
     private SongFactory mSongFactory;
 
     private List<Song> mSongs = new ArrayList<Song>();
-    private int mIndex = -1;
+    private int mIndex = 0;
 
     public Playlist(String playlistName, MetadataBackend metadataBackend, SongFactory songFactory) {
         mPlaylistName = playlistName;
@@ -31,13 +28,10 @@ public class Playlist {
         mSongFactory = songFactory;
     }
 
-    private Promise<Void, Exception, Void> reloadIfNeededForNextSong() {
+    private Promise<Void, Exception, Void> reloadIfNeededForSongIndex(int index) {
         Timber.i("checking if reload is needed. songs count: %d Current index: %d", mSongs.size(), mIndex);
-        if(mIndex+1 >= mSongs.size()) {
+        if(index >= mSongs.size()) {
             Timber.i("reloading songs");
-
-            mSongs.clear();
-            mIndex = -1;
 
             return mMetadataBackend.fetchPlaylist(mPlaylistName).then(new DoneFilter<List<SongResult>, Void>() {
                 @Override
@@ -60,27 +54,31 @@ public class Playlist {
     }
 
 
-    public Promise<Song, Exception, Void> nextSong() {
+    public Promise<Song, Exception, Void> peekCurrentSong() {
         Timber.i("function start");
         
-        return peekNextSong().then(new DoneFilter<Song, Song>() {
-            @Override
-            public Song filterDone(Song result) {
-                mIndex++;
-
-                return result;
-            }
-        });
+        return peekSong(mIndex);
     }
 
     public Promise<Song, Exception, Void> peekNextSong() {
         Timber.i("function start");
-        
-        return reloadIfNeededForNextSong().then(new DonePipe<Void, Song, Exception, Void>() {
+
+        return peekSong(mIndex + 1);
+    }
+
+    public void nextSong() {
+        Timber.i("function start. From %d to %d", mIndex, mIndex+1);
+        mIndex++;
+    }
+
+    private Promise<Song, Exception, Void> peekSong(final int index) {
+        Timber.i("function start. index: %d", index);
+
+        return reloadIfNeededForSongIndex(index).then(new DonePipe<Void, Song, Exception, Void>() {
             @Override
             public Promise<Song, Exception, Void> pipeDone(Void result) {
                 DeferredObject<Song, Exception, Void> deferredObject = new DeferredObject<>();
-                Song resolve = mSongs.get(mIndex + 1);
+                Song resolve = mSongs.get(index);
                 Timber.i("peeked next song: %s", resolve.toString());
                 return deferredObject.resolve(resolve).promise();
             }

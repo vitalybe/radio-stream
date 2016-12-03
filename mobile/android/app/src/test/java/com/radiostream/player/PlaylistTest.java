@@ -1,8 +1,6 @@
 package com.radiostream.player;
 
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.JavaOnlyMap;
-import com.radiostream.BuildConfig;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
 
@@ -12,22 +10,17 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import timber.log.Timber;
 
 import static com.radiostream.player.Utils.resolvedPromise;
 import static org.junit.Assert.*;
@@ -92,16 +85,17 @@ public class PlaylistTest {
     }
 
     @Test
-    public void nextSong_returnsNextSong() throws Exception {
+    public void nextSong_movesToNextSong() throws Exception {
         Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
-        playlist.nextSong().then(new DoneCallback<Song>() {
+        playlist.peekCurrentSong().then(new DoneCallback<Song>() {
             @Override
             public void onDone(Song result) {
                 assertEquals(result.getTitle(), mockLoadedSongs1_Song1.title);
             }
         });
 
-        playlist.nextSong().then(new DoneCallback<Song>() {
+        playlist.nextSong();
+        playlist.peekCurrentSong().then(new DoneCallback<Song>() {
             @Override
             public void onDone(Song result) {
                 assertEquals(result.getTitle(), mockLoadedSongs1_Song2.title);
@@ -110,61 +104,42 @@ public class PlaylistTest {
     }
 
     @Test
-    public void nextSong_reloadsPlaylistIfFinished() throws Exception {
+    public void peekCurrentSong_reloadsPlaylistIfFinished() throws Exception {
         Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
-        playlist.nextSong().then(new DoneCallback<Song>() {
+        playlist.peekCurrentSong().then(new DoneCallback<Song>() {
             @Override
             public void onDone(Song result) {
                 assertEquals(result.getTitle(), mockLoadedSongs1_Song1.title);
             }
         });
+        playlist.nextSong();
 
+        playlist.peekCurrentSong();
         playlist.nextSong();
-        playlist.nextSong();
-        playlist.nextSong().then(new DoneCallback<Song>() {
+
+        playlist.peekCurrentSong().then(new DoneCallback<Song>() {
             @Override
             public void onDone(Song result) {
-                assertEquals(result.getTitle(), mockLoadedSongs2_Song2.title);
+                assertEquals(result.getTitle(), mockLoadedSongs2_Song1.title);
             }
         });
         verify(mockMetadataBackend, times(2)).fetchPlaylist(mPlaylistName);
     }
 
     @Test
-    public void reload_reloadsPlaylistIfFinished() throws Exception {
-        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
-        playlist.nextSong().then(new DoneCallback<Song>() {
-            @Override
-            public void onDone(Song result) {
-                assertEquals(result.getTitle(), mockLoadedSongs1_Song1.title);
-            }
-        });
-
-        playlist.nextSong();
-        playlist.nextSong();
-        playlist.nextSong().then(new DoneCallback<Song>() {
-            @Override
-            public void onDone(Song result) {
-                assertEquals(result.getTitle(), mockLoadedSongs2_Song2.title);
-            }
-        });
-        verify(mockMetadataBackend, times(2)).fetchPlaylist(mPlaylistName);
-    }
-
-    @Test
-    public void peekNextSong_previewsNextSong() throws Exception {
+    public void peekNextSong_returnsNextSong() throws Exception {
         Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
         playlist.peekNextSong().then(new DoneCallback<Song>() {
             @Override
             public void onDone(Song result) {
-                assertEquals(result.getTitle(), mockLoadedSongs1_Song1.title);
+                assertEquals(mockLoadedSongs1_Song2.title, result.getTitle());
             }
         });
 
         playlist.peekNextSong().then(new DoneCallback<Song>() {
             @Override
             public void onDone(Song result) {
-                assertEquals(result.getTitle(), mockLoadedSongs1_Song1.title);
+                assertEquals(mockLoadedSongs1_Song2.title, result.getTitle());
             }
         });
 

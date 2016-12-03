@@ -130,7 +130,7 @@ public class Song {
     }
 
     public void close() {
-        Timber.i("function start");
+        Timber.i("function start: %s", this.toString());
 
         pause();
 

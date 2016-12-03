@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -20,6 +21,7 @@ import static com.radiostream.player.Utils.resolvedPromise;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,9 +61,8 @@ public class PlaylistPlayerTest {
         when(mockFirstSong.preload()).thenReturn(resolvedPromise(mockFirstSong));
         when(mockSecondSong.preload()).thenReturn(resolvedPromise(mockSecondSong));
 
-        when(mockPlaylist.nextSong())
-            .thenReturn(resolvedPromise(mockFirstSong))
-            .thenReturn(resolvedPromise(mockSecondSong));
+        when(mockPlaylist.peekCurrentSong())
+            .thenReturn(resolvedPromise(mockFirstSong));
 
         when(mockPlaylist.peekNextSong())
             .thenReturn(resolvedPromise(mockSecondSong));
@@ -72,7 +73,7 @@ public class PlaylistPlayerTest {
     }
 
     @Test
-    public void play_playsNextSongIfNotSongAvailable() throws Exception {
+    public void play_preloadSongOnlyOnFirstCall() throws Exception {
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
         playlistPlayer.play();
 
@@ -98,23 +99,21 @@ public class PlaylistPlayerTest {
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
         playlistPlayer.play();
 
-        verify(mockPlaylist, times(1)).nextSong();
-        verify(mockFirstSong, times(1)).play();
+        verify(mockPlaylist, atLeastOnce()).peekCurrentSong();
+        verify(mockFirstSong, atLeastOnce()).play();
 
         playlistPlayer.play();
-        verify(mockPlaylist, times(1)).nextSong();
-        verify(mockFirstSong, times(2)).play();
+        verify(mockFirstSong, Mockito.times(1)).preload();
+
     }
 
     @Test
     public void playNext_playingSecondSong() throws Exception {
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
         playlistPlayer.playNext();
-        playlistPlayer.playNext();
 
+        verify(mockPlaylist, times(1)).nextSong();
         verify(mockFirstSong, times(1)).play();
-        verify(mockFirstSong, times(1)).close();
-        verify(mockSecondSong, times(1)).play();
     }
 
     @Test
@@ -148,12 +147,14 @@ public class PlaylistPlayerTest {
 
     @Test
     public void playNext_retriesOnFailure() throws Exception {
-        when(mockFirstSong.preload()).thenReturn(Utils.<Song>rejectedPromise(new Exception()));
+        when(mockFirstSong.preload())
+            .thenReturn(Utils.<Song>rejectedPromise(new Exception()))
+            .thenReturn(Utils.resolvedPromise(mockFirstSong));
 
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
-        playlistPlayer.playNext();
+        playlistPlayer.play();
 
-        // second song will be loaded if preloading the first one failed
-        verify(mockSecondSong, times(1)).play();
+        // song will be loaded if preloading the first one failed
+        verify(mockFirstSong, times(1)).play();
     }
 }
