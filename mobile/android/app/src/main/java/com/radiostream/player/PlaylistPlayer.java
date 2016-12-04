@@ -62,38 +62,48 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     }
 
     @Override
-    public void play() {
+    public Promise<Song, Exception, Void> play() {
         Timber.i("function start");
         if (getIsCurrentSongLoading()) {
             Timber.i("invalid request. song already loading");
             throw new IllegalStateException("invalid request. song already loading");
         }
 
-        mPlaylist.peekCurrentSong().then(new DoneCallback<Song>() {
+        return mPlaylist.peekCurrentSong().then(new DonePipe<Song, Song, Exception, Void>() {
             @Override
-            public void onDone(Song playlistCurrentSong) {
-                if (getCurrentSong() == null || getCurrentSong() != playlistCurrentSong) {
-                    Timber.i("loading different song from playlist: %s", playlistCurrentSong.toString());
-                    retryPreloadAndPlaySong()
-                        .then(new DonePipe<Song, Song, Exception, Void>() {
-                            @Override
-                            public Promise<Song, Exception, Void> pipeDone(Song result) {
-                                return PlaylistPlayer.this.preloadPeekedSong();
-                            }
-                        })
-                        .always(new AlwaysCallback<Song, Exception>() {
-                            @Override
-                            public void onAlways(Promise.State state, Song resolved, Exception rejected) {
-                                Timber.i("current song loading = false");
-                                setIsCurrentSongLoading(false);
-                            }
-                        });
-                } else {
-                    Timber.i("playing paused song");
-                    getCurrentSong().subscribeToEvents(PlaylistPlayer.this);
-                    getCurrentSong().play();
+            public Promise<Song, Exception, Void> pipeDone(Song playlistCurrentSong) {
+                try {
+                    Promise<Song, Exception, Void> promise;
 
-                    mPlayerEventsEmitter.sendPlayerStatus(PlaylistPlayer.this.toBridgeObject());
+                    if (getCurrentSong() == null || getCurrentSong() != playlistCurrentSong) {
+                        Timber.i("loading different song from playlist: %s", playlistCurrentSong.toString());
+                        promise = retryPreloadAndPlaySong()
+                            .then(new DonePipe<Song, Song, Exception, Void>() {
+                                @Override
+                                public Promise<Song, Exception, Void> pipeDone(Song result) {
+                                    return PlaylistPlayer.this.preloadPeekedSong();
+                                }
+                            })
+                            .always(new AlwaysCallback<Song, Exception>() {
+                                @Override
+                                public void onAlways(Promise.State state, Song resolved, Exception rejected) {
+                                    Timber.i("current song loading = false");
+                                    setIsCurrentSongLoading(false);
+                                }
+                            });
+                    } else {
+                        Timber.i("playing paused song");
+                        getCurrentSong().subscribeToEvents(PlaylistPlayer.this);
+                        getCurrentSong().play();
+
+                        mPlayerEventsEmitter.sendPlayerStatus(PlaylistPlayer.this.toBridgeObject());
+
+                        promise = new DeferredObject<Song, Exception, Void>().resolve(getCurrentSong()).promise();
+                    }
+
+                    return promise;
+                } catch (Exception e) {
+                    return new DeferredObject<Song, Exception, Void>().reject(e).promise();
                 }
             }
         });
@@ -151,23 +161,33 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         mPlaylist.peekCurrentSong().then(new DonePipe<Song, Song, Exception, Void>() {
             @Override
             public Promise<Song, Exception, Void> pipeDone(Song song) {
-                Timber.i("preloading song: %s", song.toString());
-                setCurrentSong(song);
-                return song.preload();
-            }
-        }).then(new DoneCallback<Song>() {
-            @Override
-            public void onDone(Song song) {
-                setIsCurrentSongLoading(false);
-
-                // We won't be playing any new music if playlistPlayer is closed
-                if (!mIsClosed) {
-                    PlaylistPlayer.this.play();
-                } else {
-                    Timber.i("playlist player was already closed - not playing loaded song");
+                try {
+                    Timber.i("preloading song: %s", song.toString());
+                    setCurrentSong(song);
+                    return song.preload();
+                } catch (Exception e) {
+                    return new DeferredObject<Song, Exception, Void>().reject(e).promise();
                 }
+            }
+        }).then(new DonePipe<Song, Song, Exception, Void>() {
+            @Override
+            public Promise<Song, Exception, Void> pipeDone(Song song) {
+                try {
+                    setIsCurrentSongLoading(false);
 
-                deferredObject.resolve(song);
+                    // We won't be playing any new music if playlistPlayer is closed
+                    if (!mIsClosed) {
+                        PlaylistPlayer.this.play();
+                    } else {
+                        Timber.i("playlist player was already closed - not playing loaded song");
+                    }
+
+                    deferredObject.resolve(song);
+
+                    return deferredObject.promise();
+                } catch (Exception e) {
+                    return new DeferredObject<Song, Exception, Void>().reject(e).promise();
+                }
             }
         }).fail(new FailCallback<Exception>() {
             @Override

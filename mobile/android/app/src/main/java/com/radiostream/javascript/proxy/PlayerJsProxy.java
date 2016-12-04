@@ -22,7 +22,7 @@ import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.PlaylistListResult;
 import com.radiostream.player.PlayerService;
 import com.radiostream.player.PlaylistControls;
-import com.radiostream.player.PlaylistPlayer;
+import com.radiostream.player.Song;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
@@ -32,7 +32,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 import static android.content.Context.BIND_AUTO_CREATE;
@@ -150,8 +149,9 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
 
     @ReactMethod
     @Override
-    public void play() {
+    public org.jdeferred.Promise<Song, Exception, Void> play() {
         mPlayerService.getPlayer().play();
+        return null;
     }
 
     @ReactMethod

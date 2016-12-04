@@ -1,8 +1,8 @@
 package com.radiostream.player;
 
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
+
+import org.jdeferred.Promise;
 
 import javax.inject.Inject;
 
@@ -33,7 +33,7 @@ public class Player implements PlaylistControls {
     }
 
     @Override
-    public void play() {
+    public Promise<Song, Exception, Void> play() {
         Timber.i("function start");
 
         if(mCurrentPlaylistPlayer == null) {
@@ -41,6 +41,7 @@ public class Player implements PlaylistControls {
         }
 
         mCurrentPlaylistPlayer.play();
+        return null;
     }
 
     @Override

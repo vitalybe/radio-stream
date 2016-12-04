@@ -1,10 +1,12 @@
 package com.radiostream.player;
 
+import org.jdeferred.Promise;
+
 /**
  * Created by vitaly on 18/11/2016.
  */
 public interface PlaylistControls {
-    void play();
+    Promise<Song, Exception, Void> play();
 
     void pause();
 
