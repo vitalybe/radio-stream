@@ -16,6 +16,8 @@ import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Locale;
 
 import timber.log.Timber;
@@ -37,8 +39,18 @@ public class Song {
         this.mArtist = songResult.artist;
         this.mAlbum = songResult.album;
         this.mTitle = songResult.title;
-        this.mPath = songResult.path;
 
+        String pathBuilder = "";
+        String[] pathParts = songResult.path.split("/");
+        for(String pathPart : pathParts) {
+            try {
+                pathBuilder += "/" + URLEncoder.encode(pathPart, "UTF-8").replace("+", "%20");
+            } catch (UnsupportedEncodingException e) {
+                Timber.e(e, "failed to encode path part: %s", pathPart);
+            }
+        }
+
+        this.mPath = pathBuilder.substring(1);
         mMediaPlayer = mediaPlayer;
         mSettings = settings;
 

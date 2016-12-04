@@ -174,4 +174,17 @@ public class SongTest {
 
         verify(mockMediaPlayer, times(2)).prepareAsync();
     }
+
+
+    @Test
+    public void ctor_encodesPathUrl() throws Exception {
+        String songPath = "art ist/so ng.mp3";
+        SongResult songResult = new SongResult();
+        songResult.path = songPath;
+
+        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings);
+        song.preload();
+
+        verify(mockMediaPlayer).setDataSource(settingsUrl + "music/art%20ist/so%20ng.mp3");
+    }
 }
