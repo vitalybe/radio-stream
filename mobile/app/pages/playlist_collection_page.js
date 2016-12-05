@@ -6,7 +6,7 @@ import { StyleSheet, Text, View, TouchableHighlight, Image, ActivityIndicator } 
 
 import playerProxy from '../native_proxy/player_proxy'
 import { colors } from '../styles/styles'
-import Button from '../components/button'
+import Button from '../components/rectangle_button'
 import Navigator from '../stores/navigator'
 
 export default class PlaylistCollectionPage extends Component {
