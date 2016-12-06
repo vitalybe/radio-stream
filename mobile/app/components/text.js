@@ -20,7 +20,7 @@ export default class CustomText extends Component {
   render() {
 
     return (
-      <Text ref={component => this._root = component} style={[styles.text, this.props.style]} {...this.props}>
+      <Text {...this.props} ref={component => this._root = component} style={[styles.text, this.props.style]}>
         {this.props.children}
       </Text>
     )

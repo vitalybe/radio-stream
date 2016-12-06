@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight, Image, ActivityIndicator } from 'react-native';
 
 import playerProxy from '../native_proxy/player_proxy'
-import { colors } from '../styles/styles'
+import { colors, fontSizes } from '../styles/styles'
 import Button from '../components/rectangle_button'
 import Navigator from '../stores/navigator'
 
@@ -93,7 +93,7 @@ PlaylistCollectionPage.propTypes = {
   },
   playlistText: {
     color: colors.SEMI_WHITE.rgbString(),
-    fontSize: 15,
+    fontSize: fontSizes.NORMAL,
   },
   settingsButton: {
     position: "absolute",

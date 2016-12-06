@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import playerProxy from '../native_proxy/player_proxy'
 
-import { colors } from '../styles/styles'
+import { colors, fontSizes } from '../styles/styles'
 import RectangleButton from '../components/rectangle_button'
 import CircleButton from '../components/circle_button'
 import Text from '../components/text'
@@ -38,7 +38,6 @@ export default class PlayerPage extends Component {
     DeviceEventEmitter.addListener(this.PLAYER_STATUS_EVENT, event => this.onPlayerEvent(event));
 
     playerProxy.changePlaylist(this.props.playlistName);
-    // TODO: uncomment
     playerProxy.play();
   }
 
@@ -66,10 +65,10 @@ export default class PlayerPage extends Component {
     if (event.song.artist && event.song.artist !== this.state.song.artist) {
       logger.info(`artist changed from '${this.state.song.artist}' to '${event.song.artist}' - reloading album cover`);
 
-      this.setState({ song: { ...this.state.song, albumArtUri: null }});
+      this.setState({song: {...this.state.song, albumArtUri: null}});
       getArtistImage(event.song.artist).then(imageUri => {
         logger.info(`got album art uri: ${imageUri}`);
-        this.setState({ song: { ...this.state.song, albumArtUri: imageUri }});
+        this.setState({song: {...this.state.song, albumArtUri: imageUri}});
       })
     }
 
@@ -97,29 +96,44 @@ export default class PlayerPage extends Component {
 
     return (
       <View style={styles.container}>
-        <Text>
-          {this.props.playlistName}
-        </Text>
+        <View style={styles.playlistNameView}>
+          <Icon name="music" style={styles.playlistIcon}/>
+          <Text>{this.props.playlistName}</Text>
+        </View>
         <Choose>
-          {/* TODO: add ! */}
           <When condition={!this.state.isLoading}>
-            <Text>{`${this.state.song.artist} - ${this.state.song.album} - ${this.state.song.title}`}</Text>
             {/* Album art */}
             <View style={styles.albumArtView}>
               <Image style={styles.albumArt} source={albumArt}/>
             </View>
             {/* Controls */}
+            <View style={styles.namesView}>
+              <Text style={[styles.nameText, styles.titleText]}>{`${this.state.song.title}`}</Text>
+              <Text style={[styles.nameText, styles.artistText]}>{`${this.state.song.artist}`}</Text>
+              <Text style={[styles.nameText, styles.albumText]}>{`${this.state.song.album}`}</Text>
+            </View>
+            {/* Controls */}
             <View style={styles.controlsView}>
-              <CircleButton size={100} onPress={() => this.onPressPlayPause()}>
-                <Icon name={this.state.isPlaying ? "pause" : "play"} style={styles.controlButton}/>
+              <CircleButton size={100} onPress={() => this.onPressPlayPause()}
+                            style={[styles.controlButtonPlay]}>
+                <Icon name={this.state.isPlaying ? "pause" : "play"}
+                      style={[styles.controlButtonText, this.state.isPlaying ? styles.controlTextPause : styles.controlTextPlay]}/>
               </CircleButton>
               <CircleButton size={60} onPress={() => this.onPressNext()}>
-                <Icon name="step-forward" style={styles.controlButton}/>
+                <Icon name="step-forward"
+                      style={styles.controlButtonText}/>
               </CircleButton>
             </View>
           </When>
           <Otherwise>
-            <ActivityIndicator />
+            <View style={styles.progressView}>
+              <View style={styles.progressSpinner}>
+                <ActivityIndicator size="large"/>
+              </View>
+              <View style={styles.progressStatus}>
+                <Text>Loading...</Text>
+              </View>
+            </View>
           </Otherwise>
         </Choose>
       </View>
@@ -136,6 +150,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "stretch"
   },
+  // Playlist name
+  playlistNameView: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "stretch",
+    marginBottom: 10,
+    paddingTop: 5,
+    paddingLeft: 5,
+  },
+  playlistIcon: {
+    color: colors.SEMI_WHITE.rgbString(),
+    marginRight: 5,
+  },
+  // Album
   albumArtView: {
     backgroundColor: "black",
     borderColor: colors.CYAN_DARK.rgbString(),
@@ -144,18 +172,58 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
 
+    marginBottom: 20
+  },
+  // Names (artist, title, album)
+  namesView: {
+    alignItems: "center",
+    marginBottom: 10
+  },
+  nameText: {
+    fontSize: fontSizes.LARGE,
+    marginBottom: 10
+  },
+  artistText: {
+    color: colors.CYAN_BRIGHT.rgbString()
   },
   albumArt: {
     width: 200,
     height: 200,
     resizeMode: "contain"
   },
+  // Controls
   controlsView: {
+    position: "absolute",
+    bottom: 10,
+    left: 0,
+    right: 0,
+
     flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
-    paddingLeft: 60, // Causes the play button to be in the center
+    paddingLeft: 80, // Causes the play button to be in the center
   },
-  controlButton: {
-    color: colors.SEMI_WHITE.rgbString(), fontSize: 40
+  controlButtonText: {
+    color: colors.SEMI_WHITE.rgbString(),
+    fontSize: 40
+  },
+  controlTextPlay: {
+    paddingLeft: 10
+  },
+  controlTextPause: {
+    paddingLeft: 0
+  },
+  controlButtonPlay: {
+    marginRight: 20
+  },
+  // Progress
+  progressSpinner: {
+    justifyContent: "flex-end",
+    paddingBottom: 10,
+    flex: 1,
+  },
+  progressStatus: {
+    justifyContent: "flex-start",
+    flex: 1,
   }
 });

@@ -6,3 +6,8 @@ export const colors = {
   SEMI_WHITE: Color("#e2e2e2"),
   RED: Color("#e25d24"),
 };
+
+export const fontSizes = {
+  NORMAL: 15,
+  LARGE: 20,
+};
