@@ -2,7 +2,7 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("player_page");
 
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableHighlight, Image, ActivityIndicator, DeviceEventEmitter } from 'react-native';
+import { StyleSheet, View, TouchableHighlight, Image, ActivityIndicator, DeviceEventEmitter, BackAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import playerProxy from '../native_proxy/player_proxy'
@@ -12,6 +12,7 @@ import RectangleButton from '../components/rectangle_button'
 import CircleButton from '../components/circle_button'
 import Text from '../components/text'
 
+import Navigator from '../stores/navigator'
 import { getArtistImage } from '../utils/backend_lastfm_api'
 
 export default class PlayerPage extends Component {
@@ -36,6 +37,7 @@ export default class PlayerPage extends Component {
     };
 
     DeviceEventEmitter.addListener(this.PLAYER_STATUS_EVENT, event => this.onPlayerEvent(event));
+    BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
 
     playerProxy.changePlaylist(this.props.playlistName);
     playerProxy.play();
@@ -51,6 +53,13 @@ export default class PlayerPage extends Component {
 
   onPressNext() {
     playerProxy.playNext();
+  }
+
+  onPressHardwareBack() {
+      let logger = loggerCreator("hardwareBackPress", moduleLogger);
+      logger.info(`start`);
+      this.props.navigator.navigateToPlaylistCollection();
+      return true;
   }
 
   onPlayerEvent(event) {
@@ -227,3 +236,8 @@ const styles = StyleSheet.create({
     flex: 1,
   }
 });
+
+PlayerPage.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator).isRequired,
+  playlistName: React.PropTypes.string.isRequired,
+};

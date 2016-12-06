@@ -1,8 +1,8 @@
- import loggerCreator from '../utils/logger'
+import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("playlist_collection_page");
 
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight, Image, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, Image, ActivityIndicator, BackAndroid } from 'react-native';
 
 import playerProxy from '../native_proxy/player_proxy'
 import { colors, fontSizes } from '../styles/styles'
@@ -10,15 +10,32 @@ import Button from '../components/rectangle_button'
 import Navigator from '../stores/navigator'
 
 export default class PlaylistCollectionPage extends Component {
+
+  componentWillMount() {
+    let logger = loggerCreator("componentWillMount", moduleLogger);
+    logger.info(`start`);
+
+    this.state = {};
+    this.fetchPlaylists();
+    BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
+  }
+
   fetchPlaylists() {
-    let logger = loggerCreator(this.fetchPlaylists.name, moduleLogger);
-    logger.info("start");
+    let logger = loggerCreator("fetchPlaylists", moduleLogger);
+    logger.info(`start`);
 
     playerProxy.fetchPlaylists().then(result => {
       logger.info(`got results: ${result}`);
       this.setState({playlists: result})
     })
+  }
 
+  onPressHardwareBack() {
+    let logger = loggerCreator("onPressHardwareBack", moduleLogger);
+    logger.info(`start`);
+
+    BackAndroid.exitApp();
+    return true;
   }
 
   onPlaylistClick(playlistName) {
@@ -26,11 +43,6 @@ export default class PlaylistCollectionPage extends Component {
     logger.info(`start: ${playlistName}`);
 
     this.props.navigator.navigateToPlayer(playlistName);
-  }
-
-  componentWillMount() {
-    this.state = {};
-    this.fetchPlaylists();
   }
 
   render() {
@@ -60,7 +72,7 @@ export default class PlaylistCollectionPage extends Component {
           </Otherwise>
         </Choose>
         <Button style={styles.settingsButton}
-                onPress={() => logger.info(`clicked settings`)} >
+                onPress={() => logger.info(`clicked settings`)}>
           <Image style={styles.settingsIcon} source={require("../images/settings.png")}/>
         </Button>
       </View>
@@ -72,7 +84,7 @@ PlaylistCollectionPage.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator).isRequired
 };
 
- const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     // remove width and height to override fixed static size

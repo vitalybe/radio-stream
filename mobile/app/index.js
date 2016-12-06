@@ -28,7 +28,7 @@ export default class RadioStream extends Component {
         page = <PlaylistCollectionPage navigator={this.navigator} />;
         break;
       case this.navigator.ROUTE_PLAYER_PAGE:
-        page = <PlayerPage playlistName={activeRoute.playlistName} />;
+        page = <PlayerPage playlistName={activeRoute.playlistName} navigator={this.navigator} />;
         break;
     }
 
