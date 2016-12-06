@@ -103,6 +103,11 @@ export default class PlayerPage extends Component {
       albumArt = {uri: this.state.song.albumArtUri};
     }
 
+    let loadingStatus = "Loading";
+    if(this.state.song.title) {
+      loadingStatus = `${loadingStatus}: ${this.state.song.artist} - ${this.state.song.title}`
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.playlistNameView}>
@@ -140,7 +145,7 @@ export default class PlayerPage extends Component {
                 <ActivityIndicator size="large"/>
               </View>
               <View style={styles.progressStatus}>
-                <Text>Loading...</Text>
+                <Text>{loadingStatus}</Text>
               </View>
             </View>
           </Otherwise>
