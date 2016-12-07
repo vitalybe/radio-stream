@@ -1,4 +1,4 @@
-package com.radiostream;
+package com.radiostream.util;
 
 import android.util.Log;
 

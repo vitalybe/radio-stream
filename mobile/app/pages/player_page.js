@@ -25,6 +25,8 @@ export default class PlayerPage extends Component {
 
     this.state = {
       isLoading: true,
+      loadingError: null,
+
       isPlaying: false,
 
       playlistName: this.props.playlistName,
@@ -83,6 +85,7 @@ export default class PlayerPage extends Component {
 
     this.setState({
       isLoading: event.isLoading,
+      loadingError: event.loadingError,
       isPlaying: event.isPlaying,
       song: {
         ...this.state.song,
@@ -106,6 +109,11 @@ export default class PlayerPage extends Component {
     let loadingStatus = "Loading";
     if(this.state.song.title) {
       loadingStatus = `${loadingStatus}: ${this.state.song.artist} - ${this.state.song.title}`
+    }
+
+    let loadingError = "";
+    if(this.state.loadingError) {
+      loadingError = `Error occured, retrying: ${this.state.loadingError}`
     }
 
     return (
@@ -146,6 +154,7 @@ export default class PlayerPage extends Component {
               </View>
               <View style={styles.progressStatus}>
                 <Text>{loadingStatus}</Text>
+                <Text style={styles.progressStatusError}>{loadingError}</Text>
               </View>
             </View>
           </Otherwise>
@@ -238,7 +247,11 @@ const styles = StyleSheet.create({
   },
   progressStatus: {
     justifyContent: "flex-start",
+    alignItems: "center",
     flex: 1,
+  },
+  progressStatusError: {
+    color: "red"
   }
 });
 

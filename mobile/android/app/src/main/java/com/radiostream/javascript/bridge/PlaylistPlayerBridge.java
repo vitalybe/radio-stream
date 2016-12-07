@@ -12,6 +12,7 @@ import com.facebook.react.bridge.WritableNativeMap;
 public class PlaylistPlayerBridge {
     private final String fieldIsPlaying = "isPlaying";
     private final String fieldIsLoading = "isLoading";
+    private final String fieldLoadingError = "loadingError";
     private final String fieldPlaylist = "playlist";
     private final String fieldSong = "song";
 
@@ -38,7 +39,7 @@ public class PlaylistPlayerBridge {
         return mBackingMap.getBoolean(fieldIsLoading);
     }
 
-    public void setIsLoading(boolean value) {
+    public void setLoading(boolean value) {
         mBackingMap.putBoolean(fieldIsLoading, value);
     }
 
@@ -57,5 +58,9 @@ public class PlaylistPlayerBridge {
 
     public void setSong(SongBridge song) {
         mBackingMap.putMap(fieldSong, song.asMap());
+    }
+
+    public void setLoadingError(Exception loadingError) {
+        mBackingMap.putString(fieldLoadingError, loadingError != null ? loadingError.getMessage() : "");
     }
 }

@@ -5,6 +5,7 @@ import com.radiostream.javascript.bridge.PlayerEventsEmitter;
 import com.radiostream.javascript.bridge.PlaylistBridge;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 import com.radiostream.javascript.bridge.SongBridge;
+import com.radiostream.util.SetTimeout;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import static com.radiostream.player.Utils.resolvedPromise;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -44,6 +46,9 @@ public class PlaylistPlayerTest {
 
     @Mock
     PlayerEventsEmitter mockPlayerEventsEmitter;
+
+    @Mock
+    SetTimeout mockSetTimeout;
 
     @Before
     public void setUp() throws Exception {
@@ -76,7 +81,7 @@ public class PlaylistPlayerTest {
 
     @Test
     public void play_preloadSongOnlyOnFirstCall() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout);
         playlistPlayer.play();
 
         verify(mockFirstSong, times(1)).play();
@@ -98,7 +103,7 @@ public class PlaylistPlayerTest {
 
     @Test
     public void play_playSongIfSongAvailable() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout);
         playlistPlayer.play();
 
         verify(mockPlaylist, atLeastOnce()).peekCurrentSong();
@@ -111,7 +116,7 @@ public class PlaylistPlayerTest {
 
     @Test
     public void playNext_playingSecondSong() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout);
         playlistPlayer.playNext();
 
         verify(mockPlaylist, times(1)).nextSong();
@@ -120,7 +125,7 @@ public class PlaylistPlayerTest {
 
     @Test
     public void playNext_playFirstSong() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout);
         playlistPlayer.playNext();
 
         verify(mockFirstSong, times(1)).play();
@@ -128,19 +133,19 @@ public class PlaylistPlayerTest {
 
     @Test(expected=IllegalStateException.class)
     public void pause_throwsExceptionIfNoSong() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout);
         playlistPlayer.pause();
     }
 
     @Test
     public void close_closesPlaylist() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout);
         playlistPlayer.close();
     }
 
     @Test
     public void close_closesSongIfExists() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout);
         playlistPlayer.play();
         playlistPlayer.close();
 
@@ -153,7 +158,9 @@ public class PlaylistPlayerTest {
             .thenReturn(Utils.<Song>rejectedPromise(new Exception()))
             .thenReturn(Utils.resolvedPromise(mockFirstSong));
 
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter);
+        when(mockSetTimeout.run(anyInt())).thenReturn(resolvedPromise((Void)null));
+
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout);
         playlistPlayer.play();
 
         // song will be loaded if preloading the first one failed

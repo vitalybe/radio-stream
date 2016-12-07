@@ -2,9 +2,8 @@ package com.radiostream.player;
 
 import com.radiostream.javascript.bridge.PlayerEventsEmitter;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
+import com.radiostream.util.SetTimeout;
 
-import org.jdeferred.AlwaysCallback;
-import org.jdeferred.DoneCallback;
 import org.jdeferred.DonePipe;
 import org.jdeferred.FailCallback;
 import org.jdeferred.Promise;
@@ -16,28 +15,29 @@ import timber.log.Timber;
 
 public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     private PlayerEventsEmitter mPlayerEventsEmitter;
+    private SetTimeout mSetTimeout;
     private Playlist mPlaylist;
     private Song mCurrentSong;
 
-    private boolean mIsCurrentSongLoading = false;
+    private boolean mIsLoading = false;
+    private Exception mLoadingError = null;
+
     private boolean mIsClosed = false;
 
     @Inject
-    public PlaylistPlayer(Playlist playlist, PlayerEventsEmitter playerEventsEmitter) {
+    public PlaylistPlayer(Playlist playlist, PlayerEventsEmitter playerEventsEmitter, SetTimeout setTimeout) {
 
         mPlaylist = playlist;
         mPlayerEventsEmitter = playerEventsEmitter;
+        mSetTimeout = setTimeout;
     }
 
-    private boolean getIsCurrentSongLoading() {
-        return mIsCurrentSongLoading;
-    }
-
-    private void setIsCurrentSongLoading(boolean value) {
-        Timber.i("change loading to: %b", value);
-        if (value != mIsCurrentSongLoading) {
+    private void setSongLoadingStatus(boolean isLoading, Exception error) {
+        Timber.i("change loading to: %b and error to: %s", isLoading, error != null ? error.toString() : "NULL");
+        if (isLoading != mIsLoading || mLoadingError != error) {
             Timber.i("value changed");
-            mIsCurrentSongLoading = value;
+            mIsLoading = isLoading;
+            mLoadingError = error;
             mPlayerEventsEmitter.sendPlayerStatus(this.toBridgeObject());
         } else {
             Timber.i("value didn't change");
@@ -64,7 +64,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     @Override
     public Promise<Song, Exception, Void> play() {
         Timber.i("function start");
-        if (getIsCurrentSongLoading()) {
+        if (mIsLoading) {
             Timber.i("invalid request. song already loading");
             throw new IllegalStateException("invalid request. song already loading");
         }
@@ -87,13 +87,6 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
                     public Promise<Song, Exception, Void> pipeDone(Song result) {
                         return PlaylistPlayer.this.preloadPeekedSong();
                     }
-                })
-                .always(new AlwaysCallback<Song, Exception>() {
-                    @Override
-                    public void onAlways(Promise.State state, Song resolved, Exception rejected) {
-                        Timber.i("current song loading = false");
-                        setIsCurrentSongLoading(false);
-                    }
                 });
         }
 
@@ -104,7 +97,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     public void pause() {
         Timber.i("function start");
 
-        if (getIsCurrentSongLoading() || getCurrentSong() == null) {
+        if (mIsLoading || getCurrentSong() == null) {
             throw new IllegalStateException("no song was loaded yet");
         }
 
@@ -122,7 +115,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
     @Override
     public void playPause() {
-        if (getIsCurrentSongLoading()) {
+        if (mIsLoading) {
             throw new IllegalStateException("no song was loaded yet");
         }
 
@@ -147,7 +140,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         // To convert a failed promise to a resolved one, we must create a new deferred object
         final DeferredObject<Song, Exception, Void> deferredObject = new DeferredObject<>();
 
-        setIsCurrentSongLoading(true);
+        setSongLoadingStatus(true, null);
 
         mPlaylist.peekCurrentSong().then(new DonePipe<Song, Song, Exception, Void>() {
             @Override
@@ -164,7 +157,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             @Override
             public Promise<Song, Exception, Void> pipeDone(Song song) {
                 try {
-                    setIsCurrentSongLoading(false);
+                    setSongLoadingStatus(false, null);
 
                     // We won't be playing any new music if playlistPlayer is closed
                     if (!mIsClosed) {
@@ -184,6 +177,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             @Override
             public void onFail(Exception exception) {
                 Timber.e(exception, "exception occured during next song loading");
+                setSongLoadingStatus(true, exception);
                 deferredObject.resolve(null);
             }
         });
@@ -192,8 +186,14 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             @Override
             public Promise<Song, Exception, Void> pipeDone(Song song) {
                 if (song == null) {
-                    Timber.i("no song was loaded - retrying");
-                    return PlaylistPlayer.this.retryPreloadAndPlaySong();
+                    Timber.i("no song was loaded - waiting and retrying");
+                    return mSetTimeout.run(10000).then(new DonePipe<Void, Song, Exception, Void>() {
+                        @Override
+                        public Promise<Song, Exception, Void> pipeDone(Void result) {
+                            Timber.i("timeout finished - retrying");
+                            return PlaylistPlayer.this.retryPreloadAndPlaySong();
+                        }
+                    });
                 } else {
                     Timber.i("song preloaded successfully");
                     return new DeferredObject<Song, Exception, Void>().resolve(song).promise();
@@ -250,7 +250,8 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
     public PlaylistPlayerBridge toBridgeObject() {
         PlaylistPlayerBridge bridge = new PlaylistPlayerBridge();
-        bridge.setIsLoading(getIsCurrentSongLoading());
+        bridge.setLoading(mIsLoading);
+        bridge.setLoadingError(mLoadingError);
         bridge.setIsPlaying(getIsPlaying());
         bridge.setPlaylist(mPlaylist.toBridgeObject());
 
