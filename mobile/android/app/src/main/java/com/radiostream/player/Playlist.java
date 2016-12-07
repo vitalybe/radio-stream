@@ -53,7 +53,6 @@ public class Playlist {
         }
     }
 
-
     public Promise<Song, Exception, Void> peekCurrentSong() {
         Timber.i("function start");
         
@@ -64,6 +63,17 @@ public class Playlist {
         Timber.i("function start");
 
         return peekSong(mIndex + 1);
+    }
+
+    public boolean isCurrentSong(Song song) {
+        if(mIndex < mSongs.size()) {
+            Timber.i("checking if given song '%s' is the current song", song.toString());
+            return mSongs.get(mIndex) == song;
+        } else {
+            Timber.i("current index %d out of songs bounds %d - this can't be the current song", mIndex, mSongs.size());
+            // it can't be the current song - current index is already beyond the bounds of the playlist
+            return false;
+        }
     }
 
     public void nextSong() {
@@ -84,7 +94,6 @@ public class Playlist {
             }
         });
     }
-
 
     public PlaylistBridge toBridgeObject() {
         final PlaylistBridge playlistBridge = new PlaylistBridge();

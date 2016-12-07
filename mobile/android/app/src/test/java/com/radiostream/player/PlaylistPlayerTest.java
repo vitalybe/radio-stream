@@ -67,6 +67,8 @@ public class PlaylistPlayerTest {
         when(mockPlaylist.peekNextSong())
             .thenReturn(resolvedPromise(mockSecondSong));
 
+        when(mockPlaylist.isCurrentSong(mockFirstSong)).thenReturn(true);
+
         final PlaylistBridge dummyPlaylistBridge = new PlaylistBridge();
         dummyPlaylistBridge.setName("X");
         when(mockPlaylist.toBridgeObject()).thenReturn(dummyPlaylistBridge);

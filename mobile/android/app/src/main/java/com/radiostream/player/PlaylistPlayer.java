@@ -69,44 +69,35 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             throw new IllegalStateException("invalid request. song already loading");
         }
 
-        return mPlaylist.peekCurrentSong().then(new DonePipe<Song, Song, Exception, Void>() {
-            @Override
-            public Promise<Song, Exception, Void> pipeDone(Song playlistCurrentSong) {
-                try {
-                    Promise<Song, Exception, Void> promise;
+        Promise<Song, Exception, Void> promise;
 
-                    if (getCurrentSong() == null || getCurrentSong() != playlistCurrentSong) {
-                        Timber.i("loading different song from playlist: %s", playlistCurrentSong.toString());
-                        promise = retryPreloadAndPlaySong()
-                            .then(new DonePipe<Song, Song, Exception, Void>() {
-                                @Override
-                                public Promise<Song, Exception, Void> pipeDone(Song result) {
-                                    return PlaylistPlayer.this.preloadPeekedSong();
-                                }
-                            })
-                            .always(new AlwaysCallback<Song, Exception>() {
-                                @Override
-                                public void onAlways(Promise.State state, Song resolved, Exception rejected) {
-                                    Timber.i("current song loading = false");
-                                    setIsCurrentSongLoading(false);
-                                }
-                            });
-                    } else {
-                        Timber.i("playing paused song");
-                        getCurrentSong().subscribeToEvents(PlaylistPlayer.this);
-                        getCurrentSong().play();
+        if (getCurrentSong() != null && mPlaylist.isCurrentSong(getCurrentSong())) {
+            Timber.i("playing paused song");
+            getCurrentSong().subscribeToEvents(PlaylistPlayer.this);
+            getCurrentSong().play();
 
-                        mPlayerEventsEmitter.sendPlayerStatus(PlaylistPlayer.this.toBridgeObject());
+            mPlayerEventsEmitter.sendPlayerStatus(PlaylistPlayer.this.toBridgeObject());
 
-                        promise = new DeferredObject<Song, Exception, Void>().resolve(getCurrentSong()).promise();
+            promise = new DeferredObject<Song, Exception, Void>().resolve(getCurrentSong()).promise();
+        } else {
+            Timber.i("loading different song from playlist");
+            promise = retryPreloadAndPlaySong()
+                .then(new DonePipe<Song, Song, Exception, Void>() {
+                    @Override
+                    public Promise<Song, Exception, Void> pipeDone(Song result) {
+                        return PlaylistPlayer.this.preloadPeekedSong();
                     }
+                })
+                .always(new AlwaysCallback<Song, Exception>() {
+                    @Override
+                    public void onAlways(Promise.State state, Song resolved, Exception rejected) {
+                        Timber.i("current song loading = false");
+                        setIsCurrentSongLoading(false);
+                    }
+                });
+        }
 
-                    return promise;
-                } catch (Exception e) {
-                    return new DeferredObject<Song, Exception, Void>().reject(e).promise();
-                }
-            }
-        });
+        return promise;
     }
 
     @Override

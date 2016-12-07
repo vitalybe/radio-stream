@@ -146,4 +146,53 @@ public class PlaylistTest {
         verify(mockMetadataBackend, times(1)).fetchPlaylist(mPlaylistName);
     }
 
-}
+    @Test
+    public void isCurrentSong_returnsTrueIfCurrent() throws Exception {
+        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
+
+        final Song[] currentSong = {null};
+        playlist.peekCurrentSong().then(new DoneCallback<Song>() {
+            @Override
+            public void onDone(Song result) {
+                currentSong[0] = result;
+            }
+        });
+
+        assertTrue(playlist.isCurrentSong(currentSong[0]));
+    }
+
+    @Test
+    public void isCurrentSong_returnsFalseIfWrongSong() throws Exception {
+        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
+
+        final Song[] nextSong = {null};
+        playlist.peekNextSong().then(new DoneCallback<Song>() {
+            @Override
+            public void onDone(Song result) {
+                nextSong[0] = result;
+            }
+        });
+
+        assertFalse(playlist.isCurrentSong(nextSong[0]));
+    }
+
+    @Test
+    public void isCurrentSong_returnsFalseIfCurrentSongOutOfBounds() throws Exception {
+        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
+
+        final Song[] currentSong = {null};
+        playlist.peekCurrentSong().then(new DoneCallback<Song>() {
+            @Override
+            public void onDone(Song result) {
+                currentSong[0] = result;
+            }
+        });
+
+        playlist.nextSong();
+        playlist.nextSong();
+        playlist.nextSong();
+        playlist.nextSong();
+        playlist.nextSong();
+
+        assertFalse(playlist.isCurrentSong(currentSong[0]));
+    }}
