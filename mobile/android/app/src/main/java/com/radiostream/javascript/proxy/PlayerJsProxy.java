@@ -65,6 +65,7 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
 
     public PlayerJsProxy(ReactApplicationContext reactContext) {
         super(reactContext);
+        Timber.i("creating new instance of PlayerJsProxy (%d) with reactContext: %d", this.hashCode(), reactContext.hashCode());
 
         reactContext.addLifecycleEventListener(this);
 
