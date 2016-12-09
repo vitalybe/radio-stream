@@ -17,7 +17,7 @@ public class PlayerEventsEmitter {
 
     @Inject
     public PlayerEventsEmitter(ReactContext context) {
-        Timber.i("creating new instance of PlayerEventsEmitter (%d) with reactContext: %d", this.hashCode(), context.hashCode());
+        Timber.i("creating new instance of PlayerEventsEmitter (%h) with reactContext: %h", this, context);
         mContext = context;
     }
 

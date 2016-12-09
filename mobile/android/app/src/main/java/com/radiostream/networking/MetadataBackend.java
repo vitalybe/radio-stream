@@ -92,6 +92,10 @@ public class MetadataBackend {
         return deferred.promise();
     }
 
+    public Promise<Void, Exception, Void> markAsPlayed() {
+        return null;
+    }
+
     interface BackendMetadataClient {
         @GET("api/playlists")
         Call<PlaylistListResult> allPlaylists();

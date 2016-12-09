@@ -10,8 +10,13 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.radiostream.Settings;
 import com.radiostream.javascript.bridge.SongBridge;
+import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
+import com.radiostream.util.SetTimeout;
 
+import org.jdeferred.DoneCallback;
+import org.jdeferred.DonePipe;
+import org.jdeferred.FailCallback;
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
 
@@ -24,25 +29,32 @@ import timber.log.Timber;
 
 public class Song {
 
+    public static final int markPlayedAfterMs = 30000;
+    public static final int markPlayedRetryMs = 5000;
+
     private final String mArtist;
     private final String mAlbum;
     private final String mTitle;
-
     private final String mPath;
-    private Promise<Song,Exception,Void> mSongLoadingPromise = null;
-
+    private SetTimeout mSetTimeout;
+    private MetadataBackend mMetadataBackend;
+    private Promise<Song, Exception, Void> mSongLoadingPromise = null;
     private MediaPlayer mMediaPlayer;
     private Settings mSettings;
     private EventsListener mEventsListener;
+    private Promise<Boolean, Exception, Void> markedAsPlayedPromise = null;
 
-    public Song(SongResult songResult, MediaPlayer mediaPlayer, Context context, Settings settings) {
+    public Song(SongResult songResult, MediaPlayer mediaPlayer,
+                Context context, Settings settings, SetTimeout setTimeout, MetadataBackend metadataBackend) {
         this.mArtist = songResult.artist;
         this.mAlbum = songResult.album;
         this.mTitle = songResult.title;
+        this.mSetTimeout = setTimeout;
+        this.mMetadataBackend = metadataBackend;
 
         String pathBuilder = "";
         String[] pathParts = songResult.path.split("/");
-        for(String pathPart : pathParts) {
+        for (String pathPart : pathParts) {
             try {
                 pathBuilder += "/" + URLEncoder.encode(pathPart, "UTF-8").replace("+", "%20");
             } catch (UnsupportedEncodingException e) {
@@ -59,6 +71,84 @@ public class Song {
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         Timber.i("created new song: %s", this.toString());
+
+        scheduleMarkAsPlayed();
+    }
+
+    private void scheduleMarkAsPlayed() {
+        Timber.i("markedAsPlayedPromise: %h", markedAsPlayedPromise);
+        Timber.i("current player position is %d and we mark as played at %d",
+            mMediaPlayer.getCurrentPosition(), markPlayedAfterMs);
+
+        if (mMediaPlayer == null) {
+            Timber.i("media player is null - song is no longer active - further scheduling cancelled");
+        } else if (this.markedAsPlayedPromise != null) {
+            Timber.i("mark as played already in progress");
+        } else if (mMediaPlayer.getCurrentPosition() >= markPlayedAfterMs) {
+            Timber.i("marking song as played");
+            this.markedAsPlayedPromise = retryMarkAsPlayed();
+        } else {
+            Timber.i("this is not the time to mark as played, retrying again in %dms", markPlayedRetryMs);
+            this.mSetTimeout.run(markPlayedRetryMs).then(new DoneCallback<Void>() {
+                @Override
+                public void onDone(Void result) {
+                    Timber.i("retrying...");
+                    scheduleMarkAsPlayed();
+                }
+            });
+        }
+    }
+
+    public Promise<Boolean, Exception, Void> waitForMarkedAsPlayed() {
+        Timber.i("function start");
+
+        if (markedAsPlayedPromise != null) {
+            Timber.i("returning existing promise");
+            return markedAsPlayedPromise;
+        } else {
+            Timber.i("mark as played hasn't started - returning resolved promise");
+            return new DeferredObject<Boolean, Exception, Void>().resolve(null).promise();
+        }
+    }
+
+    private Promise<Boolean, Exception, Void> retryMarkAsPlayed() {
+        final DeferredObject<Boolean, Exception, Void> deferredObject = new DeferredObject<>();
+        Timber.i("function start");
+
+        mMetadataBackend.markAsPlayed()
+            .then(new DoneCallback<Void>() {
+                @Override
+                public void onDone(Void result) {
+                    Timber.i("marked as played successfully");
+                    deferredObject.resolve(true);
+                }
+            })
+            .fail(new FailCallback<Exception>() {
+                @Override
+                public void onFail(Exception result) {
+                    Timber.i(result, "failed to mark as read");
+                    deferredObject.resolve(false);
+                }
+            });
+
+        return deferredObject.promise().then(new DonePipe<Boolean, Boolean, Exception, Void>() {
+            @Override
+            public Promise<Boolean, Exception, Void> pipeDone(Boolean result) {
+                if (result) {
+                    Timber.i("returning resolved promise");
+                    return deferredObject.promise();
+                } else {
+                    Timber.i("retrying again after sleep");
+                    return Song.this.mSetTimeout.run(markPlayedRetryMs).then(new DonePipe<Void, Boolean, Exception, Void>() {
+                        @Override
+                        public Promise<Boolean, Exception, Void> pipeDone(Void result) {
+                            Timber.i("sleep done - trying to mark again");
+                            return retryMarkAsPlayed();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public void subscribeToEvents(EventsListener eventsListener) {
@@ -66,10 +156,10 @@ public class Song {
         mEventsListener = eventsListener;
     }
 
-    public Promise<Song,Exception,Void> preload() {
+    public Promise<Song, Exception, Void> preload() {
         Timber.i("function start");
 
-        if(mSongLoadingPromise == null || mSongLoadingPromise.isRejected()) {
+        if (mSongLoadingPromise == null || mSongLoadingPromise.isRejected()) {
             Timber.i("creating a new promise");
             final DeferredObject<Song, Exception, Void> deferredObject = new DeferredObject<>();
             mSongLoadingPromise = deferredObject.promise();
@@ -112,7 +202,7 @@ public class Song {
 
     public void play() {
         Timber.i("function start");
-        
+
         mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -136,7 +226,7 @@ public class Song {
     }
 
     public void pause() {
-        if(mMediaPlayer.isPlaying()) {
+        if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
         }
     }
@@ -153,7 +243,7 @@ public class Song {
     }
 
     public boolean isPlaying() {
-        if(mMediaPlayer != null) {
+        if (mMediaPlayer != null) {
             return mMediaPlayer.isPlaying();
         } else {
             // if released
@@ -176,13 +266,14 @@ public class Song {
         return bridge;
     }
 
-    public interface EventsListener {
-        void onSongFinish(Song song);
-        void onSongError(Exception error);
-    }
-
     @Override
     public String toString() {
         return String.format("[%s - %s]", mArtist, mTitle);
+    }
+
+    public interface EventsListener {
+        void onSongFinish(Song song);
+
+        void onSongError(Exception error);
     }
 }

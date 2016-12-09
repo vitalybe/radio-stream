@@ -65,6 +65,8 @@ public class PlaylistPlayerTest {
 
         when(mockFirstSong.preload()).thenReturn(resolvedPromise(mockFirstSong));
         when(mockSecondSong.preload()).thenReturn(resolvedPromise(mockSecondSong));
+        when(mockFirstSong.waitForMarkedAsPlayed()).thenReturn(resolvedPromise(true));
+        when(mockSecondSong.waitForMarkedAsPlayed()).thenReturn(resolvedPromise(true));
 
         when(mockPlaylist.peekCurrentSong())
             .thenReturn(resolvedPromise(mockFirstSong));

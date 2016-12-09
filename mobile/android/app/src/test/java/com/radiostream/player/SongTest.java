@@ -3,12 +3,14 @@ package com.radiostream.player;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.support.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
 import com.radiostream.BuildConfig;
 import com.radiostream.Settings;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
+import com.radiostream.util.SetTimeout;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
@@ -61,6 +63,12 @@ public class SongTest {
     @Mock
     Settings mockSettings;
 
+    @Mock
+    SetTimeout mockSetTimeout;
+
+    @Mock
+    MetadataBackend mockMetadataBackend;
+
     final String settingsUrl = "http://wwww.fake-url.com/";
 
     @Before
@@ -68,7 +76,18 @@ public class SongTest {
         Utils.initTestLogging();
         Utils.mockAndroidStatics();
 
+        final int[] dummyPosition = {0};
+        when(mockMediaPlayer.getCurrentPosition()).thenAnswer(new Answer<Integer>() {
+            @Override
+            public Integer answer(InvocationOnMock invocation) throws Throwable {
+                dummyPosition[0] += 5000;
+                return dummyPosition[0];
+            }
+        });
+        when(mockMetadataBackend.markAsPlayed()).thenReturn(resolvedPromise((Void)null));
+
         when(mockSettings.getAddress()).thenReturn(settingsUrl);
+        when(mockSetTimeout.run(Matchers.anyInt())).thenReturn(resolvedPromise((Void)null));
 
         Mockito.doAnswer(new Answer() {
             @Override
@@ -94,7 +113,7 @@ public class SongTest {
         SongResult songResult = new SongResult();
         songResult.path = songPath;
 
-        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings);
+        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackend);
 
         Mockito.doAnswer(new Answer() {
             @Override
@@ -118,12 +137,7 @@ public class SongTest {
 
     @Test
     public void preload_throwsExceptionOnMediaPlayerError() throws Exception {
-        SongResult songResult = new SongResult();
-        songResult.artist = "artist";
-        songResult.title = "title";
-        songResult.path = "artist/song.mp3";
-
-        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings);
+        final Song song = new Song(createDummySongResult(), mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackend);
 
         Mockito.doAnswer(new Answer() {
             @Override
@@ -144,12 +158,21 @@ public class SongTest {
         assertTrue(failException[0] instanceof NetworkErrorException);
     }
 
+    @NonNull
+    private SongResult createDummySongResult() {
+        SongResult songResult = new SongResult();
+        songResult.artist = "artist";
+        songResult.title = "title";
+        songResult.path = "artist/song.mp3";
+        return songResult;
+    }
+
     @Test
     public void preload_doNotRunAgainIfPreloadedBefore() throws Exception {
         String songPath = "artist/song.mp3";
         SongResult songResult = new SongResult();
         songResult.path = songPath;
-        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings);
+        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackend);
         song.preload();
         song.preload();
         verify(mockMediaPlayer, times(1)).prepareAsync();
@@ -168,7 +191,7 @@ public class SongTest {
         String songPath = "artist/song.mp3";
         SongResult songResult = new SongResult();
         songResult.path = songPath;
-        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings);
+        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackend);
         song.preload();
         song.preload();
 
@@ -182,9 +205,18 @@ public class SongTest {
         SongResult songResult = new SongResult();
         songResult.path = songPath;
 
-        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings);
+        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackend);
         song.preload();
 
         verify(mockMediaPlayer).setDataSource(settingsUrl + "music/art%20ist/so%20ng.mp3");
     }
+
+    @Test
+    public void retriesAndMarksAsPlayed_retriesAndMarks() throws Exception {
+        final Song song = new Song(createDummySongResult(), mockMediaPlayer, mockContext, mockSettings,
+            mockSetTimeout, mockMetadataBackend);
+
+        verify(mockMetadataBackend, times(1)).markAsPlayed();
+   }
+
 }

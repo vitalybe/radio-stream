@@ -142,7 +142,12 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
         setSongLoadingStatus(true, null);
 
-        mPlaylist.peekCurrentSong().then(new DonePipe<Song, Song, Exception, Void>() {
+        waitForCurrentSongMarkedAsPlayed().then(new DonePipe<Boolean, Song, Exception, Void>() {
+            @Override
+            public Promise<Song, Exception, Void> pipeDone(Boolean result) {
+                return mPlaylist.peekCurrentSong();
+            }
+        }).then(new DonePipe<Song, Song, Exception, Void>() {
             @Override
             public Promise<Song, Exception, Void> pipeDone(Song song) {
                 try {
@@ -200,6 +205,16 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
                 }
             }
         });
+    }
+
+    private Promise<Boolean, Exception, Void> waitForCurrentSongMarkedAsPlayed() {
+        Timber.i("function start");
+        if (getCurrentSong() != null) {
+            return getCurrentSong().waitForMarkedAsPlayed();
+        } else {
+            Timber.i("no current song found - not waiting");
+            return new DeferredObject<Boolean, Exception, Void>().resolve(true).promise();
+        }
     }
 
     private Promise<Song, Exception, Void> preloadPeekedSong() {
