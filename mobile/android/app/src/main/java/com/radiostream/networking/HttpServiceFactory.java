@@ -25,6 +25,12 @@ public class HttpServiceFactory {
             new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create());
 
+    static {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        httpClient.addInterceptor(logging);
+    }
+
     public static <S> S createService(Class<S> serviceClass, String baseUrl, String username, String password) {
         if (username != null && password != null) {
             String credentials = username + ":" + password;
@@ -47,9 +53,6 @@ public class HttpServiceFactory {
             });
         }
 
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-        httpClient.addInterceptor(logging);
 
         OkHttpClient client = httpClient.build();
         Retrofit retrofit = builder.baseUrl(baseUrl).client(client).build();
