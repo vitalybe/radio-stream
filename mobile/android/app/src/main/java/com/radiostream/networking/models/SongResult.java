@@ -4,6 +4,7 @@ package com.radiostream.networking.models;
  * Created by vitaly on 23/11/2016.
  */
 public class SongResult {
+    public int id;
     public String artist;
     public String album;
     public String title;

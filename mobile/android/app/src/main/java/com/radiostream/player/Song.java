@@ -36,12 +36,15 @@ public class Song {
     private final String mAlbum;
     private final String mTitle;
     private final String mPath;
+    private final int mId;
     private SetTimeout mSetTimeout;
     private MetadataBackend mMetadataBackend;
     private Promise<Song, Exception, Void> mSongLoadingPromise = null;
     private MediaPlayer mMediaPlayer;
     private Settings mSettings;
     private EventsListener mEventsListener;
+
+    private boolean mMarkAsPlayedScheduled = false;
     private Promise<Boolean, Exception, Void> markedAsPlayedPromise = null;
 
     public Song(SongResult songResult, MediaPlayer mediaPlayer,
@@ -49,6 +52,7 @@ public class Song {
         this.mArtist = songResult.artist;
         this.mAlbum = songResult.album;
         this.mTitle = songResult.title;
+        this.mId = songResult.id;
         this.mSetTimeout = setTimeout;
         this.mMetadataBackend = metadataBackend;
 
@@ -71,24 +75,23 @@ public class Song {
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         Timber.i("created new song: %s", this.toString());
-
-        scheduleMarkAsPlayed();
     }
 
     private void scheduleMarkAsPlayed() {
         Timber.i("markedAsPlayedPromise: %h", markedAsPlayedPromise);
-        Timber.i("current player position is %d and we mark as played at %d",
-            mMediaPlayer.getCurrentPosition(), markPlayedAfterMs);
-
         if (mMediaPlayer == null) {
             Timber.i("media player is null - song is no longer active - further scheduling cancelled");
         } else if (this.markedAsPlayedPromise != null) {
             Timber.i("mark as played already in progress");
         } else if (mMediaPlayer.getCurrentPosition() >= markPlayedAfterMs) {
-            Timber.i("marking song as played");
+            Timber.i("marking song as played since its current position %d is after %d",
+                mMediaPlayer.getCurrentPosition(), markPlayedAfterMs);
+
             this.markedAsPlayedPromise = retryMarkAsPlayed();
         } else {
-            Timber.i("this is not the time to mark as played, retrying again in %dms", markPlayedRetryMs);
+            Timber.i("this is not the time to mark as played %dms, retrying again in %dms",
+                mMediaPlayer.getCurrentPosition(), markPlayedRetryMs);
+            
             this.mSetTimeout.run(markPlayedRetryMs).then(new DoneCallback<Void>() {
                 @Override
                 public void onDone(Void result) {
@@ -115,7 +118,7 @@ public class Song {
         final DeferredObject<Boolean, Exception, Void> deferredObject = new DeferredObject<>();
         Timber.i("function start");
 
-        mMetadataBackend.markAsPlayed()
+        mMetadataBackend.markAsPlayed(this.mId)
             .then(new DoneCallback<Void>() {
                 @Override
                 public void onDone(Void result) {
@@ -202,6 +205,12 @@ public class Song {
 
     public void play() {
         Timber.i("function start");
+
+        if (!mMarkAsPlayedScheduled) {
+            Timber.i("this is the first play - schedule song to be marked as played");
+            mMarkAsPlayedScheduled = true;
+            scheduleMarkAsPlayed();
+        }
 
         mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override

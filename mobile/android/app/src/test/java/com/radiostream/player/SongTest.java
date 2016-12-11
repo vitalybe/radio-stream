@@ -84,7 +84,7 @@ public class SongTest {
                 return dummyPosition[0];
             }
         });
-        when(mockMetadataBackend.markAsPlayed()).thenReturn(resolvedPromise((Void)null));
+        when(mockMetadataBackend.markAsPlayed(Matchers.anyInt())).thenReturn(resolvedPromise((Void)null));
 
         when(mockSettings.getAddress()).thenReturn(settingsUrl);
         when(mockSetTimeout.run(Matchers.anyInt())).thenReturn(resolvedPromise((Void)null));
@@ -215,8 +215,9 @@ public class SongTest {
     public void retriesAndMarksAsPlayed_retriesAndMarks() throws Exception {
         final Song song = new Song(createDummySongResult(), mockMediaPlayer, mockContext, mockSettings,
             mockSetTimeout, mockMetadataBackend);
+        song.play();
 
-        verify(mockMetadataBackend, times(1)).markAsPlayed();
+        verify(mockMetadataBackend, times(1)).markAsPlayed(Matchers.anyInt());
    }
 
 }

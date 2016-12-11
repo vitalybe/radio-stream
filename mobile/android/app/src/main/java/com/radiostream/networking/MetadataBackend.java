@@ -20,7 +20,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
+import timber.log.Timber;
 
 @DebugLog
 public class MetadataBackend {
@@ -43,7 +45,6 @@ public class MetadataBackend {
             public void onResponse(Call<PlaylistListResult> call, Response<PlaylistListResult> response) {
                 if (response.isSuccessful()) {
                     deferred.resolve(response.body());
-                    return;
                 } else {
                     deferred.reject(new IOException(String.format(Locale.ENGLISH,
                         "Playlist call failed - Returned status: %d", response.code())));
@@ -75,7 +76,6 @@ public class MetadataBackend {
             public void onResponse(Call<PlaylistResult> call, Response<PlaylistResult> response) {
                 if (response.isSuccessful()) {
                     deferred.resolve(response.body().results);
-                    return;
                 } else {
                     deferred.reject(new IOException(String.format(Locale.ENGLISH,
                         "Playlist call failed - Returned status: %d", response.code())));
@@ -92,8 +92,34 @@ public class MetadataBackend {
         return deferred.promise();
     }
 
-    public Promise<Void, Exception, Void> markAsPlayed() {
-        return null;
+    public Promise<Void, Exception, Void> markAsPlayed(Integer songId) {
+        Timber.i("function start for song id: %d", songId);
+        final Deferred<Void, Exception, Void> deferred = new DeferredObject<>();
+
+        BackendMetadataClient client = getService();
+        Call<Void> playlistCall = client.updateLastPlayed(songId);
+        playlistCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Timber.i("success");
+                    deferred.resolve(null);
+                } else {
+                    Timber.i("error");
+                    deferred.reject(new IOException(String.format(Locale.ENGLISH,
+                        "Playlist call failed - Returned status: %d", response.code())));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                deferred.reject(new IOException(String.format(Locale.ENGLISH,
+                    "Playlist call failed - %s", t.toString())));
+            }
+        });
+
+
+        return deferred.promise();
     }
 
     interface BackendMetadataClient {
@@ -102,5 +128,9 @@ public class MetadataBackend {
 
         @GET("api/playlists/{playlistName}")
         Call<PlaylistResult> playlist(@Path("playlistName") String playlistName);
+
+
+        @POST("api/item/{songId}/last-played")
+        Call<Void> updateLastPlayed(@Path("songId") Integer songId);
     }
 }
