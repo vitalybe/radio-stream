@@ -38,13 +38,13 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             Timber.i("value changed");
             mIsLoading = isLoading;
             mLoadingError = error;
-            mPlayerEventsEmitter.sendPlaylistPlayerStatus(this.toBridgeObject());
+            mPlayerEventsEmitter.sendPlaylistPlayerStatus(this);
         } else {
             Timber.i("value didn't change");
         }
     }
 
-    private Song getCurrentSong() {
+    public Song getCurrentSong() {
         return mCurrentSong;
     }
 
@@ -57,7 +57,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
             Timber.i("changing current song to: %s", value.toString());
             mCurrentSong = value;
-            mPlayerEventsEmitter.sendPlaylistPlayerStatus(this.toBridgeObject());
+            mPlayerEventsEmitter.sendPlaylistPlayerStatus(this);
         }
     }
 
@@ -76,7 +76,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             getCurrentSong().subscribeToEvents(PlaylistPlayer.this);
             getCurrentSong().play();
 
-            mPlayerEventsEmitter.sendPlaylistPlayerStatus(PlaylistPlayer.this.toBridgeObject());
+            mPlayerEventsEmitter.sendPlaylistPlayerStatus(PlaylistPlayer.this);
 
             promise = new DeferredObject<Song, Exception, Void>().resolve(getCurrentSong()).promise();
         } else {
@@ -102,7 +102,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         }
 
         getCurrentSong().pause();
-        mPlayerEventsEmitter.sendPlaylistPlayerStatus(this.toBridgeObject());
+        mPlayerEventsEmitter.sendPlaylistPlayerStatus(this);
     }
 
     private boolean getIsPlaying() {

@@ -2,6 +2,7 @@ package com.radiostream.javascript.bridge;
 
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.radiostream.player.PlaylistPlayer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,18 +22,18 @@ public class PlaylistPlayerEventsEmitter {
         mContext = context;
     }
 
-    public void sendPlaylistPlayerStatus(PlaylistPlayerBridge bridge) {
-        sendToJavascript(playlistPlayerStatusEvent, bridge.asMap());
-        sendToSubscribers(bridge);
+    public void sendPlaylistPlayerStatus(PlaylistPlayer playlistPlayer) {
+        sendToJavascript(playlistPlayerStatusEvent, playlistPlayer.toBridgeObject().asMap());
+        sendToSubscribers(playlistPlayer);
     }
 
     public void subscribe(EventCallback callback) {
         mCallback = callback;
     }
 
-    private void sendToSubscribers(PlaylistPlayerBridge bridge) {
+    private void sendToSubscribers(PlaylistPlayer playlistPlayer) {
         if(mCallback != null) {
-            mCallback.onEvent(bridge);
+            mCallback.onEvent(playlistPlayer);
         }
     }
 
@@ -49,6 +50,6 @@ public class PlaylistPlayerEventsEmitter {
     }
 
     public interface EventCallback {
-        void onEvent(PlaylistPlayerBridge bridge);
+        void onEvent(PlaylistPlayer playlistPlayer);
     }
 }

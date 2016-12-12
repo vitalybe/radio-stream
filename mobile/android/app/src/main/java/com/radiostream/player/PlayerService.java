@@ -1,7 +1,9 @@
 package com.radiostream.player;
 
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -20,6 +22,7 @@ import com.radiostream.javascript.proxy.PlayerJsProxy;
 import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 
 @DebugLog
@@ -37,16 +40,24 @@ public class PlayerService extends Service {
     PlaylistPlayerEventsEmitter mPlaylistPlayerEventsEmitter;
     private PlaylistPlayerEventsEmitter.EventCallback onPlaylistPlayerEvent = new PlaylistPlayerEventsEmitter.EventCallback() {
         @Override
-        public void onEvent(PlaylistPlayerBridge bridge) {
-            mPlayer.
+        public void onEvent(PlaylistPlayer playlistPlayer) {
+            Timber.i("function start");
+
+            if (playlistPlayer != null && playlistPlayer.getCurrentSong() != null) {
+                Timber.i("showing notification for event");
+
+                final Song currentSong = playlistPlayer.getCurrentSong();
+                PlayerService.this.showServiceNotification(currentSong.getTitle(), currentSong.getArtist());
+            }
         }
     };
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Timber.i("function start");
 
-        showServiceNotification("Radio Stream", "Loading...");
+        // showServiceNotification("Radio Stream", "Loading...");
 
         PlayerServiceComponent component = DaggerPlayerServiceComponent.builder()
             .jsProxyComponent(PlayerJsProxy.JsProxyComponent())
@@ -58,6 +69,7 @@ public class PlayerService extends Service {
     }
 
     private void showServiceNotification(String title, String contentText) {
+        Timber.i("function start");
 
         // Open main UI activity
         Intent activityIntent = new Intent(getApplication().getApplicationContext(), MainActivity.class);
@@ -72,8 +84,9 @@ public class PlayerService extends Service {
         mBuilder.setSmallIcon(R.drawable.image_note)
             .setContentTitle(title)
             .setContentText(contentText)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(activityPendingIntent)
+            .setVibrate(new long[0]) // required for heads-up notification
             .addAction(R.drawable.image_stop, "Stop", stopPendingIntent);
 
         startForeground(NOTIFICATION_ID, mBuilder.build());

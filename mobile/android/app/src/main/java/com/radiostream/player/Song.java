@@ -280,6 +280,10 @@ public class Song {
         return String.format("[%s - %s]", mArtist, mTitle);
     }
 
+    public String getArtist() {
+        return mArtist;
+    }
+
     public interface EventsListener {
         void onSongFinish(Song song);
 
