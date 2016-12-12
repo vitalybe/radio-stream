@@ -22,9 +22,9 @@ public class PlaylistPlayerEventsEmitter {
         mContext = context;
     }
 
-    public void sendPlaylistPlayerStatus(PlaylistPlayer playlistPlayer) {
-        sendToJavascript(playlistPlayerStatusEvent, playlistPlayer.toBridgeObject().asMap());
-        sendToSubscribers(playlistPlayer);
+    public void sendPlaylistPlayerStatus(PlaylistPlayerBridge playlistPlayerBridge) {
+        sendToJavascript(playlistPlayerStatusEvent, playlistPlayerBridge.asMap());
+        sendToSubscribers(playlistPlayerBridge);
     }
 
     public void subscribe(EventCallback callback) {

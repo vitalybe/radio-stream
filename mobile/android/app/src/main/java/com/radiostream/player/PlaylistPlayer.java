@@ -265,11 +265,13 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
     public PlaylistPlayerBridge toBridgeObject() {
         PlaylistPlayerBridge bridge = new PlaylistPlayerBridge();
-        bridge.setLoading(mIsLoading);
-        bridge.setLoadingError(mLoadingError);
-        bridge.setIsPlaying(getIsPlaying());
-        bridge.setPlaylist(mPlaylist);
-        bridge.setSong(mCurrentSong);
+        bridge.isLoading = mIsLoading;
+        bridge.loadingError = mLoadingError;
+        bridge.isPlaying = getIsPlaying();
+        bridge.playlistBridge = mPlaylist.toBridgeObject();
+        if(mCurrentSong != null) {
+            bridge.songBridge = mCurrentSong.toBridgeObject();
+        }
 
         return bridge;
     }

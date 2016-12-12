@@ -8,24 +8,14 @@ import com.radiostream.player.PlaylistPlayer;
  * Created by vitaly on 27/11/2016.
  */
 public class PlayerBridge {
-    private final String fieldPlaylistPlayer = "playlistPlayer";
 
-    private final WritableMap mBackingMap;
-
-    public PlayerBridge() {
-        mBackingMap = Arguments.createMap();
-    }
+    public PlaylistPlayerBridge playlistPlayerBridge;
 
     public WritableMap asMap() {
-        return mBackingMap;
-    }
+        WritableMap map = Arguments.createMap();
+        map.putMap("playlistPlayer", playlistPlayerBridge.asMap());
 
-    public void setPlaylistPlayer(PlaylistPlayer value) {
-        mBackingMap.putMap(fieldPlaylistPlayer, null);
-
-        if(value != null) {
-            mBackingMap.putMap(fieldPlaylistPlayer, value.toBridgeObject().asMap());
-        }
+        return map;
     }
 
 }

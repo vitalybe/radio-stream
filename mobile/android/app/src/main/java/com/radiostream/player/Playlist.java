@@ -97,7 +97,7 @@ public class Playlist {
 
     public PlaylistBridge toBridgeObject() {
         final PlaylistBridge playlistBridge = new PlaylistBridge();
-        playlistBridge.setName(mPlaylistName);
+        playlistBridge.name = mPlaylistName;
         return playlistBridge;
     }
 }

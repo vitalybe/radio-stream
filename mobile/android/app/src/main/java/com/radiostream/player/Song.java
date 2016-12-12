@@ -268,9 +268,9 @@ public class Song {
     public SongBridge toBridgeObject() {
         SongBridge bridge = new SongBridge();
 
-        bridge.setArtist(mArtist);
-        bridge.setAlbum(mAlbum);
-        bridge.setTitle(mTitle);
+        bridge.artist = mArtist;
+        bridge.album = mAlbum;
+        bridge.title = mTitle;
 
         return bridge;
     }

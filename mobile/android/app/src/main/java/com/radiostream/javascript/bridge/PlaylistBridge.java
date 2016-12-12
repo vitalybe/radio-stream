@@ -8,24 +8,12 @@ import com.facebook.react.bridge.WritableNativeMap;
  * Created by vitaly on 27/11/2016.
  */
 public class PlaylistBridge {
-    private final String fieldName = "name";
-
-    private final WritableMap mBackingMap;
-
-    public PlaylistBridge() {
-        mBackingMap = Arguments.createMap();
-    }
+    public String name;
 
     public WritableMap asMap() {
-        return mBackingMap;
-    }
+        WritableMap map = Arguments.createMap();
+        map.putString("name", name);
 
-    public String getName() {
-        return mBackingMap.getString(fieldName);
+        return map;
     }
-
-    public void setName(String value) {
-        mBackingMap.putString(fieldName, value);
-    }
-
 }

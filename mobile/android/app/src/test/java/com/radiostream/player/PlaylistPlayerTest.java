@@ -56,11 +56,11 @@ public class PlaylistPlayerTest {
         Utils.mockAndroidStatics();
 
         final SongBridge dummyFirstSongBridge = new SongBridge();
-        dummyFirstSongBridge.setTitle("mockFirstSong");
+        dummyFirstSongBridge.title = "mockFirstSong";
         when(mockFirstSong.toBridgeObject()).thenReturn(dummyFirstSongBridge);
 
         final SongBridge dummySecondSongBridge = new SongBridge();
-        dummyFirstSongBridge.setTitle("mockFirstSong");
+        dummyFirstSongBridge.title = "mockFirstSong";
         when(mockSecondSong.toBridgeObject()).thenReturn(dummySecondSongBridge);
 
         when(mockFirstSong.preload()).thenReturn(resolvedPromise(mockFirstSong));
@@ -77,7 +77,7 @@ public class PlaylistPlayerTest {
         when(mockPlaylist.isCurrentSong(mockFirstSong)).thenReturn(true);
 
         final PlaylistBridge dummyPlaylistBridge = new PlaylistBridge();
-        dummyPlaylistBridge.setName("X");
+        dummyPlaylistBridge.name = "X";
         when(mockPlaylist.toBridgeObject()).thenReturn(dummyPlaylistBridge);
     }
 
@@ -94,12 +94,12 @@ public class PlaylistPlayerTest {
         final List<PlaylistPlayer> bridges = captor.getAllValues();
 
         final PlaylistPlayerBridge loadingStartedState = bridges.get(0).toBridgeObject();
-        assertEquals(true, loadingStartedState.getIsLoading());
-        assertNull(loadingStartedState.getSong());
+        assertEquals(true, loadingStartedState.isLoading);
+        assertNull(loadingStartedState.songBridge);
 
         final PlaylistPlayerBridge songPlayingState = bridges.get(2).toBridgeObject();
-        assertEquals(false, songPlayingState.getIsLoading());
-        assertNotNull(songPlayingState.getSong());
+        assertEquals(false, loadingStartedState.isLoading);
+        assertNotNull(loadingStartedState.songBridge);
 
     }
 
