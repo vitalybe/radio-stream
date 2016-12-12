@@ -95,16 +95,17 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
 
     @Override
     public void onHostResume() {
+        Timber.i("function start");
+
         Activity activity = this.getCurrentActivity();
         Timber.i("activity: %s", activity.toString());
 
-        Intent musicServiceIntent = new Intent(activity, PlayerService.class);
-        activity.bindService(musicServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-        activity.startService(musicServiceIntent);
+        activity.bindService(new Intent(activity, PlayerService.class), mServiceConnection, BIND_AUTO_CREATE);
     }
 
     @Override
     public void onHostPause() {
+        Timber.i("function start");
 
         this.getCurrentActivity().unbindService(mServiceConnection);
     }
@@ -112,6 +113,7 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     @ReactMethod
     @Override
     public void onHostDestroy() {
+        Timber.i("function start");
 
     }
 
@@ -182,7 +184,7 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
             PlayerBridge bridge = mPlayerService.getPlayer().toBridgeObject();
             promise.resolve(bridge.asMap());
         } catch (Exception e) {
-            Timber.e(e, "function failed");
+            Timber.e(e, "");
             promise.reject(e);
         }
     }

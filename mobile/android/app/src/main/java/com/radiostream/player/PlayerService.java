@@ -1,13 +1,12 @@
 package com.radiostream.player;
 
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
 
 import com.radiostream.MainActivity;
@@ -19,6 +18,11 @@ import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 import com.radiostream.javascript.bridge.PlaylistPlayerEventsEmitter;
 import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.javascript.proxy.PlayerJsProxy;
+import com.radiostream.util.SetTimeout;
+
+import org.jdeferred.DoneCallback;
+
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -29,36 +33,67 @@ import timber.log.Timber;
 @DebugLog
 public class PlayerService extends Service {
 
-    private final int NOTIFICATION_ID = 1;
+    private boolean mServiceAlive = true;
+
+    private final int mStopPausedServiceAfterMs = 5 * 1000;
+    private final int mStopPausedServiceRetryAfterMs = 5 * 1000;
+
+    private final int mNotificationId = 1;
+    private final String mParamExit = "mParamExit";
 
     private final PlayerServiceBinder mBinder = new PlayerServiceBinder();
-    private final String PARAM_EXIT = "PARAM_EXIT";
-
     @Inject
     Player mPlayer;
-
     @Inject
     PlaylistPlayerEventsEmitter mPlaylistPlayerEventsEmitter;
+    @Inject
+    SetTimeout mSetTimeout;
+
+
+    private Date mPausedDate = null;
     private PlaylistPlayerEventsEmitter.EventCallback onPlaylistPlayerEvent = new PlaylistPlayerEventsEmitter.EventCallback() {
         @Override
         public void onEvent(PlaylistPlayerBridge playlistPlayerBridge) {
-            Timber.i("function start");
+            Timber.i("onPlaylistPlayerEvent - function start");
 
-            if (playlistPlayerBridge != null && playlistPlayerBridge.songBridge != null) {
-                Timber.i("showing notification for event");
+            if (playlistPlayerBridge != null) {
+                if (playlistPlayerBridge.isLoading) {
+                    showLoadingNotification();
+                } else if (playlistPlayerBridge.isPlaying) {
+                    showSongNotification(playlistPlayerBridge.songBridge);
+                }
 
-                final SongBridge currentSong = playlistPlayerBridge.songBridge;
-                PlayerService.this.showServiceNotification(currentSong.title, currentSong.artist);
+                if (playlistPlayerBridge.isPlaying || playlistPlayerBridge.isLoading) {
+                    mPausedDate = null;
+                    Timber.i("player unpaused");
+                } else if (mPausedDate == null) {
+                    mPausedDate = new Date();
+                    Timber.i("player paused on: %s", mPausedDate);
+                }
             }
         }
     };
+
+    private void stopService() {
+        Timber.i("function start");
+        stopSelf();
+        stopForeground(true);
+    }
+
+    private void showSongNotification(SongBridge currentSong) {
+        Timber.i("function start - show song notification for: %s - %s", currentSong.title, currentSong.artist);
+        showServiceNotification(currentSong.title, currentSong.artist, true);
+    }
+
+    private void showLoadingNotification() {
+        Timber.i("function start - show loading notification");
+        showServiceNotification("Radio Stream", "Loading...", false);
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         Timber.i("function start");
-
-        // showServiceNotification("Radio Stream", "Loading...");
 
         PlayerServiceComponent component = DaggerPlayerServiceComponent.builder()
             .jsProxyComponent(PlayerJsProxy.JsProxyComponent())
@@ -66,10 +101,46 @@ public class PlayerService extends Service {
             .build();
 
         component.inject(this);
+
         mPlaylistPlayerEventsEmitter.subscribe(onPlaylistPlayerEvent);
+        scheduleStopSelfOnPause();
     }
 
-    private void showServiceNotification(String title, String contentText) {
+    private void scheduleStopSelfOnPause() {
+        Timber.i("function start");
+        Timber.i("service hash: %h", PlayerService.this);
+
+        if (mPausedDate != null) {
+            final long currentTime = new Date().getTime();
+            final long timePaused = currentTime - mPausedDate.getTime();
+            Timber.i("time in paused state: %dms out of %dms", timePaused, mStopPausedServiceAfterMs);
+
+            if (mPausedDate != null && timePaused > mStopPausedServiceAfterMs) {
+                Timber.i("stopping service");
+                mPausedDate = null;
+                stopService();
+            } else {
+                Timber.i("not enough time has passed in paused mode");
+            }
+        } else {
+            Timber.i("currently not paused");
+        }
+
+        // We're retrying even after stopping a service because a stopped service might still be bound to activity
+        if(mServiceAlive) {
+            Timber.i("sleeping and retrying in %dms...", mStopPausedServiceRetryAfterMs);
+            mSetTimeout.run(mStopPausedServiceRetryAfterMs).then(new DoneCallback<Void>() {
+                @Override
+                public void onDone(Void result) {
+                    scheduleStopSelfOnPause();
+                }
+            });
+        } else {
+            Timber.i("service is dead - will not retry again");
+        }
+    }
+
+    private void showServiceNotification(String title, String contentText, boolean isHeadsUp) {
         Timber.i("function start");
 
         // Open main UI activity
@@ -78,7 +149,7 @@ public class PlayerService extends Service {
 
         // Stop intent
         Intent stopIntent = new Intent(this, PlayerService.class);
-        stopIntent.putExtra(PARAM_EXIT, true);
+        stopIntent.putExtra(mParamExit, true);
         PendingIntent stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplication().getApplicationContext());
@@ -87,10 +158,14 @@ public class PlayerService extends Service {
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(activityPendingIntent)
-            .setVibrate(new long[0]) // required for heads-up notification
             .addAction(R.drawable.image_stop, "Stop", stopPendingIntent);
 
-        startForeground(NOTIFICATION_ID, mBuilder.build());
+        if (isHeadsUp) {
+            mBuilder.setVibrate(new long[0]);
+        }
+
+        this.startService(new Intent(this, PlayerService.class));
+        startForeground(mNotificationId, mBuilder.build());
     }
 
     public Player getPlayer() {
@@ -100,7 +175,7 @@ public class PlayerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            boolean toExit = intent.getBooleanExtra(PARAM_EXIT, false);
+            boolean toExit = intent.getBooleanExtra(mParamExit, false);
             if (toExit) {
                 stopForeground(true);
                 stopSelf();
@@ -112,9 +187,15 @@ public class PlayerService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        Timber.i("function start");
 
+        super.onDestroy();
         mPlayer.close();
+
+        Timber.i("stopping activity");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(MainActivity.ACTION_STOP_MUSIC_ACTIVITY));
+
+        mServiceAlive = false;
     }
 
     @Nullable

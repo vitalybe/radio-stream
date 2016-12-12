@@ -30,7 +30,7 @@ import timber.log.Timber;
 public class Song {
 
     public static final int markPlayedAfterMs = 30000;
-    public static final int markPlayedRetryMs = 5000;
+    public static final int markPlayedRetryMs = 15000;
 
     private final String mArtist;
     private final String mAlbum;
