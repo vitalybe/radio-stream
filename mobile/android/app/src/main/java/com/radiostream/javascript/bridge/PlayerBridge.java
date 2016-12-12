@@ -10,9 +10,11 @@ import com.radiostream.player.PlaylistPlayer;
 public class PlayerBridge {
 
     public PlaylistPlayerBridge playlistPlayerBridge;
+    public int id;
 
     public WritableMap asMap() {
         WritableMap map = Arguments.createMap();
+        map.putInt("id", id);
         map.putMap("playlistPlayer", playlistPlayerBridge != null ? playlistPlayerBridge.asMap() : null);
 
         return map;

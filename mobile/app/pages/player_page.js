@@ -23,7 +23,7 @@ export default class PlayerPage extends Component {
     let logger = loggerCreator("componentWillMount", moduleLogger);
     logger.info(`start playlist: ${this.props.playlistName}`);
 
-    this.playlistChosen = false;
+    this.playerId = null;
 
     this.state = {
       isLoading: true,
@@ -74,13 +74,18 @@ export default class PlayerPage extends Component {
       return playerProxy.getPlayerStatus();
     }).then(status => {
       logger.info(`got status: ${JSON.stringify(status)}`);
-      logger.info(`this.playlistChosen: ${this.playlistChosen}`);
 
       var playlistPlayer = status.playlistPlayer;
 
-      if (!playlistPlayer && this.playlistChosen) {
-        logger.info(`player service restarted`);
+      if (this.playerId == null) {
+        this.playerId = status.id;
+        logger.info(`player id was not set. setting to ${this.playerId}`);
+      }
+
+      if (this.playerId != status.id) {
+        logger.info(`player id changed - service restarted: ${this.playerId} != ${status.id}`);
         this.props.navigator.navigateToPlaylistCollection();
+        this.playerId = status.id;
       } else if (playlistPlayer && playlistPlayer.isPlaying && playlistPlayer.playlist.name == this.props.playlistName) {
         logger.info(`playing existing playlist`);
         this.onPlaylistPlayerStatus(playlistPlayer);
@@ -88,8 +93,6 @@ export default class PlayerPage extends Component {
         logger.info(`changing playlist to: ${this.props.playlistName}`);
         playerProxy.changePlaylist(this.props.playlistName);
         playerProxy.play();
-
-        this.playlistChosen = true;
       }
     });
   }

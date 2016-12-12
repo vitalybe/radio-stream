@@ -87,6 +87,7 @@ public class Player implements PlaylistControls {
     public PlayerBridge toBridgeObject() {
         PlayerBridge bridge = new PlayerBridge();
 
+        bridge.id = this.hashCode();
         if(mCurrentPlaylistPlayer != null) {
             bridge.playlistPlayerBridge = mCurrentPlaylistPlayer.toBridgeObject();
         }
