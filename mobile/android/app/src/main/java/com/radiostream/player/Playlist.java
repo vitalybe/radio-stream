@@ -100,4 +100,11 @@ public class Playlist {
         playlistBridge.name = mPlaylistName;
         return playlistBridge;
     }
+
+    public void close() {
+        Timber.i("closing all songs");
+        for(Song song : mSongs) {
+            song.close();
+        }
+    }
 }

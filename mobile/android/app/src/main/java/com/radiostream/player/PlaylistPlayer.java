@@ -243,6 +243,11 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             Timber.i("closing current song");
             getCurrentSong().close();
         }
+
+        if(mPlaylist != null) {
+            mPlaylist.close();
+            mPlaylist = null;
+        }
     }
 
     @Override

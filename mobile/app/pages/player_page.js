@@ -2,7 +2,7 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("player_page");
 
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableHighlight, Image, ActivityIndicator, DeviceEventEmitter, BackAndroid } from 'react-native';
+import { StyleSheet, View, TouchableHighlight, Image, ActivityIndicator, DeviceEventEmitter, BackAndroid, AppState } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import playerProxy from '../native_proxy/player_proxy'
@@ -19,9 +19,53 @@ export default class PlayerPage extends Component {
 
   PLAYLIST_PLAYER_STATUS_EVENT = "PLAYLIST_PLAYER_STATUS_EVENT";
 
+  resolveWhenPlayerAvailable() {
+    let logger = loggerCreator("resolveWhenPlayerAvailable", moduleLogger);
+    logger.info(`start`);
+
+    return playerProxy.isPlayerAvailable().then(isAvailable => {
+      if (!isAvailable) {
+        logger.info(`not available - retrying`);
+        return this.resolveWhenPlayerAvailable();
+      }
+    });
+  }
+
+  refreshStatus() {
+    let logger = loggerCreator("refreshStatus", moduleLogger);
+    logger.info(`start`);
+    
+    logger.info(`waiting for player to be available`);
+    this.resolveWhenPlayerAvailable().then(() => {
+      logger.info(`player available`);
+      return playerProxy.getPlayerStatus();  
+    }).then(status => {
+      logger.info(`got status: ${JSON.stringify(status)}`);
+      logger.info(`this.playlistChosen: ${this.playlistChosen}`);
+
+      var playlistPlayer = status.playlistPlayer;
+
+      if (!playlistPlayer && this.playlistChosen) {
+        logger.info(`player service restarted`);
+        this.props.navigator.navigateToPlaylistCollection();
+      } else if (playlistPlayer && playlistPlayer.isPlaying && playlistPlayer.playlist.name == this.props.playlistName) {
+        logger.info(`playing existing playlist`);
+        this.onPlaylistPlayerStatus(playlistPlayer);
+      } else {
+        logger.info(`changing playlist to: ${this.props.playlistName}`);
+        playerProxy.changePlaylist(this.props.playlistName);
+        playerProxy.play();
+
+        this.playlistChosen = true;
+      }
+    });
+  }
+
   componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
     logger.info(`start playlist: ${this.props.playlistName}`);
+
+    this.playlistChosen = false;
 
     this.state = {
       isLoading: true,
@@ -40,26 +84,23 @@ export default class PlayerPage extends Component {
 
     DeviceEventEmitter.addListener(this.PLAYLIST_PLAYER_STATUS_EVENT, event => this.onPlaylistPlayerStatus(event));
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
+    AppState.addEventListener('change', currentAppState => this.onHandleAppStateChange(currentAppState));
 
-    logger.info(`getting status...`);
-    playerProxy.getPlayerStatus().then(status => {
-      logger.info(`got status: ${JSON.stringify(status)}`);
-
-      var playlistPlayer = status.playlistPlayer;
-
-      if (playlistPlayer && playlistPlayer.isPlaying && playlistPlayer.playlist.name == this.props.playlistName) {
-        logger.info(`playing existing playlist`);
-        this.onPlaylistPlayerStatus(playlistPlayer);
-      } else {
-        logger.info(`changing playlist to: ${this.props.playlistName}`);
-        playerProxy.changePlaylist(this.props.playlistName);
-        playerProxy.play();
-      }
-    });
+    this.refreshStatus();
   }
 
   componentWillUnmount() {
     DeviceEventEmitter.removeAllListeners(this.PLAYLIST_PLAYER_STATUS_EVENT);
+    AppState.removeEventListener('change', this.onHandleAppStateChange());
+  }
+
+  onHandleAppStateChange(currentAppState) {
+    let logger = loggerCreator("onHandleAppStateChange", moduleLogger);
+    logger.info(`start: ${currentAppState}`);
+
+    if (currentAppState === 'active') {
+      this.refreshStatus();
+    }
   }
 
   onPressPlayPause() {

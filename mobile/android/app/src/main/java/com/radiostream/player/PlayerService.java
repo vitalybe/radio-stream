@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
 
 import com.radiostream.MainActivity;
@@ -102,13 +101,13 @@ public class PlayerService extends Service {
 
         component.inject(this);
 
+        Timber.i("player: %h", this.mPlayer);
         mPlaylistPlayerEventsEmitter.subscribe(onPlaylistPlayerEvent);
         scheduleStopSelfOnPause();
     }
 
     private void scheduleStopSelfOnPause() {
         Timber.i("function start");
-        Timber.i("service hash: %h", PlayerService.this);
 
         if (mPausedDate != null) {
             final long currentTime = new Date().getTime();
@@ -191,9 +190,7 @@ public class PlayerService extends Service {
 
         super.onDestroy();
         mPlayer.close();
-
-        Timber.i("stopping activity");
-        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(MainActivity.ACTION_STOP_MUSIC_ACTIVITY));
+        mPlayer = null;
 
         mServiceAlive = false;
     }

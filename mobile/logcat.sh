@@ -20,4 +20,6 @@ pidcat com.radiostream \
 -i SecWifiDisplayUtil \
 -i libEGL \
 -i Zygote \
--i SELinux
+-i SELinux \
+-i System.out \
+-i MediaHTTPConnection

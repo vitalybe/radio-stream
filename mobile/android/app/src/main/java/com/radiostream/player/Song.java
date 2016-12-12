@@ -242,13 +242,16 @@ public class Song {
 
     public void close() {
         Timber.i("function start: %s", this.toString());
+        if(mMediaPlayer != null) {
+            pause();
 
-        pause();
-
-        Timber.i("resetting and releasing the media player");
-        mMediaPlayer.reset();
-        mMediaPlayer.release();
-        mMediaPlayer = null;
+            Timber.i("resetting and releasing the media player");
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        } else {
+            Timber.i("already closed");
+        }
     }
 
     public boolean isPlaying() {
