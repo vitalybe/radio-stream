@@ -19,48 +19,6 @@ export default class PlayerPage extends Component {
 
   PLAYLIST_PLAYER_STATUS_EVENT = "PLAYLIST_PLAYER_STATUS_EVENT";
 
-  resolveWhenPlayerAvailable() {
-    let logger = loggerCreator("resolveWhenPlayerAvailable", moduleLogger);
-    logger.info(`start`);
-
-    return playerProxy.isPlayerAvailable().then(isAvailable => {
-      if (!isAvailable) {
-        logger.info(`not available - retrying`);
-        return this.resolveWhenPlayerAvailable();
-      }
-    });
-  }
-
-  refreshStatus() {
-    let logger = loggerCreator("refreshStatus", moduleLogger);
-    logger.info(`start`);
-    
-    logger.info(`waiting for player to be available`);
-    this.resolveWhenPlayerAvailable().then(() => {
-      logger.info(`player available`);
-      return playerProxy.getPlayerStatus();  
-    }).then(status => {
-      logger.info(`got status: ${JSON.stringify(status)}`);
-      logger.info(`this.playlistChosen: ${this.playlistChosen}`);
-
-      var playlistPlayer = status.playlistPlayer;
-
-      if (!playlistPlayer && this.playlistChosen) {
-        logger.info(`player service restarted`);
-        this.props.navigator.navigateToPlaylistCollection();
-      } else if (playlistPlayer && playlistPlayer.isPlaying && playlistPlayer.playlist.name == this.props.playlistName) {
-        logger.info(`playing existing playlist`);
-        this.onPlaylistPlayerStatus(playlistPlayer);
-      } else {
-        logger.info(`changing playlist to: ${this.props.playlistName}`);
-        playerProxy.changePlaylist(this.props.playlistName);
-        playerProxy.play();
-
-        this.playlistChosen = true;
-      }
-    });
-  }
-
   componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
     logger.info(`start playlist: ${this.props.playlistName}`);
@@ -92,6 +50,48 @@ export default class PlayerPage extends Component {
   componentWillUnmount() {
     DeviceEventEmitter.removeAllListeners(this.PLAYLIST_PLAYER_STATUS_EVENT);
     AppState.removeEventListener('change', this.onHandleAppStateChange());
+  }
+
+  resolveWhenPlayerAvailable() {
+    let logger = loggerCreator("resolveWhenPlayerAvailable", moduleLogger);
+    logger.info(`start`);
+
+    return playerProxy.isPlayerAvailable().then(isAvailable => {
+      if (!isAvailable) {
+        logger.info(`not available - retrying`);
+        return this.resolveWhenPlayerAvailable();
+      }
+    });
+  }
+
+  refreshStatus() {
+    let logger = loggerCreator("refreshStatus", moduleLogger);
+    logger.info(`start`);
+
+    logger.info(`waiting for player to be available`);
+    this.resolveWhenPlayerAvailable().then(() => {
+      logger.info(`player available`);
+      return playerProxy.getPlayerStatus();
+    }).then(status => {
+      logger.info(`got status: ${JSON.stringify(status)}`);
+      logger.info(`this.playlistChosen: ${this.playlistChosen}`);
+
+      var playlistPlayer = status.playlistPlayer;
+
+      if (!playlistPlayer && this.playlistChosen) {
+        logger.info(`player service restarted`);
+        this.props.navigator.navigateToPlaylistCollection();
+      } else if (playlistPlayer && playlistPlayer.isPlaying && playlistPlayer.playlist.name == this.props.playlistName) {
+        logger.info(`playing existing playlist`);
+        this.onPlaylistPlayerStatus(playlistPlayer);
+      } else {
+        logger.info(`changing playlist to: ${this.props.playlistName}`);
+        playerProxy.changePlaylist(this.props.playlistName);
+        playerProxy.play();
+
+        this.playlistChosen = true;
+      }
+    });
   }
 
   onHandleAppStateChange(currentAppState) {
