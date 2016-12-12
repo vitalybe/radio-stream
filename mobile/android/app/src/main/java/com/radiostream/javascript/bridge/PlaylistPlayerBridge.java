@@ -4,6 +4,8 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
+import com.radiostream.player.Playlist;
+import com.radiostream.player.Song;
 
 /**
  * Created by vitaly on 27/11/2016.
@@ -47,17 +49,20 @@ public class PlaylistPlayerBridge {
         return mBackingMap.getMap(fieldPlaylist);
     }
 
-    public void setPlaylist(PlaylistBridge value) {
+    public void setPlaylist(Playlist value) {
 
-        mBackingMap.putMap(fieldPlaylist, value.asMap());
+        mBackingMap.putMap(fieldPlaylist, value.toBridgeObject().asMap());
     }
 
     public ReadableMap getSong() {
         return mBackingMap.getMap(fieldSong);
     }
 
-    public void setSong(SongBridge song) {
-        mBackingMap.putMap(fieldSong, song.asMap());
+    public void setSong(Song song) {
+        mBackingMap.putMap(fieldSong, null);
+        if(song != null) {
+            mBackingMap.putMap(fieldSong, song.toBridgeObject().asMap());
+        }
     }
 
     public void setLoadingError(Exception loadingError) {

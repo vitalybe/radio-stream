@@ -9,10 +9,15 @@ import PlaylistCollectionPage from './pages/playlist_collection_page'
 import PlayerPage from './pages/player_page'
 import Navigator from  './stores/navigator'
 
+import playerProxy from './native_proxy/player_proxy'
+
 @observer
 export default class RadioStream extends Component {
 
   componentWillMount() {
+    let logger = loggerCreator("componentWillMount", moduleLogger);
+    logger.info(`start`);
+
     this.navigator = new Navigator();
   }
 

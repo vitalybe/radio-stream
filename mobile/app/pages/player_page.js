@@ -17,11 +17,11 @@ import { getArtistImage } from '../utils/backend_lastfm_api'
 
 export default class PlayerPage extends Component {
 
-  PLAYER_STATUS_EVENT = "PLAYER_STATUS_EVENT";
+  PLAYLIST_PLAYER_STATUS_EVENT = "PLAYLIST_PLAYER_STATUS_EVENT";
 
   componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
-    logger.info(`start`);
+    logger.info(`start playlist: ${this.props.playlistName}`);
 
     this.state = {
       isLoading: true,
@@ -38,15 +38,28 @@ export default class PlayerPage extends Component {
       }
     };
 
-    DeviceEventEmitter.addListener(this.PLAYER_STATUS_EVENT, event => this.onPlayerEvent(event));
+    DeviceEventEmitter.addListener(this.PLAYLIST_PLAYER_STATUS_EVENT, event => this.onPlaylistPlayerStatus(event));
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
 
-    playerProxy.changePlaylist(this.props.playlistName);
-    playerProxy.play();
+    logger.info(`getting status...`);
+    playerProxy.getPlayerStatus().then(status => {
+      logger.info(`got status: ${JSON.stringify(status)}`);
+
+      var playlistPlayer = status.playlistPlayer;
+
+      if (playlistPlayer && playlistPlayer.isPlaying && playlistPlayer.playlist.name == this.props.playlistName) {
+        logger.info(`playing existing playlist`);
+        this.onPlaylistPlayerStatus(playlistPlayer);
+      } else {
+        logger.info(`changing playlist to: ${this.props.playlistName}`);
+        playerProxy.changePlaylist(this.props.playlistName);
+        playerProxy.play();
+      }
+    });
   }
 
   componentWillUnmount() {
-    DeviceEventEmitter.removeAllListeners(this.PLAYER_STATUS_EVENT);
+    DeviceEventEmitter.removeAllListeners(this.PLAYLIST_PLAYER_STATUS_EVENT);
   }
 
   onPressPlayPause() {
@@ -58,40 +71,41 @@ export default class PlayerPage extends Component {
   }
 
   onPressHardwareBack() {
-      let logger = loggerCreator("hardwareBackPress", moduleLogger);
-      logger.info(`start`);
-      this.props.navigator.navigateToPlaylistCollection();
-      return true;
+    let logger = loggerCreator("hardwareBackPress", moduleLogger);
+    logger.info(`start`);
+    playerProxy.pause();
+    this.props.navigator.navigateToPlaylistCollection();
+    return true;
   }
 
-  onPlayerEvent(event) {
-    let logger = loggerCreator("onPlayerEvent", moduleLogger);
-    logger.info(`got event: ${JSON.stringify(event)}`);
-    event.song = event.song || {};
+  onPlaylistPlayerStatus(status) {
+    let logger = loggerCreator("onPlaylistPlayerStatus", moduleLogger);
+    logger.info(`got event: ${JSON.stringify(status)}`);
+    status.song = status.song || {};
 
-    // sample event: {"song":{"title":"Strangelove","album":"Music For the Masses","artist":"Depeche Mode"},
+    // sample status: {"song":{"title":"Strangelove","album":"Music For the Masses","artist":"Depeche Mode"},
     //                "playlist":{"name":"Peaceful"},"isPlaying":false,"isLoading":true}
 
 
-    if (event.song.artist && event.song.artist !== this.state.song.artist) {
-      logger.info(`artist changed from '${this.state.song.artist}' to '${event.song.artist}' - reloading album cover`);
+    if (status.song.artist && status.song.artist !== this.state.song.artist) {
+      logger.info(`artist changed from '${this.state.song.artist}' to '${status.song.artist}' - reloading album cover`);
 
       this.setState({song: {...this.state.song, albumArtUri: null}});
-      getArtistImage(event.song.artist).then(imageUri => {
+      getArtistImage(status.song.artist).then(imageUri => {
         logger.info(`got album art uri: ${imageUri}`);
         this.setState({song: {...this.state.song, albumArtUri: imageUri}});
       })
     }
 
     this.setState({
-      isLoading: event.isLoading,
-      loadingError: event.loadingError,
-      isPlaying: event.isPlaying,
+      isLoading: status.isLoading,
+      loadingError: status.loadingError,
+      isPlaying: status.isPlaying,
       song: {
         ...this.state.song,
-        artist: event.song.artist,
-        title: event.song.title,
-        album: event.song.album,
+        artist: status.song.artist,
+        title: status.song.title,
+        album: status.song.album,
       }
     });
   }
@@ -107,12 +121,12 @@ export default class PlayerPage extends Component {
     }
 
     let loadingStatus = "Loading";
-    if(this.state.song.title) {
+    if (this.state.song.title) {
       loadingStatus = `${loadingStatus}: ${this.state.song.artist} - ${this.state.song.title}`
     }
 
     let loadingError = "";
-    if(this.state.loadingError) {
+    if (this.state.loadingError) {
       loadingError = `Error occured, retrying: ${this.state.loadingError}`
     }
 

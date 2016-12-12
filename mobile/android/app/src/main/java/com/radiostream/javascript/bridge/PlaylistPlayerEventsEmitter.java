@@ -10,19 +10,19 @@ import javax.inject.Singleton;
 import timber.log.Timber;
 
 @Singleton
-public class PlayerEventsEmitter {
+public class PlaylistPlayerEventsEmitter {
 
     private ReactContext mContext;
-    private final String playerStatusEvent = "PLAYER_STATUS_EVENT";
+    private final String playlistPlayerStatusEvent = "PLAYLIST_PLAYER_STATUS_EVENT";
 
     @Inject
-    public PlayerEventsEmitter(ReactContext context) {
-        Timber.i("creating new instance of PlayerEventsEmitter (%h) with reactContext: %h", this, context);
+    public PlaylistPlayerEventsEmitter(ReactContext context) {
+        Timber.i("creating new instance of PlaylistPlayerEventsEmitter (%h) with reactContext: %h", this, context);
         mContext = context;
     }
 
-    public void sendPlayerStatus(PlaylistPlayerBridge bridge) {
-        send("PLAYER_STATUS_EVENT", bridge.asMap());
+    public void sendPlaylistPlayerStatus(PlaylistPlayerBridge bridge) {
+        send(playlistPlayerStatusEvent, bridge.asMap());
     }
 
     private void send(String event, Object params) {

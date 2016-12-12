@@ -1,5 +1,6 @@
 package com.radiostream.player;
 
+import com.radiostream.javascript.bridge.PlayerBridge;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 
 import org.jdeferred.Promise;
@@ -83,11 +84,10 @@ public class Player implements PlaylistControls {
         }
     }
 
-    public PlaylistPlayerBridge toBridgeObject() {
-        if(mCurrentPlaylistPlayer != null) {
-            return mCurrentPlaylistPlayer.toBridgeObject();
-        } else {
-            return null;
-        }
+    public PlayerBridge toBridgeObject() {
+        PlayerBridge bridge = new PlayerBridge();
+        bridge.setPlaylistPlayer(mCurrentPlaylistPlayer);
+
+        return bridge;
     }
 }

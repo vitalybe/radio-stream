@@ -1,6 +1,6 @@
 package com.radiostream.player;
 
-import com.radiostream.javascript.bridge.PlayerEventsEmitter;
+import com.radiostream.javascript.bridge.PlaylistPlayerEventsEmitter;
 import com.radiostream.util.SetTimeout;
 
 import javax.inject.Inject;
@@ -12,11 +12,11 @@ import javax.inject.Inject;
 public class PlaylistPlayerFactory {
 
     private PlaylistFactory mPlaylistFactory;
-    private PlayerEventsEmitter mPlayerEventsEmitter;
+    private PlaylistPlayerEventsEmitter mPlayerEventsEmitter;
     private SetTimeout mSetTimeout;
 
     @Inject
-    public PlaylistPlayerFactory(PlaylistFactory playlistFactory, PlayerEventsEmitter playerEventsEmitter, SetTimeout setTimeout) {
+    public PlaylistPlayerFactory(PlaylistFactory playlistFactory, PlaylistPlayerEventsEmitter playerEventsEmitter, SetTimeout setTimeout) {
 
         mPlaylistFactory = playlistFactory;
         mPlayerEventsEmitter = playerEventsEmitter;

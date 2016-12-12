@@ -1,7 +1,7 @@
  package com.radiostream.player;
 
 import com.facebook.react.bridge.Arguments;
-import com.radiostream.javascript.bridge.PlayerEventsEmitter;
+import com.radiostream.javascript.bridge.PlaylistPlayerEventsEmitter;
 import com.radiostream.javascript.bridge.PlaylistBridge;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 import com.radiostream.javascript.bridge.SongBridge;
@@ -45,7 +45,7 @@ public class PlaylistPlayerTest {
     PlaylistFactory mockPlaylistFactory;
 
     @Mock
-    PlayerEventsEmitter mockPlayerEventsEmitter;
+    PlaylistPlayerEventsEmitter mockPlayerEventsEmitter;
 
     @Mock
     SetTimeout mockSetTimeout;
@@ -89,7 +89,7 @@ public class PlaylistPlayerTest {
         verify(mockFirstSong, times(1)).play();
 
         ArgumentCaptor<PlaylistPlayerBridge> captor = ArgumentCaptor.forClass(PlaylistPlayerBridge.class);
-        verify(mockPlayerEventsEmitter, times(4)).sendPlayerStatus(captor.capture());
+        verify(mockPlayerEventsEmitter, times(4)).sendPlaylistPlayerStatus(captor.capture());
 
         final List<PlaylistPlayerBridge> bridges = captor.getAllValues();
 

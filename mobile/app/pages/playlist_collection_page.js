@@ -16,7 +16,21 @@ export default class PlaylistCollectionPage extends Component {
     logger.info(`start`);
 
     this.state = {};
-    this.fetchPlaylists();
+
+    logger.info(`getting status...`);
+    playerProxy.getPlayerStatus().then(status => {
+      logger.info(`got status: ${JSON.stringify(status)}`);
+      var playlistPlayer = status.playlistPlayer;
+
+      if (playlistPlayer && playlistPlayer.isPlaying) {
+        logger.info(`player currently playing - navigating to player`);
+        this.props.navigator.navigateToPlayer(playlistPlayer.playlist.name)
+      } else {
+        this.fetchPlaylists();
+      }
+    });
+
+
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
   }
 

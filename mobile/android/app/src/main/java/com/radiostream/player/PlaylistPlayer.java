@@ -1,6 +1,6 @@
 package com.radiostream.player;
 
-import com.radiostream.javascript.bridge.PlayerEventsEmitter;
+import com.radiostream.javascript.bridge.PlaylistPlayerEventsEmitter;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 import com.radiostream.util.SetTimeout;
 
@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import timber.log.Timber;
 
 public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
-    private PlayerEventsEmitter mPlayerEventsEmitter;
+    private PlaylistPlayerEventsEmitter mPlayerEventsEmitter;
     private SetTimeout mSetTimeout;
     private Playlist mPlaylist;
     private Song mCurrentSong;
@@ -25,7 +25,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     private boolean mIsClosed = false;
 
     @Inject
-    public PlaylistPlayer(Playlist playlist, PlayerEventsEmitter playerEventsEmitter, SetTimeout setTimeout) {
+    public PlaylistPlayer(Playlist playlist, PlaylistPlayerEventsEmitter playerEventsEmitter, SetTimeout setTimeout) {
 
         mPlaylist = playlist;
         mPlayerEventsEmitter = playerEventsEmitter;
@@ -38,7 +38,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             Timber.i("value changed");
             mIsLoading = isLoading;
             mLoadingError = error;
-            mPlayerEventsEmitter.sendPlayerStatus(this.toBridgeObject());
+            mPlayerEventsEmitter.sendPlaylistPlayerStatus(this.toBridgeObject());
         } else {
             Timber.i("value didn't change");
         }
@@ -57,7 +57,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
             Timber.i("changing current song to: %s", value.toString());
             mCurrentSong = value;
-            mPlayerEventsEmitter.sendPlayerStatus(this.toBridgeObject());
+            mPlayerEventsEmitter.sendPlaylistPlayerStatus(this.toBridgeObject());
         }
     }
 
@@ -76,7 +76,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             getCurrentSong().subscribeToEvents(PlaylistPlayer.this);
             getCurrentSong().play();
 
-            mPlayerEventsEmitter.sendPlayerStatus(PlaylistPlayer.this.toBridgeObject());
+            mPlayerEventsEmitter.sendPlaylistPlayerStatus(PlaylistPlayer.this.toBridgeObject());
 
             promise = new DeferredObject<Song, Exception, Void>().resolve(getCurrentSong()).promise();
         } else {
@@ -102,7 +102,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         }
 
         getCurrentSong().pause();
-        mPlayerEventsEmitter.sendPlayerStatus(this.toBridgeObject());
+        mPlayerEventsEmitter.sendPlaylistPlayerStatus(this.toBridgeObject());
     }
 
     private boolean getIsPlaying() {
@@ -268,11 +268,8 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         bridge.setLoading(mIsLoading);
         bridge.setLoadingError(mLoadingError);
         bridge.setIsPlaying(getIsPlaying());
-        bridge.setPlaylist(mPlaylist.toBridgeObject());
-
-        if (getCurrentSong() != null) {
-            bridge.setSong(mCurrentSong.toBridgeObject());
-        }
+        bridge.setPlaylist(mPlaylist);
+        bridge.setSong(mCurrentSong);
 
         return bridge;
     }
