@@ -13,6 +13,8 @@ import com.radiostream.R;
 import com.radiostream.di.components.DaggerPlayerServiceComponent;
 import com.radiostream.di.components.PlayerServiceComponent;
 import com.radiostream.di.modules.ContextModule;
+import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
+import com.radiostream.javascript.bridge.PlaylistPlayerEventsEmitter;
 import com.radiostream.javascript.proxy.PlayerJsProxy;
 
 import javax.inject.Inject;
@@ -31,6 +33,15 @@ public class PlayerService extends Service {
     @Inject
     Player mPlayer;
 
+    @Inject
+    PlaylistPlayerEventsEmitter mPlaylistPlayerEventsEmitter;
+    private PlaylistPlayerEventsEmitter.EventCallback onPlaylistPlayerEvent = new PlaylistPlayerEventsEmitter.EventCallback() {
+        @Override
+        public void onEvent(PlaylistPlayerBridge bridge) {
+            mPlayer.
+        }
+    };
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -43,6 +54,7 @@ public class PlayerService extends Service {
             .build();
 
         component.inject(this);
+        mPlaylistPlayerEventsEmitter.subscribe(onPlaylistPlayerEvent);
     }
 
     private void showServiceNotification(String title, String contentText) {
@@ -60,7 +72,7 @@ public class PlayerService extends Service {
         mBuilder.setSmallIcon(R.drawable.image_note)
             .setContentTitle(title)
             .setContentText(contentText)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(activityPendingIntent)
             .addAction(R.drawable.image_stop, "Stop", stopPendingIntent);
 

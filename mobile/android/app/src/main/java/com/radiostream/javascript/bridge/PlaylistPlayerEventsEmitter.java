@@ -2,7 +2,6 @@ package com.radiostream.javascript.bridge;
 
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.radiostream.player.PlaylistPlayer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,6 +13,7 @@ public class PlaylistPlayerEventsEmitter {
 
     private ReactContext mContext;
     private final String playlistPlayerStatusEvent = "PLAYLIST_PLAYER_STATUS_EVENT";
+    private EventCallback mCallback;
 
     @Inject
     public PlaylistPlayerEventsEmitter(ReactContext context) {
@@ -22,10 +22,21 @@ public class PlaylistPlayerEventsEmitter {
     }
 
     public void sendPlaylistPlayerStatus(PlaylistPlayerBridge bridge) {
-        send(playlistPlayerStatusEvent, bridge.asMap());
+        sendToJavascript(playlistPlayerStatusEvent, bridge.asMap());
+        sendToSubscribers(bridge);
     }
 
-    private void send(String event, Object params) {
+    public void subscribe(EventCallback callback) {
+        mCallback = callback;
+    }
+
+    private void sendToSubscribers(PlaylistPlayerBridge bridge) {
+        if(mCallback != null) {
+            mCallback.onEvent(bridge);
+        }
+    }
+
+    private void sendToJavascript(String event, Object params) {
         Timber.i("function start - %s - %s", event, params.toString());
 
         if (mContext.hasActiveCatalystInstance()) {
@@ -37,4 +48,7 @@ public class PlaylistPlayerEventsEmitter {
         }
     }
 
+    public interface EventCallback {
+        void onEvent(PlaylistPlayerBridge bridge);
+    }
 }
