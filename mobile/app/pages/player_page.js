@@ -52,6 +52,11 @@ export default class PlayerPage extends Component {
     AppState.removeEventListener('change', this.onHandleAppStateChange());
   }
 
+  sleep(millisecond) {
+    return new Promise(resolve => setTimeout(resolve, millisecond)
+    )
+  }
+
   resolveWhenPlayerAvailable() {
     let logger = loggerCreator("resolveWhenPlayerAvailable", moduleLogger);
     logger.info(`start`);
@@ -59,7 +64,7 @@ export default class PlayerPage extends Component {
     return playerProxy.isPlayerAvailable().then(isAvailable => {
       if (!isAvailable) {
         logger.info(`not available - retrying`);
-        return this.resolveWhenPlayerAvailable();
+        return this.sleep(500).then(() => this.resolveWhenPlayerAvailable());
       }
     });
   }

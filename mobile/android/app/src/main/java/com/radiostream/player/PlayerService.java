@@ -34,8 +34,8 @@ public class PlayerService extends Service {
 
     private boolean mServiceAlive = true;
 
-    private final int mStopPausedServiceAfterMs = 5 * 1000;
-    private final int mStopPausedServiceRetryAfterMs = 5 * 1000;
+    private final int mStopPausedServiceAfterMs = 10 * 60 * 1000;
+    private final int mStopPausedServiceRetryAfterMs = 30 * 1000;
 
     private final int mNotificationId = 1;
     private final String mParamExit = "mParamExit";
@@ -156,8 +156,7 @@ public class PlayerService extends Service {
             .setContentTitle(title)
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setContentIntent(activityPendingIntent)
-            .addAction(R.drawable.image_stop, "Stop", stopPendingIntent);
+            .setContentIntent(activityPendingIntent);
 
         if (isHeadsUp) {
             mBuilder.setVibrate(new long[0]);
