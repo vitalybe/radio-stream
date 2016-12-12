@@ -16,6 +16,7 @@ export default class PlaylistCollectionPage extends Component {
     logger.info(`start`);
 
     this.state = {};
+    BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
 
     logger.info(`getting status...`);
     playerProxy.getPlayerStatus().then(status => {
@@ -29,9 +30,6 @@ export default class PlaylistCollectionPage extends Component {
         this.fetchPlaylists();
       }
     });
-
-
-    BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
   }
 
   fetchPlaylists() {
