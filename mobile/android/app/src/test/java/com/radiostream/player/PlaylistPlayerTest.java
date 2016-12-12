@@ -88,18 +88,18 @@ public class PlaylistPlayerTest {
 
         verify(mockFirstSong, times(1)).play();
 
-        ArgumentCaptor<PlaylistPlayer> captor = ArgumentCaptor.forClass(PlaylistPlayer.class);
+        ArgumentCaptor<PlaylistPlayerBridge> captor = ArgumentCaptor.forClass(PlaylistPlayerBridge.class);
         verify(mockPlayerEventsEmitter, times(4)).sendPlaylistPlayerStatus(captor.capture());
 
-        final List<PlaylistPlayer> bridges = captor.getAllValues();
+        final List<PlaylistPlayerBridge> bridges = captor.getAllValues();
 
-        final PlaylistPlayerBridge loadingStartedState = bridges.get(0).toBridgeObject();
+        final PlaylistPlayerBridge loadingStartedState = bridges.get(0);
         assertEquals(true, loadingStartedState.isLoading);
         assertNull(loadingStartedState.songBridge);
 
-        final PlaylistPlayerBridge songPlayingState = bridges.get(2).toBridgeObject();
-        assertEquals(false, loadingStartedState.isLoading);
-        assertNotNull(loadingStartedState.songBridge);
+        final PlaylistPlayerBridge songPlayingState = bridges.get(2);
+        assertEquals(false, songPlayingState.isLoading);
+        assertNotNull(songPlayingState.songBridge);
 
     }
 

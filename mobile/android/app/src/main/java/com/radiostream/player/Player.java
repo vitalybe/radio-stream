@@ -87,7 +87,9 @@ public class Player implements PlaylistControls {
     public PlayerBridge toBridgeObject() {
         PlayerBridge bridge = new PlayerBridge();
 
-        bridge.playlistPlayerBridge = mCurrentPlaylistPlayer.toBridgeObject();
+        if(mCurrentPlaylistPlayer != null) {
+            bridge.playlistPlayerBridge = mCurrentPlaylistPlayer.toBridgeObject();
+        }
 
         return bridge;
     }

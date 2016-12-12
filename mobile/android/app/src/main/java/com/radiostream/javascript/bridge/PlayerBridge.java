@@ -13,7 +13,7 @@ public class PlayerBridge {
 
     public WritableMap asMap() {
         WritableMap map = Arguments.createMap();
-        map.putMap("playlistPlayer", playlistPlayerBridge.asMap());
+        map.putMap("playlistPlayer", playlistPlayerBridge != null ? playlistPlayerBridge.asMap() : null);
 
         return map;
     }

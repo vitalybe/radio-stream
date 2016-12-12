@@ -17,6 +17,7 @@ import com.radiostream.di.components.PlayerServiceComponent;
 import com.radiostream.di.modules.ContextModule;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 import com.radiostream.javascript.bridge.PlaylistPlayerEventsEmitter;
+import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.javascript.proxy.PlayerJsProxy;
 
 import javax.inject.Inject;
@@ -40,14 +41,14 @@ public class PlayerService extends Service {
     PlaylistPlayerEventsEmitter mPlaylistPlayerEventsEmitter;
     private PlaylistPlayerEventsEmitter.EventCallback onPlaylistPlayerEvent = new PlaylistPlayerEventsEmitter.EventCallback() {
         @Override
-        public void onEvent(PlaylistPlayer playlistPlayer) {
+        public void onEvent(PlaylistPlayerBridge playlistPlayerBridge) {
             Timber.i("function start");
 
-            if (playlistPlayer != null && playlistPlayer.getCurrentSong() != null) {
+            if (playlistPlayerBridge != null && playlistPlayerBridge.songBridge != null) {
                 Timber.i("showing notification for event");
 
-                final Song currentSong = playlistPlayer.getCurrentSong();
-                PlayerService.this.showServiceNotification(currentSong.getTitle(), currentSong.getArtist());
+                final SongBridge currentSong = playlistPlayerBridge.songBridge;
+                PlayerService.this.showServiceNotification(currentSong.title, currentSong.artist);
             }
         }
     };

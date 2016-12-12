@@ -31,9 +31,9 @@ public class PlaylistPlayerEventsEmitter {
         mCallback = callback;
     }
 
-    private void sendToSubscribers(PlaylistPlayer playlistPlayer) {
+    private void sendToSubscribers(PlaylistPlayerBridge playlistPlayerBridge) {
         if(mCallback != null) {
-            mCallback.onEvent(playlistPlayer);
+            mCallback.onEvent(playlistPlayerBridge);
         }
     }
 
@@ -50,6 +50,6 @@ public class PlaylistPlayerEventsEmitter {
     }
 
     public interface EventCallback {
-        void onEvent(PlaylistPlayer playlistPlayer);
+        void onEvent(PlaylistPlayerBridge playlistPlayerBridge);
     }
 }
