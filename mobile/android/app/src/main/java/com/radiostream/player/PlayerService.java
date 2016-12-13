@@ -2,7 +2,12 @@ package com.radiostream.player;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -24,6 +29,7 @@ import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -47,6 +53,23 @@ public class PlayerService extends Service implements PlaylistControls {
     SetTimeout mSetTimeout;
     private boolean mServiceAlive = true;
     private Date mPausedDate = null;
+
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Timber.i("function start");
+            if(intent.getAction().equals(BluetoothDevice.ACTION_ACL_DISCONNECTED)) {
+                Timber.i("bluetooth disconnected");
+                BluetoothDevice btDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (btDevice.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.AUDIO_VIDEO) {
+                    Timber.i("pausing music due to bluetooth disconnection");
+                    mPlayer.pause();
+                }
+            }
+        }
+    };
+
     private PlaylistPlayerEventsEmitter.EventCallback onPlaylistPlayerEvent = new PlaylistPlayerEventsEmitter.EventCallback() {
         @Override
         public void onEvent(PlaylistPlayerBridge playlistPlayerBridge) {
@@ -86,7 +109,10 @@ public class PlayerService extends Service implements PlaylistControls {
 
         component.inject(this);
 
-        Timber.i("player: %h", this.mPlayer);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        registerReceiver(mReceiver, intentFilter);
+
         mPlaylistPlayerEventsEmitter.subscribe(onPlaylistPlayerEvent);
         scheduleStopSelfOnPause();
     }
@@ -168,11 +194,12 @@ public class PlayerService extends Service implements PlaylistControls {
     public void onDestroy() {
         Timber.i("function start");
 
-        super.onDestroy();
         mPlayer.close();
         mPlayer = null;
+        unregisterReceiver(mReceiver);
 
         mServiceAlive = false;
+        super.onDestroy();
     }
 
     @Nullable
