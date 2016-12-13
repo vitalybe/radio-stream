@@ -12,6 +12,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 
 import com.radiostream.MainActivity;
 import com.radiostream.R;
@@ -45,14 +47,17 @@ public class PlayerService extends Service implements PlaylistControls {
     private final int mNotificationId = 1;
     private final String mParamExit = "mParamExit";
     private final PlayerServiceBinder mBinder = new PlayerServiceBinder();
+
+    private boolean mServiceAlive = true;
+    private Date mPausedDate = null;
+    private boolean mPausedDuePhoneState = false;
+
     @Inject
     Player mPlayer;
     @Inject
     PlaylistPlayerEventsEmitter mPlaylistPlayerEventsEmitter;
     @Inject
     SetTimeout mSetTimeout;
-    private boolean mServiceAlive = true;
-    private Date mPausedDate = null;
 
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -67,6 +72,30 @@ public class PlayerService extends Service implements PlaylistControls {
                     mPlayer.pause();
                 }
             }
+        }
+    };
+
+    private PhoneStateListener phoneStateListener = new PhoneStateListener() {
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+            Timber.i("function start");
+            if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                Timber.i("telephone busy state: %d", state);
+                if(mPlayer.getIsPlaying()) {
+                    Timber.i("pausing due to telephone state");
+                    mPlayer.pause();
+                    mPausedDuePhoneState = true;
+                }
+            } else if(state == TelephonyManager.CALL_STATE_IDLE) {
+                Timber.i("telehpone idle state");
+                if(mPausedDuePhoneState) {
+                    Timber.i("resuming pause music");
+                    mPlayer.play();
+                    mPausedDuePhoneState = false;
+                }
+            }
+
+            super.onCallStateChanged(state, incomingNumber);
         }
     };
 
@@ -109,10 +138,18 @@ public class PlayerService extends Service implements PlaylistControls {
 
         component.inject(this);
 
+        Timber.i("registering to bluetooth events");
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         registerReceiver(mReceiver, intentFilter);
 
+        Timber.i("registering to telephony events");
+        TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        if(mgr != null) {
+            mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        }
+
+        Timber.i("registering to player events");
         mPlaylistPlayerEventsEmitter.subscribe(onPlaylistPlayerEvent);
         scheduleStopSelfOnPause();
     }
@@ -197,6 +234,11 @@ public class PlayerService extends Service implements PlaylistControls {
         mPlayer.close();
         mPlayer = null;
         unregisterReceiver(mReceiver);
+
+        TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        if(mgr != null) {
+            mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+        }
 
         mServiceAlive = false;
         super.onDestroy();

@@ -85,4 +85,16 @@ public class Player implements PlaylistControls {
 
         return bridge;
     }
+
+    public boolean getIsPlaying() {
+        Timber.i("function start");
+
+        if(mCurrentPlaylistPlayer != null) {
+            Timber.i("returning value based on current song, if any");
+            return mCurrentPlaylistPlayer.getIsPlaying();
+        } else {
+            Timber.i("no playlist selected - not playing");
+            return false;
+        }
+    }
 }

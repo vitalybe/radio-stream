@@ -105,7 +105,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         mPlayerEventsEmitter.sendPlaylistPlayerStatus(this.toBridgeObject());
     }
 
-    private boolean getIsPlaying() {
+    public boolean getIsPlaying() {
         if (getCurrentSong() == null) {
             return false;
         } else {
