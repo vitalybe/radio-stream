@@ -13,6 +13,7 @@ import com.radiostream.R;
 import com.radiostream.di.components.DaggerPlayerServiceComponent;
 import com.radiostream.di.components.PlayerServiceComponent;
 import com.radiostream.di.modules.ContextModule;
+import com.radiostream.javascript.bridge.PlayerBridge;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 import com.radiostream.javascript.bridge.PlaylistPlayerEventsEmitter;
 import com.radiostream.javascript.bridge.SongBridge;
@@ -20,6 +21,7 @@ import com.radiostream.javascript.proxy.PlayerJsProxy;
 import com.radiostream.util.SetTimeout;
 
 import org.jdeferred.DoneCallback;
+import org.jdeferred.Promise;
 
 import java.util.Date;
 
@@ -30,16 +32,12 @@ import timber.log.Timber;
 
 
 @DebugLog
-public class PlayerService extends Service {
-
-    private boolean mServiceAlive = true;
+public class PlayerService extends Service implements PlaylistControls {
 
     private final int mStopPausedServiceAfterMs = 10 * 60 * 1000;
     private final int mStopPausedServiceRetryAfterMs = 30 * 1000;
-
     private final int mNotificationId = 1;
     private final String mParamExit = "mParamExit";
-
     private final PlayerServiceBinder mBinder = new PlayerServiceBinder();
     @Inject
     Player mPlayer;
@@ -47,8 +45,7 @@ public class PlayerService extends Service {
     PlaylistPlayerEventsEmitter mPlaylistPlayerEventsEmitter;
     @Inject
     SetTimeout mSetTimeout;
-
-
+    private boolean mServiceAlive = true;
     private Date mPausedDate = null;
     private PlaylistPlayerEventsEmitter.EventCallback onPlaylistPlayerEvent = new PlaylistPlayerEventsEmitter.EventCallback() {
         @Override
@@ -57,36 +54,24 @@ public class PlayerService extends Service {
 
             if (playlistPlayerBridge != null) {
                 if (playlistPlayerBridge.isLoading) {
+                    Timber.i("showing loading notification");
                     showLoadingNotification();
                 } else if (playlistPlayerBridge.isPlaying) {
+                    Timber.i("showing song notification");
                     showSongNotification(playlistPlayerBridge.songBridge);
-                }
-
-                if (playlistPlayerBridge.isPlaying || playlistPlayerBridge.isLoading) {
-                    mPausedDate = null;
-                    Timber.i("player unpaused");
-                } else if (mPausedDate == null) {
-                    mPausedDate = new Date();
-                    Timber.i("player paused on: %s", mPausedDate);
                 }
             }
         }
     };
 
-    private void stopService() {
-        Timber.i("function start");
-        stopSelf();
-        stopForeground(true);
-    }
-
     private void showSongNotification(SongBridge currentSong) {
         Timber.i("function start - show song notification for: %s - %s", currentSong.title, currentSong.artist);
-        showServiceNotification(currentSong.title, currentSong.artist, true);
+        startWithNotificaiton(currentSong.title, currentSong.artist, true);
     }
 
     private void showLoadingNotification() {
         Timber.i("function start - show loading notification");
-        showServiceNotification("Radio Stream", "Loading...", false);
+        startWithNotificaiton("Radio Stream", "Loading...", false);
     }
 
     @Override
@@ -109,24 +94,24 @@ public class PlayerService extends Service {
     private void scheduleStopSelfOnPause() {
         Timber.i("function start");
 
-        if (mPausedDate != null) {
-            final long currentTime = new Date().getTime();
-            final long timePaused = currentTime - mPausedDate.getTime();
-            Timber.i("time in paused state: %dms out of %dms", timePaused, mStopPausedServiceAfterMs);
-
-            if (mPausedDate != null && timePaused > mStopPausedServiceAfterMs) {
-                Timber.i("stopping service");
-                mPausedDate = null;
-                stopService();
-            } else {
-                Timber.i("not enough time has passed in paused mode");
-            }
-        } else {
-            Timber.i("currently not paused");
-        }
-
         // We're retrying even after stopping a service because a stopped service might still be bound to activity
-        if(mServiceAlive) {
+        if (mServiceAlive) {
+            if (mPausedDate != null) {
+                final long currentTime = new Date().getTime();
+                final long timePaused = currentTime - mPausedDate.getTime();
+                Timber.i("time in paused state: %dms out of %dms", timePaused, mStopPausedServiceAfterMs);
+
+                if (mPausedDate != null && timePaused > mStopPausedServiceAfterMs) {
+                    Timber.i("stopping service");
+                    mPausedDate = null;
+                    stop();
+                } else {
+                    Timber.i("not enough time has passed in paused mode");
+                }
+            } else {
+                Timber.i("currently not paused");
+            }
+
             Timber.i("sleeping and retrying in %dms...", mStopPausedServiceRetryAfterMs);
             mSetTimeout.run(mStopPausedServiceRetryAfterMs).then(new DoneCallback<Void>() {
                 @Override
@@ -139,7 +124,7 @@ public class PlayerService extends Service {
         }
     }
 
-    private void showServiceNotification(String title, String contentText, boolean isHeadsUp) {
+    private void startWithNotificaiton(String title, String contentText, boolean isHeadsUp) {
         Timber.i("function start");
 
         // Open main UI activity
@@ -164,10 +149,6 @@ public class PlayerService extends Service {
 
         this.startService(new Intent(this, PlayerService.class));
         startForeground(mNotificationId, mBuilder.build());
-    }
-
-    public Player getPlayer() {
-        return mPlayer;
     }
 
     @Override
@@ -203,6 +184,39 @@ public class PlayerService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         return false;
+    }
+
+    @Override
+    public Promise<Song, Exception, Void> play() {
+        mPausedDate = null;
+        Timber.i("player unpaused");
+        return this.mPlayer.play();
+    }
+
+    @Override
+    public void pause() {
+        mPausedDate = new Date();
+        Timber.i("player paused on: %s", mPausedDate);
+        this.mPlayer.pause();
+    }
+
+    @Override
+    public void playNext() {
+        this.mPlayer.playNext();
+    }
+
+    public void changePlaylist(String playlistName) {
+        this.mPlayer.changePlaylist(playlistName);
+    }
+
+    public PlayerBridge getPlayerBridgeObject() {
+        return mPlayer.toBridgeObject();
+    }
+
+    public void stop() {
+        Timber.i("function start");
+        stopSelf();
+        stopForeground(true);
     }
 
     public class PlayerServiceBinder extends Binder {

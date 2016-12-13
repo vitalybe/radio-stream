@@ -1,3 +1,58 @@
 'use strict';
+import loggerCreator from '../utils/logger'
+var moduleLogger = loggerCreator("player_proxy");
+
 import { NativeModules } from 'react-native';
-module.exports = NativeModules.PlayerJsProxy;
+
+class PlayerProxy {
+
+  proxy = NativeModules.PlayerJsProxy;
+
+  _sleep(millisecond) {
+    return new Promise(resolve => setTimeout(resolve, millisecond)
+    )
+  }
+
+  _resolveWhenPlayerAvailable() {
+    let logger = loggerCreator("resolveWhenPlayerAvailable", moduleLogger);
+    logger.info(`start`);
+
+    return this.proxy.isPlayerAvailable().then(isAvailable => {
+      if (!isAvailable) {
+        logger.info(`not available - retrying`);
+        return this._sleep(500).then(() => this._resolveWhenPlayerAvailable());
+      }
+    });
+  }
+
+  fetchPlaylists() {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.fetchPlaylists());
+  }
+
+  changePlaylist(playlistName) {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.changePlaylist(playlistName));
+  }
+
+  play() {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.play());
+  }
+
+  pause() {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.pause());
+  }
+
+  playNext() {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.playNext());
+  }
+
+  getPlayerStatus() {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.getPlayerStatus());
+  }
+
+  stopPlayer() {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.stopPlayer());
+  }
+
+}
+
+export default new PlayerProxy();

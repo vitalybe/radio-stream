@@ -52,32 +52,12 @@ export default class PlayerPage extends Component {
     AppState.removeEventListener('change', this.onHandleAppStateChange());
   }
 
-  sleep(millisecond) {
-    return new Promise(resolve => setTimeout(resolve, millisecond)
-    )
-  }
-
-  resolveWhenPlayerAvailable() {
-    let logger = loggerCreator("resolveWhenPlayerAvailable", moduleLogger);
-    logger.info(`start`);
-
-    return playerProxy.isPlayerAvailable().then(isAvailable => {
-      if (!isAvailable) {
-        logger.info(`not available - retrying`);
-        return this.sleep(500).then(() => this.resolveWhenPlayerAvailable());
-      }
-    });
-  }
-
   refreshStatus() {
     let logger = loggerCreator("refreshStatus", moduleLogger);
     logger.info(`start`);
 
     logger.info(`waiting for player to be available`);
-    this.resolveWhenPlayerAvailable().then(() => {
-      logger.info(`player available`);
-      return playerProxy.getPlayerStatus();
-    }).then(status => {
+    return playerProxy.getPlayerStatus().then(status => {
       logger.info(`got status: ${JSON.stringify(status)}`);
 
       var playlistPlayer = status.playlistPlayer;
@@ -112,7 +92,17 @@ export default class PlayerPage extends Component {
   }
 
   onPressPlayPause() {
-    playerProxy.playPause();
+    let logger = loggerCreator("onPressPlayPause", moduleLogger);
+    logger.info(`start`);
+
+    if (this.state.isPlaying) {
+      logger.info(`pause`);
+      playerProxy.pause();
+    } else {
+      logger.info(`play`);
+      playerProxy.play();
+    }
+
   }
 
   onPressNext() {

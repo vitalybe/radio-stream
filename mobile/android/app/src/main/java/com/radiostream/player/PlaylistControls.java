@@ -10,7 +10,5 @@ public interface PlaylistControls {
 
     void pause();
 
-    void playPause();
-
     void playNext();
 }

@@ -45,6 +45,7 @@ export default class PlaylistCollectionPage extends Component {
   onPressHardwareBack() {
     let logger = loggerCreator("onPressHardwareBack", moduleLogger);
     logger.info(`start`);
+    playerProxy.stopPlayer();
 
     BackAndroid.exitApp();
     return true;

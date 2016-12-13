@@ -105,6 +105,7 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     public void onHostPause() {
         Timber.i("function start");
 
+        Timber.i("unbinding service");
         this.getCurrentActivity().unbindService(mServiceConnection);
         mPlayerService = null;
     }
@@ -148,7 +149,7 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     @ReactMethod
     public void changePlaylist(String playlistName) {
         try {
-            mPlayerService.getPlayer().changePlaylist(playlistName);
+            mPlayerService.changePlaylist(playlistName);
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -158,7 +159,7 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     @Override
     public org.jdeferred.Promise<Song, Exception, Void> play() {
         try {
-            mPlayerService.getPlayer().play();
+            mPlayerService.play();
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -170,17 +171,7 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     @Override
     public void pause() {
         try {
-            mPlayerService.getPlayer().pause();
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-    }
-
-    @ReactMethod
-    @Override
-    public void playPause() {
-        try {
-            mPlayerService.getPlayer().playPause();
+            mPlayerService.pause();
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -190,7 +181,7 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     @Override
     public void playNext() {
         try {
-            mPlayerService.getPlayer().playNext();
+            mPlayerService.playNext();
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -201,7 +192,7 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     public void getPlayerStatus(final Promise promise) {
         try {
             Timber.i("function start");
-            PlayerBridge bridge = mPlayerService.getPlayer().toBridgeObject();
+            PlayerBridge bridge = mPlayerService.getPlayerBridgeObject();
             promise.resolve(bridge.asMap());
         } catch (Exception e) {
             Timber.e(e);
@@ -211,6 +202,20 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
 
     @ReactMethod
     public void isPlayerAvailable(final Promise promise) {
-        promise.resolve(mPlayerService != null);
+        try {
+            promise.resolve(mPlayerService != null);
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+    }
+
+    @ReactMethod
+    public void stopPlayer() {
+        try {
+            Timber.i("stopping service");
+            mPlayerService.stop();
+        } catch (Exception e) {
+            Timber.e(e);
+        }
     }
 }

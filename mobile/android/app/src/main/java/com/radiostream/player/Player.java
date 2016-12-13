@@ -57,15 +57,6 @@ public class Player implements PlaylistControls {
     }
 
     @Override
-    public void playPause() {
-        if(mCurrentPlaylistPlayer == null) {
-            throw new IllegalStateException("playlist must be set");
-        }
-
-        mCurrentPlaylistPlayer.playPause();
-    }
-
-    @Override
     public void playNext() {
         Timber.i("function start");
 

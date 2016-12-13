@@ -114,19 +114,6 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     }
 
     @Override
-    public void playPause() {
-        if (mIsLoading) {
-            throw new IllegalStateException("no song was loaded yet");
-        }
-
-        if (this.getIsPlaying()) {
-            this.pause();
-        } else {
-            this.play();
-        }
-    }
-
-    @Override
     public void playNext() {
         Timber.i("function start");
         this.mPlaylist.nextSong();
