@@ -13,10 +13,12 @@ import android.media.session.PlaybackState;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.view.KeyEvent;
 
 import com.radiostream.MainActivity;
 import com.radiostream.R;
@@ -120,6 +122,34 @@ public class PlayerService extends Service implements PlaylistControls {
             }
         }
     };
+    
+    private MediaSession.Callback mMediaSessionCallback = new MediaSession.Callback() {
+
+        @Override
+        public boolean onMediaButtonEvent(@NonNull Intent mediaButtonIntent) {
+            Timber.i("function start");
+
+            KeyEvent ke = mediaButtonIntent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+            if (ke != null && ke.getAction() == KeyEvent.ACTION_DOWN) {
+                switch (ke.getKeyCode()) {
+                    case KeyEvent.KEYCODE_MEDIA_PLAY:
+                        Timber.i("play media button");
+                        PlayerService.this.play();
+                        return true;
+                    case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                        Timber.i("pause media button");
+                        PlayerService.this.pause();
+                        return true;
+                    case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                        Timber.i("play/pause media button");
+                        PlayerService.this.playPause();
+                        return true;
+                }
+            }
+
+            return false;
+        }
+    };
 
     private void showSongNotification(SongBridge currentSong) {
         Timber.i("function start - show song notification for: %s - %s", currentSong.title, currentSong.artist);
@@ -155,34 +185,23 @@ public class PlayerService extends Service implements PlaylistControls {
         }
 
         mMediaSession = new MediaSession(this, "PlayerService");
-        mMediaSession.setCallback(new MediaSession.Callback() {
-            @Override
-            public void onPlay() {
-                Timber.i("bluetooth onPlay");
-            }
-
-            @Override
-            public void onPause() {
-                Timber.i("bluetooth onPause");
-            }
-        });
-
-        mMediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS |
-            MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
+        mMediaSession.setCallback(mMediaSessionCallback);
+        mMediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mMediaSession.setActive(true);
-
-        PlaybackState state = new PlaybackState.Builder()
-            .setActions(
-                PlaybackState.ACTION_PLAY | PlaybackState.ACTION_PLAY_PAUSE |
-                    PlaybackState.ACTION_PLAY_FROM_MEDIA_ID | PlaybackState.ACTION_PAUSE |
-                    PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS)
-            .build();
+        PlaybackState state = new PlaybackState.Builder().setActions(PlaybackState.ACTION_PLAY_PAUSE).build();
         mMediaSession.setPlaybackState(state);
 
         Timber.i("registering to player events");
         mPlaylistPlayerEventsEmitter.subscribe(onPlaylistPlayerEvent);
         scheduleStopSelfOnPause();
+    }
+
+    private void playPause() {
+        if(this.mPlayer.getIsPlaying()) {
+            this.mPlayer.pause();
+        } else {
+            this.mPlayer.play();
+        }
     }
 
     private void scheduleStopSelfOnPause() {
