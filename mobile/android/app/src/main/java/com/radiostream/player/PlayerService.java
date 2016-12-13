@@ -8,8 +8,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.session.MediaSession;
+import android.media.session.PlaybackState;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
@@ -51,6 +54,8 @@ public class PlayerService extends Service implements PlaylistControls {
     private boolean mServiceAlive = true;
     private Date mPausedDate = null;
     private boolean mPausedDuePhoneState = false;
+
+    MediaSession mMediaSession = null;
 
     @Inject
     Player mPlayer;
@@ -149,6 +154,32 @@ public class PlayerService extends Service implements PlaylistControls {
             mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
 
+        mMediaSession = new MediaSession(this, "PlayerService");
+        mMediaSession.setCallback(new MediaSession.Callback() {
+            @Override
+            public void onPlay() {
+                Timber.i("bluetooth onPlay");
+            }
+
+            @Override
+            public void onPause() {
+                Timber.i("bluetooth onPause");
+            }
+        });
+
+        mMediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS |
+            MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+        mMediaSession.setActive(true);
+
+        PlaybackState state = new PlaybackState.Builder()
+            .setActions(
+                PlaybackState.ACTION_PLAY | PlaybackState.ACTION_PLAY_PAUSE |
+                    PlaybackState.ACTION_PLAY_FROM_MEDIA_ID | PlaybackState.ACTION_PAUSE |
+                    PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS)
+            .build();
+        mMediaSession.setPlaybackState(state);
+
         Timber.i("registering to player events");
         mPlaylistPlayerEventsEmitter.subscribe(onPlaylistPlayerEvent);
         scheduleStopSelfOnPause();
@@ -239,6 +270,8 @@ public class PlayerService extends Service implements PlaylistControls {
         if(mgr != null) {
             mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
         }
+
+        mMediaSession.release();
 
         mServiceAlive = false;
         super.onDestroy();
