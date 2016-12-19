@@ -181,7 +181,7 @@ export default class PlayerPage extends Component {
             <View style={styles.albumArtView}>
               <Image style={styles.albumArt} source={albumArt}/>
             </View>
-            {/* Controls */}
+            {/* Names */}
             <View style={styles.namesView}>
               <Text style={[styles.nameText, styles.titleText]}>{`${this.state.song.title}`}</Text>
               <Text style={[styles.nameText, styles.artistText]}>{`${this.state.song.artist}`}</Text>
