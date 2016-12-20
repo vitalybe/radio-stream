@@ -41,7 +41,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
  * Created by vitaly on 11/11/2016.
  */
 
-public class PlayerJsProxy extends ReactContextBaseJavaModule implements LifecycleEventListener, PlaylistControls {
+public class PlayerJsProxy extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
     private static JsProxyComponent mJsProxyComponent = null;
     @Inject
@@ -147,6 +147,26 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     }
 
     @ReactMethod
+    public void updateSongRating(int songId, int newRating, final Promise promise) {
+        try {
+            mPlayerService.updateSongRating(songId, newRating).then(new DoneCallback<Void>() {
+                @Override
+                public void onDone(Void playlistResult) {
+                    promise.resolve(null);
+                }
+            }).fail(new FailCallback<Exception>() {
+                @Override
+                public void onFail(Exception error) {
+                    promise.reject("update song rating failed", error);
+                }
+            });
+        } catch (Exception e) {
+            Timber.e(e);
+            promise.reject("updateSongRating failed", e);
+        }
+    }
+
+    @ReactMethod
     public void changePlaylist(String playlistName) {
         try {
             mPlayerService.changePlaylist(playlistName);
@@ -156,19 +176,15 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     }
 
     @ReactMethod
-    @Override
-    public org.jdeferred.Promise<Song, Exception, Void> play() {
+    public void play() {
         try {
             mPlayerService.play();
         } catch (Exception e) {
             Timber.e(e);
         }
-
-        return null;
     }
 
     @ReactMethod
-    @Override
     public void pause() {
         try {
             mPlayerService.pause();
@@ -178,7 +194,6 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     }
 
     @ReactMethod
-    @Override
     public void playNext() {
         try {
             mPlayerService.playNext();

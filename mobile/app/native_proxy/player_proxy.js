@@ -29,6 +29,10 @@ class PlayerProxy {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.fetchPlaylists());
   }
 
+  updateSongRating(songId, newRating) {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.updateSongRating(songId, newRating));
+  }
+
   changePlaylist(playlistName) {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.changePlaylist(playlistName));
   }

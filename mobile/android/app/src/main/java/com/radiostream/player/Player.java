@@ -4,6 +4,7 @@ import com.radiostream.javascript.bridge.PlayerBridge;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 
 import org.jdeferred.Promise;
+import org.jdeferred.impl.DeferredObject;
 
 import javax.inject.Inject;
 
@@ -95,6 +96,16 @@ public class Player implements PlaylistControls {
         } else {
             Timber.i("no playlist selected - not playing");
             return false;
+        }
+    }
+
+    public Promise<Void, Exception, Void> updateSongRating(int songId, int newRating) {
+        Timber.i("function start");
+        if(mCurrentPlaylistPlayer != null) {
+            return mCurrentPlaylistPlayer.updateSongRating(songId, newRating);
+        } else {
+            Timber.w("playlist unavailable - song rating is unavailable");
+            return new DeferredObject<Void, Exception, Void>().reject(null);
         }
     }
 }

@@ -32,12 +32,13 @@ public class Song {
     public static final int markPlayedAfterMs = 30000;
     public static final int markPlayedRetryMs = 15000;
 
+    private final int mId;
     private final String mArtist;
     private final String mAlbum;
     private final String mTitle;
     private final String mPath;
-    private final int mId;
-    private final int mRating;
+    private int mRating;
+
     private SetTimeout mSetTimeout;
     private MetadataBackend mMetadataBackend;
     private Promise<Song, Exception, Void> mSongLoadingPromise = null;
@@ -289,6 +290,14 @@ public class Song {
 
     public String getArtist() {
         return mArtist;
+    }
+
+    public int getId() {
+        return mId;
+    }
+
+    public void setRating(int newRating) {
+        mRating = newRating;
     }
 
     public interface EventsListener {

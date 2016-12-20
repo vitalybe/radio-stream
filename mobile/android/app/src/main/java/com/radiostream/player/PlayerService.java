@@ -340,6 +340,10 @@ public class PlayerService extends Service implements PlaylistControls {
         stopForeground(true);
     }
 
+    public Promise<Void, Exception, Void> updateSongRating(int songId, int newRating) {
+        return mPlayer.updateSongRating(songId, newRating);
+    }
+
     public class PlayerServiceBinder extends Binder {
         public PlayerService getService() {
             return PlayerService.this;

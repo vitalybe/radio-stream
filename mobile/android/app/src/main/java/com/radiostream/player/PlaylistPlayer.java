@@ -2,8 +2,10 @@ package com.radiostream.player;
 
 import com.radiostream.javascript.bridge.PlaylistPlayerEventsEmitter;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
+import com.radiostream.networking.MetadataBackend;
 import com.radiostream.util.SetTimeout;
 
+import org.jdeferred.DoneCallback;
 import org.jdeferred.DonePipe;
 import org.jdeferred.FailCallback;
 import org.jdeferred.Promise;
@@ -18,18 +20,22 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     private SetTimeout mSetTimeout;
     private Playlist mPlaylist;
     private Song mCurrentSong;
+    private MetadataBackend mMetadataBackend;
 
     private boolean mIsLoading = false;
     private Exception mLoadingError = null;
 
     private boolean mIsClosed = false;
 
+
     @Inject
-    public PlaylistPlayer(Playlist playlist, PlaylistPlayerEventsEmitter playerEventsEmitter, SetTimeout setTimeout) {
+    public PlaylistPlayer(Playlist playlist, PlaylistPlayerEventsEmitter playerEventsEmitter,
+                          SetTimeout setTimeout, MetadataBackend metadataBackend) {
 
         mPlaylist = playlist;
         mPlayerEventsEmitter = playerEventsEmitter;
         mSetTimeout = setTimeout;
+        mMetadataBackend = metadataBackend;
     }
 
     private void setSongLoadingStatus(boolean isLoading, Exception error) {
@@ -231,7 +237,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             getCurrentSong().close();
         }
 
-        if(mPlaylist != null) {
+        if (mPlaylist != null) {
             mPlaylist.close();
             mPlaylist = null;
         }
@@ -261,10 +267,31 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         bridge.loadingError = mLoadingError;
         bridge.isPlaying = getIsPlaying();
         bridge.playlistBridge = mPlaylist.toBridgeObject();
-        if(mCurrentSong != null) {
+        if (mCurrentSong != null) {
             bridge.songBridge = mCurrentSong.toBridgeObject();
         }
 
         return bridge;
+    }
+
+    public Promise<Void, Exception, Void> updateSongRating(int songId, final int newRating) {
+        Timber.i("function start");
+        final Song updatedSong = getCurrentSong();
+        if (updatedSong.getId() == songId) {
+            return mMetadataBackend.updateSongRating(songId, newRating).then(new DoneCallback<Void>() {
+                @Override
+                public void onDone(Void result) {
+                    updatedSong.setRating(newRating);
+
+                    Timber.i("song rating updated - sending status update");
+                    mPlayerEventsEmitter.sendPlaylistPlayerStatus(PlaylistPlayer.this.toBridgeObject());
+                }
+            });
+        } else {
+            Timber.w("tried to update id %d even though current song %s has id %d",
+                songId, updatedSong.toString(), updatedSong.getId());
+
+            return new DeferredObject<Void, Exception, Void>().reject(null);
+        }
     }
 }

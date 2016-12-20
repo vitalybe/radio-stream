@@ -6,6 +6,7 @@ import { StyleSheet, View, TouchableWithoutFeedback, Image, Vibration } from 're
 import Text from './text';
 import _ from 'lodash'
 import { colors } from '../styles/styles'
+import playerProxy from '../native_proxy/player_proxy'
 
 let starFullSource = require("../images/star-full.png");
 let starEmptySource = require("../images/star-empty.png");
@@ -20,15 +21,19 @@ export default class Rating extends Component {
     let logger = loggerCreator("onStarPress", moduleLogger);
     logger.info(`clicked star ${starIndex}`);
 
-    // Vibration.vibrate();
     let newRating = (starIndex+1) * RATING_STAR_RATIO;
     logger.info(`new rating: ${newRating}`);
 
-    // backendMetadataApi.updateRating(this.props.songId, newRating);
-  }
+    logger.info(`updating song ${this.props.songId} with new rating: ${newRating}`);
+    playerProxy.updateSongRating(this.props.songId, newRating)
+      .then(() => {
+        logger.info(`update finished`);
+      })
+      .catch(e => {
+        logger.error(`update failed: ${e}`)
+      });
 
-  onStarPress() {
-    // Vibration.vibrate();
+    Vibration.vibrate();
   }
 
   render() {
@@ -48,7 +53,7 @@ export default class Rating extends Component {
       }
 
       return (
-        <TouchableWithoutFeedback key={i} onPress={() => this.onStarPress()} onLongPress={() => this.onStarLongPress(i)}>
+        <TouchableWithoutFeedback key={i} onLongPress={() => this.onStarLongPress(i)}>
           <Image style={[styles.star]} source={imageSource}/>
         </TouchableWithoutFeedback>
       );
