@@ -8,6 +8,7 @@ import playerProxy from '../native_proxy/player_proxy'
 import { colors, fontSizes } from '../styles/styles'
 import Button from '../components/rectangle_button'
 import Navigator from '../stores/navigator'
+import backendMetadataApi from '../utils/backend_metadata_api'
 
 export default class PlaylistCollectionPage extends Component {
 
@@ -36,7 +37,7 @@ export default class PlaylistCollectionPage extends Component {
     let logger = loggerCreator("fetchPlaylists", moduleLogger);
     logger.info(`start`);
 
-    playerProxy.fetchPlaylists().then(result => {
+    backendMetadataApi.playlists().then(result => {
       logger.info(`got results: ${result}`);
       this.setState({playlists: result})
     })
