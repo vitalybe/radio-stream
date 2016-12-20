@@ -12,6 +12,7 @@ import RectangleButton from '../components/rectangle_button'
 import CircleButton from '../components/circle_button'
 import Text from '../components/text'
 
+import Rating from '../components/rating'
 import Navigator from '../stores/navigator'
 import { getArtistImage } from '../utils/backend_lastfm_api'
 
@@ -33,10 +34,12 @@ export default class PlayerPage extends Component {
 
       playlistName: this.props.playlistName,
       song: {
+        id: null,
         artist: null,
         title: null,
         album: null,
-        albumArtUri: null
+        albumArtUri: null,
+        rating: null,
       }
     };
 
@@ -142,11 +145,18 @@ export default class PlayerPage extends Component {
       isPlaying: status.isPlaying,
       song: {
         ...this.state.song,
+        id: status.song.id,
         artist: status.song.artist,
         title: status.song.title,
         album: status.song.album,
+        rating: status.song.rating,
       }
     });
+  }
+
+  onRatingChanged(newRating) {
+    let logger = loggerCreator("onRatingChanged", moduleLogger);
+    logger.info(`start: ${newRating}`);
   }
 
   render() {
@@ -181,6 +191,9 @@ export default class PlayerPage extends Component {
             <View style={styles.albumArtView}>
               <Image style={styles.albumArt} source={albumArt}/>
             </View>
+            {/* Ratings */}
+            <Rating style={[styles.rating]}
+                    rating={this.state.song.rating} songId={this.state.song.id} />
             {/* Names */}
             <View style={styles.namesView}>
               <Text style={[styles.nameText, styles.titleText]}>{`${this.state.song.title}`}</Text>
@@ -250,14 +263,17 @@ const styles = StyleSheet.create({
 
     marginBottom: 20
   },
+  // Ratings
+  rating: {
+    marginBottom: 20
+  },
   // Names (artist, title, album)
   namesView: {
     alignItems: "center",
-    marginBottom: 10
   },
   nameText: {
     fontSize: fontSizes.LARGE,
-    marginBottom: 10
+    marginBottom: 2
   },
   artistText: {
     color: colors.CYAN_BRIGHT.rgbString()

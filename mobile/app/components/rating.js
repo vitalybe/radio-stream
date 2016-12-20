@@ -1,5 +1,5 @@
 import loggerCreator from '../utils/logger'
-var moduleLogger = loggerCreator("stars");
+var moduleLogger = loggerCreator("rating");
 
 import React, { Component } from 'react';
 import { StyleSheet, View, TouchableWithoutFeedback, Image, Vibration } from 'react-native';
@@ -10,14 +10,21 @@ import { colors } from '../styles/styles'
 let starFullSource = require("../images/star-full.png");
 let starEmptySource = require("../images/star-empty.png");
 
-export default class Stars extends Component {
+const MAX_RATING = 100;
+const STAR_COUNT = 5;
+const RATING_STAR_RATIO = MAX_RATING / STAR_COUNT;
 
-  onStarLongPress(i) {
+export default class Rating extends Component {
+
+  onStarLongPress(starIndex) {
     let logger = loggerCreator("onStarPress", moduleLogger);
-    logger.info(`clicked star ${i}`);
+    logger.info(`clicked star ${starIndex}`);
 
     // Vibration.vibrate();
-    this.props.onStarPress(i);
+    let newRating = (starIndex+1) * RATING_STAR_RATIO;
+    logger.info(`new rating: ${newRating}`);
+
+    // backendMetadataApi.updateRating(this.props.songId, newRating);
   }
 
   onStarPress() {
@@ -26,12 +33,15 @@ export default class Stars extends Component {
 
   render() {
     let logger = loggerCreator("render", moduleLogger);
-    logger.info(`start`);
+    logger.info(`start - rating: ${this.props.rating}`);
 
-    let stars = _.range(5).map(i => {
+    var highlightedStarCount = this.props.rating / RATING_STAR_RATIO;
+    logger.info(`highlighted stars: ${highlightedStarCount}`);
+
+    let stars = _.range(STAR_COUNT).map(i => {
       var imageSource;
 
-      if (i < this.props.highlighted) {
+      if (i < highlightedStarCount) {
         imageSource = starFullSource;
       } else {
         imageSource = starEmptySource;
@@ -45,7 +55,7 @@ export default class Stars extends Component {
     });
 
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, this.props.style]}>
         {stars}
       </View>
     )
@@ -53,9 +63,9 @@ export default class Stars extends Component {
   }
 }
 
-Stars.propTypes = {
-  highlighted: React.PropTypes.number.isRequired,
-  onStarPress: React.PropTypes.func.isRequired
+Rating.propTypes = {
+  rating: React.PropTypes.number.isRequired,
+  songId: React.PropTypes.number.isRequired
 };
 
 const styles = StyleSheet.create({

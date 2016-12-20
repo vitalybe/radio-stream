@@ -8,7 +8,6 @@ import playerProxy from '../native_proxy/player_proxy'
 import { colors, fontSizes } from '../styles/styles'
 import Button from '../components/rectangle_button'
 import Navigator from '../stores/navigator'
-import Stars from '../components/stars'
 
 export default class PlaylistCollectionPage extends Component {
 
@@ -80,7 +79,6 @@ export default class PlaylistCollectionPage extends Component {
                   </Button>)
               })
             }
-            <Stars highlighted={3} onStarPress={() => {}}/>
           </When>
           <Otherwise>
             <ActivityIndicator />

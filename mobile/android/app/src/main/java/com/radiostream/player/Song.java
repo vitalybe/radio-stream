@@ -37,6 +37,7 @@ public class Song {
     private final String mTitle;
     private final String mPath;
     private final int mId;
+    private final int mRating;
     private SetTimeout mSetTimeout;
     private MetadataBackend mMetadataBackend;
     private Promise<Song, Exception, Void> mSongLoadingPromise = null;
@@ -55,6 +56,7 @@ public class Song {
         this.mId = songResult.id;
         this.mSetTimeout = setTimeout;
         this.mMetadataBackend = metadataBackend;
+        this.mRating = songResult.rating;
 
         String pathBuilder = "";
         String[] pathParts = songResult.path.split("/");
@@ -271,9 +273,11 @@ public class Song {
     public SongBridge toBridgeObject() {
         SongBridge bridge = new SongBridge();
 
+        bridge.id = mId;
         bridge.artist = mArtist;
         bridge.album = mAlbum;
         bridge.title = mTitle;
+        bridge.rating = mRating;
 
         return bridge;
     }
