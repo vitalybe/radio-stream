@@ -1,14 +1,16 @@
 import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("playlist_collection_page");
 
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight, Image, ActivityIndicator, BackAndroid } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, Text, View, TouchableHighlight, Image, ActivityIndicator, BackAndroid} from 'react-native';
 
 import playerProxy from '../native_proxy/player_proxy'
-import { colors, fontSizes } from '../styles/styles'
+import {colors, fontSizes} from '../styles/styles'
 import Button from '../components/rectangle_button'
 import Navigator from '../stores/navigator'
 import backendMetadataApi from '../utils/backend_metadata_api'
+import { globalSettings } from '../utils/settings'
+
 
 export default class PlaylistCollectionPage extends Component {
 
@@ -22,14 +24,21 @@ export default class PlaylistCollectionPage extends Component {
     logger.info(`getting status...`);
     playerProxy.getPlayerStatus().then(status => {
       logger.info(`got status: ${JSON.stringify(status)}`);
-      var playlistPlayer = status.playlistPlayer;
+      const playlistPlayer = status.playlistPlayer;
 
-      if (playlistPlayer && playlistPlayer.isPlaying) {
-        logger.info(`player currently playing - navigating to player`);
-        this.props.navigator.navigateToPlayer(playlistPlayer.playlist.name)
-      } else {
-        this.fetchPlaylists();
-      }
+      logger.info(`fetching persisted settings`);
+      globalSettings.load().then(() => {
+        if (!globalSettings.host) {
+          logger.info(`host not found in settings - showing settings page`);
+          this.props.navigator.navigateToSettings();
+        } else if (playlistPlayer && playlistPlayer.isPlaying) {
+          logger.info(`player currently playing - navigating to player`);
+          this.props.navigator.navigateToPlayer(playlistPlayer.playlist.name)
+        } else {
+          logger.info(`proceed as usual - fetching playlists`);
+          this.fetchPlaylists();
+        }
+      });
     });
   }
 
