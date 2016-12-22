@@ -13,15 +13,16 @@ import timber.log.Timber;
 @DebugLog
 @Singleton
 public class Settings {
-    private String mAddress = "***REMOVED***/5f707e4f-97cc-438e-90d8-1e5e35bd558a/";
-    private String mUser = "radio";
-    private String mPassword = "myman";
+    private String mAddress = null;
+    private String mUser = null;
+    private String mPassword = null;
 
     @Inject
     public Settings() {
     }
 
-    public void updateSettings(String address, String user, String password) {
+    public void update(String address, String user, String password) {
+        Timber.i("updating settings. new address: %s", address);
 
         mAddress = address;
         if(!mAddress.endsWith("/")) {

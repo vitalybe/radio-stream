@@ -6,7 +6,6 @@
 // let logger = moduleLogger("method", moduleLogger);
 // logger.info(`start`);
 
-var util = require("util");
 var clim;
 
 module.exports = clim = function (prefix, parent, patch) {
@@ -106,9 +105,7 @@ function createLogger(method, prefixes, noFormat) {
 
   return function () {
     // Handle formatting and circular objects like in the original
-    var msg = noFormat ?
-      Array.prototype.slice.call(arguments)
-      : util.format.apply(this, arguments);
+    var msg = Array.prototype.slice.call(arguments);
 
     clim.logWrite(method, prefixes, msg);
   };

@@ -147,6 +147,14 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     }
 
     @ReactMethod
+    public void updateSettings(String host, String user, String password, Promise promise) {
+        Timber.i("function start");
+
+        mSettings.update(host, user, password);
+        promise.resolve(null);
+    }
+
+    @ReactMethod
     public void updateSongRating(int songId, int newRating, final Promise promise) {
         try {
             mPlayerService.updateSongRating(songId, newRating).then(new DoneCallback<Void>() {

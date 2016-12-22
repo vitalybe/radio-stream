@@ -9,37 +9,42 @@ import {colors, fontSizes} from '../styles/styles'
 import Button from '../components/rectangle_button'
 import Navigator from '../stores/navigator'
 import backendMetadataApi from '../utils/backend_metadata_api'
-import { globalSettings } from '../utils/settings'
+import {globalSettings} from '../utils/settings'
 
 
 export default class PlaylistCollectionPage extends Component {
 
-  componentWillMount() {
+  async componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
     logger.info(`start`);
 
     this.state = {};
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
 
-    logger.info(`getting status...`);
-    playerProxy.getPlayerStatus().then(status => {
+    logger.info(`fetching persisted settings`);
+    await globalSettings.load();
+    if (globalSettings.host) {
+
+      logger.info(`updating settings`);
+      await playerProxy.updateSettings(globalSettings.host, globalSettings.user, globalSettings.password);
+      logger.info(`settings updated`);
+
+      let status = await playerProxy.getPlayerStatus();
       logger.info(`got status: ${JSON.stringify(status)}`);
       const playlistPlayer = status.playlistPlayer;
 
-      logger.info(`fetching persisted settings`);
-      globalSettings.load().then(() => {
-        if (!globalSettings.host) {
-          logger.info(`host not found in settings - showing settings page`);
-          this.props.navigator.navigateToSettings();
-        } else if (playlistPlayer && playlistPlayer.isPlaying) {
-          logger.info(`player currently playing - navigating to player`);
-          this.props.navigator.navigateToPlayer(playlistPlayer.playlist.name)
-        } else {
-          logger.info(`proceed as usual - fetching playlists`);
-          this.fetchPlaylists();
-        }
-      });
-    });
+      if (playlistPlayer && playlistPlayer.isPlaying) {
+        logger.info(`player currently playing - navigating to player`);
+        this.props.navigator.navigateToPlayer(playlistPlayer.playlist.name)
+      } else {
+        logger.info(`proceed as usual - fetching playlists`);
+        this.fetchPlaylists();
+      }
+
+    } else {
+      logger.info(`host not found in settings - showing settings page`);
+      this.props.navigator.navigateToSettings();
+    }
   }
 
   fetchPlaylists() {

@@ -57,6 +57,9 @@ class PlayerProxy {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.stopPlayer());
   }
 
+  updateSettings(host, user, password) {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.updateSettings(host, user, password));
+  }
 }
 
 export default new PlayerProxy();
