@@ -3,11 +3,11 @@ var moduleLogger = loggerCreator("settings");
 
 let DEFAULT_USER = "radio";
 
-class Settings {
-
+export class Settings {
   _host = "where-is-my-music-vf7bm.duckdns.org/5f707e4f-97cc-438e-90d8-1e5e35bd558a/";
 
   _user = DEFAULT_USER;
+
   _password = "myman";
 
   constructor() {
@@ -33,9 +33,13 @@ class Settings {
     // TBD
   }
 
-  save(host, password) {
-    // TBD
+  copyFrom(otherSettings) {
+    let logger = loggerCreator("clone", moduleLogger);
+    logger.info(`cloning from other settings: ${JSON.stringify(otherSettings)}`);
+
+    this._host = otherSettings.host;
+    this._password = otherSettings.password;
   }
 }
 
-export default new Settings();
+export let globalSettings = new Settings();

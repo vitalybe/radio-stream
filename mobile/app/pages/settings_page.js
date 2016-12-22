@@ -3,23 +3,32 @@ const moduleLogger = loggerCreator("settings_page");
 
 import React, {Component} from 'react';
 import {StyleSheet, View, BackAndroid, TextInput} from 'react-native';
+import {observable} from "mobx";
+import {observer} from "mobx-react"
 
 import {colors, fontSizes} from '../styles/styles'
 import Button from '../components/rectangle_button'
 import Text from '../components/text'
 import Navigator from '../stores/navigator'
-import {globalSettings} from '../utils/settings'
+import {globalSettings, Settings} from '../utils/settings'
+import backendMetadataApi from '../utils/backend_metadata_api'
 
+
+@observer
 export default class SettingsPage extends Component {
 
-  componentWillMount() {
-    let logger = loggerCreator("componentWillMount", moduleLogger);
+  constructor(props) {
+    super(props);
+
+    let logger = loggerCreator("constructor", moduleLogger);
     logger.info(`start`);
 
-    this.state = {
+    this.store = observable({
       host: globalSettings.host,
-      password: globalSettings.password
-    };
+      password: globalSettings.password,
+
+      status: null,
+    });
 
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
   }
@@ -28,8 +37,44 @@ export default class SettingsPage extends Component {
     let logger = loggerCreator("onPressHardwareBack", moduleLogger);
     logger.info(`start`);
 
-    // BackAndroid.exitApp();
-    // return true;
+    if(globalSettings.host) {
+      logger.info(`cancelling setting changes`);
+      this.props.navigator.navigateToPlaylistCollection();
+    } else {
+      logger.info(`no host was configured - quitting`);
+      BackAndroid.exitApp();
+
+    }
+
+    return true;
+  }
+
+  onTextChange(label, text) {
+    let logger = loggerCreator("onTextChange", moduleLogger);
+    logger.info(`start - changing ${label} from ${this.store[label]} to ${text}`);
+
+    this.store[label] = text;
+  }
+
+  onSavePress() {
+    let logger = loggerCreator("onSavePress", moduleLogger);
+    logger.info(`start`);
+
+    let testSettings = new Settings();
+    testSettings.copyFrom(this.store);
+
+    this.store.status = "Connecting...";
+    backendMetadataApi.testConnection(testSettings)
+      .then(() => {
+        this.store.status = "Connected";
+
+        logger.info(`updating global settings`);
+        globalSettings.copyFrom(testSettings);
+        this.props.navigator.navigateToPlaylistCollection();
+      })
+      .catch(error => {
+        this.store.status = `Failed: ${error}`;
+      })
   }
 
   render() {
@@ -39,13 +84,17 @@ export default class SettingsPage extends Component {
     return (
       <View style={styles.container}>
         <Text style={[styles.label]}>Host</Text>
-        <TextInput style={[styles.input]}/>
+        <TextInput style={[styles.input]} value={this.store.host}
+                   onChangeText={text => this.onTextChange("host", text)}/>
 
         <Text style={[styles.label]}>Password</Text>
-        <TextInput style={[styles.input]}/>
+        <TextInput style={[styles.input]} value={this.store.password}  secureTextEntry={true}
+                   onChangeText={text => this.onTextChange("password", text)}/>
 
-        <Button style={[styles.submit]}><Text>Save</Text></Button>
-        <Text style={[styles.status]}>Connecting...</Text>
+        <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
+          <Text>Save</Text>
+        </Button>
+        <Text style={[styles.status]}>{this.store.status}</Text>
       </View>
     );
   }
@@ -74,6 +123,7 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
 
+    color: colors.SEMI_WHITE.rgbString(),
     backgroundColor: colors.CYAN_DARK.clone().clearer(0.5).rgbString(),
 
     borderColor: colors.CYAN_BRIGHT.rgbString(),
@@ -89,7 +139,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
-  status: {
+  saveButton: {
     marginTop: 10,
   }
 });

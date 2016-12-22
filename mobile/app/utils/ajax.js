@@ -36,13 +36,13 @@ export default class Ajax {
       .then(() => fetch(url, config))
       .then(function (response) {
         if (response.status < 200 || response.status >= 300) {
-          logger.error(`received error status: ${response.status}`);
+          logger.warn(`received network error status: ${response.status}`);
           throw new NetworkError(`Received status ${response.status} from the server`);
         }
 
         return response;
       }).catch(error => {
-          logger.error(`received error: ${error}`);
+          logger.warn(`received network error: ${error}`);
           throw new NetworkError(`Received error ${error} from the server`);
       });
   }
