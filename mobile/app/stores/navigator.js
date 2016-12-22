@@ -20,10 +20,14 @@ export default class Navigator {
   }
 
   navigateToPlaylistCollection() {
-    this._navigateTo(this.ROUTE_PLAYLIST_COLLECTION_PAGE, null);
+    this._navigateTo(this.ROUTE_PLAYLIST_COLLECTION_PAGE);
   }
 
   navigateToPlayer(playlistName) {
     this._navigateTo(this.ROUTE_PLAYER_PAGE, {playlistName: playlistName});
+  }
+
+  navigateToSettings() {
+    this._navigateTo(this.ROUTE_SETTINGS_PAGE);
   }
 }

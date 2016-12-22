@@ -11,3 +11,4 @@ export const fontSizes = {
   NORMAL: 15,
   LARGE: 20,
 };
+

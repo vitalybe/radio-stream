@@ -59,6 +59,10 @@ export default class PlaylistCollectionPage extends Component {
     this.props.navigator.navigateToPlayer(playlistName);
   }
 
+  onSettingsClick() {
+    this.props.navigator.navigateToSettings();
+  }
+
   render() {
     let logger = loggerCreator(this.render.name, moduleLogger);
     logger.info(`start`);
@@ -86,7 +90,7 @@ export default class PlaylistCollectionPage extends Component {
           </Otherwise>
         </Choose>
         <Button style={styles.settingsButton}
-                onPress={() => logger.info(`clicked settings`)}>
+                onPress={() => this.onSettingsClick() }>
           <Image style={styles.settingsIcon} source={require("../images/settings.png")}/>
         </Button>
       </View>

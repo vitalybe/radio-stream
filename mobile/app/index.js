@@ -7,6 +7,7 @@ import { observer } from "mobx-react"
 
 import PlaylistCollectionPage from './pages/playlist_collection_page'
 import PlayerPage from './pages/player_page'
+import SettingsPage from './pages/settings_page'
 import Navigator from  './stores/navigator'
 
 import playerProxy from './native_proxy/player_proxy'
@@ -34,6 +35,9 @@ export default class RadioStream extends Component {
         break;
       case this.navigator.ROUTE_PLAYER_PAGE:
         page = <PlayerPage playlistName={activeRoute.playlistName} navigator={this.navigator} />;
+        break;
+      case this.navigator.ROUTE_SETTINGS_PAGE:
+        page = <SettingsPage navigator={this.navigator} />;
         break;
     }
 
