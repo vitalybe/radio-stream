@@ -10,7 +10,7 @@ import {colors, fontSizes} from '../styles/styles'
 import Button from '../components/rectangle_button'
 import Text from '../components/text'
 import Navigator from '../stores/navigator'
-import {globalSettings, Settings} from '../utils/settings'
+import {globalSettings} from '../utils/settings'
 import backendMetadataApi from '../utils/backend_metadata_api'
 
 
@@ -37,7 +37,7 @@ export default class SettingsPage extends Component {
     let logger = loggerCreator("onPressHardwareBack", moduleLogger);
     logger.info(`start`);
 
-    if(globalSettings.host) {
+    if (globalSettings.host) {
       logger.info(`cancelling setting changes`);
       this.props.navigator.navigateToPlaylistCollection();
     } else {
@@ -51,7 +51,7 @@ export default class SettingsPage extends Component {
 
   onTextChange(label, text) {
     let logger = loggerCreator("onTextChange", moduleLogger);
-    logger.info(`start - changing ${label} from ${this.store[label]} to ${text}`);
+    logger.info(`start - changing ${label}`);
 
     this.store[label] = text;
   }
@@ -60,17 +60,16 @@ export default class SettingsPage extends Component {
     let logger = loggerCreator("onSavePress", moduleLogger);
     logger.info(`start`);
 
-    let testSettings = new Settings();
-    testSettings.copyFrom(this.store);
-
     this.store.status = "Connecting...";
-    backendMetadataApi.testConnection(testSettings)
+    backendMetadataApi.testConnection(this.store.host, this.store.password)
       .then(() => {
         this.store.status = "Connected";
 
         logger.info(`updating global settings`);
-        globalSettings.copyFrom(testSettings);
-        this.props.navigator.navigateToPlaylistCollection();
+
+        return globalSettings.update(this.store.host, this.store.password).then(() => {
+          this.props.navigator.navigateToPlaylistCollection();
+        });
       })
       .catch(error => {
         this.store.status = `Failed: ${error}`;
@@ -88,7 +87,7 @@ export default class SettingsPage extends Component {
                    onChangeText={text => this.onTextChange("host", text)}/>
 
         <Text style={[styles.label]}>Password</Text>
-        <TextInput style={[styles.input]} value={this.store.password}  secureTextEntry={true}
+        <TextInput style={[styles.input]} value={this.store.password} secureTextEntry={true}
                    onChangeText={text => this.onTextChange("password", text)}/>
 
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>

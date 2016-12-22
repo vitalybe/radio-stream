@@ -16,7 +16,7 @@ export default class Ajax {
   _ajaxCall(apiAddress, callConfig) {
     let logger = loggerCreator(this._ajaxCall.name, moduleLogger);
 
-    var config = {
+    let config = {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export default class Ajax {
       config.body = JSON.stringify(config.body);
     }
 
-    var url = this.rootAddress + apiAddress;
+    const url = this.rootAddress + apiAddress;
 
     logger.info(`[${config.method}] ${url}`);
     return Promise.resolve()

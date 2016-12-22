@@ -27,18 +27,20 @@ export default class RadioStream extends Component {
     logger.info(`start. activate route: ${this.navigator.activeRoute}`);
 
     let page = null;
-    var activeRoute = this.navigator.activeRoute;
+    let activeRoute = this.navigator.activeRoute;
 
-    switch (activeRoute.address) {
-      case this.navigator.ROUTE_PLAYLIST_COLLECTION_PAGE:
-        page = <PlaylistCollectionPage navigator={this.navigator} />;
-        break;
-      case this.navigator.ROUTE_PLAYER_PAGE:
-        page = <PlayerPage playlistName={activeRoute.playlistName} navigator={this.navigator} />;
-        break;
-      case this.navigator.ROUTE_SETTINGS_PAGE:
-        page = <SettingsPage navigator={this.navigator} />;
-        break;
+    if(activeRoute) {
+      switch (activeRoute.address) {
+        case this.navigator.ROUTE_PLAYLIST_COLLECTION_PAGE:
+          page = <PlaylistCollectionPage navigator={this.navigator}/>;
+          break;
+        case this.navigator.ROUTE_PLAYER_PAGE:
+          page = <PlayerPage playlistName={activeRoute.playlistName} navigator={this.navigator}/>;
+          break;
+        case this.navigator.ROUTE_SETTINGS_PAGE:
+          page = <SettingsPage navigator={this.navigator}/>;
+          break;
+      }
     }
 
     return (

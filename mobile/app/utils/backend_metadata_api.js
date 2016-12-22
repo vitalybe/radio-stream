@@ -8,15 +8,34 @@ import { globalSettings } from '../utils/settings'
 class BackendMetadataApi {
 
   // NOTE: Since the host might change, we create a new Ajax object every time
-  _getAjax(customSettings) {
+  _getAjax(customHost, customPassword) {
+    let logger = loggerCreator("_getAjax", moduleLogger);
+    logger.info(`start`);
 
-    let usedSettings = globalSettings;
-    if (customSettings) {
-      usedSettings = customSettings;
+    let host = globalSettings.host;
+    let password = globalSettings.password;
+
+    if (customHost && customPassword) {
+      logger.info(`using custom host/password`);
+      host = customHost;
+      password = customPassword;
+    } else {
+      logger.info(`using global host/password`);
     }
 
-    const beetsServer = `http://${usedSettings.host}/api`;
-    const credentials = btoa(unescape(encodeURIComponent(usedSettings.user + ':' + usedSettings.password)));
+    if(!host || !password) {
+      throw "host or password are empty"
+    }
+
+    const httpPrefix = "http://";
+    if(host.startsWith(httpPrefix)) {
+      logger.info(`removing prefix ${httpPrefix} from host`);
+      host = host.slice(httpPrefix.length);
+      logger.info(`resulting host: ${host}`);
+    }
+
+    const beetsServer = `http://${host}/api`;
+    const credentials = btoa(unescape(encodeURIComponent(globalSettings.user + ':' + password)));
     return new Ajax(beetsServer, {
       'headers': {
         'Authorization': "Basic " + credentials,
@@ -34,11 +53,11 @@ class BackendMetadataApi {
       });
   }
 
-  testConnection(testSettings) {
+  testConnection(host, password) {
     let logger = loggerCreator("testConnection", moduleLogger);
-    logger.info(`start`);
+    logger.info(`start host: ${host}`);
 
-    return this._getAjax(testSettings).get(`/playlists`);
+    return this._getAjax(host, password).get(`/playlists`);
   }
 }
 

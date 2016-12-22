@@ -1,7 +1,9 @@
-import { observable, action } from "mobx";
+import {observable, action} from "mobx";
 
 import loggerCreator from '../utils/logger'
-var moduleLogger = loggerCreator("navigator");
+const moduleLogger = loggerCreator("navigator");
+
+import {globalSettings} from '../utils/settings'
 
 export default class Navigator {
 
@@ -12,7 +14,18 @@ export default class Navigator {
   @observable activeRoute = null;
 
   constructor() {
-    this.navigateToPlaylistCollection();
+    let logger = loggerCreator("constructor", moduleLogger);
+    logger.info(`start`);
+
+    globalSettings.load().then(() => {
+      if(globalSettings.host) {
+        logger.info(`host found in settings - showing playlist page`);
+        this.navigateToPlaylistCollection();
+      } else {
+        logger.info(`no hosts found - navigating to settings`);
+        this.navigateToSettings();
+      }
+    });
   }
 
   _navigateTo(address, params) {

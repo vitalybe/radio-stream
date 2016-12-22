@@ -1,14 +1,19 @@
 import loggerCreator from '../utils/logger'
-var moduleLogger = loggerCreator("settings");
+const moduleLogger = loggerCreator("settings");
+
+import {AsyncStorage} from 'react-native'
 
 let DEFAULT_USER = "radio";
 
-export class Settings {
-  _host = "where-is-my-music-vf7bm.duckdns.org/5f707e4f-97cc-438e-90d8-1e5e35bd558a/";
+let PERSISTENCE_HOST = "host";
+let PERSISTENCE_PASSWORD = "password";
+
+class Settings {
+  _host = null;
 
   _user = DEFAULT_USER;
 
-  _password = "myman";
+  _password = null;
 
   constructor() {
     let logger = loggerCreator(this.constructor.name, moduleLogger);
@@ -30,15 +35,29 @@ export class Settings {
   }
 
   load() {
-    // TBD
+    let logger = loggerCreator("load", moduleLogger);
+    logger.info(`start`);
+
+    return AsyncStorage.getItem(PERSISTENCE_HOST)
+      .then(value => {
+        this._host = value;
+        return AsyncStorage.getItem(PERSISTENCE_PASSWORD)
+      })
+      .then(value => {
+        this._password = value;
+      });
   }
 
-  copyFrom(otherSettings) {
+  update(host, password) {
     let logger = loggerCreator("clone", moduleLogger);
-    logger.info(`cloning from other settings: ${JSON.stringify(otherSettings)}`);
+    logger.info(`updating global settings. host: ${host}`);
 
-    this._host = otherSettings.host;
-    this._password = otherSettings.password;
+    this._host = host;
+    this._password = password;
+
+    return AsyncStorage.setItem(PERSISTENCE_HOST, this.host).then(() => {
+      return AsyncStorage.setItem(PERSISTENCE_PASSWORD, this.password)
+    });
   }
 }
 
