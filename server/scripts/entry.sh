@@ -46,21 +46,10 @@ nginx
 merge_yaml /radio-stream/config/config_source.yaml /radio-stream/config/config_user.yaml /radio-stream/data/beets/config.yaml
 
 # Settings beets default config location per: http://beets.readthedocs.io/en/latest/reference/config.html#environment-variable
-echo "PATH=$PATH:/radio-stream/scripts/user:/radio-stream/scripts/bundled" >> /etc/profile
-echo "export BEETSDIR=/radio-stream/data/beets/" >> /etc/profile
-echo "export EDITOR=vi" >> /etc/profile
-source /etc/profile
-
-# SQLite workaround
-echo "Preparing SQLite workaround..."
-echo "export BEETSDIR=/radio-stream/tmp/" >> /etc/profile
-source /etc/profile
-
-mkdir /radio-stream/tmp/
-cp /radio-stream/data/beets/library.db /radio-stream/tmp/
-cp /radio-stream/data/beets/config.yaml /radio-stream/tmp/
-
-inotifycp /radio-stream/tmp/ /radio-stream/data/beets/ > /radio-stream/log/inotifycp-tmp-data.log &
+echo "PATH=$PATH:/radio-stream/scripts/user:/radio-stream/scripts/bundled" >> /root/.bashrc
+echo "export BEETSDIR=/radio-stream/data/beets/" >> /root/.bashrc
+echo "export EDITOR=vi" >> /root/.bashrc
+source /root/.bashrc
 
 # CMD
 #####

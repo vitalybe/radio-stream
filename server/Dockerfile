@@ -50,14 +50,6 @@ RUN chmod +x /usr/local/bin/merge_yaml
 
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
-# SQLite workaround
-###################
-
-RUN pip install pyinotify
-COPY scripts/inotifycp.py /usr/local/bin/inotifycp
-RUN chmod +x /usr/local/bin/inotifycp
-RUN mkdir /radio-stream/log
-
 # Auto execution
 ################
 
