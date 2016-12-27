@@ -47,14 +47,17 @@ export default class PlaylistCollectionPage extends Component {
     }
   }
 
-  fetchPlaylists() {
+  async fetchPlaylists() {
     let logger = loggerCreator("fetchPlaylists", moduleLogger);
     logger.info(`start`);
 
-    backendMetadataApi.playlists().then(result => {
+    try {
+      result = await backendMetadataApi.playlists();
       logger.info(`got results: ${result}`);
       this.setState({playlists: result})
-    })
+    } catch (err) {
+      logger.error(`failed to get playlists`);
+    }
   }
 
   onPressHardwareBack() {

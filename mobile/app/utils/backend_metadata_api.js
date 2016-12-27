@@ -27,14 +27,7 @@ class BackendMetadataApi {
       throw "host or password are empty"
     }
 
-    const httpPrefix = "http://";
-    if(host.startsWith(httpPrefix)) {
-      logger.info(`removing prefix ${httpPrefix} from host`);
-      host = host.slice(httpPrefix.length);
-      logger.info(`resulting host: ${host}`);
-    }
-
-    const beetsServer = `http://${host}/api`;
+    const beetsServer = `${host}/api`;
     const credentials = btoa(unescape(encodeURIComponent(globalSettings.user + ':' + password)));
     return new Ajax(beetsServer, {
       'headers': {
