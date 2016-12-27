@@ -23,7 +23,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     private MetadataBackend mMetadataBackend;
 
     private boolean mIsLoading = false;
-    private Exception mLoadingError = null;
+    private Exception mLastLoadingError = null;
 
     private boolean mIsClosed = false;
 
@@ -40,10 +40,10 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
     private void setSongLoadingStatus(boolean isLoading, Exception error) {
         Timber.i("change loading to: %b and error to: %s", isLoading, error != null ? error.toString() : "NULL");
-        if (isLoading != mIsLoading || mLoadingError != error) {
+        if (isLoading != mIsLoading || mLastLoadingError != error) {
             Timber.i("value changed");
             mIsLoading = isLoading;
-            mLoadingError = error;
+            mLastLoadingError = error;
             mPlayerEventsEmitter.sendPlaylistPlayerStatus(this.toBridgeObject());
         } else {
             Timber.i("value didn't change");
@@ -133,7 +133,9 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         // To convert a failed promise to a resolved one, we must create a new deferred object
         final DeferredObject<Song, Exception, Void> deferredObject = new DeferredObject<>();
 
-        setSongLoadingStatus(true, null);
+        // NOTE: the last error to the function is sent since merely retrying
+        // the function doesn't clear the erro
+        setSongLoadingStatus(true, mLastLoadingError);
 
         waitForCurrentSongMarkedAsPlayed().then(new DonePipe<Boolean, Song, Exception, Void>() {
             @Override
@@ -264,7 +266,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     public PlaylistPlayerBridge toBridgeObject() {
         PlaylistPlayerBridge bridge = new PlaylistPlayerBridge();
         bridge.isLoading = mIsLoading;
-        bridge.loadingError = mLoadingError;
+        bridge.loadingError = mLastLoadingError;
         bridge.isPlaying = getIsPlaying();
         bridge.playlistBridge = mPlaylist.toBridgeObject();
         if (mCurrentSong != null) {
