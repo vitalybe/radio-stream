@@ -47,6 +47,8 @@ COPY nginx/nginx.conf /etc/nginx/nginx.conf
 # Auto execution
 ################
 
+COPY scripts/.bashrc /root/.bashrc
+
 COPY scripts/entry.sh /entry.sh
 
 COPY scripts/cmd.sh /cmd.sh

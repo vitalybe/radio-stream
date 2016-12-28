@@ -14,17 +14,13 @@ stop() {
     echo "Done."
 }
 
+# needed for beet to know its library location
+source /root/.bashrc
+
 echo "Running radio-stream..."
 trap stop SIGINT SIGTERM
 beet radio &
 pid="$!"
 mkdir -p /var/run/$DAEMON && echo "${pid}" > /var/run/$DAEMON/$DAEMON.pid
-
-echo "******************************************************************"
-echo " Radio Stream server is up and listening on: http://localhost:80"
-echo " User: radio"
-echo " Pass: $NGINX_PASSWORD"
-echo "******************************************************************"
-echo ""
 
 wait "${pid}" && exit $?
