@@ -13,14 +13,8 @@ RUN echo "http://dl-4.alpinelinux.org/alpine/v3.3/main" >> /etc/apk/repositories
 RUN apk add nginx=1.8.1-r1 && \
     chown -R nginx:www-data /var/lib/nginx
 
-# Install SSH
-RUN apk add openssh openssl bash ca-certificates && \
-    mkdir -p ~root/.ssh && chmod 700 ~root/.ssh/ && \
-    echo -e "Port 22\n" >> /etc/ssh/sshd_config && \
-    cp -a /etc/ssh /etc/ssh.cache
-
 # Various useful linux utilities
-RUN apk add util-linux ffmpeg
+RUN apk add util-linux ffmpeg bash openssl
 
 # Useful pip utilities
 RUN pip install youtube_dl
