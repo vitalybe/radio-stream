@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.facebook.react.ReactActivity;
-import com.testfairy.TestFairy;
 
 import timber.log.Timber;
 
@@ -21,12 +20,5 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "RadioStream";
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        TestFairy.begin(this, "764a3f516e3fdab9f742b8aaf02f2058bd95890c");
     }
 }
