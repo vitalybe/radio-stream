@@ -85,9 +85,16 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
+    signingConfigs {
+        release {
+            storeFile file(ANDROID_RELEASE_STORE_FILE)
+            storePassword ANDROID_RELEASE_STORE_PASSWORD
+
+            keyAlias RADIO_STREAM_RELEASE_KEY_ALIAS
+            keyPassword RADIO_STREAM_RELEASE_KEY_PASSWORD        }
+    }
     compileSdkVersion 23
     buildToolsVersion "25.0.0"
-
     defaultConfig {
         applicationId "com.radiostream"
         minSdkVersion 23
@@ -110,6 +117,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -117,7 +125,7 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
+            def versionCodes = ["armeabi-v7a": 1, "x86": 2]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
@@ -125,42 +133,36 @@ android {
             }
         }
     }
-
     dexOptions {
         javaMaxHeapSize "2g"
     }
 }
 
 dependencies {
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
-    compile "com.facebook.react:react-native:+"  // From node_modules
-
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.facebook.react:react-native:+'
+    // From node_modules
     // timber
     compile 'com.jakewharton.timber:timber:4.3.1'
-
     // retrofit - http client
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
-
     // unit tests and mocking
     testCompile 'junit:junit:4.12'
-    testCompile "org.mockito:mockito-core:1.+"
-    testCompile "org.powermock:powermock-api-mockito:1.6.6"
-    testCompile "org.powermock:powermock-module-junit4:1.6.6"
-    testCompile "org.powermock:powermock-classloading-xstream:1.6.6"
-
+    testCompile 'org.mockito:mockito-core:1.+'
+    testCompile 'org.powermock:powermock-api-mockito:1.6.6'
+    testCompile 'org.powermock:powermock-module-junit4:1.6.6'
+    testCompile 'org.powermock:powermock-classloading-xstream:1.6.6'
     // dagger 2
     // apt command comes from the android-apt plugint
     apt 'com.google.dagger:dagger-compiler:2.7'
     compile 'com.google.dagger:dagger:2.7'
     provided 'javax.annotation:jsr250-api:1.0'
-
     // jdeferred (promises)
     compile 'org.jdeferred:jdeferred-android-aar:1.2.4'
-
     // testfairy
     compile 'testfairy:testfairy-android-sdk:1.+@aar'
 }
