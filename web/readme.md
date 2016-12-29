@@ -15,15 +15,28 @@ Running Mocha tests in PyCharm
    Copy **www/scripts/mocha_reporter_for_pycharm.js** to **/Users/vitaly/Library/Application Support/PyCharm50/NodeJS/js/mocha-intellij/lib/mochaIntellijReporter.js**
 
 
-Running
+Development
 =======
 
-Development
+Running
 -----------
 
-* OSX: `npm run iterm-desktop-dev`
+Run in 2 terminals:
+* `npm run server-desktop-dev` - This starts webpack and transpiles the application
+* `npm run start-desktop-dev` - This launches electron and loads the bundle inside it
 
-Production
-----------
+Alternatively, if you're on OSX and using iTerm, you can use instead: `npm run iterm-desktop-dev`
 
-Create package: `npm run build-desktop-prod`
+Releasing
+==========
+
+OSX
+----
+
+Create package: 
+
+`npm run build-desktop-prod`
+
+Copy to **Applications**:
+
+`release/darwin-x64/Radio Stream-darwin-x64/Radio Stream.app`

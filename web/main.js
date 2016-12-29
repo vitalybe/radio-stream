@@ -16,6 +16,7 @@ const nativeLog = require("./app/native/native_log")
 
 const globalShortcuts = require("./app/native/global_shortcuts")
 const titleHandler = require("./app/native/title_handler")
+const menu = require('./app/native/menu')
 
 let mainWindow = null;
 
@@ -25,6 +26,7 @@ app.on('ready', () => {
 
     titleHandler.register(app, mainWindow);
     globalShortcuts.register(app, mainWindow);
+    menu.setup();
 
     if (process.env.HOT) {
         mainWindow.loadURL(`file://${__dirname}/app/hot-dev-index.html`);
