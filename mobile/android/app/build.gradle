@@ -160,6 +160,9 @@ dependencies {
 
     // jdeferred (promises)
     compile 'org.jdeferred:jdeferred-android-aar:1.2.4'
+
+    // testfairy
+    compile 'testfairy:testfairy-android-sdk:1.+@aar'
 }
 
 // Run this once to be able to run the application with BUCK
