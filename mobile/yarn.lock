@@ -3362,6 +3362,10 @@ react-dom:
     loose-envify "^1.1.0"
     object-assign "^4.1.0"
 
+react-native-testfairy:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-testfairy/-/react-native-testfairy-2.0.8.tgz#e938991c96bd4e4732e1818f294c0d7bda2f3ff1"
+
 react-native-vector-icons:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-3.0.0.tgz#a2f63757dee4fb89f67eef660e25e86926ae6827"

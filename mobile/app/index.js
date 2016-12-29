@@ -9,6 +9,7 @@ import PlaylistCollectionPage from './pages/playlist_collection_page'
 import PlayerPage from './pages/player_page'
 import SettingsPage from './pages/settings_page'
 import Navigator from  './stores/navigator'
+import TestFairy from 'react-native-testfairy';
 
 import playerProxy from './native_proxy/player_proxy'
 
@@ -18,6 +19,9 @@ export default class RadioStream extends Component {
   componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
     logger.info(`start`);
+
+    logger.info(`starting testfairy`);
+    TestFairy.begin("764a3f516e3fdab9f742b8aaf02f2058bd95890c");
 
     this.navigator = new Navigator();
   }

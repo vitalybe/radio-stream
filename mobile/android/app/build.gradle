@@ -97,8 +97,8 @@ android {
     buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "com.radiostream"
-        minSdkVersion 23
-        targetSdkVersion 23
+        minSdkVersion 22
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
         ndk {
@@ -163,6 +163,8 @@ dependencies {
     provided 'javax.annotation:jsr250-api:1.0'
     // jdeferred (promises)
     compile 'org.jdeferred:jdeferred-android-aar:1.2.4'
+    // testfairy
+    compile project(path: ':react-native-testfairy')
 }
 
 // Run this once to be able to run the application with BUCK

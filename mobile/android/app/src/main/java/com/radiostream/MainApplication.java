@@ -11,6 +11,7 @@ import com.facebook.react.shell.MainReactPackage;
 import com.radiostream.javascript.proxy.JsProxyPackage;
 import com.radiostream.util.VerboseDebugTree;
 import com.facebook.soloader.SoLoader;
+import com.testfairy.react.TestFairyPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +30,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
-        new JsProxyPackage()
+        new JsProxyPackage(),
+        new TestFairyPackage()
       );
     }
   };
@@ -43,7 +45,7 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-	
+
 	Timber.plant(new VerboseDebugTree());
   }
 }
