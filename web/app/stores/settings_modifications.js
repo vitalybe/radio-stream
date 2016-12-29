@@ -5,7 +5,7 @@ var moduleLogger = loggerCreator(__filename);
 import { observable, action } from "mobx";
 import keycode from "keycode";
 
-import getSettings from '../stores/settings'
+import { getSettings, Settings } from '../stores/settings'
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
 class SettingsModifications {
@@ -39,18 +39,22 @@ class SettingsModifications {
         this.testState = "";
         this.isTestError = false;
 
-        this.values = getSettings().values;
+        this.values = _.clone(getSettings().values);
     }
 
     save() {
-        this.testState = `Connecting to ${getSettings().host}...`;
+        let customSettings = new Settings();
+        customSettings.update(this.values);
+
+        this.testState = `Connecting to ${customSettings.address}...`;
         this.isTestError = false;
 
-        return backendMetadataApi.testConnection(this)
+        return backendMetadataApi.testConnection(customSettings)
             .then(() => {
                 this.testState = "Connection is successful";
 
-                getSettings().save(this.values);
+                getSettings().update(this.values);
+                getSettings().save();
             })
             .catch(err => {
                 this.testState = "Connection failed: " + err.toString();

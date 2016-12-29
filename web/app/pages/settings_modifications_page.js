@@ -43,7 +43,7 @@ export class SettingsModificationsPage extends Component {
                        onChange={event => settingsModifications.values.password = event.target.value}/>
                 <label>Play/Pause shortcut</label>
                 <input type="text" value={settingsModifications.values.playPauseKey}
-                       onKeyDown={event => settingsModifications.values.modifyPlayPauseKey(event)}
+                       onKeyDown={event => settingsModifications.modifyPlayPauseKey(event)}
                        onChange={() => {/* avoid react warning: https://github.com/facebook/react/issues/1118 */}}/>
                 <div className={classNames("test-state", {"error": settingsModifications.isTestError})}>
                     {settingsModifications.testState}

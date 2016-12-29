@@ -6,7 +6,7 @@ import { ipcRenderer } from 'electron'
 
 import player from "../stores/player"
 import navigator from "../stores/navigator"
-import getSettings from "../stores/settings"
+import { getSettings } from '../stores/settings'
 import { autorun } from "mobx";
 
 export function connect() {

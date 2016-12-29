@@ -1,7 +1,7 @@
 import getHistory from '../utils/history'
 import Ajax from './ajax'
 import { USERNAME } from "../utils/constants"
-import getSettings from '../stores/settings'
+import { getSettings } from '../stores/settings'
 
 // NOTE: Since the host might change, we create a new Ajax object every time
 function getAjax(customSettings) {
@@ -11,9 +11,8 @@ function getAjax(customSettings) {
         settings = customSettings;
     }
 
-    var beetsServer = `http://${settings.values.host}/api`;
-
-    var credentials = btoa(unescape(encodeURIComponent(USERNAME + ':' + settings.values.password)))
+    var beetsServer = settings.address + "/api";
+    var credentials = btoa(unescape(encodeURIComponent(USERNAME + ':' + settings.password)))
     return new Ajax(beetsServer, {
         'headers': {
             'Authorization': "Basic " + credentials,
