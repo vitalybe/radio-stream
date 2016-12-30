@@ -46,7 +46,9 @@ export default class PlayerPage extends Component {
     DeviceEventEmitter.addListener(this.PLAYLIST_PLAYER_STATUS_EVENT, event => this.onPlaylistPlayerStatus(event));
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
     AppState.addEventListener('change', currentAppState => this.onHandleAppStateChange(currentAppState));
+  }
 
+  componentDidMount() {
     this.refreshStatus();
   }
 
@@ -74,7 +76,7 @@ export default class PlayerPage extends Component {
         logger.info(`player id changed - service restarted: ${this.playerId} != ${status.id}`);
         this.props.navigator.navigateToPlaylistCollection();
         this.playerId = status.id;
-      } else if (playlistPlayer && playlistPlayer.isPlaying && playlistPlayer.playlist.name == this.props.playlistName) {
+      } else if (playlistPlayer && playlistPlayer.playlist.name == this.props.playlistName) {
         logger.info(`playing existing playlist`);
         this.onPlaylistPlayerStatus(playlistPlayer);
       } else {
