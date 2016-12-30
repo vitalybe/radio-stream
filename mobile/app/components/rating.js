@@ -2,7 +2,7 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("rating");
 
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableWithoutFeedback, Image, Vibration } from 'react-native';
+import { StyleSheet, View, TouchableWithoutFeedback, Image, Vibration, ToastAndroid } from 'react-native';
 import Text from './text';
 import _ from 'lodash'
 import { colors } from '../styles/styles'
@@ -36,6 +36,10 @@ export default class Rating extends Component {
     Vibration.vibrate();
   }
 
+  onStarPress() {
+    ToastAndroid.show('Long press to change rating', ToastAndroid.SHORT);
+  }
+
   render() {
     let logger = loggerCreator("render", moduleLogger);
     logger.info(`start - rating: ${this.props.rating}`);
@@ -53,7 +57,7 @@ export default class Rating extends Component {
       }
 
       return (
-        <TouchableWithoutFeedback key={i} onLongPress={() => this.onStarLongPress(i)}>
+        <TouchableWithoutFeedback key={i} onPress={() => this.onStarPress()} onLongPress={() => this.onStarLongPress(i)}>
           <Image style={[styles.star]} source={imageSource}/>
         </TouchableWithoutFeedback>
       );
