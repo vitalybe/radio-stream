@@ -34,18 +34,18 @@ class Settings {
     return this._password;
   }
 
-  load() {
+  async load() {
     let logger = loggerCreator("load", moduleLogger);
     logger.info(`start`);
 
-    return AsyncStorage.getItem(PERSISTENCE_HOST)
-      .then(value => {
-        this._host = value;
-        return AsyncStorage.getItem(PERSISTENCE_PASSWORD)
-      })
-      .then(value => {
-        this._password = value;
-      });
+
+    this._host = await AsyncStorage.getItem(PERSISTENCE_HOST);
+    this._password = await AsyncStorage.getItem(PERSISTENCE_PASSWORD);
+  }
+
+  async save() {
+    await AsyncStorage.setItem(PERSISTENCE_HOST, this.host);
+    await AsyncStorage.setItem(PERSISTENCE_PASSWORD, this.password);
   }
 
   update(host, password) {
@@ -54,10 +54,6 @@ class Settings {
 
     this._host = host;
     this._password = password;
-
-    return AsyncStorage.setItem(PERSISTENCE_HOST, this.host).then(() => {
-      return AsyncStorage.setItem(PERSISTENCE_PASSWORD, this.password)
-    });
   }
 }
 

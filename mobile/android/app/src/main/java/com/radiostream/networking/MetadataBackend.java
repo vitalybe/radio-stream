@@ -63,8 +63,10 @@ public class MetadataBackend {
     }
 
     private BackendMetadataClient getService() {
+        final String address = mSettings.getAddress();
+        
         return HttpServiceFactory.createService(BackendMetadataClient.class,
-            mSettings.getAddress(), mSettings.getUser(), mSettings.getPassword());
+            address, mSettings.getUser(), mSettings.getPassword());
     }
 
     public Promise<List<SongResult>, Exception, Void> fetchPlaylist(String playlistName) {

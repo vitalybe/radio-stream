@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.support.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
-import com.radiostream.BuildConfig;
 import com.radiostream.Settings;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
@@ -14,7 +13,6 @@ import com.radiostream.util.SetTimeout;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
-import org.jdeferred.Promise;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,18 +20,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.internal.util.MockUtil;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.net.NetworkInterface;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static com.radiostream.player.Utils.resolvedPromise;
 import static org.junit.Assert.assertEquals;
@@ -69,7 +61,7 @@ public class SongTest {
     @Mock
     MetadataBackend mockMetadataBackend;
 
-    final String settingsUrl = "http://wwww.fake-url.com/";
+    final String settingsUrl = "http://wwww.fake-url.com";
 
     @Before
     public void setUp() throws Exception {
@@ -131,7 +123,7 @@ public class SongTest {
             }
         });
 
-        verify(mockMediaPlayer).setDataSource(settingsUrl + "music/" + songPath);
+        verify(mockMediaPlayer).setDataSource(settingsUrl + "/music/" + songPath);
         assertEquals(doneResult[0], song);
     }
 
@@ -208,7 +200,7 @@ public class SongTest {
         final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackend);
         song.preload();
 
-        verify(mockMediaPlayer).setDataSource(settingsUrl + "music/art%20ist/so%20ng.mp3");
+        verify(mockMediaPlayer).setDataSource(settingsUrl + "/music/art%20ist/so%20ng.mp3");
     }
 
     @Test

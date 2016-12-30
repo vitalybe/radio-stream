@@ -63,13 +63,6 @@ export default class SettingsPage extends Component {
     let host = this.store.host;
     let password = this.store.password;
 
-    const httpPrefix = "http://";
-    if(false === this.store.host.startsWith(httpPrefix)) {
-      logger.info(`adding prefix ${httpPrefix} to host`);
-      host = httpPrefix + host;
-      logger.info(`resulting host: ${host}`);
-    }
-
     this.store.status = "Connecting...";
     backendMetadataApi.testConnection(host, password)
       .then(() => {
@@ -77,7 +70,8 @@ export default class SettingsPage extends Component {
 
         logger.info(`updating global settings`);
 
-        return globalSettings.update(host, password).then(() => {
+        globalSettings.update(host, password);
+        return globalSettings.save().then(() => {
           this.props.navigator.navigateToPlaylistCollection();
         });
       })

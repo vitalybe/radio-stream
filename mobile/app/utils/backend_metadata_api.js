@@ -27,9 +27,9 @@ class BackendMetadataApi {
       throw "host or password are empty"
     }
 
-    const beetsServer = `${host}/api`;
+    const address = `http://${host}/radio-stream/api`;
     const credentials = btoa(unescape(encodeURIComponent(globalSettings.user + ':' + password)));
-    return new Ajax(beetsServer, {
+    return new Ajax(address, {
       'headers': {
         'Authorization': "Basic " + credentials,
         'Content-Type': "application/json"

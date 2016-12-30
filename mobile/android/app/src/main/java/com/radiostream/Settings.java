@@ -13,7 +13,7 @@ import timber.log.Timber;
 @DebugLog
 @Singleton
 public class Settings {
-    private String mAddress = null;
+    private String mHost = null;
     private String mUser = null;
     private String mPassword = null;
 
@@ -21,21 +21,20 @@ public class Settings {
     public Settings() {
     }
 
-    public void update(String address, String user, String password) {
-        Timber.i("updating settings. new address: %s", address);
+    public void update(String host, String user, String password) {
+        Timber.i("updating settings. new host: %s", host);
 
-        mAddress = address;
-        if(!mAddress.endsWith("/")) {
-            Timber.i("adding missing '/' at the end of address: %s", address);
-            mAddress += "/";
-        }
-
+        mHost = host;
         mUser = user;
         mPassword = password;
     }
 
+    public String getHost() {
+        return mHost;
+    }
+
     public String getAddress() {
-        return mAddress;
+        return "http://" + this.mHost + "/radio-stream/";
     }
 
     public String getUser() {

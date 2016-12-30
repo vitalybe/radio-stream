@@ -6,8 +6,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.PowerManager;
 
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeMap;
 import com.radiostream.Settings;
 import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.networking.MetadataBackend;
@@ -190,7 +188,7 @@ public class Song {
                 }
             });
 
-            String url = mSettings.getAddress() + "music/" + this.mPath;
+            String url = mSettings.getAddress() + "/music/" + this.mPath;
             Timber.i("loading song from url: %s", url);
             try {
                 mMediaPlayer.setDataSource(url);
