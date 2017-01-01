@@ -107,18 +107,24 @@ class Player {
       this.loadingAction = `Loading next song...`;
       this.loadingError = lastError && lastError.toString();
       let nextSong = await this.currentPlaylist.nextSong();
-      logger.info(`got next song: ${nextSong}`);
 
-      if (this.song != nextSong || this.song == null) {
-        logger.info(`subscribing to song events`);
-        this.song = nextSong;
-        this.song.subscribePlayProgress(this._onPlayProgress.bind(this));
-        this.song.subscribeFinish(this.next.bind(this));
+      if(nextSong != null) {
+        logger.info(`got next song: ${nextSong.toString()}`);
+
+        if (this.song != nextSong || this.song == null) {
+          this.song = nextSong;
+          logger.info(`subscribing to song events`);
+          this.song.subscribePlayProgress(this._onPlayProgress.bind(this));
+          this.song.subscribeFinish(this.next.bind(this));
+        }
+
+        this.loadingAction = `${nextSong.toString()}: Loading sound...`;
+        logger.info(`playing sound`);
+        await this.song.playSound();
+      } else {
+        logger.info(`no next song returned - playlist is empty`);
+        this.loadingError = "Playlist is empty - No additional songs found"
       }
-
-      this.loadingAction = `${nextSong.toString()}: Loading sound...`;
-      logger.info(`playing sound`);
-      await this.song.playSound();
     })
 
     await this._preloadNextSong();
