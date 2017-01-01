@@ -2,65 +2,65 @@ import loggerCreator from '../utils/logger'
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator(__filename);
 
-import { observable, action } from "mobx";
+import {observable, action} from "mobx";
 
 export class Settings {
 
-    _values = {
-        host: "",
-        password: "",
-        playPauseKey: ""
-    };
+  _values = {
+    host: "",
+    password: "",
+    playPauseKey: ""
+  };
 
-    // i am unable to get proxyquire, in tests, to require electron, so I have to hide it inside
-    _electronSettings = require('electron-settings');
+  // i am unable to get proxyquire, in tests, to require electron, so I have to hide it inside
+  _electronSettings = require('electron-settings');
 
-    constructor() {
-        let logger = loggerCreator(this.constructor.name, moduleLogger);
-        logger.info(`start`);
+  constructor() {
+    let logger = loggerCreator(this.constructor.name, moduleLogger);
+    logger.info(`start`);
 
-        this.load();
+    this.load();
+  }
+
+  get values() {
+    return this._values;
+  }
+
+  get address() {
+    if (this._values.host) {
+      return `http://${this._values.host}/radio-stream/`
+    } else {
+      return null;
     }
+  }
 
-    get values() {
-        return this._values;
-    }
+  get password() {
+    return this._values.password;
+  }
 
-    get address() {
-        if(this._values.host) {
-          return `http://${this._values.host}/radio-stream/`
-        } else {
-          return null;
-        }
-    }
+  get playPauseKey() {
+    return this._values.playPauseKey;
+  }
 
-    get password() {
-        return this._values.password;
-    }
+  update(newValues) {
+    this._values = _.clone(newValues);
+  }
 
-    get playPauseKey() {
-      return this._values.playPauseKey;
-    }
+  load() {
+    this._values = this._electronSettings.getSync("values");
+  }
 
-    update(newValues) {
-        this._values = _.clone(newValues);
-    }
-
-    load() {
-        this._values = this._electronSettings.getSync("values");
-    }
-
-    save() {
-       return this._electronSettings.setSync("values", this.values);
-    }
+  save() {
+    return this._electronSettings.setSync("values", this.values);
+  }
 }
 
 // note: we can't export a new instance because due to electron requiring issues in proxyquire in tests
 let settingsInstance = null;
 export function getSettings() {
-    if (!settingsInstance) {
-        settingsInstance = new Settings();
-    }
+  if (!settingsInstance) {
+    settingsInstance = new Settings();
+  }
 
-    return settingsInstance;
+  return settingsInstance;
 }

@@ -2,48 +2,48 @@ import loggerCreator from '../utils/logger'
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator(__filename);
 
-import { observable, action } from "mobx";
+import {observable, action} from "mobx";
 import retries from "../utils/retries"
 
 import Playlist from "../domain/playlist"
 import * as backendMetadataApi from '../utils/backend_metadata_api'
 
 class PlaylistCollection {
-    @observable items = [];
+  @observable items = [];
 
-    @observable loading = false;
-    @observable loadingAction = null;
-    @observable loadingError = null;
+  @observable loading = false;
+  @observable loadingAction = null;
+  @observable loadingError = null;
 
-    constructor() {
-    }
+  constructor() {
+  }
 
-    @action
-    load() {
-        let logger = loggerCreator(this.load.name, moduleLogger);
-        logger.info(`start`);
+  @action
+  load() {
+    let logger = loggerCreator(this.load.name, moduleLogger);
+    logger.info(`start`);
 
-        this.items.clear();
-        this.loading = true;
-        this.error = false;
-        logger.info(`loading playlists`);
+    this.items.clear();
+    this.loading = true;
+    this.error = false;
+    logger.info(`loading playlists`);
 
-        return retries.promiseRetry(lastError => {
-            this.loadingAction = "Loading playlists";
-            this.loadingError = lastError && lastError.toString();
+    return retries.promiseRetry(lastError => {
+      this.loadingAction = "Loading playlists";
+      this.loadingError = lastError && lastError.toString();
 
-            return backendMetadataApi.playlists();
-        }).then(action((playlists) => {
-            logger.info(`got playlists: ${playlists}`);
+      return backendMetadataApi.playlists();
+    }).then(action((playlists) => {
+      logger.info(`got playlists: ${playlists}`);
 
-            let newPlaylists = playlists.map(playlistName => {
-                return new Playlist(playlistName);
-            });
+      let newPlaylists = playlists.map(playlistName => {
+        return new Playlist(playlistName);
+      });
 
-            this.items = observable(newPlaylists);
-            this.loading = false;
-        }));
-    }
+      this.items = observable(newPlaylists);
+      this.loading = false;
+    }));
+  }
 }
 
 export default new PlaylistCollection();

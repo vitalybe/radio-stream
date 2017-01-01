@@ -21,25 +21,25 @@ const menu = require('./app/native/menu')
 let mainWindow = null;
 
 app.on('ready', () => {
-    mainWindow = new BrowserWindow({width: 1024, height: 728, icon: "app/images/icon.ico"});
-    nativeLog.setMainWindow(mainWindow);
+  mainWindow = new BrowserWindow({width: 1024, height: 728, icon: "app/images/icon.ico"});
+  nativeLog.setMainWindow(mainWindow);
 
-    titleHandler.register(app, mainWindow);
-    globalShortcuts.register(app, mainWindow);
-    menu.setup();
+  titleHandler.register(app, mainWindow);
+  globalShortcuts.register(app, mainWindow);
+  menu.setup();
 
-    if (process.env.HOT) {
-        mainWindow.loadURL(`file://${__dirname}/app/hot-dev-index.html`);
-    } else {
-        mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
-    }
+  if (process.env.HOT) {
+    mainWindow.loadURL(`file://${__dirname}/app/hot-dev-index.html`);
+  } else {
+    mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
+  }
 
-    mainWindow.on('closed', () => {
-        mainWindow = null;
-    });
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
 
-    app.on('window-all-closed', () => {
-        if (process.platform !== 'darwin') app.quit();
-    });
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') app.quit();
+  });
 
 });

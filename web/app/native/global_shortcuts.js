@@ -4,22 +4,22 @@ const electron = require("electron")
 const globalShortcut = electron.globalShortcut;
 const ipcMain = electron.ipcMain;
 
-module.exports.register = function(app, mainWindow) {
-    ipcMain.on("onPlayPauseKeyChanged", (event, newKey) => {
-        nativeLog.log(`registering key: ${newKey}`);
+module.exports.register = function (app, mainWindow) {
+  ipcMain.on("onPlayPauseKeyChanged", (event, newKey) => {
+    nativeLog.log(`registering key: ${newKey}`);
 
-        globalShortcut.unregisterAll();
+    globalShortcut.unregisterAll();
 
-        if (newKey) {
-            globalShortcut.register(newKey, function () {
-                nativeLog.log('play/pause toggle key pressed');
-                mainWindow.webContents.send('playPauseGlobalKey');
-            });
-        }
-    })
+    if (newKey) {
+      globalShortcut.register(newKey, function () {
+        nativeLog.log('play/pause toggle key pressed');
+        mainWindow.webContents.send('playPauseGlobalKey');
+      });
+    }
+  })
 
-    app.on('will-quit', function () {
-        // Unregister all shortcuts.
-        globalShortcut.unregisterAll();
-    });
+  app.on('will-quit', function () {
+    // Unregister all shortcuts.
+    globalShortcut.unregisterAll();
+  });
 }

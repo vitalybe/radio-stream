@@ -8,38 +8,38 @@ const PLAYLIST_2 = "PLAYLIST_2";
 
 describe('PlaylistCollection', () => {
 
-    jsdom();
-    let self = {};
+  jsdom();
+  let self = {};
 
-    beforeEach(() => {
-        // Mocks
-        self.backendMetadataApiStub = {
-            "playlists": sinon.stub().returns(new Promise(resolve => {
-                let playlistNames = [PLAYLIST_1, PLAYLIST_2];
-                resolve(playlistNames);
-            }))
-        };
+  beforeEach(() => {
+    // Mocks
+    self.backendMetadataApiStub = {
+      "playlists": sinon.stub().returns(new Promise(resolve => {
+        let playlistNames = [PLAYLIST_1, PLAYLIST_2];
+        resolve(playlistNames);
+      }))
+    };
 
 
-        // SUT
-        let PlaylistCollectionModule = proxyquire("../../app/stores/playlist_collection", {
-                "../utils/backend_metadata_api": self.backendMetadataApiStub
-            }
-        );
+    // SUT
+    let PlaylistCollectionModule = proxyquire("../../app/stores/playlist_collection", {
+        "../utils/backend_metadata_api": self.backendMetadataApiStub
+      }
+    );
 
-        self.playlistCollection = PlaylistCollectionModule.default;
-    });
+    self.playlistCollection = PlaylistCollectionModule.default;
+  });
 
-    it('returns playlist names', () => {
-        let playlistCollection = self.playlistCollection;
+  it('returns playlist names', () => {
+    let playlistCollection = self.playlistCollection;
 
-        return playlistCollection.load()
-            .then(() => {
-                expect(playlistCollection.items.length).to.be.equal(2);
-                expect(playlistCollection.items[0].name).to.be.equal(PLAYLIST_1);
-                expect(playlistCollection.items[1].name).to.be.equal(PLAYLIST_2);
-            })
-    });
+    return playlistCollection.load()
+      .then(() => {
+        expect(playlistCollection.items.length).to.be.equal(2);
+        expect(playlistCollection.items[0].name).to.be.equal(PLAYLIST_1);
+        expect(playlistCollection.items[1].name).to.be.equal(PLAYLIST_2);
+      })
+  });
 
 
 });

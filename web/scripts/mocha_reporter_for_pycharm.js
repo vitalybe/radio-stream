@@ -92,14 +92,14 @@ function extractErrInfo(err) {
 
   // replace relative with absolute path for pycharm
   var re = /[\(]?([\w\/]+\.js)(:\d+:\d+)[\)]?/g;
-  stack = stack.replace(re, function(match, filename, lineNumbers) {
+  stack = stack.replace(re, function (match, filename, lineNumbers) {
     //console.log(`filename: ${filename}`)
 
     var absolute_filename = path.join(process.cwd(), filename);
     //console.log(`absolute: ${absolute_filename}`)
 
-    return "\n"+absolute_filename+lineNumbers;
-});
+    return "\n" + absolute_filename + lineNumbers;
+  });
 
   var index = stack.indexOf(message);
   if (index >= 0) {
@@ -111,8 +111,8 @@ function extractErrInfo(err) {
     }
   }
   return {
-    message : message,
-    stack : stack // fs.readdirSync(".").toString()
+    message: message,
+    stack: stack // fs.readdirSync(".").toString()
   }
 }
 
@@ -180,9 +180,9 @@ function finishTestNode(tree, test, err) {
   var testNode = treeUtil.getNodeForTest(test);
   if (testNode != null && testNode.isFinished()) {
     /* See https://youtrack.jetbrains.com/issue/WEB-10637
-       A test can be reported as failed and passed at the same test run if a error is raised using
-         this.test.error(new Error(...));
-       At least all errors should be presented to a user. */
+     A test can be reported as failed and passed at the same test run if a error is raised using
+     this.test.error(new Error(...));
+     At least all errors should be presented to a user. */
     addStdErr(testNode, err);
     return;
   }
