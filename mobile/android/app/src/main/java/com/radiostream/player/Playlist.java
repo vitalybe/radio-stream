@@ -30,21 +30,22 @@ public class Playlist {
 
     private Promise<Void, Exception, Void> reloadIfNeededForSongIndex(int index) {
         Timber.i("checking if reload is needed. songs count: %d Current index: %d", mSongs.size(), mIndex);
-        if(index >= mSongs.size()) {
+        if (index >= mSongs.size()) {
             Timber.i("reloading songs");
 
-            return mMetadataBackend.fetchPlaylist(mPlaylistName).then(new DoneFilter<List<SongResult>, Void>() {
+            return mMetadataBackend.fetchPlaylist(mPlaylistName).then(new DonePipe<List<SongResult>, Void, Exception, Void>() {
                 @Override
-                public Void filterDone(List<SongResult> result) {
+                public Promise<Void, Exception, Void> pipeDone(List<SongResult> result) {
                     if (result.size() == 0) {
-                        throw new RuntimeException("Empty playlists are currently unhandled");
+                        Timber.e("empty playlist was returned");
+                        return new DeferredObject<Void, Exception, Void>().reject(new Exception("Empty playlists")).promise();
                     }
 
                     for (SongResult songResult : result) {
                         mSongs.add(mSongFactory.build(songResult));
                     }
 
-                    return null;
+                    return new DeferredObject<Void, Exception, Void>().resolve(null).promise();
                 }
             });
         } else {
@@ -55,7 +56,7 @@ public class Playlist {
 
     public Promise<Song, Exception, Void> peekCurrentSong() {
         Timber.i("function start");
-        
+
         return peekSong(mIndex);
     }
 
@@ -66,7 +67,7 @@ public class Playlist {
     }
 
     public boolean isCurrentSong(Song song) {
-        if(mIndex < mSongs.size()) {
+        if (mIndex < mSongs.size()) {
             Timber.i("checking if given song '%s' is the current song", song.toString());
             return mSongs.get(mIndex) == song;
         } else {
@@ -77,7 +78,7 @@ public class Playlist {
     }
 
     public void nextSong() {
-        Timber.i("function start. From %d to %d", mIndex, mIndex+1);
+        Timber.i("function start. From %d to %d", mIndex, mIndex + 1);
         mIndex++;
     }
 
@@ -88,9 +89,14 @@ public class Playlist {
             @Override
             public Promise<Song, Exception, Void> pipeDone(Void result) {
                 DeferredObject<Song, Exception, Void> deferredObject = new DeferredObject<>();
-                Song resolve = mSongs.get(index);
-                Timber.i("peeked next song: %s", resolve.toString());
-                return deferredObject.resolve(resolve).promise();
+                try {
+                    Song resolve = mSongs.get(index);
+                    Timber.i("peeked next song: %s", resolve.toString());
+                    return deferredObject.resolve(resolve).promise();
+                } catch (Exception e) {
+                    Timber.e(e, "peek failed");
+                    return deferredObject.reject(e);
+                }
             }
         });
     }
@@ -103,7 +109,7 @@ public class Playlist {
 
     public void close() {
         Timber.i("closing all songs");
-        for(Song song : mSongs) {
+        for (Song song : mSongs) {
             song.close();
         }
     }
