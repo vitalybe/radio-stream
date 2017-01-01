@@ -3,7 +3,7 @@ var webpack = require('webpack');
 
 var config = require('./webpack.config.base.js')
 config.devtool = 'source-map';
-config.entry = './app/index';
+config.entry = ['babel-polyfill', './app/index'];
 
 config.plugins = config.plugins.concat([
     new webpack.optimize.OccurenceOrderPlugin(),

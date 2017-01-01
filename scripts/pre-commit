@@ -24,7 +24,7 @@ function web_hook() {
 	prevent_text web/test \.only\(
 
 	echo "Running tests..."
-	node web/node_modules/mocha/bin/_mocha --compilers js:babel-register --ui bdd --recursive web/test
+	node web/node_modules/mocha/bin/_mocha --compilers js:babel-register --ui bdd --recursive web/test --require babel-polyfill
 	if [[ $? = 0 ]]
 	then
 	    echo "> Tests passed"

@@ -3,9 +3,11 @@ Test
 
 Running in shell
 ----------------
-To run: `node ./node_modules/mocha/bin/_mocha --compilers js:babel-register --recursive`
+To run: `node ./node_modules/mocha/bin/_mocha --compilers js:babel-register --recursive --require babel-polyfill`
 
-To debug: `node debug ./node_modules/mocha/bin/_mocha --compilers js:babel-register --recursive`
+To run in a a watch mode use `node watch` in line above.
+To debug use `node debug` in line above.
+
 
 Running Mocha tests in PyCharm
 ------------------------------

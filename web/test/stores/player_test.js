@@ -39,8 +39,15 @@ describe('Player', () => {
 
         self.stubRetries = Object.create({
             promiseRetry: (f) => {
+                let logger = loggerCreator("promiseRetry stub", moduleLogger);
+                logger.info(`start`);
+
                 return promiseRetryLib(retry => {
-                    return f().catch(err => retry(err))
+                    logger.info(`starting: try...`);
+                    return f().catch(err => {
+                      logger.info(`caught err - will retry`);
+                      retry(err)
+                    })
                 }, {retries: RETRIES_COUNT, minTimeout: 0, maxTimeout: 0});
             }
         })
