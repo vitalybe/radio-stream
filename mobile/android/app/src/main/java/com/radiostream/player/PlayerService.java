@@ -48,7 +48,7 @@ import timber.log.Timber;
 public class PlayerService extends Service implements PlaylistControls {
 
     private final int mStopPausedServiceAfterMs = 10 * 60 * 1000;
-    private final int mStopPausedServiceRetryAfterMs = 30 * 1000;
+    private final int mStopPausedServiceRetryAfterMs = 3 * 60 * 1000;
     private final int mNotificationId = 1;
     private final String mParamExit = "mParamExit";
     private final PlayerServiceBinder mBinder = new PlayerServiceBinder();
@@ -76,7 +76,7 @@ public class PlayerService extends Service implements PlaylistControls {
                 BluetoothDevice btDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (btDevice.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.AUDIO_VIDEO) {
                     Timber.i("pausing music due to bluetooth disconnection");
-                    mPlayer.pause();
+                    PlayerService.this.pause();
                 }
             }
         }
@@ -90,14 +90,14 @@ public class PlayerService extends Service implements PlaylistControls {
                 Timber.i("telephone busy state: %d", state);
                 if(mPlayer.getIsPlaying()) {
                     Timber.i("pausing due to telephone state");
-                    mPlayer.pause();
+                    PlayerService.this.pause();
                     mPausedDuePhoneState = true;
                 }
             } else if(state == TelephonyManager.CALL_STATE_IDLE) {
                 Timber.i("telehpone idle state");
                 if(mPausedDuePhoneState) {
                     Timber.i("resuming pause music");
-                    mPlayer.play();
+                    PlayerService.this.play();
                     mPausedDuePhoneState = false;
                 }
             }
@@ -198,9 +198,9 @@ public class PlayerService extends Service implements PlaylistControls {
 
     private void playPause() {
         if(this.mPlayer.getIsPlaying()) {
-            this.mPlayer.pause();
+            PlayerService.this.pause();
         } else {
-            this.mPlayer.play();
+            PlayerService.this.play();
         }
     }
 
