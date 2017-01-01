@@ -1,3 +1,15 @@
+Development
+=======
+
+Running
+-----------
+
+Run in 2 terminals:
+* `npm run server-desktop-dev` - This starts webpack and transpiles the application
+* `npm run start-desktop-dev` - This launches electron and loads the bundle inside it
+
+Alternatively, if you're on OSX and using iTerm, you can use instead: `npm run iterm-desktop-dev`
+
 Test
 ====
 
@@ -15,19 +27,6 @@ Running Mocha tests in PyCharm
 1. Add to mocha default options in PyCharm configuration: `Extra mocha options: --compilers js:babel-register`
 1. (Optional) To handle the issue of [missing file links](https://intellij-support.jetbrains.com/hc/en-us/community/posts/203331070-File-name-isn-t-clickable-in-Mocha-output)
    Copy **www/scripts/mocha_reporter_for_pycharm.js** to **/Users/vitaly/Library/Application Support/PyCharm50/NodeJS/js/mocha-intellij/lib/mochaIntellijReporter.js**
-
-
-Development
-=======
-
-Running
------------
-
-Run in 2 terminals:
-* `npm run server-desktop-dev` - This starts webpack and transpiles the application
-* `npm run start-desktop-dev` - This launches electron and loads the bundle inside it
-
-Alternatively, if you're on OSX and using iTerm, you can use instead: `npm run iterm-desktop-dev`
 
 Releasing
 ==========
