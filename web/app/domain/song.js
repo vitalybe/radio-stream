@@ -82,7 +82,7 @@ export class Song {
       });
   }
 
-  _loadImage() {
+  async _loadImage() {
     let logger = loggerCreator(this._loadImage.name, moduleLogger);
     logger.info(`start`);
 
@@ -91,24 +91,25 @@ export class Song {
       return Promise.resolve();
     } else {
       logger.info(`loading artist image`);
-      return backendLastFm.getArtistImage(this.artist).then(imageUrl => {
-        logger.info(`image loaded`);
-        this.loadedImageUrl = imageUrl;
-      });
+      let imageUrl = await backendLastFm.getArtistImage(this.artist);
+
+      logger.info(`image loaded`);
+      this.loadedImageUrl = imageUrl;
     }
 
 
   }
 
-  load() {
+  async load() {
     let logger = loggerCreator(this.load.name, moduleLogger);
     logger.info(`start`);
 
-    return this._loadSound().then(() => {
-      return this._loadImage().catch(err => {
-        logger.error(`failed to load image: ${err}`);
-      })
-    })
+    await this._loadSound();
+    try {
+      await this._loadImage();
+    } catch (err) {
+      logger.warn(`failed to load image: ${err}`);
+    }
   }
 
   playSound() {

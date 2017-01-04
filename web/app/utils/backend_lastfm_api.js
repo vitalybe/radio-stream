@@ -15,7 +15,7 @@ export function getArtistImage(artist) {
         logger.info("Done");
         resolve(data.artist.image[3]["#text"]);
       }, error: function (code, message) {
-        logger.error(`Failed - ${message}`);
+        logger.warn(`Failed - ${message}`);
         reject(message);
       }
     });
