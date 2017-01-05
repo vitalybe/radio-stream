@@ -4,4 +4,4 @@
 
 [submodule "server/cli"]
     path = server/cli
-    url = ssh://git@bitbucket.org/vitalyb/radio-stream-cli.git
+    url = https://github.com/vitalybe/radio-stream-cli.git
