@@ -17,7 +17,7 @@ If you have the permission you can publish directly by running:
 
 Running
 =======
-See [here](cli/README.md)
+See [here](https://github.com/vitalybe/radio-stream-cli/)
 
 Development
 ===========
