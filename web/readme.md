@@ -1,8 +1,12 @@
 Development
 =======
 
+Prerequirements
+-------------
+Run: `npm install`
+
 Running
------------
+-------
 
 Run in 2 terminals:
 * `npm run server-desktop-dev` - This starts webpack and transpiles the application

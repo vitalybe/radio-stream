@@ -1,6 +1,11 @@
+Prerequirements
+===============
+
+1. `yarn install`
+1. `brew install pidcat`
+
 Build
 =====
-
 Run: `./build_dockerfile.sh`
 
 Publish
@@ -12,15 +17,14 @@ If you have the permission you can publish directly by running:
 
 Running
 =======
-
-See (file)[cli/README.md]
+See [here](cli/README.md)
 
 Development
 ===========
 
 To run in development mode add `-d` parameter to regular cli running, like so:
 
-`./run_server.sh -d sh`
+`./cli/bin/server/start -d sh`
 
 Then once in the container shell, write:
 

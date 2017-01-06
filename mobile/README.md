@@ -1,11 +1,11 @@
-Prerequirements
-===============
-
-1. `yarn install`
-1. `brew install pidcat`
-
 Development
 ===========
+
+Prerequirements
+----------------
+
+1. `yarn install`
+1. Install [pidcat](https://github.com/JakeWharton/pidcat), on OSX: `brew install pidcat`
 
 Launching
 ---------
@@ -18,7 +18,7 @@ This will do the following:
 * Installs the debug application to the connected Android phone
 * Launched **pidcat** and shows you application's logs filtered to show only releveant output
 
-If you want to just launch pidcat, without everything else, run: `logcat.sh`
+If you want to just launch pidcat, without everything else, run: `./logcat.sh`
 
 Modifying code
 --------------
