@@ -187,9 +187,6 @@ public class PlayerService extends Service implements PlaylistControls {
         mMediaSession = new MediaSession(this, "PlayerService");
         mMediaSession.setCallback(mMediaSessionCallback);
         mMediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
-        mMediaSession.setActive(true);
-        PlaybackState state = new PlaybackState.Builder().setActions(PlaybackState.ACTION_PLAY_PAUSE).build();
-        mMediaSession.setPlaybackState(state);
 
         Timber.i("registering to player events");
         mPlaylistPlayerEventsEmitter.subscribe(onPlaylistPlayerEvent);
@@ -197,6 +194,8 @@ public class PlayerService extends Service implements PlaylistControls {
     }
 
     private void playPause() {
+        Timber.i("function start");
+
         if(this.mPlayer.getIsPlaying()) {
             PlayerService.this.pause();
         } else {
@@ -309,6 +308,14 @@ public class PlayerService extends Service implements PlaylistControls {
 
     @Override
     public Promise<Song, Exception, Void> play() {
+        Timber.i("function start");
+
+        Timber.i("updating media session");
+        mMediaSession.setActive(true);
+        final long actions = PlaybackState.ACTION_PLAY_PAUSE | PlaybackState.ACTION_PLAY | PlaybackState.ACTION_PAUSE;
+        PlaybackState state = new PlaybackState.Builder().setActions(actions).build();
+        mMediaSession.setPlaybackState(state);
+
         mPausedDate = null;
         Timber.i("player unpaused");
         return this.mPlayer.play();
