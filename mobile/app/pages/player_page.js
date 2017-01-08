@@ -43,18 +43,25 @@ export default class PlayerPage extends Component {
       }
     };
 
-    DeviceEventEmitter.addListener(this.PLAYLIST_PLAYER_STATUS_EVENT, event => this.onPlaylistPlayerStatus(event));
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
-    AppState.addEventListener('change', currentAppState => this.onHandleAppStateChange(currentAppState));
   }
 
   componentDidMount() {
+    let logger = loggerCreator("componentDidMount", moduleLogger);
+    logger.info(`start`);
+
+    AppState.addEventListener('change', this.onHandleAppStateChange);
+    DeviceEventEmitter.addListener(this.PLAYLIST_PLAYER_STATUS_EVENT, event => this.onPlaylistPlayerStatus(event));
+
     this.refreshStatus();
   }
 
   componentWillUnmount() {
+    let logger = loggerCreator("componentWillUnmount", moduleLogger);
+    logger.info(`start`);
+
     DeviceEventEmitter.removeAllListeners(this.PLAYLIST_PLAYER_STATUS_EVENT);
-    AppState.removeEventListener('change', this.onHandleAppStateChange());
+    AppState.removeEventListener('change', this.onHandleAppStateChange);
   }
 
   refreshStatus() {
@@ -87,7 +94,7 @@ export default class PlayerPage extends Component {
     });
   }
 
-  onHandleAppStateChange(currentAppState) {
+  onHandleAppStateChange = (currentAppState) => {
     let logger = loggerCreator("onHandleAppStateChange", moduleLogger);
     logger.info(`start: ${currentAppState}`);
 
