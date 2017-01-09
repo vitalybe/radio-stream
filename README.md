@@ -35,7 +35,8 @@ Docker was used to provide easy deployment and minimize required configuration f
 
 This is the server-side application that the user interacts with to control the docker container and execute beets inside it.
 
-**Client applicationsn**
+Client applications
+-------------------
 
 * Android application - Developed using react-native.
 * Desktop application - Developed with electron. 

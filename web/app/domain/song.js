@@ -21,7 +21,7 @@ export class Song {
   @observable rating = null;
 
   @observable isMarkedAsPlayed = false;
-  _markingAsPlayedPromise = null;
+  markingAsPlayedPromise = null;
 
   @observable loadedSound = null;
   @observable loadedImageUrl = null;
@@ -167,17 +167,16 @@ export class Song {
     let logger = loggerCreator(this.markAsPlayed.name, moduleLogger);
 
     logger.debug(`start: ${this.toString()}`);
-    if (!this._markingAsPlayedPromise) {
-      this._markingAsPlayedPromise = retries.promiseRetry(() => backendMetadataApi.updateLastPlayed(this.id))
+    if (!this.markingAsPlayedPromise) {
+      this.markingAsPlayedPromise = retries.promiseRetry(() => backendMetadataApi.updateLastPlayed(this.id))
         .then(() => {
           logger.debug(`complete: ${this.toString()}`);
 
           this.isMarkedAsPlayed = true;
-          this.markingAsPlayedPromise = null;
         });
     }
 
-    return this._markingAsPlayedPromise;
+    return this.markingAsPlayedPromise;
   }
 
   toString() {

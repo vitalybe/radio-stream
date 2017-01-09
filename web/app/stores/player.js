@@ -20,7 +20,7 @@ class Player {
   }
 
   _onPlayProgress(seconds) {
-    if (this.song && this.song.isMarkedAsPlayed == false && seconds >= config.MARK_PLAYED_AFTER_SECONDS) {
+    if (this.song && this.song.markingAsPlayedPromise === null && seconds >= config.MARK_PLAYED_AFTER_SECONDS) {
       let logger = loggerCreator(this._onPlayProgress.name, moduleLogger);
       logger.info(`start`);
 
@@ -95,12 +95,18 @@ class Player {
     assert(this.currentPlaylist, "invalid state");
 
     if (previousSong) {
-      logger.info(`pausing playing song: ${previousSong}`);
+      logger.info(`previous song: ${previousSong.toString()}`);
+
+      logger.info(`previous song - pausing playing song`);
       previousSong.pauseSound();
 
-      logger.info(`making sure song was marked as played`);
-      this.loadingAction = `${previousSong.artist} - ${previousSong.title}: Marking as played...`;
-      await previousSong.markAsPlayed();
+      logger.info(`previous song - making sure was marked as played`);
+      if (previousSong.markingAsPlayedPromise) {
+        logger.info(`previous song - marking as played`);
+        await previousSong.markAsPlayed();
+      } else {
+        logger.info(`previous song - no need to mark as played`);
+      }
     }
 
     await retries.promiseRetry(async lastError => {
