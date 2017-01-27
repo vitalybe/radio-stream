@@ -8,7 +8,7 @@ About
 **Radio Stream** is your personal music service that streams music automatically based on your listening habits.
 
 * **Your music** - Use your own music files without restrictions.
-* **Automatic DJ** - Enjoy music immediately without choosing a specific song or album. The music is selected based on when you last heard it, its rating and more. Read more [here](https://github.com/vitalybe/radio-stream-cli#automatic-dj).
+* **Automatic DJ** - Enjoy music immediately without choosing a specific song or album. The music is selected based on when you last heard it, its rating and more.
 * **Dynamic playlists** - Want to hear only some of your music? Create a music playlist, e.g, only with genre Heavy Metal, and have the automatic DJ stream the music from that station.
 * **Desktop and Mobile clients** - Listen to your music when you're on another computer or on your mobile phone.
 * **Last.FM support** - Scrobble your music to Last.FM
