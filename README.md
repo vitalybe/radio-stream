@@ -5,9 +5,16 @@ Radio Stream - Development repository
 
 About
 =====
-The goal of this project is to provide an easy music listening experience for the user via auto generated playlists.
+**Radio Stream** is your personal music service that streams music automatically based on your listening habits.
 
-You can read additional details about user-related goals of this project [here](https://github.com/vitalybe/radio-stream-cli).
+* **Your music** - Use your own music files without restrictions.
+* **Automatic DJ** - Enjoy music immediately without choosing a specific song or album. The music is selected based on when you last heard it, its rating and more.
+* **Dynamic playlists** - Want to hear only some of your music? Create a music playlist, e.g, only with genre Heavy Metal, and have the automatic DJ stream the music from that station.
+* **Desktop and Mobile clients** - Listen to your music when you're on another computer or on your mobile phone.
+* **Last.FM support** - Scrobble your music to Last.FM
+* **Powered by beets** - Use the super-powerful [beets](https://github.com/beetbox/beets) and all its plugins to organize your music. 
+
+You can read additional details and installation instructions [here](https://github.com/vitalybe/radio-stream-cli).
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/vitalybe/radio-stream-cli/master/images/android.jpg" alt="Radio Stream for Android"/>
