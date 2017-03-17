@@ -25,6 +25,7 @@ RUN rm -rf /var/cache/apk/*
 # Beets
 #######
 
+# Actual (modified) beets code
 COPY beets /radio-stream/beets
 
 # HACK: Install the dependencies
@@ -38,6 +39,9 @@ RUN pip install flask flask-cors pylast
 RUN pip install hiyapyco
 COPY scripts/merge_yaml.py /usr/local/bin/merge_yaml
 RUN chmod +x /usr/local/bin/merge_yaml
+
+# Replace beet launcher with my own version - I can't seem to use the original one in dev (-d) mode of bin/server/start
+RUN ln -s -f /radio-stream/beets/beet /usr/local/bin/beet
 
 # Nginx
 #######
