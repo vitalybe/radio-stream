@@ -28,6 +28,4 @@ To run in development mode add `-d` parameter to regular cli running, like so:
 
 Then once in the container shell, write:
 
-`/radio-stream/beets/beet radio`
-
-NOTE: For some reason `beet` command does not work in dev mode 
+`/radio-stream/beets/beet radio -d`
