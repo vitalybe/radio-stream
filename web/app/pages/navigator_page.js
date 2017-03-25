@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 
 import {observer} from "mobx-react"
 
-import settings from '../stores/settings_modifications'
 import playlistCollection from '../stores/playlist_collection'
 import player from '../stores/player'
 import navigator from '../stores/navigator'
@@ -47,7 +46,7 @@ export default class NavigatorPage extends Component {
             <TopBarComponent/>
             <PlaylistCollectionPage />
           </When>
-          <When condition={activeComponentStore === settings}>
+          <When condition={activeComponentStore === "settings"}>
             <TopBarComponent hasBack/>
             <SettingsModificationsPage />
           </When>

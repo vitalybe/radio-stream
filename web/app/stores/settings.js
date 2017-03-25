@@ -13,7 +13,7 @@ export class Settings {
   };
 
   // i am unable to get proxyquire, in tests, to require electron, so I have to hide it inside
-  _electronSettings = require('electron-settings');
+  _electronSettings = require('electron-json-storage');
 
   constructor() {
     let logger = loggerCreator(this.constructor.name, moduleLogger);
@@ -47,11 +47,24 @@ export class Settings {
   }
 
   load() {
-    this._values = this._electronSettings.getSync("values");
+    return new Promise((resolve, reject) => {
+      this._electronSettings.get("values", (error, data) => {
+        if (error) throw reject(error);
+
+        this._values = data;
+        resolve();
+      });
+    })
   }
 
   save() {
-    return this._electronSettings.setSync("values", this.values);
+    return new Promise((resolve, reject) => {
+      this._electronSettings.set('values', this._values, function (error) {
+        if (error) throw reject(error);
+
+        resolve();
+      });
+    });
   }
 }
 

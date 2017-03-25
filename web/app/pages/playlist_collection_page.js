@@ -1,3 +1,7 @@
+import loggerCreator from '../utils/logger'
+//noinspection JSUnresolvedVariable
+var moduleLogger = loggerCreator(__filename);
+
 import React, {Component} from 'react';
 import classNames from 'classnames';
 
@@ -7,6 +11,7 @@ import Spinner from '../components/spinner'
 
 import navigator from '../stores/navigator'
 import playlistCollection from '../stores/playlist_collection'
+import {getSettings} from '../stores/settings'
 
 const logoImage = require("../images/logo.png");
 const settingsImage = require("../images/settings.png");
@@ -18,8 +23,20 @@ export class PlaylistCollectionPage extends Component {
   }
 
   //noinspection JSUnusedGlobalSymbols
-  componentDidMount() {
-    playlistCollection.load();
+  async componentDidMount() {
+    let logger = loggerCreator("componentDidMount", moduleLogger);
+    logger.info(`start`);
+
+    await getSettings().load();
+    logger.info(`settings loaded`);
+
+    if (getSettings().address && getSettings().password) {
+      logger.info(`settings exists`);
+      playlistCollection.load();
+    } else {
+      logger.info(`no settings`);
+      navigator.activateSettings();
+    }
   }
 
   render() {
