@@ -65,6 +65,7 @@ export class SettingsModificationsPage extends Component {
       return key;
     } else {
       logger.info(`modifier key`);
+      return "";
     }
   }
 

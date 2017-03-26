@@ -6,7 +6,7 @@ import {observable, action} from "mobx";
 
 export class Settings {
 
-  _values = {
+  @observable _values = {
     host: "",
     password: "",
     playPauseKey: ""
@@ -43,6 +43,9 @@ export class Settings {
   }
 
   update(newValues) {
+    let logger = loggerCreator("update", moduleLogger);
+    logger.info(`start: ${JSON.stringify(newValues)}`);
+
     this._values = _.clone(newValues);
   }
 
