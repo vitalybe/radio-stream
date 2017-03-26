@@ -43,6 +43,10 @@ export function updateLastPlayed(songId) {
   return getAjax().post(`/item/${songId}/last-played`);
 }
 
+export function markAsDeleted(songId) {
+  return getAjax().delete(`/item/${songId}`);
+}
+
 export function updateRating(songId, newRating) {
   return getAjax().put(`/item/${songId}/rating`, {body: {newRating}});
 }

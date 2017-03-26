@@ -5,13 +5,11 @@ import React, {Component} from 'react';
 import {observer} from "mobx-react"
 import classNames from 'classnames';
 import moment from 'moment';
-
-import assert from "../utils/assert"
-
 import Spinner from '../components/spinner'
-
 import player from '../stores/player'
+import DropdownMenu from 'react-dd-menu';
 
+require("react-dd-menu/dist/react-dd-menu.css");
 const infoImage = require("../images/info.png");
 
 @observer
@@ -19,6 +17,10 @@ export class PlayerPage extends Component {
 
   constructor(props, context) {
     super(props, context);
+
+    this.state = {
+      contextMenuOpen: false
+    }
   }
 
   //noinspection JSUnusedGlobalSymbols
@@ -45,6 +47,19 @@ export class PlayerPage extends Component {
     let song = player.song;
     if (song) {
       song.changeRating(newRating);
+    } else {
+      logger.error("song doesn't exist")
+    }
+  }
+
+  async deleteSong() {
+    let logger = loggerCreator("deleteSong", moduleLogger);
+    logger.info(`start`);
+
+    let song = player.song;
+    if (song) {
+      player.next();
+      song.markAsDeleted()
     } else {
       logger.error("song doesn't exist")
     }
@@ -89,7 +104,17 @@ export class PlayerPage extends Component {
                     <img className="artist" src={song.loadedImageUrl} alt=""/>
                   </If>
                 </div>
-                <div className="stars">{ratingStars}</div>
+                <div className="stars">
+                  {ratingStars}
+                  <DropdownMenu
+                    isOpen={this.state.contextMenuOpen}
+                    close={() => this.setState({contextMenuOpen: false})}
+                    toggle={<img className="context-menu" src={infoImage}
+                                 onClick={() => this.setState({contextMenuOpen: true})}/>}>
+                    <li><a href="#" onClick={() => this.onChangeRating(0)}>Clear rating</a></li>
+                    <li><a href="#" onClick={() => this.deleteSong()}>Delete song</a></li>
+                  </DropdownMenu>
+                </div>
                 <div className="names">
                   <div>{song.title}</div>
                   <div className="artist-name">{song.artist}</div>

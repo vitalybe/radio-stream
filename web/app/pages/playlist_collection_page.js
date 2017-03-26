@@ -3,12 +3,8 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator(__filename);
 
 import React, {Component} from 'react';
-import classNames from 'classnames';
-
 import {observer} from "mobx-react"
-
 import Spinner from '../components/spinner'
-
 import navigator from '../stores/navigator'
 import playlistCollection from '../stores/playlist_collection'
 import {getSettings} from '../stores/settings'
