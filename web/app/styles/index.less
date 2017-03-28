@@ -201,25 +201,54 @@ h1 {
         }
       }
 
-      .star-full, .star-empty {
-        width: 53px;
-        height: 50px;
-        display: inline-block;
-        background-size: auto;
-        margin-top: 20px;
-        margin-right: 10px;
-        cursor: pointer;
-      }
+      .stars {
 
-      .star-full {
-        background-image: url("../images/star.png");
-        -webkit-filter: brightness(200%);
-      }
+        position: relative;
 
-      .star-empty {
-        background-image: url("../images/star.png");
-        opacity: 0.8;
-        -webkit-filter: grayscale(100%) brightness(50%);
+        .star-full, .star-empty {
+          width: 53px;
+          height: 50px;
+          display: inline-block;
+          background-size: auto;
+          margin-top: 20px;
+          margin-right: 10px;
+          cursor: pointer;
+        }
+
+        .star-full {
+          background-image: url("../images/star.png");
+          -webkit-filter: brightness(200%);
+        }
+
+        .star-empty {
+          background-image: url("../images/star.png");
+          opacity: 0.8;
+          -webkit-filter: grayscale(100%) brightness(50%);
+        }
+
+        .dd-menu {
+          position: absolute;
+          right: 0;
+
+          img.context-menu {
+            padding: 1em 1em 0 1em;
+          }
+
+          .dd-menu-items {
+
+            ul {
+              background-color: #0c191c;
+              color: @cyan-bright;
+              border: 1px solid @cyan-bright;
+
+              li:hover {
+                background-color: lighten(#0c191c, 10%);
+                color: @cyan-bright;
+              }
+            }
+
+          }
+        }
       }
 
       .names {

@@ -11,6 +11,7 @@ import DropdownMenu from 'react-dd-menu';
 
 require("react-dd-menu/dist/react-dd-menu.css");
 const infoImage = require("../images/info.png");
+const ellipsisImage = require("../images/ellipsis.png");
 
 @observer
 export class PlayerPage extends Component {
@@ -109,8 +110,8 @@ export class PlayerPage extends Component {
                   <DropdownMenu
                     isOpen={this.state.contextMenuOpen}
                     close={() => this.setState({contextMenuOpen: false})}
-                    toggle={<img className="context-menu" src={infoImage}
-                                 onClick={() => this.setState({contextMenuOpen: true})}/>}>
+                    toggle={<img className="context-menu" src={ellipsisImage}
+                                 onClick={() => this.setState({contextMenuOpen: !this.state.contextMenuOpen})}/>}>
                     <li><a href="#" onClick={() => this.onChangeRating(0)}>Clear rating</a></li>
                     <li><a href="#" onClick={() => this.deleteSong()}>Delete song</a></li>
                   </DropdownMenu>
