@@ -10,6 +10,7 @@ import {PlaylistCollectionPage} from './playlist_collection_page';
 import {PlayerPage} from './player_page';
 import {SettingsModificationsPage} from './settings_modifications_page'
 import {FatalErrorPage} from './fatal_error_page'
+import {Sidebar} from '../components/sidebar'
 
 class TopBarComponent extends Component {
   render() {
@@ -37,6 +38,7 @@ export default class NavigatorPage extends Component {
     return (
       <div className="main">
         <div className="background"></div>
+        <Sidebar />
         <Choose>
           <When condition={navigator.fatalErrorMessage != null}>
             <TopBarComponent/>

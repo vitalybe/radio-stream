@@ -11,20 +11,22 @@ body {
 @semi-white: #e2e2e2;
 @red: #e25d24;
 
+@font-size-default: 1.3rem;
+
 .button-mixin {
-  background: fade(@cyan-dark, 25%);
+  background: fade(@cyan-dark, 50%);
   color: @cyan-bright;
   border: 1px solid @cyan-bright;
   cursor: pointer;
   border-radius: 5px;
+  font-size: @font-size-default;
 
   &:hover {
-    background: fade(@cyan-dark, 50%);
+    background: fade(@cyan-dark, 75%);
   }
 }
 
 * {
-  font-size: 1rem;
   box-sizing: border-box;
 }
 
@@ -39,6 +41,7 @@ h1 {
   top: 0;
   bottom: 0;
   overflow: hidden;
+  font-size: 1rem;
 
   color: @semi-white;
 
@@ -253,7 +256,6 @@ h1 {
 
       .names {
         margin-top: 30px;
-        font-size: 30px;
 
         & > div {
           margin-top: 10px;
@@ -317,5 +319,73 @@ h1 {
       -webkit-filter: hue-rotate(225deg);
       margin-bottom: 1em;
     }
+  }
+
+  .sidebar {
+
+    img.open-close {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+    }
+
+    .content {
+      position: absolute;
+      top: 3.5em;
+      left: -1px;
+      bottom: -1px;
+      width: 20em;
+
+      background: fade(@cyan-dark, 50%);
+      border: 1px solid @cyan-bright;
+      cursor: pointer;
+      border-radius: 0 5px 5px 0;
+      color: @semi-white;
+
+      .title {
+        font-size: 1.5rem;
+        margin: 1rem;
+      }
+
+      .sidebar-button-mixin {
+        .button-mixin;
+
+        width: 100%;
+        text-align: left;
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        padding: 0.7rem 0.5rem;
+        margin-bottom: -1px;
+
+        img.icon {
+          height: @font-size-default;
+          vertical-align: bottom;
+          margin: 0 0.5rem 0 1rem;
+        }
+      }
+
+      button.settings {
+        .sidebar-button-mixin;
+      }
+
+      button.playlist {
+        .sidebar-button-mixin;
+
+        img.context-menu {
+          position: absolute;
+          right: 0;
+          vertical-align: bottom;
+          margin: 0 0.5rem 0 1rem;
+          padding: 0 0.5rem;
+        }
+      }
+
+      button.new-playlist {
+        opacity: 0.5;
+        .sidebar-button-mixin;
+      }
+    }
+
   }
 }
