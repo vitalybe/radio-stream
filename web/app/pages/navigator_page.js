@@ -3,14 +3,14 @@ import React, {Component} from 'react';
 import {observer} from "mobx-react"
 
 import playlistCollection from '../stores/playlist_collection'
-import player from '../stores/player'
-import navigator from '../stores/navigator'
+import player from 'stores/player'
+import navigator from 'stores/navigator'
 
 import {PlaylistCollectionPage} from './playlist_collection_page';
-import {PlayerPage} from './player_page';
+import {PlayerPage} from 'pages/player_page';
 import {SettingsModificationsPage} from './settings_modifications_page'
 import {FatalErrorPage} from './fatal_error_page'
-import {Sidebar} from '../components/sidebar/'
+import {Sidebar} from 'components/sidebar'
 
 class TopBarComponent extends Component {
   render() {

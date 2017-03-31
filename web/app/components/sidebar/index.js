@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Motion, spring, presets} from 'react-motion';
 import {Content} from './content'
+import playlistCollection from 'stores/playlist_collection'
 
 const sidebarImage = require("../../images/sidebar.png");
 

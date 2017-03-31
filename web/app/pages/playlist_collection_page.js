@@ -4,13 +4,13 @@ var moduleLogger = loggerCreator(__filename);
 
 import React, {Component} from 'react';
 import {observer} from "mobx-react"
-import Spinner from '../components/spinner'
-import navigator from '../stores/navigator'
-import playlistCollection from '../stores/playlist_collection'
-import {getSettings} from '../stores/settings'
+import Spinner from 'components/spinner'
+import navigator from 'stores/navigator'
+import playlistCollection from 'stores/playlist_collection'
+import {getSettings} from 'stores/settings'
 
-const logoImage = require("../images/logo.png");
-const settingsImage = require("../images/settings.png");
+const logoImage = require("images/logo.png");
+const settingsImage = require("images/settings.png");
 
 @observer
 export class PlaylistCollectionPage extends Component {

@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Spinner from '../spinner'
 
 const settingsImage = require("../../images/settings.png");
 const playlistImage = require("../../images/playlist.png");
@@ -9,6 +10,7 @@ export class Content extends Component {
 
   constructor(props, context) {
     super(props, context);
+
   }
 
   render() {
