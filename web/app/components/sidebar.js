@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import classNames from 'classnames';
+
 const sidebarImage = require("../images/sidebar.png");
 const settingsImage = require("../images/settings.png");
 const playlistImage = require("../images/playlist.png");
@@ -9,11 +10,22 @@ const ellipsisImage = require("../images/ellipsis.png");
 
 export class Sidebar extends Component {
 
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      open: true,
+    }
+  }
+
+  onSidebarIconClick = () => {
+    this.setState({open: !this.state.open})
+  }
+
   render() {
     return (
       <div className="sidebar">
-        <img className="open-close" src={sidebarImage}/>
-        <div className="content">
+        <img className="open-close" src={sidebarImage} onClick={this.onSidebarIconClick} />
+        <div className={classNames("content", {"open": this.state.open})}>
           <div className="title">Radio Stream</div>
           <button className="settings">
             <img className="icon" src={settingsImage}/>

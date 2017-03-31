@@ -330,11 +330,16 @@ h1 {
     }
 
     .content {
+
+      &.open {
+        left: -1px;
+      }
+
       position: absolute;
       top: 3.5em;
-      left: -1px;
       bottom: -1px;
       width: 20em;
+      left: -100%;
 
       background: fade(@cyan-dark, 50%);
       border: 1px solid @cyan-bright;
