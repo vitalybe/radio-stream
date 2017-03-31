@@ -331,21 +331,17 @@ h1 {
 
     .content {
 
-      &.open {
-        left: -1px;
-      }
-
       position: absolute;
       top: 3.5em;
       bottom: -1px;
       width: 20em;
-      left: -100%;
 
       background: fade(@cyan-dark, 50%);
       border: 1px solid @cyan-bright;
       cursor: pointer;
       border-radius: 0 5px 5px 0;
       color: @semi-white;
+      transform: translateX(-1px);
 
       .title {
         font-size: 1.5rem;
