@@ -1,6 +1,5 @@
-import loggerCreator from '../utils/logger'
-//noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator(__filename);
+import loggerCreator from 'utils/logger'
+const moduleLogger = loggerCreator(__filename);
 
 import React, {Component} from 'react';
 import {observer} from "mobx-react"
