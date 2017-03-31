@@ -13,6 +13,8 @@ export class Sidebar extends Component {
 
   constructor(props, context) {
     super(props, context);
+    this.width = 20;
+
     this.state = {
       open: true,
     }
@@ -24,7 +26,7 @@ export class Sidebar extends Component {
 
   getSidebarLeft = () => {
     const leftOpen = 0;
-    const leftClosed = -20*2;
+    const leftClosed = -this.width * 2;
 
     return this.state.open ? [leftClosed, leftOpen] : [leftOpen, leftClosed];
   }
@@ -36,8 +38,8 @@ export class Sidebar extends Component {
       <div className="sidebar">
         <img className="open-close" src={sidebarImage} onClick={this.onSidebarIconClick}/>
         <Motion defaultStyle={{left: sidebarLeftStart}} style={{left: spring(sidebarLeftEnd, ...presets.stiff)}}>
-          {value => {
-            return <div className="content" style={{left: value.left ? value.left + "em" : value.left}}>
+          {
+            value => <div className="content" style={{width: this.width + "em", left: value.left + "em"}}>
               <div className="title">Radio Stream</div>
               <button className="settings">
                 <img className="icon" src={settingsImage}/>
@@ -56,7 +58,6 @@ export class Sidebar extends Component {
                 <span>Create playlist</span>
               </button>
             </div>
-          }
           }
         </Motion>
       </div>
