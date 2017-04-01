@@ -16,9 +16,6 @@ class TopBarComponent extends Component {
   render() {
     return (
       <div className="top-bar">
-        <If condition={this.props.hasBack}>
-          <div className="back" onClick={() => navigator.activatePlaylistCollection()}></div>
-        </If>
       </div>
     )
   }
@@ -38,7 +35,6 @@ export default class NavigatorPage extends Component {
     return (
       <div className="main">
         <div className="background"></div>
-        <Sidebar />
         <Choose>
           <When condition={navigator.fatalErrorMessage != null}>
             <TopBarComponent/>
@@ -57,6 +53,7 @@ export default class NavigatorPage extends Component {
             <PlayerPage />
           </When>
         </Choose>
+        <Sidebar />
       </div>
     );
   }

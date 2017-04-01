@@ -124,7 +124,7 @@ class Player {
           this.song.subscribeFinish(this.next.bind(this));
         }
 
-        this.loadingAction = `${nextSong.toString()}: Loading sound...`;
+        this.loadingAction = `${nextSong.artist} - ${nextSong.title}`;
         logger.info(`playing sound`);
         await this.song.playSound();
       } else {
