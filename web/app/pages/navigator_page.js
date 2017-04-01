@@ -10,7 +10,7 @@ import {PlaylistCollectionPage} from './playlist_collection_page';
 import {PlayerPage} from 'pages/player_page';
 import {SettingsModificationsPage} from './settings_modifications_page'
 import {FatalErrorPage} from './fatal_error_page'
-import {Sidebar} from 'components/sidebar'
+import {Sidebar} from 'components/sidebar/sidebar_index'
 
 class TopBarComponent extends Component {
   render() {

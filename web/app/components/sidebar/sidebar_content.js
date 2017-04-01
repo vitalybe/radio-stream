@@ -4,6 +4,7 @@ const moduleLogger = loggerCreator(__filename);
 import React, {Component} from 'react';
 import Spinner from 'components/spinner'
 import navigator from 'stores/navigator'
+import sidebarStore from 'stores/sidebar_store.js'
 import playlistCollection from 'stores/playlist_collection'
 import {getSettings} from 'stores/settings'
 
@@ -34,6 +35,11 @@ export class Content extends Component {
     }
   }
 
+  onPlaylistClicked = (playlist) => {
+    navigator.activatePlayer(playlist);
+    sidebarStore.isOpen = false;
+  }
+
   render() {
     return (
       <div className="content" style={{width: this.props.width + "em", left: this.props.left + "em"}}>
@@ -47,13 +53,16 @@ export class Content extends Component {
           {
             playlistCollection.loading
               ? <Spinner action={playlistCollection.loadingAction} error={playlistCollection.loadingError}/>
-              : (
-                <button className="playlist">
-                  <img className="icon" src={playlistImage}/>
-                  <img className="context-menu" src={ellipsisImage}/>
-                  <span>All Music</span>
-                </button>
-              )
+              : playlistCollection.items.map(playlist => {
+                return (
+                  <button className="playlist" key={playlist.name}
+                          onClick={() => this.onPlaylistClicked(playlist)}>
+                    <img className="icon" src={playlistImage}/>
+                    <img className="context-menu" src={ellipsisImage}/>
+                    <span>{playlist.name}</span>
+                  </button>
+                )
+              })
           }
         </div>
         <button className="new-playlist">
