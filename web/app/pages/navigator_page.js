@@ -6,7 +6,7 @@ import playlistCollection from '../stores/playlist_collection'
 import player from 'stores/player'
 import navigator from 'stores/navigator'
 
-import {PlaylistCollectionPage} from './playlist_collection_page';
+import {StartUpPage} from './startup_page';
 import {PlayerPage} from 'pages/player_page';
 import {SettingsModificationsPage} from './settings_modifications_page'
 import {FatalErrorPage} from './fatal_error_page'
@@ -42,7 +42,7 @@ export default class NavigatorPage extends Component {
           </When>
           <When condition={activeComponentStore === playlistCollection}>
             <TopBarComponent/>
-            <PlaylistCollectionPage />
+            <StartUpPage />
           </When>
           <When condition={activeComponentStore === "settings"}>
             <TopBarComponent hasBack/>

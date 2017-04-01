@@ -40,11 +40,17 @@ export class Content extends Component {
     sidebarStore.isOpen = false;
   }
 
+  onSettingsClicked = () => {
+    navigator.activateSettings();
+    sidebarStore.isOpen = false;
+  }
+
+
   render() {
     return (
       <div className="content" style={{width: this.props.width + "em", left: this.props.left + "em"}}>
         <div className="title">Radio Stream</div>
-        <button className="settings">
+        <button className="settings" onClick={this.onSettingsClicked}>
           <img className="icon" src={settingsImage}/>
           <span>Settings</span>
         </button>
