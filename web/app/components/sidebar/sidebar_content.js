@@ -6,7 +6,6 @@ import Spinner from 'components/spinner'
 import navigator from 'stores/navigator'
 import sidebarStore from 'stores/sidebar_store.js'
 import playlistCollection from 'stores/playlist_collection'
-import {getSettings} from 'stores/settings'
 
 const settingsImage = require("../../images/settings.png");
 const playlistImage = require("../../images/playlist.png");
@@ -17,22 +16,6 @@ export class Content extends Component {
 
   constructor(props, context) {
     super(props, context);
-  }
-
-  async componentDidMount() {
-    let logger = loggerCreator("componentDidMount", moduleLogger);
-    logger.info(`start`);
-
-    await getSettings().load();
-    logger.info(`settings loaded`);
-
-    if (getSettings().address && getSettings().password) {
-      logger.info(`settings exists`);
-      playlistCollection.load();
-    } else {
-      logger.info(`no settings`);
-      navigator.activateSettings();
-    }
   }
 
   onPlaylistClicked = (playlist) => {

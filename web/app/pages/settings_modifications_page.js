@@ -8,6 +8,7 @@ import {observer} from "mobx-react"
 import classNames from 'classnames';
 //noinspection JSUnresolvedVariable
 import keycode from "keycode";
+import sidebarStore from 'stores/sidebar_store'
 
 import {getSettings, Settings} from '../stores/settings'
 import * as backendMetadataApi from '../utils/backend_metadata_api'
@@ -18,6 +19,11 @@ export class SettingsModificationsPage extends Component {
 
   constructor(props, context) {
     super(props, context);
+
+    let logger = loggerCreator("constructor", moduleLogger);
+    logger.info(`start`);
+
+    sidebarStore.isOpen = false;
 
     this.state = {
       values: _.clone(getSettings().values),
