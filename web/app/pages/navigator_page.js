@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 
 import {observer} from "mobx-react"
+import {HashRouter as Router, Route} from 'react-router-dom'
 
 import playlistCollection from '../stores/playlist_collection'
 import player from 'stores/player'
@@ -35,25 +36,23 @@ export default class NavigatorPage extends Component {
     return (
       <div className="main">
         <div className="background"></div>
+        <TopBarComponent/>
+        <Router>
+          <div>
+            <Route path="/" exact={true} component={StartUpPage}/>
+            <Route path="/settings" component={SettingsModificationsPage}/>
+            <Sidebar />
+          </div>
+        </Router>
         <Choose>
           <When condition={navigator.fatalErrorMessage != null}>
-            <TopBarComponent/>
             <FatalErrorPage />
-          </When>
-          <When condition={activeComponentStore === playlistCollection}>
-            <TopBarComponent/>
-            <StartUpPage />
-          </When>
-          <When condition={activeComponentStore === "settings"}>
-            <TopBarComponent hasBack/>
-            <SettingsModificationsPage />
           </When>
           <When condition={activeComponentStore === player}>
             <TopBarComponent hasBack/>
             <PlayerPage />
           </When>
         </Choose>
-        <Sidebar />
       </div>
     );
   }

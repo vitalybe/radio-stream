@@ -24,7 +24,7 @@ export class Content extends Component {
   }
 
   onSettingsClicked = () => {
-    navigator.activateSettings();
+    this.context.router.history.push("/settings")
     sidebarStore.isOpen = false;
   }
 
@@ -61,4 +61,8 @@ export class Content extends Component {
       </div>
     )
   }
+}
+
+Content.contextTypes = {
+  router: React.PropTypes.object
 }

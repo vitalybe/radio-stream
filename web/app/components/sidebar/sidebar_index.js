@@ -44,7 +44,7 @@ export class Sidebar extends Component {
       <div className="sidebar">
         <img className="open-close" src={sidebarImage} onClick={this.onSidebarIconClick}/>
         <Motion defaultStyle={{left: sidebarLeftStart}} style={{left: spring(sidebarLeftEnd, ...presets.stiff)}}>
-          { value => <Content width={this.width} left={value.left}/> }
+          { value => <Content width={this.width} left={value.left} /> }
         </Motion>
       </div>
     )
