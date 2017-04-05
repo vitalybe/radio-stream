@@ -4,7 +4,7 @@ const moduleLogger = loggerCreator(__filename);
 import React, {Component} from 'react';
 import {Motion, spring, presets} from 'react-motion';
 import sidebarStore from 'stores/sidebar_store.js'
-import {Content} from './sidebar_content'
+import {SidebarContent} from './sidebar_content'
 import {observer} from "mobx-react"
 
 const sidebarImage = require("../../images/sidebar.png");
@@ -44,7 +44,7 @@ export class Sidebar extends Component {
       <div className="sidebar">
         <img className="open-close" src={sidebarImage} onClick={this.onSidebarIconClick}/>
         <Motion defaultStyle={{left: sidebarLeftStart}} style={{left: spring(sidebarLeftEnd, ...presets.stiff)}}>
-          { value => <Content width={this.width} left={value.left} /> }
+          { value => <SidebarContent width={this.width} left={value.left} /> }
         </Motion>
       </div>
     )

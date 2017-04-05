@@ -12,7 +12,7 @@ const playlistImage = require("../../images/playlist.png");
 const plusImage = require("../../images/plus.png");
 const ellipsisImage = require("../../images/ellipsis.png");
 
-export class Content extends Component {
+export class SidebarContent extends Component {
 
   constructor(props, context) {
     super(props, context);
@@ -63,6 +63,6 @@ export class Content extends Component {
   }
 }
 
-Content.contextTypes = {
+SidebarContent.contextTypes = {
   router: React.PropTypes.object
 }
