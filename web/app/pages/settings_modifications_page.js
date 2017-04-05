@@ -12,32 +12,26 @@ import sidebarStore from 'stores/sidebar_store'
 
 import {getSettings, Settings} from '../stores/settings'
 import * as backendMetadataApi from '../utils/backend_metadata_api'
-import navigator from '../stores/navigator'
 
 @observer
 export class SettingsModificationsPage extends Component {
 
-  constructor(props, context) {
-    super(props, context);
-
-    let logger = loggerCreator("constructor", moduleLogger);
+  componentWillMount() {
+    let logger = loggerCreator("componentWillMount", moduleLogger);
     logger.info(`start`);
 
     sidebarStore.isOpen = false;
+
+    this._modifierKeys = [
+      keycode("left command"), keycode("right command"),
+      keycode("shift"), keycode("ctrl"), keycode("alt")
+    ];
 
     this.state = {
       values: _.clone(getSettings().values),
       testState: "",
       isTestError: false
     }
-
-    this._modifierKeys = [
-      keycode("left command"), keycode("right command"),
-      keycode("shift"), keycode("ctrl"), keycode("alt")
-    ];
-  }
-
-  componentWillUnmount() {
   }
 
   keyboardEventToString(keyboardEvent) {
@@ -90,7 +84,7 @@ export class SettingsModificationsPage extends Component {
       getSettings().update(this.state.values);
       await getSettings().save();
 
-      navigator.activatePlaylistCollection()
+      this.context.router.history.push("/")
     } catch (err) {
       this.setState({testState: "Connection failed: " + err.toString(), isTestError: true});
     }
@@ -122,4 +116,8 @@ export class SettingsModificationsPage extends Component {
       </div>
     );
   }
+}
+
+SettingsModificationsPage.contextTypes = {
+  router: React.PropTypes.object
 }

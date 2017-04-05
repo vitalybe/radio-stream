@@ -12,18 +12,12 @@ const logoImage = require("images/logo.png");
 
 @observer
 export class StartUpPage extends Component {
-  constructor(props, context) {
-    super(props, context);
-
-    sidebarStore.isOpen = true;
-  }
 
   async componentDidMount() {
     let logger = loggerCreator("componentDidMount", moduleLogger);
     logger.info(`start`);
 
-    await getSettings().load();
-    logger.info(`settings loaded`);
+    sidebarStore.isOpen = true;
 
     if (getSettings().address && getSettings().password) {
       logger.info(`settings exists`);
