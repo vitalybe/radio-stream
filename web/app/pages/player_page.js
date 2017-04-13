@@ -1,5 +1,5 @@
 import loggerCreator from '../utils/logger'
-var moduleLogger = loggerCreator(__filename);
+const moduleLogger = loggerCreator(__filename);
 
 import React, {Component} from 'react';
 import {observer} from "mobx-react"
@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 import Spinner from '../components/spinner'
 import player from '../stores/player'
+import playlistCollection from '../stores/playlist_collection'
 import DropdownMenu from 'react-dd-menu';
 
 require("react-dd-menu/dist/react-dd-menu.css");
@@ -16,21 +17,41 @@ const ellipsisImage = require("../images/ellipsis.png");
 @observer
 export class PlayerPage extends Component {
 
-  constructor(props, context) {
-    super(props, context);
+  async componentWillMount() {
+    let logger = loggerCreator("componentWillMount", moduleLogger);
+    logger.info(`start`);
 
     this.state = {
       contextMenuOpen: false
     }
+
+    await this.playPlaylist(this.props.match.params.name);
   }
 
-  //noinspection JSUnusedGlobalSymbols
-  componentDidMount() {
-  }
-
-  //noinspection JSUnusedGlobalSymbols
   componentWillUnmount() {
     player.stop();
+  }
+
+  async componentWillReceiveProps(nextProps) {
+    let logger = loggerCreator("componentWillReceiveProps", moduleLogger);
+    logger.info(`start`);
+
+    await this.playPlaylist(nextProps.match.params.name);
+  }
+
+  async playPlaylist(playlistName) {
+    let logger = loggerCreator("playPlaylist", moduleLogger);
+    logger.info(`start`);
+    
+    logger.info(`playlist name: ${playlistName}`);
+    const playlist = await playlistCollection.playlistByName(playlistName)
+    if (playlist) {
+      logger.info(`playlist found`);
+      await player.changePlaylist(playlist);
+      player.play();
+    } else {
+      throw new Error(`playlist not found: ${playlistName}`)
+    }
   }
 
   onPlayPause() {

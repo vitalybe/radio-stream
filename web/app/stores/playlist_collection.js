@@ -1,6 +1,5 @@
 import loggerCreator from '../utils/logger'
-//noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator(__filename);
+const moduleLogger = loggerCreator(__filename);
 
 import {observable, action} from "mobx";
 import retries from "../utils/retries"
@@ -43,6 +42,11 @@ class PlaylistCollection {
       this.items = observable(newPlaylists);
       this.loading = false;
     }));
+  }
+
+  async playlistByName(name) {
+    await this.load();
+    return this.items.find(playlist => playlist.name === name)
   }
 }
 

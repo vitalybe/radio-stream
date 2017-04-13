@@ -21,7 +21,7 @@ Running in shell
 ----------------
 To run: `node ./node_modules/mocha/bin/_mocha --compilers js:babel-register --recursive --require babel-polyfill`
 
-To run in a a watch mode use `node watch` in line above.
+To run in a a watch mode add `--watch` flag in the line above.
 To debug use `node debug` in line above.
 
 

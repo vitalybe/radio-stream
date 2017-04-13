@@ -3,7 +3,6 @@ const moduleLogger = loggerCreator(__filename);
 
 import React, {Component} from 'react';
 import Spinner from 'components/spinner'
-import navigator from 'stores/navigator'
 import sidebarStore from 'stores/sidebar_store.js'
 import playlistCollection from 'stores/playlist_collection'
 
@@ -19,12 +18,12 @@ export class SidebarContent extends Component {
   }
 
   onPlaylistClicked = (playlist) => {
-    navigator.activatePlayer(playlist);
+    this.context.router.history.replace(`/playlist/${playlist.name}`)
     sidebarStore.isOpen = false;
   }
 
   onSettingsClicked = () => {
-    this.context.router.history.push("/settings")
+    this.context.router.history.replace("/settings")
     sidebarStore.isOpen = false;
   }
 

@@ -18,14 +18,6 @@ export class StartUpPage extends Component {
     logger.info(`start`);
 
     sidebarStore.isOpen = true;
-
-    if (getSettings().address && getSettings().password) {
-      logger.info(`settings exists`);
-      playlistCollection.load();
-    } else {
-      logger.info(`no settings`);
-      navigator.activateSettings();
-    }
   }
 
   render() {

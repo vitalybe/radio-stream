@@ -28,12 +28,20 @@ class Player {
     }
   }
 
-  changePlaylist(playlist) {
-    this.pause();
+  async changePlaylist(playlist) {
+    let logger = loggerCreator("changePlaylist", moduleLogger);
+    logger.info(`start`);
+
+    await this.stop();
+
+    logger.info(`setting playlist to ${playlist.name}`);
     this.currentPlaylist = playlist;
   }
 
   @action pause() {
+    let logger = loggerCreator("pause", moduleLogger);
+    logger.info(`start`);
+
     let promise = Promise.resolve();
 
     if (this.song) {
@@ -46,7 +54,10 @@ class Player {
   }
 
   @action play() {
-    assert(this.currentPlaylist, "invalid state");
+    let logger = loggerCreator("play", moduleLogger);
+    logger.info(`start`);
+
+    assert(this.currentPlaylist, "unexpected: playlist isn't set");
 
     if (this.song) {
       this.song.playSound();
@@ -137,7 +148,11 @@ class Player {
   }
 
   @action stop() {
+    let logger = loggerCreator("stop", moduleLogger);
+    logger.info(`start`);
+
     return this.pause().then(() => {
+      logger.info(`setting song to null`);
       this.song = null;
     });
   }
