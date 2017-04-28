@@ -6,13 +6,13 @@ import {
   View
 } from 'react-native';
 
-import App from './app/index';
+import App from './app/app';
 
-class ReactNativeWeb extends Component {
+class RadioStreamWeb extends Component {
   render() {
     return <App/>;
   }
 }
 
-AppRegistry.registerComponent('ReactNativeWeb', () => ReactNativeWeb);
+AppRegistry.registerComponent('ReactNativeWeb', () => RadioStreamWeb);
 AppRegistry.runApplication('ReactNativeWeb', {rootTag: document.getElementById('react-app')});

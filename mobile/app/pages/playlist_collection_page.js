@@ -52,7 +52,7 @@ export default class PlaylistCollectionPage extends Component {
     logger.info(`start`);
 
     try {
-      result = await backendMetadataApi.playlists();
+      let result = await backendMetadataApi.playlists();
       logger.info(`got results: ${result}`);
       this.setState({playlists: result})
     } catch (err) {

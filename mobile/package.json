@@ -3,7 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "web": "node webpack/scripts/start.js",
+    "web-build": "node webpack/scripts/build.js",
+    "android": "adb logcat -c && react-native run-android && ./logcat.sh",
+    "desktop": "concurrently 'node webpack/scripts/start.js --electron' 'wait-on tcp:localhost:3000 && ELECTRON_START_URL=http://localhost:3000 electron .'",
+    "desktop-build": "node webpack/scripts/build.js --electron && electron-packager --overwrite --out=build-electron ."
   },
   "dependencies": {
     "autoprefixer": "6.7.2",

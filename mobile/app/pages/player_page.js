@@ -3,7 +3,7 @@ var moduleLogger = loggerCreator("player_page");
 
 import React, { Component } from 'react';
 import { StyleSheet, View, TouchableHighlight, Image, ActivityIndicator, DeviceEventEmitter, BackAndroid, AppState } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from '../components/icon'
 
 import playerProxy from '../native_proxy/player_proxy'
 
