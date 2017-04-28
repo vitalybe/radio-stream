@@ -2,6 +2,7 @@
   "name": "RadioStream",
   "version": "0.0.1",
   "private": true,
+  "main": "main.electron.js",
   "scripts": {
     "web": "node webpack/scripts/start.js",
     "web-build": "node webpack/scripts/build.js",

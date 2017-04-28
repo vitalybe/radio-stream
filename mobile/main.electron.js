@@ -10,7 +10,11 @@ let win
 
 function createWindow() {
   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 600})
+  win = new BrowserWindow({
+    width: 800, height: 600, webPreferences: {
+      webSecurity: false
+    }
+  });
 
   const startUrl = process.env.ELECTRON_START_URL || url.format({
       pathname: path.join(__dirname, 'build/index.html'),
@@ -55,5 +59,5 @@ app.on('activate', () => {
 })
 
 ipcMain.on("fromWebToNative", (event) => {
-  dialog.showMessageBox(win, { message: "I am electron!" })
+  dialog.showMessageBox(win, {message: "I am electron!"})
 });
