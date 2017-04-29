@@ -72,18 +72,20 @@ export default class PlayerPage extends Component {
     return playerProxy.getPlayerStatus().then(status => {
       logger.info(`got status: ${JSON.stringify(status)}`);
 
-      var playlistPlayer = status.playlistPlayer;
+      const playlistPlayer = status.playlistPlayer;
 
-      if (this.playerId == null) {
+      if (this.playerId === null) {
         this.playerId = status.id;
         logger.info(`player id was not set. setting to ${this.playerId}`);
       }
 
-      if (this.playerId != status.id) {
+      if (this.playerId !== status.id) {
+        // the service may stop due to inactivity. in this case we'd like to revert to the original,
+        // playlist-choosing screen
         logger.info(`player id changed - service restarted: ${this.playerId} != ${status.id}`);
         this.props.navigator.navigateToPlaylistCollection();
         this.playerId = status.id;
-      } else if (playlistPlayer && playlistPlayer.playlist.name == this.props.playlistName) {
+      } else if (playlistPlayer && playlistPlayer.playlist.name === this.props.playlistName) {
         logger.info(`playing existing playlist`);
         this.onPlaylistPlayerStatus(playlistPlayer);
       } else {
