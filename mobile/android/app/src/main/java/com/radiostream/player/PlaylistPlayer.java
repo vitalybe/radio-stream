@@ -135,6 +135,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         // NOTE: the last error to the function is sent since merely retrying
         // the function doesn't clear the erro
         setSongLoadingStatus(true, mLastLoadingError);
+        mStatusProvider.sendStatus();
 
         waitForCurrentSongMarkedAsPlayed().then(new DonePipe<Boolean, Song, Exception, Void>() {
             @Override
