@@ -3,15 +3,16 @@ var moduleLogger = loggerCreator("playlist_collection_page");
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, TouchableHighlight, Image, ActivityIndicator, BackAndroid} from 'react-native';
+import {observer} from "mobx-react"
 
-import playerProxy from '../native_proxy/player_proxy'
+import player from '../stores/player'
 import {colors, fontSizes} from '../styles/styles'
 import Button from '../components/rectangle_button'
 import Navigator from '../stores/navigator'
 import backendMetadataApi from '../utils/backend_metadata_api'
 import {globalSettings} from '../utils/settings'
 
-
+@observer
 export default class PlaylistCollectionPage extends Component {
 
   async componentWillMount() {
@@ -26,14 +27,13 @@ export default class PlaylistCollectionPage extends Component {
     if (globalSettings.host) {
 
       logger.info(`updating settings`);
-      await playerProxy.updateSettings(globalSettings.host, globalSettings.user, globalSettings.password);
+      await player.updateSettings(globalSettings.host, globalSettings.user, globalSettings.password);
       logger.info(`settings updated`);
 
-      let status = await playerProxy.getPlayerStatus();
-      logger.info(`got status: ${JSON.stringify(status)}`);
-      const playlistPlayer = status.playlistPlayer;
-
-      if (playlistPlayer && playlistPlayer.isPlaying) {
+      logger.info(`updating player status`);
+      await player.updatePlayerStatus();
+      logger.info(`updated status. playing? ${player.isPlaying}`);
+      if (player.isPlaying) {
         logger.info(`player currently playing - navigating to player`);
         this.props.navigator.navigateToPlayer(playlistPlayer.playlist.name)
       } else {
@@ -63,7 +63,7 @@ export default class PlaylistCollectionPage extends Component {
   onPressHardwareBack() {
     let logger = loggerCreator("onPressHardwareBack", moduleLogger);
     logger.info(`start`);
-    playerProxy.stopPlayer();
+    player.stopPlayer();
 
     BackAndroid.exitApp();
     return true;
@@ -73,6 +73,8 @@ export default class PlaylistCollectionPage extends Component {
     let logger = loggerCreator(this.onPlaylistClick.name, moduleLogger);
     logger.info(`start: ${playlistName}`);
 
+    player.changePlaylist(playlistName);
+    player.play();
     this.props.navigator.navigateToPlayer(playlistName);
   }
 

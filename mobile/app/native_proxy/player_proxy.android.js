@@ -2,11 +2,18 @@
 import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("player_proxy");
 
-import { NativeModules } from 'react-native';
+import {NativeModules, DeviceEventEmitter} from 'react-native';
 
 class PlayerProxy {
 
-  proxy = NativeModules.PlayerJsProxy;
+  PLAYLIST_PLAYER_STATUS_EVENT = "PLAYLIST_PLAYER_STATUS_EVENT";
+
+  constructor() {
+    this.proxy = NativeModules.PlayerJsProxy;
+    this.statusCallback = null;
+
+    DeviceEventEmitter.addListener(this.PLAYLIST_PLAYER_STATUS_EVENT, event => this.onPlayerStatusChanged(event));
+  }
 
   _sleep(millisecond) {
     return new Promise(resolve => setTimeout(resolve, millisecond)
@@ -55,6 +62,16 @@ class PlayerProxy {
 
   updateSettings(host, user, password) {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.updateSettings(host, user, password));
+  }
+
+  subscribePlayerStatusChanged(callback) {
+    this.statusCallback = callback;
+  }
+
+  onPlayerStatusChanged(nativePlayer) {
+    if (this.statusCallback) {
+      this.statusCallback(nativePlayer)
+    }
   }
 }
 

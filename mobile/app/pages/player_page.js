@@ -1,173 +1,78 @@
 import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("player_page");
 
-import React, { Component } from 'react';
-import { StyleSheet, View, TouchableHighlight, Image, ActivityIndicator, DeviceEventEmitter, BackAndroid, AppState } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View, TouchableHighlight, Image, ActivityIndicator, BackAndroid, AppState} from 'react-native';
+import { observer } from "mobx-react"
+
 import Icon from '../components/icon'
-
-import playerProxy from '../native_proxy/player_proxy'
-
-import { colors, fontSizes } from '../styles/styles'
-import RectangleButton from '../components/rectangle_button'
+import player from '../stores/player'
+import {colors, fontSizes} from '../styles/styles'
 import CircleButton from '../components/circle_button'
 import Text from '../components/text'
-
 import Rating from '../components/rating'
 import Navigator from '../stores/navigator'
-import { getArtistImage } from '../utils/backend_lastfm_api'
 
+@observer
 export default class PlayerPage extends Component {
-
-  PLAYLIST_PLAYER_STATUS_EVENT = "PLAYLIST_PLAYER_STATUS_EVENT";
 
   componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
     logger.info(`start playlist: ${this.props.playlistName}`);
 
-    this.playerId = null;
-
-    this.state = {
-      isLoading: true,
-      loadingError: null,
-
-      isPlaying: false,
-
-      playlistName: this.props.playlistName,
-      song: {
-        id: null,
-        artist: null,
-        title: null,
-        album: null,
-        albumArtUri: null,
-        rating: null,
-      }
-    };
-
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
   }
+
+  onHandleAppStateChange = async (currentAppState) => {
+    let logger = loggerCreator("onHandleAppStateChange", moduleLogger);
+    logger.info(`start: ${currentAppState}`);
+
+    if (currentAppState === 'active') {
+      await player.updatePlayerStatus();
+      if (!player.playlistName) {
+        logger.info(`no playlist selected - navigating to playlist collection`);
+        this.props.navigator.navigateToPlaylistCollection();
+      }
+    }
+  };
 
   componentDidMount() {
     let logger = loggerCreator("componentDidMount", moduleLogger);
     logger.info(`start`);
 
     AppState.addEventListener('change', this.onHandleAppStateChange);
-    DeviceEventEmitter.addListener(this.PLAYLIST_PLAYER_STATUS_EVENT, event => this.onPlaylistPlayerStatus(event));
-
-    this.refreshStatus();
   }
 
   componentWillUnmount() {
     let logger = loggerCreator("componentWillUnmount", moduleLogger);
     logger.info(`start`);
-
-    DeviceEventEmitter.removeAllListeners(this.PLAYLIST_PLAYER_STATUS_EVENT);
     AppState.removeEventListener('change', this.onHandleAppStateChange);
-  }
-
-  refreshStatus() {
-    let logger = loggerCreator("refreshStatus", moduleLogger);
-    logger.info(`start`);
-
-    logger.info(`waiting for player to be available`);
-    return playerProxy.getPlayerStatus().then(status => {
-      logger.info(`got status: ${JSON.stringify(status)}`);
-
-      const playlistPlayer = status.playlistPlayer;
-
-      if (this.playerId === null) {
-        this.playerId = status.id;
-        logger.info(`player id was not set. setting to ${this.playerId}`);
-      }
-
-      if (this.playerId !== status.id) {
-        // the service may stop due to inactivity. in this case we'd like to revert to the original,
-        // playlist-choosing screen
-        logger.info(`player id changed - service restarted: ${this.playerId} != ${status.id}`);
-        this.props.navigator.navigateToPlaylistCollection();
-        this.playerId = status.id;
-      } else if (playlistPlayer && playlistPlayer.playlist.name === this.props.playlistName) {
-        logger.info(`playing existing playlist`);
-        this.onPlaylistPlayerStatus(playlistPlayer);
-      } else {
-        logger.info(`changing playlist to: ${this.props.playlistName}`);
-        playerProxy.changePlaylist(this.props.playlistName);
-        playerProxy.play();
-      }
-    });
-  }
-
-  onHandleAppStateChange = (currentAppState) => {
-    let logger = loggerCreator("onHandleAppStateChange", moduleLogger);
-    logger.info(`start: ${currentAppState}`);
-
-    if (currentAppState === 'active') {
-      this.refreshStatus();
-    }
   }
 
   onPressPlayPause() {
     let logger = loggerCreator("onPressPlayPause", moduleLogger);
     logger.info(`start`);
 
-    if (this.state.isPlaying) {
+    if (player.isPlaying) {
       logger.info(`pause`);
-      playerProxy.pause();
+      player.pause();
     } else {
       logger.info(`play`);
-      playerProxy.play();
+      player.play();
     }
 
   }
 
   onPressNext() {
-    playerProxy.playNext();
+    player.playNext();
   }
 
   onPressHardwareBack() {
     let logger = loggerCreator("hardwareBackPress", moduleLogger);
     logger.info(`start`);
-    playerProxy.pause();
+    player.pause();
     this.props.navigator.navigateToPlaylistCollection();
     return true;
-  }
-
-  onPlaylistPlayerStatus(status) {
-    let logger = loggerCreator("onPlaylistPlayerStatus", moduleLogger);
-    logger.info(`got event: ${JSON.stringify(status)}`);
-    status.song = status.song || {};
-
-    // sample status: {"song":{"title":"Strangelove","album":"Music For the Masses","artist":"Depeche Mode"},
-    //                "playlist":{"name":"Peaceful"},"isPlaying":false,"isLoading":true}
-
-
-    if (status.song.artist && status.song.artist !== this.state.song.artist) {
-      logger.info(`artist changed from '${this.state.song.artist}' to '${status.song.artist}' - reloading album cover`);
-
-      this.setState({song: {...this.state.song, albumArtUri: null}});
-      getArtistImage(status.song.artist).then(imageUri => {
-        logger.info(`got album art uri: ${imageUri}`);
-        this.setState({song: {...this.state.song, albumArtUri: imageUri}});
-      })
-    }
-
-    this.setState({
-      isLoading: status.isLoading,
-      loadingError: status.loadingError,
-      isPlaying: status.isPlaying,
-      song: {
-        ...this.state.song,
-        id: status.song.id,
-        artist: status.song.artist,
-        title: status.song.title,
-        album: status.song.album,
-        rating: status.song.rating,
-      }
-    });
-  }
-
-  onRatingChanged(newRating) {
-    let logger = loggerCreator("onRatingChanged", moduleLogger);
-    logger.info(`start: ${newRating}`);
   }
 
   render() {
@@ -175,19 +80,19 @@ export default class PlayerPage extends Component {
     logger.info(`start`);
 
     let albumArt = require("../images/no-album2.png");
-    logger.info(`uri: ${this.state.song.albumArtUri}`);
-    if (this.state.song.albumArtUri) {
-      albumArt = {uri: this.state.song.albumArtUri};
+    logger.info(`uri: ${player.songArtUri}`);
+    if (player.songArtUri) {
+      albumArt = {uri: player.songArtUri};
     }
 
     let loadingStatus = "Loading";
-    if (this.state.song.title) {
-      loadingStatus = `${loadingStatus}: ${this.state.song.artist} - ${this.state.song.title}`
+    if (player.songTitle) {
+      loadingStatus = `${loadingStatus}: ${player.songArtist} - ${player.songTitle}`
     }
 
     let loadingError = "";
-    if (this.state.loadingError) {
-      loadingError = `Error occured, retrying: ${this.state.loadingError}`
+    if (player.loadingError) {
+      loadingError = `Error occurred, retrying: ${player.loadingError}`
     }
 
     return (
@@ -197,26 +102,26 @@ export default class PlayerPage extends Component {
           <Text>{this.props.playlistName}</Text>
         </View>
         <Choose>
-          <When condition={!this.state.isLoading}>
+          <When condition={!player.isLoading}>
             {/* Album art */}
             <View style={styles.albumArtView}>
               <Image style={styles.albumArt} source={albumArt}/>
             </View>
             {/* Ratings */}
             <Rating style={[styles.rating]}
-                    rating={this.state.song.rating} songId={this.state.song.id} />
+                    rating={player.songRating} songId={player.songId}/>
             {/* Names */}
             <View style={styles.namesView}>
-              <Text style={[styles.nameText, styles.titleText]}>{`${this.state.song.title}`}</Text>
-              <Text style={[styles.nameText, styles.artistText]}>{`${this.state.song.artist}`}</Text>
-              <Text style={[styles.nameText, styles.albumText]}>{`${this.state.song.album}`}</Text>
+              <Text style={[styles.nameText, styles.titleText]}>{`${player.songTitle}`}</Text>
+              <Text style={[styles.nameText, styles.artistText]}>{`${player.songArtist}`}</Text>
+              <Text style={[styles.nameText, styles.albumText]}>{`${player.songAlbum}`}</Text>
             </View>
             {/* Controls */}
             <View style={styles.controlsView}>
               <CircleButton size={100} onPress={() => this.onPressPlayPause()}
                             style={[styles.controlButtonPlay]}>
-                <Icon name={this.state.isPlaying ? "pause" : "play"}
-                      style={[styles.controlButtonText, this.state.isPlaying ? styles.controlTextPause : styles.controlTextPlay]}/>
+                <Icon name={player.isPlaying ? "pause" : "play"}
+                      style={[styles.controlButtonText, player.isPlaying ? styles.controlTextPause : styles.controlTextPlay]}/>
               </CircleButton>
               <CircleButton size={60} onPress={() => this.onPressNext()}>
                 <Icon name="step-forward"

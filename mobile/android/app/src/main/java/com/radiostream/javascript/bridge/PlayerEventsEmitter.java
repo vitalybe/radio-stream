@@ -2,7 +2,6 @@ package com.radiostream.javascript.bridge;
 
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.radiostream.player.PlaylistPlayer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -10,30 +9,30 @@ import javax.inject.Singleton;
 import timber.log.Timber;
 
 @Singleton
-public class PlaylistPlayerEventsEmitter {
+public class PlayerEventsEmitter {
 
     private ReactContext mContext;
-    private final String playlistPlayerStatusEvent = "PLAYLIST_PLAYER_STATUS_EVENT";
+    private final String playerStatusEvent = "PLAYLIST_PLAYER_STATUS_EVENT";
     private EventCallback mCallback;
 
     @Inject
-    public PlaylistPlayerEventsEmitter(ReactContext context) {
-        Timber.i("creating new instance of PlaylistPlayerEventsEmitter (%h) with reactContext: %h", this, context);
+    public PlayerEventsEmitter(ReactContext context) {
+        Timber.i("creating new instance of PlayerEventsEmitter (%h) with reactContext: %h", this, context);
         mContext = context;
     }
 
-    public void sendPlaylistPlayerStatus(PlaylistPlayerBridge playlistPlayerBridge) {
-        sendToJavascript(playlistPlayerStatusEvent, playlistPlayerBridge.asMap());
-        sendToSubscribers(playlistPlayerBridge);
+    public void sendPlayerStatus(PlayerBridge playerBridge) {
+        sendToJavascript(playerStatusEvent, playerBridge.asMap());
+        sendToSubscribers(playerBridge);
     }
 
     public void subscribe(EventCallback callback) {
         mCallback = callback;
     }
 
-    private void sendToSubscribers(PlaylistPlayerBridge playlistPlayerBridge) {
+    private void sendToSubscribers(PlayerBridge playerBridge) {
         if(mCallback != null) {
-            mCallback.onEvent(playlistPlayerBridge);
+            mCallback.onEvent(playerBridge);
         }
     }
 
@@ -50,6 +49,6 @@ public class PlaylistPlayerEventsEmitter {
     }
 
     public interface EventCallback {
-        void onEvent(PlaylistPlayerBridge playlistPlayerBridge);
+        void onEvent(PlayerBridge playerBridge);
     }
 }
