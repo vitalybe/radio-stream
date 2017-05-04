@@ -10,8 +10,6 @@ import PlayerPage from './pages/player_page'
 import SettingsPage from './pages/settings_page'
 import Navigator from  './stores/navigator'
 
-import playerProxy from './native_proxy/player_proxy'
-
 @observer
 export default class RadioStream extends Component {
 

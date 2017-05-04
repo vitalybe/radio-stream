@@ -4,9 +4,12 @@ const moduleLogger = loggerCreator("player");
 
 import {observable} from "mobx";
 import {getArtistImage} from '../utils/backend_lastfm_api'
-import nativePlayer from '../native_proxy/player_proxy'
+import {NativeModules, DeviceEventEmitter} from 'react-native';
+
 
 class Player {
+
+  PLAYLIST_PLAYER_STATUS_EVENT = "PLAYLIST_PLAYER_STATUS_EVENT";
 
   @observable playlistName = "";
   @observable isLoading = true;
@@ -24,30 +27,54 @@ class Player {
     let logger = loggerCreator("constructor", moduleLogger);
     logger.info(`start`);
 
-    nativePlayer.subscribePlayerStatusChanged(this.onPlayerStatusChanged.bind(this))
+    this.proxy = NativeModules.PlayerJsProxy;
+    this.statusCallback = null;
+
+    DeviceEventEmitter.addListener(this.PLAYLIST_PLAYER_STATUS_EVENT, event => this.onPlayerStatusChanged(event));
+  }
+
+  _sleep(millisecond) {
+    return new Promise(resolve => setTimeout(resolve, millisecond)
+    )
+  }
+
+  _resolveWhenPlayerAvailable() {
+    let logger = loggerCreator("resolveWhenPlayerAvailable", moduleLogger);
+    logger.info(`start`);
+
+    return this.proxy.isPlayerAvailable().then(isAvailable => {
+      if (!isAvailable) {
+        logger.info(`not available - retrying`);
+        return this._sleep(500).then(() => this._resolveWhenPlayerAvailable());
+      }
+    });
+  }
+
+  updateSongRating(songId, newRating) {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.updateSongRating(songId, newRating));
   }
 
   changePlaylist(playlistName) {
-    return nativePlayer.changePlaylist(playlistName);
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.changePlaylist(playlistName));
   }
 
   play() {
-    return nativePlayer.play();
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.play());
   }
 
   pause() {
-    return nativePlayer.pause();
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.pause());
   }
 
   playNext() {
-    return nativePlayer.playNext();
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.playNext());
   }
 
   async updatePlayerStatus() {
     let logger = loggerCreator("updatePlayerStatus", moduleLogger);
     logger.info(`start`);
 
-    const nativePlayerStatus = await nativePlayer.getPlayerStatus();
+    const nativePlayerStatus = await this._resolveWhenPlayerAvailable().then(() => this.proxy.getPlayerStatus());
     this.onPlayerStatusChanged(nativePlayerStatus)
   }
 
@@ -100,11 +127,11 @@ class Player {
   }
 
   stopPlayer() {
-    return nativePlayer.stopPlayer();
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.stopPlayer());
   }
 
   updateSettings(host, user, password) {
-    return nativePlayer.updateSettings(host, user, password);
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.updateSettings(host, user, password));
   }
 }
 

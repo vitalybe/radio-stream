@@ -6,7 +6,7 @@ import { StyleSheet, View, TouchableWithoutFeedback, Image, Vibration, ToastAndr
 import Text from './text';
 import _ from 'lodash'
 import { colors } from '../styles/styles'
-import playerProxy from '../native_proxy/player_proxy'
+import player from '../stores/player'
 
 let starFullSource = require("../images/star-full.png");
 let starEmptySource = require("../images/star-empty.png");
@@ -25,7 +25,7 @@ export default class Rating extends Component {
     logger.info(`new rating: ${newRating}`);
 
     logger.info(`updating song ${this.props.songId} with new rating: ${newRating}`);
-    playerProxy.updateSongRating(this.props.songId, newRating)
+    player.updateSongRating(this.props.songId, newRating)
       .then(() => {
         logger.info(`update finished`);
       })
