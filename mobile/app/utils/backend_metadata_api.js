@@ -3,7 +3,7 @@ var moduleLogger = loggerCreator("backend_metadata_api");
 
 const btoa = require('base-64').encode;
 import Ajax from '../utils/ajax'
-import { globalSettings } from '../utils/settings'
+import {globalSettings} from '../utils/settings'
 
 class BackendMetadataApi {
 
@@ -23,8 +23,8 @@ class BackendMetadataApi {
       logger.info(`using global host/password`);
     }
 
-    if(!host || !password) {
-      throw "host or password are empty"
+    if (!host || !password) {
+      throw new Error("host or password are empty")
     }
 
     const address = `http://${host}/radio-stream/api`;
@@ -43,6 +43,15 @@ class BackendMetadataApi {
       .then(response => response.json().then(json => json))
       .then((json) => {
         return json.playlists;
+      });
+  }
+
+  playlistSongs(playlistName) {
+
+    return this._getAjax().get(`/playlists/${playlistName}`)
+      .then(response => response.json().then(json => json))
+      .then((json) => {
+        return json.results;
       });
   }
 

@@ -3,9 +3,7 @@ var moduleLogger = loggerCreator("rating");
 
 import React, { Component } from 'react';
 import { StyleSheet, View, TouchableWithoutFeedback, Image, Vibration, ToastAndroid } from 'react-native';
-import Text from './text';
 import _ from 'lodash'
-import { colors } from '../styles/styles'
 import player from '../stores/player'
 
 let starFullSource = require("../images/star-full.png");
@@ -14,6 +12,13 @@ let starEmptySource = require("../images/star-empty.png");
 const MAX_RATING = 100;
 const STAR_COUNT = 5;
 const RATING_STAR_RATIO = MAX_RATING / STAR_COUNT;
+
+const styles = StyleSheet.create({
+  container: {flexDirection: "row"},
+  star: {
+    marginHorizontal: 2
+  }
+});
 
 export default class Rating extends Component {
 
@@ -76,10 +81,3 @@ Rating.propTypes = {
   rating: React.PropTypes.number.isRequired,
   songId: React.PropTypes.number.isRequired
 };
-
-const styles = StyleSheet.create({
-  container: {flexDirection: "row"},
-  star: {
-    marginHorizontal: 2
-  }
-});

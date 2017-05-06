@@ -13,6 +13,45 @@ import Navigator from '../stores/navigator'
 import {globalSettings} from '../utils/settings'
 import backendMetadataApi from '../utils/backend_metadata_api'
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // remove width and height to override fixed static size
+    width: 250,
+    height: null,
+    alignSelf: "center",
+
+    marginVertical: 20,
+  },
+
+  label: {
+    fontSize: fontSizes.NORMAL,
+    marginBottom: 10,
+  },
+
+  input: {
+    height: 50,
+
+    color: colors.SEMI_WHITE.rgbString(),
+    backgroundColor: colors.CYAN_DARK.clone().clearer(0.5).rgbString(),
+
+    borderColor: colors.CYAN_BRIGHT.rgbString(),
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRadius: 5,
+
+    marginBottom: 25,
+  },
+
+  submit: {
+    alignSelf: "flex-start",
+    marginTop: 20,
+  },
+
+  saveButton: {
+    marginTop: 10,
+  }
+});
 
 @observer
 export default class SettingsPage extends Component {
@@ -106,43 +145,3 @@ export default class SettingsPage extends Component {
 SettingsPage.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator).isRequired
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // remove width and height to override fixed static size
-    width: 250,
-    height: null,
-    alignSelf: "center",
-
-    marginVertical: 20,
-  },
-
-  label: {
-    fontSize: fontSizes.NORMAL,
-    marginBottom: 10,
-  },
-
-  input: {
-    height: 50,
-
-    color: colors.SEMI_WHITE.rgbString(),
-    backgroundColor: colors.CYAN_DARK.clone().clearer(0.5).rgbString(),
-
-    borderColor: colors.CYAN_BRIGHT.rgbString(),
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRadius: 5,
-
-    marginBottom: 25,
-  },
-
-  submit: {
-    alignSelf: "flex-start",
-    marginTop: 20,
-  },
-
-  saveButton: {
-    marginTop: 10,
-  }
-});

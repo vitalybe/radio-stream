@@ -2,7 +2,7 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("playlist_collection_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, TouchableHighlight, Image, ActivityIndicator, BackAndroid} from 'react-native';
+import {StyleSheet, Text, View, Image, ActivityIndicator, BackAndroid} from 'react-native';
 import {observer} from "mobx-react"
 
 import player from '../stores/player'
@@ -11,6 +11,43 @@ import Button from '../components/rectangle_button'
 import Navigator from '../stores/navigator'
 import backendMetadataApi from '../utils/backend_metadata_api'
 import {globalSettings} from '../utils/settings'
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // remove width and height to override fixed static size
+    width: null,
+    height: null,
+    alignItems: "center",
+    alignSelf: "stretch"
+  },
+  logo: {
+    width: 90,
+    height: 90,
+    marginVertical: 20,
+    resizeMode: "contain"
+  },
+  playlistButton: {
+    width: 150,
+    marginBottom: 10,
+  },
+  playlistText: {
+    color: colors.SEMI_WHITE.rgbString(),
+    fontSize: fontSizes.NORMAL,
+  },
+  settingsButton: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  settingsIcon: {
+    width: 30,
+    height: 30,
+    resizeMode: "contain"
+  },
+});
 
 @observer
 export default class PlaylistCollectionPage extends Component {
@@ -23,19 +60,12 @@ export default class PlaylistCollectionPage extends Component {
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
 
     logger.info(`fetching persisted settings`);
-    await globalSettings.load();
     if (globalSettings.host) {
 
-      logger.info(`updating settings`);
-      await player.updateSettings(globalSettings.host, globalSettings.user, globalSettings.password);
-      logger.info(`settings updated`);
-
-      logger.info(`updating player status`);
-      await player.updatePlayerStatus();
       logger.info(`updated status. playing? ${player.isPlaying}`);
       if (player.isPlaying) {
         logger.info(`player currently playing - navigating to player`);
-        this.props.navigator.navigateToPlayer(playlistPlayer.playlist.name)
+        this.props.navigator.navigateToPlayer(player.playlistName)
       } else {
         logger.info(`proceed as usual - fetching playlists`);
         this.fetchPlaylists();
@@ -69,11 +99,11 @@ export default class PlaylistCollectionPage extends Component {
     return true;
   }
 
-  onPlaylistClick(playlistName) {
+  async onPlaylistClick(playlistName) {
     let logger = loggerCreator(this.onPlaylistClick.name, moduleLogger);
     logger.info(`start: ${playlistName}`);
 
-    player.changePlaylist(playlistName);
+    await player.changePlaylist(playlistName);
     player.play();
     this.props.navigator.navigateToPlayer(playlistName);
   }
@@ -120,40 +150,3 @@ export default class PlaylistCollectionPage extends Component {
 PlaylistCollectionPage.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator).isRequired
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // remove width and height to override fixed static size
-    width: null,
-    height: null,
-    alignItems: "center",
-    alignSelf: "stretch"
-  },
-  logo: {
-    width: 90,
-    height: 90,
-    marginVertical: 20,
-    resizeMode: "contain"
-  },
-  playlistButton: {
-    width: 150,
-    marginBottom: 10,
-  },
-  playlistText: {
-    color: colors.SEMI_WHITE.rgbString(),
-    fontSize: fontSizes.NORMAL,
-  },
-  settingsButton: {
-    position: "absolute",
-    bottom: 10,
-    right: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-  },
-  settingsIcon: {
-    width: 30,
-    height: 30,
-    resizeMode: "contain"
-  },
-});

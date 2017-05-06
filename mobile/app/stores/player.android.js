@@ -3,8 +3,10 @@ import loggerCreator from '../utils/logger'
 const moduleLogger = loggerCreator("player");
 
 import {observable} from "mobx";
-import {getArtistImage} from '../utils/backend_lastfm_api'
 import {NativeModules, DeviceEventEmitter} from 'react-native';
+
+import {globalSettings} from '../utils/settings'
+import {getArtistImage} from '../utils/backend_lastfm_api'
 
 
 class Player {
@@ -38,16 +40,24 @@ class Player {
     )
   }
 
-  _resolveWhenPlayerAvailable() {
+  _updateSettings(host, user, password) {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.updateSettings(host, user, password));
+  }
+
+  async _resolveWhenPlayerAvailable() {
     let logger = loggerCreator("resolveWhenPlayerAvailable", moduleLogger);
     logger.info(`start`);
 
-    return this.proxy.isPlayerAvailable().then(isAvailable => {
-      if (!isAvailable) {
-        logger.info(`not available - retrying`);
-        return this._sleep(500).then(() => this._resolveWhenPlayerAvailable());
-      }
-    });
+    logger.info(`is player available?`);
+    let isAvailable = await this.proxy.isPlayerAvailable();
+    if (isAvailable) {
+      logger.info(`available - updating settings`);
+      await this._updateSettings(globalSettings.host, globalSettings.user, globalSettings.password);
+    } else {
+      logger.info(`not available - retrying soon...`);
+      await this._sleep(500);
+      await this._resolveWhenPlayerAvailable()
+    }
   }
 
   updateSongRating(songId, newRating) {
@@ -128,10 +138,6 @@ class Player {
 
   stopPlayer() {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.stopPlayer());
-  }
-
-  updateSettings(host, user, password) {
-    return this._resolveWhenPlayerAvailable().then(() => this.proxy.updateSettings(host, user, password));
   }
 }
 

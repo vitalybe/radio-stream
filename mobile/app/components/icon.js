@@ -1,21 +1,21 @@
-import React, { Component } from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  Animated,
-  TouchableOpacity,
-} from 'react-native';
+import loggerCreator from '../utils/logger'
+const moduleLogger = loggerCreator("icon");
 
-const styles = StyleSheet.create({
-});
+require("../lib/font-awesome/css/font-awesome.min.css");
+
+import React, { Component } from 'react';
+import { Text, View } from 'react-native';
+import FontAwesome from 'react-fontawesome'
 
 export default class Icon extends Component {
   render() {
+
+    let logger = loggerCreator("render", moduleLogger);
+    logger.info(`start: ${this.props.style}`);
+
     return (
       <View>
-        <Text>TBD</Text>
+        <FontAwesome name={this.props.name}  />
       </View>
     );
   }

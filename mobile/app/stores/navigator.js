@@ -1,4 +1,4 @@
-import { observable, action } from "mobx";
+import { observable } from "mobx";
 
 import loggerCreator from '../utils/logger'
 const moduleLogger = loggerCreator("navigator");
@@ -16,6 +16,8 @@ export default class Navigator {
   }
 
   _navigateTo(address, params) {
+    let logger = loggerCreator("_navigateTo", moduleLogger);
+    logger.info(`start: ${address}`);
     this.activeRoute = observable(Object.assign({address: address}, params));
   }
 

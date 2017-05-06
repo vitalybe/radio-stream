@@ -39,8 +39,8 @@ class Settings {
     logger.info(`start`);
 
 
-    this._host = await AsyncStorage.getItem(PERSISTENCE_HOST);
-    this._password = await AsyncStorage.getItem(PERSISTENCE_PASSWORD);
+    this._host = await AsyncStorage.getItem(PERSISTENCE_HOST) || "";
+    this._password = await AsyncStorage.getItem(PERSISTENCE_PASSWORD) || "";
   }
 
   async save() {
