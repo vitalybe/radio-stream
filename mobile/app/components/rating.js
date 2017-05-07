@@ -16,7 +16,9 @@ const RATING_STAR_RATIO = MAX_RATING / STAR_COUNT;
 const styles = StyleSheet.create({
   container: {flexDirection: "row"},
   star: {
-    marginHorizontal: 2
+    marginHorizontal: 2,
+    height: 50,
+    width: 53,
   }
 });
 
@@ -63,7 +65,7 @@ export default class Rating extends Component {
 
       return (
         <TouchableWithoutFeedback key={i} onPress={() => this.onStarPress()} onLongPress={() => this.onStarLongPress(i)}>
-          <Image style={[styles.star]} source={imageSource}/>
+          <View><Image style={[styles.star]} source={imageSource}/></View>
         </TouchableWithoutFeedback>
       );
     });
