@@ -219,12 +219,12 @@ export default class PlayerPage extends Component {
             <View style={styles.controlsView}>
               <CircleButton size={100} onPress={() => this.onPressPlayPause()}
                             style={[styles.controlButtonPlay]}>
-                <Icon name={player.isPlaying ? "pause" : "play"}
-                      style={[styles.controlButtonText, player.isPlaying ? styles.controlTextPause : styles.controlTextPlay]}/>
+                  <Icon name={player.isPlaying ? "pause" : "play"}
+                        style={[styles.controlButtonText, player.isPlaying ? styles.controlTextPause : styles.controlTextPlay]}/>
               </CircleButton>
               <CircleButton size={60} onPress={() => this.onPressNext()}>
-                <Icon name="step-forward"
-                      style={styles.controlButtonText}/>
+                  <Icon name="step-forward"
+                        style={styles.controlButtonText}/>
               </CircleButton>
             </View>
           </When>

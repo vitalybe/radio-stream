@@ -31,7 +31,9 @@ export default class RectangleButton extends Component {
                           style={[styles.button, {height: height, width: width, borderRadius: borderRadius}, this.props.style]}
                           underlayColor={colors.CYAN_DARK.clone().clearer(0.2).rgbString()}
                           activeOpacity={1}>
-        {this.props.children}
+        <View>
+          {this.props.children}
+        </View>
       </TouchableHighlight>
     )
 
