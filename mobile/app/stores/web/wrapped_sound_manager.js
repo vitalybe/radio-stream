@@ -6,6 +6,10 @@ import {soundManager} from 'soundmanager2';
 import WrappedSound from './wrapped_sound.js'
 import { globalSettings } from '../../utils/settings'
 
+function soundId(songId) {
+  return "i" + songId.toString()
+}
+
 export function setup() {
   logger.debug(`Running soundManager setup`);
   soundManager.setup({
@@ -21,7 +25,7 @@ export function getSoundBySong(song) {
   let flogger = loggerCreator(getSoundBySong.name, logger);
   flogger.debug(song.toString());
 
-  let sound = soundManager.getSoundById(song.id);
+  let sound = soundManager.getSoundById(soundId(song.id));
   if (sound) {
     flogger.debug(`Sound found`);
     sound = new WrappedSound(sound);
@@ -42,18 +46,19 @@ export function loadSound(song) {
   flogger.debug(song.toString());
 
   let loadingPromise = null;
-  if (loadingSongs[song.id]) {
+  let id = soundId(song.id);
+  if (loadingSongs[id]) {
     flogger.debug(`Sound is already being created, returning existing promise`);
-    loadingPromise = loadingSongs[song.id];
+    loadingPromise = loadingSongs[id];
   } else {
     flogger.debug(`Starting createSound for song...`);
     loadingPromise = new Promise(function (resolve, reject) {
-      var soundUrl = `http://${globalSettings.host}/radio-stream/music/${song.path}`;
-      let sound = soundManager.createSound({id: song.id, url: soundUrl, stream: false});
+      let soundUrl = `http://${globalSettings.host}/radio-stream/music/${song.path}`;
+      let sound = soundManager.createSound({id: id, url: soundUrl, stream: false});
       sound.load({
         stream: true,
         onload: function (success) {
-          delete loadingSongs[song.id];
+          delete loadingSongs[id];
 
           flogger.debug(`Callback 'onload' - Success: ${success}`);
           let error = null;
@@ -74,14 +79,14 @@ export function loadSound(song) {
             resolve(new WrappedSound(this));
           } else {
             flogger.debug(`Sound destroyed`);
-            soundManager.destroySound(song.id);
+            soundManager.destroySound(id);
             reject(error);
           }
         }
       });
     });
 
-    loadingSongs[song.id] = loadingPromise;
+    loadingSongs[id] = loadingPromise;
   }
 
   return loadingPromise;
