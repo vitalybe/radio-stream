@@ -112,7 +112,7 @@ export default class PlayerPage extends Component {
 
   componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
-    logger.info(`start playlist: ${this.props.playlistName}`);
+    logger.info(`playlist: ${this.props.playlistName}`);
 
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
   }
@@ -120,7 +120,7 @@ export default class PlayerPage extends Component {
   onHandleAppStateChange = async (currentAppState) => {
     // TODO: Move that logic inside native android code and remove updatePlayerStatus
     let logger = loggerCreator("onHandleAppStateChange", moduleLogger);
-    logger.info(`start: ${currentAppState}`);
+    logger.info(`${currentAppState}`);
 
     if (currentAppState === 'active') {
       await player.updatePlayerStatus();
@@ -133,20 +133,17 @@ export default class PlayerPage extends Component {
 
   componentDidMount() {
     let logger = loggerCreator("componentDidMount", moduleLogger);
-    logger.info(`start`);
 
     AppState.addEventListener('change', this.onHandleAppStateChange);
   }
 
   componentWillUnmount() {
     let logger = loggerCreator("componentWillUnmount", moduleLogger);
-    logger.info(`start`);
-    AppState.removeEventListener('change', this.onHandleAppStateChange);
+        AppState.removeEventListener('change', this.onHandleAppStateChange);
   }
 
   onPressPlayPause() {
     let logger = loggerCreator("onPressPlayPause", moduleLogger);
-    logger.info(`start`);
 
     if (player.isPlaying) {
       logger.info(`pause`);
@@ -164,15 +161,13 @@ export default class PlayerPage extends Component {
 
   onPressHardwareBack() {
     let logger = loggerCreator("hardwareBackPress", moduleLogger);
-    logger.info(`start`);
-    player.pause();
+        player.pause();
     this.props.navigator.navigateToPlaylistCollection();
     return true;
   }
 
   render() {
     let logger = loggerCreator("render", moduleLogger);
-    logger.info(`start`);
 
     let albumArt = require("../images/no-album2.png");
     let loadingStatus = "Loading";

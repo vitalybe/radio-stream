@@ -60,7 +60,6 @@ export default class SettingsPage extends Component {
     super(props);
 
     let logger = loggerCreator("constructor", moduleLogger);
-    logger.info(`start`);
 
     this.store = observable({
       host: globalSettings.host,
@@ -74,7 +73,6 @@ export default class SettingsPage extends Component {
 
   onPressHardwareBack() {
     let logger = loggerCreator("onPressHardwareBack", moduleLogger);
-    logger.info(`start`);
 
     if (globalSettings.host) {
       logger.info(`cancelling setting changes`);
@@ -90,14 +88,13 @@ export default class SettingsPage extends Component {
 
   onTextChange(label, text) {
     let logger = loggerCreator("onTextChange", moduleLogger);
-    logger.info(`start - changing ${label}`);
+    logger.info(`changing ${label}`);
 
     this.store[label] = text;
   }
 
   onSavePress() {
     let logger = loggerCreator("onSavePress", moduleLogger);
-    logger.info(`start`);
 
     let host = this.store.host;
     let password = this.store.password;
@@ -121,7 +118,6 @@ export default class SettingsPage extends Component {
 
   render() {
     let logger = loggerCreator(this.render.name, moduleLogger);
-    logger.info(`start`);
 
     return (
       <View style={styles.container}>

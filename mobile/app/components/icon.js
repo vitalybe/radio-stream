@@ -4,7 +4,7 @@ const moduleLogger = loggerCreator("icon");
 require("../lib/font-awesome/css/font-awesome.min.css");
 
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import FontAwesome from 'react-fontawesome'
 
 export default class Icon extends Component {

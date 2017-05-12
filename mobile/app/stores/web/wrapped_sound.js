@@ -7,8 +7,7 @@ export default class WrappedSound {
 
   constructor(sound) {
     let logger = loggerCreator("constructor", moduleLogger);
-    logger.info(`start`);
-    this._sound = sound;
+        this._sound = sound;
   }
 
   play(options) {

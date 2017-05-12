@@ -28,7 +28,6 @@ export class Song {
 
   constructor(songData) {
     let logger = loggerCreator(this.constructor.name, moduleLogger);
-    logger.info(`start`);
 
     this.title = songData.title;
     this.id = songData.id;
@@ -70,7 +69,7 @@ export class Song {
 
   _loadSound() {
     let logger = loggerCreator(this._loadSound.name, moduleLogger);
-    logger.info(`start - ${this.toString()}`);
+    logger.info(`${this.toString()}`);
 
     // NOTE: This will not load sound again it was loaded before
     return wrappedSoundManager.loadSound(this)
@@ -84,7 +83,6 @@ export class Song {
 
   async _loadImage() {
     let logger = loggerCreator(this._loadImage.name, moduleLogger);
-    logger.info(`start`);
 
     if (this.loadedImageUrl) {
       logger.info(`image already loaded`);
@@ -102,7 +100,6 @@ export class Song {
 
   async load() {
     let logger = loggerCreator(this.load.name, moduleLogger);
-    logger.info(`start`);
 
     await this._loadSound();
     try {
@@ -114,7 +111,6 @@ export class Song {
 
   playSound() {
     let logger = loggerCreator(this.playSound.name, moduleLogger);
-    logger.info(`start`);
 
     let that = this;
 
@@ -145,7 +141,6 @@ export class Song {
 
   pauseSound() {
     let logger = loggerCreator(this.pauseSound.name, moduleLogger);
-    logger.info(`start`);
 
     return this.load().then(() => {
       this.loadedSound.pause()
@@ -154,7 +149,7 @@ export class Song {
 
   changeRating(newRating) {
     let logger = loggerCreator(this.changeRating.name, moduleLogger);
-    logger.info(`start: ${newRating}`);
+    logger.info(`${newRating}`);
 
     backendMetadataApi.updateRating(this.id, newRating)
       .then(() => {

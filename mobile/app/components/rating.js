@@ -49,7 +49,7 @@ export default class Rating extends Component {
 
   render() {
     let logger = loggerCreator("render", moduleLogger);
-    logger.info(`start - rating: ${this.props.rating}`);
+    logger.info(`rating: ${this.props.rating}`);
 
     var highlightedStarCount = this.props.rating / RATING_STAR_RATIO;
     logger.info(`highlighted stars: ${highlightedStarCount}`);

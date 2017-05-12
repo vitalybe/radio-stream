@@ -10,7 +10,6 @@ class BackendMetadataApi {
   // NOTE: Since the host might change, we create a new Ajax object every time
   _getAjax(customHost, customPassword) {
     let logger = loggerCreator("_getAjax", moduleLogger);
-    logger.info(`start`);
 
     let host = globalSettings.host;
     let password = globalSettings.password;
@@ -57,7 +56,7 @@ class BackendMetadataApi {
 
   testConnection(host, password) {
     let logger = loggerCreator("testConnection", moduleLogger);
-    logger.info(`start host: ${host}`);
+    logger.info(`host: ${host}`);
 
     return this._getAjax(host, password).get(`/playlists`);
   }

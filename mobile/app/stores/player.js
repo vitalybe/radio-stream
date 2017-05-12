@@ -21,7 +21,6 @@ class Player {
 
   constructor() {
     let logger = loggerCreator("constructor", moduleLogger);
-    logger.info(`start`);
 
     logger.info(`initializing soundmanager2`);
     wrappedSoundManager.setup();
@@ -30,7 +29,6 @@ class Player {
   _onPlayProgress(seconds) {
     if (this.song && this.song.markingAsPlayedPromise === null && seconds >= this.MARK_PLAYED_AFTER_SECONDS) {
       let logger = loggerCreator(this._onPlayProgress.name, moduleLogger);
-      logger.info(`start`);
 
       return this.song.markAsPlayed();
     }
@@ -38,7 +36,6 @@ class Player {
 
   async changePlaylist(playlistName) {
     let logger = loggerCreator("changePlaylist", moduleLogger);
-    logger.info(`start`);
 
     await this.stop();
 
@@ -48,7 +45,6 @@ class Player {
 
   @action pause() {
     let logger = loggerCreator("pause", moduleLogger);
-    logger.info(`start`);
 
     let promise = Promise.resolve();
 
@@ -63,7 +59,6 @@ class Player {
 
   @action play() {
     let logger = loggerCreator("play", moduleLogger);
-    logger.info(`start`);
 
     assert(this.currentPlaylist, "unexpected: playlist isn't set");
 
@@ -92,7 +87,6 @@ class Player {
 
   async next() {
     let logger = loggerCreator(this.next.name, moduleLogger);
-    logger.info(`start`);
 
     // time since last player - toggle-pause.
     // if too long, stop and clear playlist
@@ -146,7 +140,6 @@ class Player {
 
   @action stop() {
     let logger = loggerCreator("stop", moduleLogger);
-    logger.info(`start`);
 
     return this.pause().then(() => {
       logger.info(`setting song to null`);

@@ -21,7 +21,6 @@ export default class Playlist {
 
   _areSongsOutOfDate() {
     let logger = loggerCreator(this._areSongsOutOfDate.name, moduleLogger);
-    logger.info(`start`);
 
     let result = null;
     if (!this._lastReloadDate) {
@@ -42,7 +41,6 @@ export default class Playlist {
 
   _reloadSongsIfNeeded() {
     let logger = loggerCreator(this._reloadSongsIfNeeded.name, moduleLogger);
-    logger.info("start");
 
     logger.info(`songs length: ${this._songs.length}. Current index: ${this._currentIndex}`);
     var isEnoughSongsInList = this._songs.length > 0 && this._currentIndex < this._songs.length;
@@ -66,7 +64,6 @@ export default class Playlist {
 
   nextSong() {
     let logger = loggerCreator(this.nextSong.name, moduleLogger);
-    logger.info("start");
 
     return this.peekNextSong().then((song) => {
       this._currentIndex++;
@@ -78,7 +75,6 @@ export default class Playlist {
 
   peekNextSong() {
     let logger = loggerCreator(this.peekNextSong.name, moduleLogger);
-    logger.info(`start`);
 
     return this._reloadSongsIfNeeded()
       .then(() => {

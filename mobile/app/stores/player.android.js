@@ -27,7 +27,6 @@ class Player {
 
   constructor() {
     let logger = loggerCreator("constructor", moduleLogger);
-    logger.info(`start`);
 
     this.proxy = NativeModules.PlayerJsProxy;
     this.statusCallback = null;
@@ -46,7 +45,6 @@ class Player {
 
   async _resolveWhenPlayerAvailable() {
     let logger = loggerCreator("resolveWhenPlayerAvailable", moduleLogger);
-    logger.info(`start`);
 
     logger.info(`is player available?`);
     let isAvailable = await this.proxy.isPlayerAvailable();
@@ -82,7 +80,6 @@ class Player {
 
   async updatePlayerStatus() {
     let logger = loggerCreator("updatePlayerStatus", moduleLogger);
-    logger.info(`start`);
 
     const nativePlayerStatus = await this._resolveWhenPlayerAvailable().then(() => this.proxy.getPlayerStatus());
     this.onPlayerStatusChanged(nativePlayerStatus)
@@ -90,7 +87,7 @@ class Player {
 
   onPlayerStatusChanged(nativePlayerStatus) {
     let logger = loggerCreator("onPlayerStatusChanged", moduleLogger);
-    logger.info(`start: ${JSON.stringify(nativePlayerStatus)}`);
+    logger.info(`${JSON.stringify(nativePlayerStatus)}`);
 
     const playlistPlayer = nativePlayerStatus.playlistPlayer;
     if (!playlistPlayer) {

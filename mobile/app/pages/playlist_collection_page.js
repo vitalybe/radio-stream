@@ -54,7 +54,6 @@ export default class PlaylistCollectionPage extends Component {
 
   async componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
-    logger.info(`start`);
 
     this.state = {};
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
@@ -79,7 +78,6 @@ export default class PlaylistCollectionPage extends Component {
 
   async fetchPlaylists() {
     let logger = loggerCreator("fetchPlaylists", moduleLogger);
-    logger.info(`start`);
 
     try {
       let result = await backendMetadataApi.playlists();
@@ -92,8 +90,7 @@ export default class PlaylistCollectionPage extends Component {
 
   onPressHardwareBack() {
     let logger = loggerCreator("onPressHardwareBack", moduleLogger);
-    logger.info(`start`);
-    player.stopPlayer();
+        player.stopPlayer();
 
     BackAndroid.exitApp();
     return true;
@@ -101,7 +98,7 @@ export default class PlaylistCollectionPage extends Component {
 
   async onPlaylistClick(playlistName) {
     let logger = loggerCreator(this.onPlaylistClick.name, moduleLogger);
-    logger.info(`start: ${playlistName}`);
+    logger.info(`${playlistName}`);
 
     await player.changePlaylist(playlistName);
     player.play();
@@ -114,7 +111,6 @@ export default class PlaylistCollectionPage extends Component {
 
   render() {
     let logger = loggerCreator(this.render.name, moduleLogger);
-    logger.info(`start`);
 
     return (
       <View style={styles.container}>

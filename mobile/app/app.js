@@ -26,7 +26,6 @@ export default class RadioStream extends Component {
 
   async componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
-    logger.info(`start`);
 
     this.state = {
       ready: false,
@@ -43,7 +42,7 @@ export default class RadioStream extends Component {
 
   render() {
     let logger = loggerCreator(this.render.name, moduleLogger);
-    logger.info(`start. activate route: ${this.navigator.activeRoute}`);
+    logger.info(`activate route: ${this.navigator.activeRoute}`);
 
     let page = null;
     let activeRoute = this.navigator.activeRoute;

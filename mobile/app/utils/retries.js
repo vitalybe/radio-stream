@@ -10,7 +10,7 @@ class Retries {
     let lastError = null;
 
     return promiseRetryLib((retry, number) => {
-      logger.info(`start. try number: ${number}`);
+      logger.info(`try number: ${number}`);
 
       return promiseReturningFunc(lastError).catch(err => {
         logger.warn(`promise failed... retrying: ${err}`);

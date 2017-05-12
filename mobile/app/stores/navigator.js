@@ -17,7 +17,7 @@ export default class Navigator {
 
   _navigateTo(address, params) {
     let logger = loggerCreator("_navigateTo", moduleLogger);
-    logger.info(`start: ${address}`);
+    logger.info(`${address}`);
     this.activeRoute = observable(Object.assign({address: address}, params));
   }
 

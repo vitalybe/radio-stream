@@ -1,6 +1,7 @@
 {
   "extends": "react-app",
   "rules": {
-    "react/jsx-no-undef": "off"
+    "react/jsx-no-undef": "off",
+    "no-unused-vars": "off"
   }
 }
