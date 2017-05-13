@@ -54,6 +54,10 @@ class BackendMetadataApi {
       });
   }
 
+  updateRating(songId, newRating) {
+    return this._getAjax().put(`/item/${songId}/rating`, {body: {newRating}});
+  }
+
   testConnection(host, password) {
     let logger = loggerCreator("testConnection", moduleLogger);
     logger.info(`host: ${host}`);

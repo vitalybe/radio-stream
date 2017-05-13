@@ -202,8 +202,7 @@ export default class PlayerPage extends Component {
               <Image style={styles.albumArt} source={albumArt}/>
             </View>
             {/* Ratings */}
-            <Rating style={[styles.rating]}
-                    rating={song.rating} songId={song.id}/>
+            <Rating style={[styles.rating]} song={song}/>
             {/* Names */}
             <View style={styles.namesView}>
               <Text style={[styles.nameText, styles.titleText]}>{`${song.title}`}</Text>

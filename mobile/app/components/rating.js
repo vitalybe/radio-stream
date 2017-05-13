@@ -1,10 +1,12 @@
 import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("rating");
 
-import React, { Component } from 'react';
-import { StyleSheet, View, TouchableWithoutFeedback, Image, Vibration, ToastAndroid } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View, TouchableWithoutFeedback, Image, Vibration, ToastAndroid, Platform} from 'react-native';
 import _ from 'lodash'
-import player from '../stores/player'
+import {observer} from "mobx-react"
+
+import BackendMetadataApi from '../utils/backend_metadata_api'
 
 let starFullSource = require("../images/star-full.png");
 let starEmptySource = require("../images/star-empty.png");
@@ -22,36 +24,46 @@ const styles = StyleSheet.create({
   }
 });
 
+@observer
 export default class Rating extends Component {
 
-  onStarLongPress(starIndex) {
+  async _changeRating(starIndex) {
     let logger = loggerCreator("onStarPress", moduleLogger);
-    logger.info(`clicked star ${starIndex}`);
 
-    let newRating = (starIndex+1) * RATING_STAR_RATIO;
-    logger.info(`new rating: ${newRating}`);
+    try {
+      logger.info(`clicked star ${starIndex}`);
 
-    logger.info(`updating song ${this.props.songId} with new rating: ${newRating}`);
-    player.updateSongRating(this.props.songId, newRating)
-      .then(() => {
-        logger.info(`update finished`);
-      })
-      .catch(e => {
-        logger.error(`update failed: ${e}`)
-      });
+      let newRating = (starIndex + 1) * RATING_STAR_RATIO;
+      logger.info(`new rating: ${newRating}`);
 
-    Vibration.vibrate();
+      logger.info(`updating song ${this.props.song.id} with new rating: ${newRating}`);
+      this.props.song.rating = newRating;
+      await BackendMetadataApi.updateRating(this.props.song.id, newRating);
+      logger.info(`update finished`);
+
+      Vibration.vibrate(500);
+    } catch (e) {
+      logger.error(`update failed: ${e}`)
+    }
   }
 
-  onStarPress() {
-    ToastAndroid.show('Long press to change rating', ToastAndroid.SHORT);
+  onStarLongPress(starIndex) {
+    this._changeRating(starIndex);
+  }
+
+  onStarPress(starIndex) {
+    if (Platform.OS === 'web') {
+      this._changeRating(starIndex);
+    } else {
+      ToastAndroid.show('Long press to change rating', ToastAndroid.SHORT);
+    }
   }
 
   render() {
     let logger = loggerCreator("render", moduleLogger);
-    logger.info(`rating: ${this.props.rating}`);
+    logger.info(`rating: ${this.props.song.rating}`);
 
-    var highlightedStarCount = this.props.rating / RATING_STAR_RATIO;
+    var highlightedStarCount = this.props.song.rating / RATING_STAR_RATIO;
     logger.info(`highlighted stars: ${highlightedStarCount}`);
 
     let stars = _.range(STAR_COUNT).map(i => {
@@ -64,7 +76,9 @@ export default class Rating extends Component {
       }
 
       return (
-        <TouchableWithoutFeedback key={i} onPress={() => this.onStarPress()} onLongPress={() => this.onStarLongPress(i)}>
+        <TouchableWithoutFeedback key={i}
+                                  onPress={() => this.onStarPress(i)}
+                                  onLongPress={() => this.onStarLongPress(i)}>
           <View><Image style={[styles.star]} source={imageSource}/></View>
         </TouchableWithoutFeedback>
       );
@@ -80,6 +94,5 @@ export default class Rating extends Component {
 }
 
 Rating.propTypes = {
-  rating: React.PropTypes.number.isRequired,
-  songId: React.PropTypes.number.isRequired
+  song: React.PropTypes.object.isRequired
 };
