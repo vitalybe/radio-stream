@@ -65,7 +65,7 @@ class Player {
     if (this.song) {
       this.song.playSound();
     } else {
-      this.next()
+      this.playNext()
     }
 
     this.isPlaying = true;
@@ -85,8 +85,8 @@ class Player {
       })
   }
 
-  async next() {
-    let logger = loggerCreator(this.next.name, moduleLogger);
+  async playNext() {
+    let logger = loggerCreator(this.playNext.name, moduleLogger);
 
     // time since last player - toggle-pause.
     // if too long, stop and clear playlist
@@ -123,7 +123,7 @@ class Player {
           this.song = nextSong;
           logger.info(`subscribing to song events`);
           this.song.subscribePlayProgress(this._onPlayProgress.bind(this));
-          this.song.subscribeFinish(this.next.bind(this));
+          this.song.subscribeFinish(this.playNext.bind(this));
         }
 
         this.loadingAction = `${nextSong.artist} - ${nextSong.title}`;
