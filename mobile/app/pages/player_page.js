@@ -2,7 +2,7 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("player_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, View, Image, ActivityIndicator, BackAndroid, AppState} from 'react-native';
+import {StyleSheet, View, Image, ActivityIndicator, BackAndroid } from 'react-native';
 import {observer} from "mobx-react"
 
 import Icon from '../components/icon'
@@ -117,29 +117,12 @@ export default class PlayerPage extends Component {
     BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
   }
 
-  onHandleAppStateChange = async (currentAppState) => {
-    // TODO: Move that logic inside native android code and remove updatePlayerStatus
-    let logger = loggerCreator("onHandleAppStateChange", moduleLogger);
-    logger.info(`${currentAppState}`);
-
-    if (currentAppState === 'active') {
-      await player.updatePlayerStatus();
-      if (!player.playlistName) {
-        logger.info(`no playlist selected - navigating to playlist collection`);
-        this.props.navigator.navigateToPlaylistCollection();
-      }
-    }
-  };
-
   componentDidMount() {
     let logger = loggerCreator("componentDidMount", moduleLogger);
-
-    AppState.addEventListener('change', this.onHandleAppStateChange);
   }
 
   componentWillUnmount() {
     let logger = loggerCreator("componentWillUnmount", moduleLogger);
-        AppState.removeEventListener('change', this.onHandleAppStateChange);
   }
 
   onPressPlayPause() {

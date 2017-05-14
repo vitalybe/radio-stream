@@ -3,7 +3,7 @@ import loggerCreator from '../utils/logger'
 const moduleLogger = loggerCreator("player");
 
 import {observable} from "mobx";
-import {NativeModules, DeviceEventEmitter} from 'react-native';
+import {NativeModules, DeviceEventEmitter, AppState} from 'react-native';
 
 import {globalSettings} from '../utils/settings'
 import {getArtistImage} from '../utils/backend_lastfm_api'
@@ -32,6 +32,7 @@ class Player {
     this.statusCallback = null;
 
     DeviceEventEmitter.addListener(this.PLAYLIST_PLAYER_STATUS_EVENT, event => this.onPlayerStatusChanged(event));
+    AppState.addEventListener('change', this.onHandleAppStateChange);
   }
 
   _sleep(millisecond) {
@@ -132,6 +133,22 @@ class Player {
   stopPlayer() {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.stopPlayer());
   }
+
+  onHandleAppStateChange = async (currentAppState) => {
+    let logger = loggerCreator("onHandleAppStateChange", moduleLogger);
+    logger.info(`${currentAppState}`);
+
+    if (currentAppState === 'active') {
+      logger.info(`updating player status`);
+      this.updatePlayerStatus();
+      if (!player.playlistName) {
+        logger.info(`no playlist selected - navigating to playlist collection`);
+        // TODO: Access navigator and redirect at this point
+        // this.props.navigator.navigateToPlaylistCollection();
+      }
+    }
+  };
+
 }
 
 export default new Player();
