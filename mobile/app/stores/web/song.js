@@ -6,7 +6,7 @@ import {observable} from "mobx";
 import assert from "../../utils/assert"
 import retries from "../../utils/retries"
 
-import * as backendMetadataApi from '../../utils/backend_metadata_api'
+import backendMetadataApi from '../../utils/backend_metadata_api'
 import * as backendLastFm from '../../utils/backend_lastfm_api'
 import * as wrappedSoundManager from './wrapped_sound_manager'
 
@@ -145,17 +145,6 @@ export class Song {
     return this.load().then(() => {
       this.loadedSound.pause()
     })
-  }
-
-  changeRating(newRating) {
-    let logger = loggerCreator(this.changeRating.name, moduleLogger);
-    logger.info(`${newRating}`);
-
-    backendMetadataApi.updateRating(this.id, newRating)
-      .then(() => {
-        logger.info(`Success`);
-        this.rating = newRating;
-      });
   }
 
   markAsPlayed() {

@@ -58,6 +58,10 @@ class BackendMetadataApi {
     return this._getAjax().put(`/item/${songId}/rating`, {body: {newRating}});
   }
 
+  updateLastPlayed(songId) {
+    return this._getAjax().post(`/item/${songId}/last-played`);
+  }
+
   testConnection(host, password) {
     let logger = loggerCreator("testConnection", moduleLogger);
     logger.info(`host: ${host}`);
