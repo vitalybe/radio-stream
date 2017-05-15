@@ -2,7 +2,7 @@ import loggerCreator from '../utils/logger'
 const moduleLogger = loggerCreator("settings_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, View, BackAndroid, TextInput} from 'react-native';
+import {StyleSheet, View, BackHandler, TextInput} from 'react-native';
 import {observable} from "mobx";
 import {observer} from "mobx-react"
 
@@ -68,7 +68,7 @@ export default class SettingsPage extends Component {
       status: null,
     });
 
-    BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
+    BackHandler.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
   }
 
   onPressHardwareBack() {
@@ -79,7 +79,7 @@ export default class SettingsPage extends Component {
       this.props.navigator.navigateToPlaylistCollection();
     } else {
       logger.info(`no host was configured - quitting`);
-      BackAndroid.exitApp();
+      BackHandler.exitApp();
 
     }
 

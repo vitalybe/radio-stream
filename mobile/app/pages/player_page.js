@@ -2,7 +2,7 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("player_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, View, Image, ActivityIndicator, BackAndroid } from 'react-native';
+import {StyleSheet, View, Image, ActivityIndicator, BackHandler } from 'react-native';
 import {observer} from "mobx-react"
 
 import Icon from '../components/icon'
@@ -114,7 +114,7 @@ export default class PlayerPage extends Component {
     let logger = loggerCreator("componentWillMount", moduleLogger);
     logger.info(`playlist: ${this.props.playlistName}`);
 
-    BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
+    BackHandler.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
   }
 
   componentDidMount() {

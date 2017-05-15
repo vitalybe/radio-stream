@@ -2,7 +2,7 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("playlist_collection_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, ActivityIndicator, BackAndroid} from 'react-native';
+import {StyleSheet, Text, View, Image, ActivityIndicator, BackHandler} from 'react-native';
 import {observer} from "mobx-react"
 
 import player from '../stores/player'
@@ -56,7 +56,7 @@ export default class PlaylistCollectionPage extends Component {
     let logger = loggerCreator("componentWillMount", moduleLogger);
 
     this.state = {};
-    BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
+    BackHandler.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
 
     logger.info(`fetching persisted settings`);
     if (globalSettings.host) {
@@ -92,7 +92,7 @@ export default class PlaylistCollectionPage extends Component {
     let logger = loggerCreator("onPressHardwareBack", moduleLogger);
     player.stopPlayer();
 
-    BackAndroid.exitApp();
+    BackHandler.exitApp();
     return true;
   }
 
