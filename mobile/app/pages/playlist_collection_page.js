@@ -64,7 +64,7 @@ export default class PlaylistCollectionPage extends Component {
       logger.info(`updated status. playing? ${player.isPlaying}`);
       if (player.isPlaying) {
         logger.info(`player currently playing - navigating to player`);
-        this.props.navigator.navigateToPlayer(player.playlistName)
+        this.props.navigator.navigateToPlayer(player.currentPlaylist.name)
       } else {
         logger.info(`proceed as usual - fetching playlists`);
         this.fetchPlaylists();
