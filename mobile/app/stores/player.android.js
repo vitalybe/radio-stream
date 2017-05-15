@@ -19,7 +19,7 @@ class Player {
   @observable currentPlaylist = null;
   @observable song = null;
 
-  @observable isLoading = false;
+  @observable isLoading = true;
   @observable loadingAction = null;
   @observable loadingError = null;
 
@@ -120,14 +120,14 @@ class Player {
           })
         }
 
-        this.song = new Song();
-        this.song.id = song.id;
-        this.song.artist = song.artist;
-        this.song.title = song.title;
-        this.song.album = song.album;
-        this.song.rating = song.rating;
+        const newSong = new Song();
+        newSong.id = song.id;
+        newSong.artist = song.artist;
+        newSong.title = song.title;
+        newSong.album = song.album;
+        newSong.rating = song.rating;
 
-
+        this.song = newSong;
       } else {
         logger.info(`no song details`);
 
