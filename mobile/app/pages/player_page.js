@@ -156,6 +156,8 @@ export default class PlayerPage extends Component {
     let loadingStatus = "Loading";
 
     const song = player.song;
+    logger.info(`rendering song: ${song && song.toString()}`);
+
     if (song) {
       if (song.loadedImageUrl) {
         logger.info(`uri: ${song.loadedImageUrl}`);

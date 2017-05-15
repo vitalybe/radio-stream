@@ -2,13 +2,12 @@
 import loggerCreator from '../utils/logger'
 const moduleLogger = loggerCreator("player");
 
-import {observable} from "mobx";
+import {observable, computed, action} from "mobx";
 import {NativeModules, DeviceEventEmitter, AppState} from 'react-native';
 
 import Playlist from './android/playlist'
 import Song from './android/song'
 import {globalSettings} from '../utils/settings'
-import {getArtistImage} from '../utils/backend_lastfm_api'
 
 
 class Player {
@@ -20,7 +19,6 @@ class Player {
   @observable song = null;
 
   @observable isLoading = true;
-  @observable loadingAction = null;
   @observable loadingError = null;
 
   constructor() {
@@ -80,58 +78,35 @@ class Player {
     this.onPlayerStatusChanged(nativePlayerStatus)
   }
 
+  @action
   onPlayerStatusChanged(nativePlayerStatus) {
     let logger = loggerCreator("onPlayerStatusChanged", moduleLogger);
     logger.info(`${JSON.stringify(nativePlayerStatus)}`);
 
     const playlistPlayer = nativePlayerStatus.playlistPlayer;
     if (!playlistPlayer) {
-      logger.info(`no playlist player was provided`);
+      logger.info(`no playlist is currently active`);
       this.playlist = null;
       this.song = null;
+      this.isLoading = true;
+      this.loadingError = null;
     } else {
       logger.info(`setting playlist details`);
+      this.isPlaying = playlistPlayer.isPlaying;
+      this.isLoading = playlistPlayer.isLoading;
+      this.loadingError = playlistPlayer.loadingError;
+
       let newPlaylist = new Playlist();
       newPlaylist.name = playlistPlayer.playlist.name;
       this.currentPlaylist = newPlaylist;
 
-      this.isLoading = playlistPlayer.isLoading;
-      this.loadingError = playlistPlayer.loadingError;
-      if (this.isLoading) {
-        if (playlistPlayer.song) {
-          this.loadingAction = `${playlistPlayer.song.artist} - ${playlistPlayer.song.title}`;
-        } else {
-          this.loadingAction = "Loading..."
-        }
-      }
-      logger.info(`isPlaying change: ${this.isPlaying} => ${playlistPlayer.isPlaying}`);
-      this.isPlaying = playlistPlayer.isPlaying;
-
       let song = playlistPlayer.song;
-      if (song) {
-        logger.info(`setting song details`);
-
-        if (song.artist && song.artist !== this.songArtist) {
-          logger.info(`artist changed from '${this.songArtist}' to '${song.artist}' - reloading album cover`);
-          this.songArtUri = null;
-          getArtistImage(song.artist).then(imageUri => {
-            logger.info(`got album art uri: ${imageUri}`);
-            this.songArtUri = imageUri;
-          })
-        }
-
-        const newSong = new Song();
-        newSong.id = song.id;
-        newSong.artist = song.artist;
-        newSong.title = song.title;
-        newSong.album = song.album;
-        newSong.rating = song.rating;
-
-        this.song = newSong;
-      } else {
-        logger.info(`no song details`);
-
+      if(!song) {
+        logger.info(`no song`);
         this.song = null;
+      } else if (song && (!this.song || this.song.id !== song.id)) {
+        logger.info(`song changed`);
+        this.song = new Song(song);
       }
     }
   }
@@ -155,6 +130,16 @@ class Player {
       }
     }
   };
+
+  @computed get loadingAction() {
+    if (this.isLoading) {
+      if (this.song) {
+        return `${this.song.artist} - ${this.song.title}`;
+      } else {
+        return "Loading..."
+      }
+    }
+  }
 
 }
 

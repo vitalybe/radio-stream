@@ -4,6 +4,8 @@ const moduleLogger = loggerCreator("song");
 
 import {observable} from "mobx";
 
+import {getArtistImage} from '../../utils/backend_lastfm_api'
+
 export default class Song {
   @observable id = null;
   @observable title = null;
@@ -19,6 +21,22 @@ export default class Song {
 
   @observable loadedSound = null;
   @observable loadedImageUrl = null;
+
+  constructor({id, artist, title, album, rating}) {
+    let logger = loggerCreator("constructor", moduleLogger);
+
+    this.id = id;
+    this.artist = artist;
+    this.title = title;
+    this.album = album;
+    this.rating = rating;
+    this.loadedImageUrl = null;
+
+    getArtistImage(this.artist).then(imageUri => {
+      logger.info(`got album art uri: ${imageUri}`);
+      this.loadedImageUrl = imageUri;
+    })
+  }
 
   toString() {
     return `Song[Artist=${this.artist} Title=${this.title}]`;
