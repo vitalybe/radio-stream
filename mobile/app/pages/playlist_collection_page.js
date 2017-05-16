@@ -12,6 +12,7 @@ import Button from '../components/rectangle_button'
 import Navigator from '../stores/navigator'
 import backendMetadataApi from '../utils/backend_metadata_api'
 import {globalSettings} from '../utils/settings'
+import FlipCard from '../utils/flip_card'
 
 const styles = StyleSheet.create({
   container: {
@@ -47,6 +48,18 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     resizeMode: "contain"
+  },
+  face: {
+    flex: 1,
+    backgroundColor: '#2ecc71',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  back: {
+    flex: 1,
+    backgroundColor: '#f1c40f',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
@@ -139,6 +152,18 @@ export default class PlaylistCollectionPage extends Component {
                 onPress={() => this.onSettingsClick() }>
           <Image style={styles.settingsIcon} source={require("../images/settings.png")}/>
         </Button>
+        <View>
+          <FlipCard>
+            {/* Face Side */}
+            <View style={styles.face}>
+              <Text>The Face</Text>
+            </View>
+            {/* Back Side */}
+            <View style={styles.back}>
+              <Text>The Back</Text>
+            </View>
+          </FlipCard>
+        </View>
       </View>
     );
   }

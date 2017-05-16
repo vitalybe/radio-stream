@@ -58,6 +58,7 @@
     "react-dom": "^15.5.4",
     "react-fontawesome": "^1.6.1",
     "react-native": "0.44.0",
+    "react-native-flip-card": "^3.4.0",
     "react-native-testfairy": "^2.0.8",
     "react-native-vector-icons": "^3.0.0",
     "react-native-web": "^0.0.81",

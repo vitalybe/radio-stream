@@ -278,7 +278,7 @@ babel-code-frame@^6.11.0, babel-code-frame@^6.16.0, babel-code-frame@^6.22.0:
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-babel-core@6.22.1, babel-core@^6.1.2:
+babel-core@6.22.1, babel-core@^6.1.2, babel-core@^6.21.0:
   version "6.22.1"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.22.1.tgz#9c5fd658ba1772d28d721f6d25d968fc7ae21648"
   dependencies:
@@ -302,7 +302,7 @@ babel-core@6.22.1, babel-core@^6.1.2:
     slash "^1.0.0"
     source-map "^0.5.0"
 
-babel-core@^6.21.0, babel-core@^6.24.1, babel-core@^6.7.2:
+babel-core@^6.24.1, babel-core@^6.7.2:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.24.1.tgz#8c428564dce1e1f41fb337ec34f4c3b022b5ad83"
   dependencies:
@@ -5038,6 +5038,10 @@ react-fontawesome@^1.6.1:
   resolved "https://registry.yarnpkg.com/react-fontawesome/-/react-fontawesome-1.6.1.tgz#eddce17e7dc731aa09fd4a186688a61793a16c5c"
   dependencies:
     prop-types "^15.5.6"
+
+react-native-flip-card@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-flip-card/-/react-native-flip-card-3.4.0.tgz#e07d88900f71acad1364ef138d40b1e6dbd48fc7"
 
 react-native-testfairy@^2.0.8:
   version "2.1.3"
