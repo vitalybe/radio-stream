@@ -2,7 +2,8 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("playlist_collection_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, ActivityIndicator, BackHandler} from 'react-native';
+import {StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native';
+import BackHandler from '../utils/back_handler/back_handler'
 import {observer} from "mobx-react"
 
 import player from '../stores/player'

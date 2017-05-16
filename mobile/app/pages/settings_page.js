@@ -2,7 +2,8 @@ import loggerCreator from '../utils/logger'
 const moduleLogger = loggerCreator("settings_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, View, BackHandler, TextInput} from 'react-native';
+import {StyleSheet, View, TextInput} from 'react-native';
+import BackHandler from '../utils/back_handler/back_handler'
 import {observable} from "mobx";
 import {observer} from "mobx-react"
 

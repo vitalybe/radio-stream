@@ -2,7 +2,8 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("player_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, View, Image, ActivityIndicator, BackHandler } from 'react-native';
+import {StyleSheet, View, Image, ActivityIndicator } from 'react-native';
+import BackHandler from '../utils/back_handler/back_handler'
 import {observer} from "mobx-react"
 
 import Icon from '../components/icon'
