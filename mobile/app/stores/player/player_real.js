@@ -148,11 +148,7 @@ class Player {
   }
 
   @computed get isLoading() {
-    if (this.song && this.song.loadedSound) {
-      return false;
-    } else {
-      return true;
-    }
+    return !(this.song && this.song.loadedSound);
   }
 }
 
