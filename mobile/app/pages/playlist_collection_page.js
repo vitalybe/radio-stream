@@ -9,7 +9,7 @@ import {observer} from "mobx-react"
 import player from '../stores/player'
 import {colors, fontSizes} from '../styles/styles'
 import Button from '../components/rectangle_button'
-import Navigator from '../stores/navigator'
+import navigator from '../stores/navigator'
 import backendMetadataApi from '../utils/backend_metadata_api'
 import {globalSettings} from '../utils/settings'
 
@@ -65,7 +65,7 @@ export default class PlaylistCollectionPage extends Component {
       logger.info(`updated status. playing? ${player.isPlaying}`);
       if (player.isPlaying) {
         logger.info(`player currently playing - navigating to player`);
-        this.props.navigator.navigateToPlayer(player.currentPlaylist.name)
+        navigator.navigateToPlayer(player.currentPlaylist.name)
       } else {
         logger.info(`proceed as usual - fetching playlists`);
         this.fetchPlaylists();
@@ -73,7 +73,7 @@ export default class PlaylistCollectionPage extends Component {
 
     } else {
       logger.info(`host not found in settings - showing settings page`);
-      this.props.navigator.navigateToSettings();
+      navigator.navigateToSettings();
     }
   }
 
@@ -103,11 +103,11 @@ export default class PlaylistCollectionPage extends Component {
 
     await player.changePlaylist(playlistName);
     player.play();
-    this.props.navigator.navigateToPlayer(playlistName);
+    navigator.navigateToPlayer(playlistName);
   }
 
   onSettingsClick() {
-    this.props.navigator.navigateToSettings();
+    navigator.navigateToSettings();
   }
 
   render() {
@@ -143,7 +143,3 @@ export default class PlaylistCollectionPage extends Component {
     );
   }
 }
-
-PlaylistCollectionPage.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator).isRequired
-};

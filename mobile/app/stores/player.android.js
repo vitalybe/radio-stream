@@ -8,6 +8,7 @@ import {NativeModules, DeviceEventEmitter, AppState} from 'react-native';
 import Playlist from './android/playlist'
 import Song from './android/song'
 import {globalSettings} from '../utils/settings'
+import navigator from '../stores/navigator'
 
 
 class Player {
@@ -125,8 +126,7 @@ class Player {
       logger.info(`finishing getting status`);
       if (this.currentPlaylist && this.currentPlaylist.name) {
         logger.info(`no playlist selected - navigating to playlist collection`);
-        // TODO: Access navigator and redirect at this point
-        // this.props.navigator.navigateToPlaylistCollection();
+        navigator.navigateToPlaylistCollection();
       }
     }
   };

@@ -10,9 +10,9 @@ import {observer} from "mobx-react"
 import {colors, fontSizes} from '../styles/styles'
 import Button from '../components/rectangle_button'
 import Text from '../components/text'
-import Navigator from '../stores/navigator'
 import {globalSettings} from '../utils/settings'
 import backendMetadataApi from '../utils/backend_metadata_api'
+import navigator from '../stores/navigator'
 
 const styles = StyleSheet.create({
   container: {
@@ -77,7 +77,7 @@ export default class SettingsPage extends Component {
 
     if (globalSettings.host) {
       logger.info(`cancelling setting changes`);
-      this.props.navigator.navigateToPlaylistCollection();
+      navigator.navigateToPlaylistCollection();
     } else {
       logger.info(`no host was configured - quitting`);
       BackHandler.exitApp();
@@ -109,7 +109,7 @@ export default class SettingsPage extends Component {
 
         globalSettings.update(host, password);
         return globalSettings.save().then(() => {
-          this.props.navigator.navigateToPlaylistCollection();
+          navigator.navigateToPlaylistCollection();
         });
       })
       .catch(error => {
@@ -140,5 +140,4 @@ export default class SettingsPage extends Component {
 }
 
 SettingsPage.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator).isRequired
 };

@@ -3,7 +3,7 @@ import { observable } from "mobx";
 import loggerCreator from '../utils/logger'
 const moduleLogger = loggerCreator("navigator");
 
-export default class Navigator {
+class Navigator {
 
   ROUTE_PLAYLIST_COLLECTION_PAGE = 'PLAYLIST_COLLECTION_PAGE';
   ROUTE_SETTINGS_PAGE = 'SETTINGS_PAGE';
@@ -33,3 +33,5 @@ export default class Navigator {
     this._navigateTo(this.ROUTE_SETTINGS_PAGE);
   }
 }
+
+export default new Navigator();
