@@ -9,7 +9,7 @@ import {globalSettings} from './utils/settings'
 import PlaylistCollectionPage from './pages/playlist_collection_page'
 import PlayerPage from './pages/player_page'
 import SettingsPage from './pages/settings_page'
-import navigator from  './stores/navigator'
+import navigator from  './stores/navigator/navigator'
 
 const styles = StyleSheet.create({
   container: {
@@ -40,20 +40,20 @@ export default class RadioStream extends Component {
 
   render() {
     let logger = loggerCreator(this.render.name, moduleLogger);
-    logger.info(`activate route: ${this.navigator.activeRoute}`);
+    logger.info(`activate route: ${navigator.activeRoute}`);
 
     let page = null;
-    let activeRoute = this.navigator.activeRoute;
+    let activeRoute = navigator.activeRoute;
 
     if (activeRoute) {
       switch (activeRoute.address) {
-        case this.navigator.ROUTE_PLAYLIST_COLLECTION_PAGE:
+        case navigator.ROUTE_PLAYLIST_COLLECTION_PAGE:
           page = <PlaylistCollectionPage />;
           break;
-        case this.navigator.ROUTE_PLAYER_PAGE:
+        case navigator.ROUTE_PLAYER_PAGE:
           page = <PlayerPage playlistName={activeRoute.playlistName} />;
           break;
-        case this.navigator.ROUTE_SETTINGS_PAGE:
+        case navigator.ROUTE_SETTINGS_PAGE:
           page = <SettingsPage />;
           break;
         default:

@@ -12,7 +12,7 @@ import Button from '../components/rectangle_button'
 import Text from '../components/text'
 import {globalSettings} from '../utils/settings'
 import backendMetadataApi from '../utils/backend_metadata_api'
-import navigator from '../stores/navigator'
+import navigator from '../stores/navigator/navigator'
 
 const styles = StyleSheet.create({
   container: {

@@ -9,7 +9,7 @@ import {observer} from "mobx-react"
 import player from '../stores/player'
 import {colors, fontSizes} from '../styles/styles'
 import Button from '../components/rectangle_button'
-import navigator from '../stores/navigator'
+import navigator from '../stores/navigator/navigator'
 import backendMetadataApi from '../utils/backend_metadata_api'
 import {globalSettings} from '../utils/settings'
 

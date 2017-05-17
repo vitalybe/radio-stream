@@ -13,7 +13,7 @@ import {colors, fontSizes} from '../styles/styles'
 import CircleButton from '../components/circle_button'
 import Text from '../components/text'
 import Rating from '../components/rating'
-import navigator from '../stores/navigator'
+import navigator from '../stores/navigator/navigator'
 
 const styles = StyleSheet.create({
   container: {
