@@ -2,10 +2,11 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("player_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, View, Image, ActivityIndicator } from 'react-native';
+import {StyleSheet, View, Image, ActivityIndicator} from 'react-native';
 import BackHandler from '../utils/back_handler/back_handler'
 import {observer} from "mobx-react"
 
+import FlipCard from '../utils/flip_card'
 import Icon from '../components/icon'
 import player from '../stores/player'
 import {colors, fontSizes} from '../styles/styles'
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
 
-    marginBottom: 20
+    marginBottom: 20,
   },
   // Ratings
   rating: {
@@ -145,7 +146,7 @@ export default class PlayerPage extends Component {
 
   onPressHardwareBack() {
     let logger = loggerCreator("hardwareBackPress", moduleLogger);
-        player.pause();
+    player.pause();
     this.props.navigator.navigateToPlaylistCollection();
     return true;
   }
@@ -184,8 +185,15 @@ export default class PlayerPage extends Component {
         <Choose>
           <When condition={!player.isLoading}>
             {/* Album art */}
-            <View style={styles.albumArtView}>
-              <Image style={styles.albumArt} source={albumArt}/>
+            <View>
+              <FlipCard>
+                <View style={styles.albumArtView}>
+                  <Image style={styles.albumArt} source={albumArt}/>
+                </View>
+                <View >
+                  <Text>Hi</Text>
+                </View>
+              </FlipCard>
             </View>
             {/* Ratings */}
             <Rating style={[styles.rating]} song={song}/>
@@ -199,12 +207,12 @@ export default class PlayerPage extends Component {
             <View style={styles.controlsView}>
               <CircleButton size={100} onPress={() => this.onPressPlayPause()}
                             style={[styles.controlButtonPlay]}>
-                  <Icon name={player.isPlaying ? "pause" : "play"}
-                        style={[styles.controlButtonText, player.isPlaying ? styles.controlTextPause : styles.controlTextPlay]}/>
+                <Icon name={player.isPlaying ? "pause" : "play"}
+                      style={[styles.controlButtonText, player.isPlaying ? styles.controlTextPause : styles.controlTextPlay]}/>
               </CircleButton>
               <CircleButton size={60} onPress={() => this.onPressNext()}>
-                  <Icon name="step-forward"
-                        style={styles.controlButtonText}/>
+                <Icon name="step-forward"
+                      style={styles.controlButtonText}/>
               </CircleButton>
             </View>
           </When>
