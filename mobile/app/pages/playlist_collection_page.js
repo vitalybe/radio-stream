@@ -6,7 +6,7 @@ import {StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native';
 import BackHandler from '../utils/back_handler/back_handler'
 import {observer} from "mobx-react"
 
-import player from '../stores/player'
+import player from '../stores/player/player'
 import {colors, fontSizes} from '../styles/styles'
 import Button from '../components/rectangle_button'
 import navigator from '../stores/navigator/navigator'

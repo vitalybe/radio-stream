@@ -1,13 +1,13 @@
-import loggerCreator from '../../utils/logger'
+import loggerCreator from '../../../utils/logger'
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator(__filename);
 
 import {observable} from "mobx";
-import assert from "../../utils/assert"
-import retries from "../../utils/retries"
+import assert from "../../../utils/assert"
+import retries from "../../../utils/retries"
 
-import backendMetadataApi from '../../utils/backend_metadata_api'
-import * as backendLastFm from '../../utils/backend_lastfm_api'
+import backendMetadataApi from '../../../utils/backend_metadata_api'
+import * as backendLastFm from '../../../utils/backend_lastfm_api'
 import * as wrappedSoundManager from './wrapped_sound_manager'
 
 export class Song {

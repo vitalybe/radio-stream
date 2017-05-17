@@ -1,10 +1,10 @@
-import loggerCreator from '../utils/logger'
+import loggerCreator from '../../utils/logger'
 //noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator("player");
+var moduleLogger = loggerCreator("player_real");
 
 import {observable, action, computed} from "mobx";
-import retries from "../utils/retries"
-import assert from "../utils/assert"
+import retries from "../../utils/retries"
+import assert from "../../utils/assert"
 import Playlist from './web/playlist'
 import * as wrappedSoundManager from './web/wrapped_sound_manager'
 

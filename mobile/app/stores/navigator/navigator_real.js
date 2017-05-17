@@ -1,5 +1,5 @@
 import loggerCreator from '../../utils/logger'
-const moduleLogger = loggerCreator("navigator");
+const moduleLogger = loggerCreator("navigator_real");
 
 import { observable } from "mobx";
 

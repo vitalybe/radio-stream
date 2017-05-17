@@ -1,10 +1,10 @@
-import loggerCreator from '../../utils/logger'
+import loggerCreator from '../../../utils/logger'
 //noinspection JSUnresolvedVariable
 const logger = loggerCreator(__filename);
 
 import {soundManager} from 'soundmanager2';
 import WrappedSound from './wrapped_sound.js'
-import { globalSettings } from '../../utils/settings'
+import { globalSettings } from '../../../utils/settings'
 
 function soundId(songId) {
   return "i" + songId.toString()

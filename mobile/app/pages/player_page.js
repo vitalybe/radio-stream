@@ -8,7 +8,7 @@ import {observer} from "mobx-react"
 
 import FlipCard from '../utils/flip_card'
 import Icon from '../components/icon'
-import player from '../stores/player'
+import player from '../stores/player/player'
 import {colors, fontSizes} from '../styles/styles'
 import CircleButton from '../components/circle_button'
 import Text from '../components/text'

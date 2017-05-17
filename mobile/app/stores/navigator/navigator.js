@@ -12,6 +12,4 @@ if (MOCK_MODE) {
   navigator = navigatorMock
 }
 
-debugger
-
 export default navigator
