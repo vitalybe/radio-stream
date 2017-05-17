@@ -181,7 +181,6 @@ export default class FlipCard extends Component {
         >
           <Animated.View
             ref='animatedView'
-            {...this.props}
             style={[
               S.flipCard,
               {
