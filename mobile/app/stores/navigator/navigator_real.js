@@ -3,11 +3,9 @@ const moduleLogger = loggerCreator("navigator_real");
 
 import { observable } from "mobx";
 
-class Navigator {
+import constants from '../../utils/constants'
 
-  ROUTE_PLAYLIST_COLLECTION_PAGE = 'PLAYLIST_COLLECTION_PAGE';
-  ROUTE_SETTINGS_PAGE = 'SETTINGS_PAGE';
-  ROUTE_PLAYER_PAGE = 'PLAYER_PAGE';
+class Navigator {
 
   @observable activeRoute = null;
 
@@ -23,17 +21,17 @@ class Navigator {
 
   navigateToPlaylistCollection() {
     loggerCreator("navigateToPlaylistCollection", moduleLogger);
-    this._navigateTo(this.ROUTE_PLAYLIST_COLLECTION_PAGE);
+    this._navigateTo(constants.ROUTE_PLAYLIST_COLLECTION_PAGE);
   }
 
   navigateToPlayer(playlistName) {
     loggerCreator("navigateToPlayer", moduleLogger);
-    this._navigateTo(this.ROUTE_PLAYER_PAGE, {playlistName: playlistName});
+    this._navigateTo(constants.ROUTE_PLAYER_PAGE, {playlistName: playlistName});
   }
 
   navigateToSettings() {
     loggerCreator("navigateToSettings", moduleLogger);
-    this._navigateTo(this.ROUTE_SETTINGS_PAGE);
+    this._navigateTo(constants.ROUTE_SETTINGS_PAGE);
   }
 }
 

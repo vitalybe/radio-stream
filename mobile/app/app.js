@@ -6,6 +6,7 @@ import {StyleSheet, Image} from 'react-native';
 import {observer} from "mobx-react"
 
 import {globalSettings} from './utils/settings'
+import constants from './utils/constants'
 import PlaylistCollectionPage from './pages/playlist_collection_page'
 import PlayerPage from './pages/player_page'
 import SettingsPage from './pages/settings_page'
@@ -47,13 +48,13 @@ export default class RadioStream extends Component {
 
     if (activeRoute) {
       switch (activeRoute.address) {
-        case navigator.ROUTE_PLAYLIST_COLLECTION_PAGE:
+        case constants.ROUTE_PLAYLIST_COLLECTION_PAGE:
           page = <PlaylistCollectionPage />;
           break;
-        case navigator.ROUTE_PLAYER_PAGE:
+        case constants.ROUTE_PLAYER_PAGE:
           page = <PlayerPage playlistName={activeRoute.playlistName} />;
           break;
-        case navigator.ROUTE_SETTINGS_PAGE:
+        case constants.ROUTE_SETTINGS_PAGE:
           page = <SettingsPage />;
           break;
         default:
