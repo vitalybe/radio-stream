@@ -1,19 +1,19 @@
-import loggerCreator from '../utils/logger'
+import loggerCreator from '../../utils/logger'
 var moduleLogger = loggerCreator("player_page");
 
 import React, {Component} from 'react';
 import {StyleSheet, View, Image, ActivityIndicator} from 'react-native';
-import BackHandler from '../utils/back_handler/back_handler'
+import BackHandler from '../../utils/back_handler/back_handler'
 import {observer} from "mobx-react"
 
-import FlipCard from '../utils/flip_card'
-import Icon from '../components/icon'
-import player from '../stores/player/player'
-import {colors, fontSizes} from '../styles/styles'
-import CircleButton from '../components/circle_button'
-import Text from '../components/text'
-import Rating from '../components/rating'
-import navigator from '../stores/navigator/navigator'
+import FlipCard from '../../utils/flip_card'
+import Icon from '../../shared_components/icon'
+import player from '../../stores/player/player'
+import {colors, fontSizes} from '../../styles/styles'
+import CircleButton from '../../shared_components/circle_button'
+import Text from '../../shared_components/text'
+import Rating from './rating'
+import navigator from '../../stores/navigator/navigator'
 
 const styles = StyleSheet.create({
   container: {
@@ -154,7 +154,7 @@ export default class PlayerPage extends Component {
   render() {
     let logger = loggerCreator("render", moduleLogger);
 
-    let albumArt = require("../images/no-album2.png");
+    let albumArt = require("../../images/no-album2.png");
     let loadingStatus = "Loading";
 
     const song = player.song;

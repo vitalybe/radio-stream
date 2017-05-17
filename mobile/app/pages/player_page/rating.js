@@ -1,4 +1,4 @@
-import loggerCreator from '../utils/logger'
+import loggerCreator from '../../utils/logger'
 var moduleLogger = loggerCreator("rating");
 
 import React, {Component} from 'react';
@@ -6,10 +6,10 @@ import {StyleSheet, View, TouchableWithoutFeedback, Image, Vibration, ToastAndro
 import _ from 'lodash'
 import {observer} from "mobx-react"
 
-import BackendMetadataApi from '../utils/backend_metadata_api'
+import BackendMetadataApi from '../../utils/backend_metadata_api'
 
-let starFullSource = require("../images/star-full.png");
-let starEmptySource = require("../images/star-empty.png");
+let starFullSource = require("../../images/star-full.png");
+let starEmptySource = require("../../images/star-empty.png");
 
 const MAX_RATING = 100;
 const STAR_COUNT = 5;

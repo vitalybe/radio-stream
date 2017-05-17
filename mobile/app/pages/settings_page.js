@@ -8,8 +8,8 @@ import {observable} from "mobx";
 import {observer} from "mobx-react"
 
 import {colors, fontSizes} from '../styles/styles'
-import Button from '../components/rectangle_button'
-import Text from '../components/text'
+import Button from '../shared_components/rectangle_button'
+import Text from '../shared_components/text'
 import {globalSettings} from '../utils/settings'
 import backendMetadataApi from '../utils/backend_metadata_api'
 import navigator from '../stores/navigator/navigator'
