@@ -13,16 +13,13 @@ import {
 
 const S = StyleSheet.create({
   flipCard: {
-    flex: 1,
     borderWidth: 1
   },
 
   face: {
-    flex: 1
   },
 
   back: {
-    flex: 1
   }
 })
 
