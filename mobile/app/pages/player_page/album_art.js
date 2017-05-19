@@ -3,28 +3,36 @@ import loggerCreator from '../../utils/logger'
 var moduleLogger = loggerCreator("AlbumArt");
 
 import React, {Component} from 'react';
-import {Image, StyleSheet, View,} from 'react-native';
+import {Image, StyleSheet, View, Dimensions} from 'react-native';
 import FlipCard from '../../utils/flip_card'
 import Text from '../../shared_components/text'
 
 import {colors, fontSizes} from '../../styles/styles'
 
+// Store width in variable
+let width = Dimensions.get('window').width;
+const artSize = Math.min(width, 300);
+
 const styles = StyleSheet.create({
-  albumArtView: {
+  container: {
     backgroundColor: "black",
     borderColor: colors.CYAN_DARK.rgbString(),
     borderWidth: 2,
-
-    width: 200,
-    height: 200,
 
     position: 'relative',
     marginBottom: 20,
   },
   albumArt: {
     resizeMode: "contain",
-    flex: 1,
+
+    width: artSize,
+    height: artSize,
   },
+  flippedAlbumArt: {
+    width: artSize,
+    height: artSize,
+  },
+
 });
 
 export default class AlbumArt extends Component {
@@ -42,11 +50,11 @@ export default class AlbumArt extends Component {
 
     return (
       <View>
-        <FlipCard style={styles.albumArtView}>
-          <View style={{flex: 1}}>
+        <FlipCard style={styles.container}>
+          <View>
             <Image style={styles.albumArt} source={albumArt}/>
           </View>
-          <View >
+          <View style={styles.flippedAlbumArt}>
             <Text>Hi</Text>
           </View>
         </FlipCard>

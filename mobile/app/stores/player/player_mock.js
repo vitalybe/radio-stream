@@ -25,6 +25,7 @@ const playerMock = new PlayerMock();
 playerMock.isLoading = false
 playerMock.song = new SongMock()
 playerMock.song.title = "Mock title"
+playerMock.song.album = "Mock album"
 playerMock.song.artist = "Mock title"
 playerMock.song.rating = 60;
 
