@@ -7,13 +7,14 @@ import BackHandler from '../../utils/back_handler/back_handler'
 import {observer} from "mobx-react"
 
 import Icon from '../../shared_components/icon'
-import player from '../../stores/player/player'
 import {colors, fontSizes} from '../../styles/styles'
-import CircleButton from '../../shared_components/circle_button'
 import Text from '../../shared_components/text'
+import navigator from '../../stores/navigator/navigator'
+import player from '../../stores/player/player'
 import Rating from './rating'
 import AlbumArt from './album_art'
-import navigator from '../../stores/navigator/navigator'
+import PlayerControls from './player_controls'
+import PlayerLoadingSpinner from './player_loading_spinner'
 
 const styles = StyleSheet.create({
   container: {
@@ -52,45 +53,6 @@ const styles = StyleSheet.create({
   artistText: {
     color: colors.CYAN_BRIGHT.rgbString()
   },
-  // Controls
-  controlsView: {
-    position: "absolute",
-    bottom: 10,
-    left: 0,
-    right: 0,
-
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingLeft: 80, // Causes the play button to be in the center
-  },
-  controlButtonText: {
-    color: colors.SEMI_WHITE.rgbString(),
-    fontSize: 40
-  },
-  controlTextPlay: {
-    paddingLeft: 10
-  },
-  controlTextPause: {
-    paddingLeft: 0
-  },
-  controlButtonPlay: {
-    marginRight: 20
-  },
-  // Progress
-  progressSpinner: {
-    justifyContent: "flex-end",
-    paddingBottom: 10,
-    flex: 1,
-  },
-  progressStatus: {
-    justifyContent: "flex-start",
-    alignItems: "center",
-    flex: 1,
-  },
-  progressStatusError: {
-    color: "red"
-  }
 });
 
 @observer
@@ -138,22 +100,8 @@ export default class PlayerPage extends Component {
   render() {
     let logger = loggerCreator("render", moduleLogger);
 
-    let loadingStatus = "Loading";
-
     const song = player.song;
     logger.info(`rendering song: ${song && song.toString()}`);
-
-    if (song) {
-
-      if (song.title) {
-        loadingStatus = `${loadingStatus}: ${song.artist} - ${song.title}`
-      }
-    }
-
-    let loadingError = "";
-    if (player.loadingError) {
-      loadingError = `Error occurred, retrying: ${player.loadingError}`
-    }
 
     return (
       <View style={styles.container}>
@@ -161,43 +109,24 @@ export default class PlayerPage extends Component {
           <Icon name="music" style={styles.playlistIcon}/>
           <Text>{this.props.playlistName}</Text>
         </View>
-        <Choose>
-          <When condition={!player.isLoading}>
+        {!player.isLoading ?
+          <View>
             {/* Album art */}
-            <AlbumArt song={song} />
+            <AlbumArt song={song}/>
             {/* Ratings */}
             <Rating style={[styles.rating]} song={song}/>
             {/* Names */}
             <View style={styles.namesView}>
-              <Text style={[styles.nameText, styles.titleText]}>{`${song.title}`}</Text>
+              <Text style={[styles.nameText]}>{`${song.title}`}</Text>
               <Text style={[styles.nameText, styles.artistText]}>{`${song.artist}`}</Text>
-              <Text style={[styles.nameText, styles.albumText]}>{`${song.album}`}</Text>
+              <Text style={[styles.nameText]}>{`${song.album}`}</Text>
             </View>
             {/* Controls */}
-            <View style={styles.controlsView}>
-              <CircleButton size={100} onPress={() => this.onPressPlayPause()}
-                            style={[styles.controlButtonPlay]}>
-                <Icon name={player.isPlaying ? "pause" : "play"}
-                      style={[styles.controlButtonText, player.isPlaying ? styles.controlTextPause : styles.controlTextPlay]}/>
-              </CircleButton>
-              <CircleButton size={60} onPress={() => this.onPressNext()}>
-                <Icon name="step-forward"
-                      style={styles.controlButtonText}/>
-              </CircleButton>
-            </View>
-          </When>
-          <Otherwise>
-            <View style={styles.progressView}>
-              <View style={styles.progressSpinner}>
-                <ActivityIndicator size="large"/>
-              </View>
-              <View style={styles.progressStatus}>
-                <Text>{loadingStatus}</Text>
-                <Text style={styles.progressStatusError}>{loadingError}</Text>
-              </View>
-            </View>
-          </Otherwise>
-        </Choose>
+            <PlayerControls />
+          </View>
+          :
+          <PlayerLoadingSpinner song={song}/>
+        }
       </View>
     );
   }
