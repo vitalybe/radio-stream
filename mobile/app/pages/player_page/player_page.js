@@ -6,13 +6,13 @@ import {StyleSheet, View, Image, ActivityIndicator} from 'react-native';
 import BackHandler from '../../utils/back_handler/back_handler'
 import {observer} from "mobx-react"
 
-import FlipCard from '../../utils/flip_card'
 import Icon from '../../shared_components/icon'
 import player from '../../stores/player/player'
 import {colors, fontSizes} from '../../styles/styles'
 import CircleButton from '../../shared_components/circle_button'
 import Text from '../../shared_components/text'
 import Rating from './rating'
+import AlbumArt from './album_art'
 import navigator from '../../stores/navigator/navigator'
 
 const styles = StyleSheet.create({
@@ -37,17 +37,6 @@ const styles = StyleSheet.create({
     color: colors.SEMI_WHITE.rgbString(),
     marginRight: 5,
   },
-  // Album
-  albumArtView: {
-    backgroundColor: "black",
-    borderColor: colors.CYAN_DARK.rgbString(),
-    borderWidth: 2,
-
-    justifyContent: "center",
-    alignItems: "center",
-
-    marginBottom: 20,
-  },
   // Ratings
   rating: {
     marginBottom: 20
@@ -62,11 +51,6 @@ const styles = StyleSheet.create({
   },
   artistText: {
     color: colors.CYAN_BRIGHT.rgbString()
-  },
-  albumArt: {
-    width: 200,
-    height: 200,
-    resizeMode: "contain"
   },
   // Controls
   controlsView: {
@@ -154,17 +138,12 @@ export default class PlayerPage extends Component {
   render() {
     let logger = loggerCreator("render", moduleLogger);
 
-    let albumArt = require("../../images/no-album2.png");
     let loadingStatus = "Loading";
 
     const song = player.song;
     logger.info(`rendering song: ${song && song.toString()}`);
 
     if (song) {
-      if (song.loadedImageUrl) {
-        logger.info(`uri: ${song.loadedImageUrl}`);
-        albumArt = {uri: song.loadedImageUrl};
-      }
 
       if (song.title) {
         loadingStatus = `${loadingStatus}: ${song.artist} - ${song.title}`
@@ -185,16 +164,7 @@ export default class PlayerPage extends Component {
         <Choose>
           <When condition={!player.isLoading}>
             {/* Album art */}
-            <View>
-              <FlipCard>
-                <View style={styles.albumArtView}>
-                  <Image style={styles.albumArt} source={albumArt}/>
-                </View>
-                <View >
-                  <Text>Hi</Text>
-                </View>
-              </FlipCard>
-            </View>
+            <AlbumArt song={song} />
             {/* Ratings */}
             <Rating style={[styles.rating]} song={song}/>
             {/* Names */}
