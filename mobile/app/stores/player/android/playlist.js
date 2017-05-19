@@ -1,4 +1,4 @@
-import loggerCreator from '../../utils/logger'
+import loggerCreator from '../../../utils/logger'
 const moduleLogger = loggerCreator("playlist");
 
 import {observable} from "mobx";
