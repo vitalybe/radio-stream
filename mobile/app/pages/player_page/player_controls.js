@@ -4,6 +4,7 @@ var moduleLogger = loggerCreator("PlayerControls");
 
 import React, {Component} from 'react';
 import {Image, StyleSheet, Text, View,} from 'react-native';
+import {observer} from "mobx-react"
 
 import Icon from '../../shared_components/icon'
 import CircleButton from '../../shared_components/circle_button'
@@ -32,6 +33,7 @@ const styles = StyleSheet.create({
   },
 });
 
+@observer
 export default class PlayerControls extends Component {
 
   onPressPlayPause() {
