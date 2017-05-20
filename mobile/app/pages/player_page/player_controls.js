@@ -12,11 +12,6 @@ import player from '../../stores/player/player'
 
 const styles = StyleSheet.create({
   controlsView: {
-    position: "absolute",
-    bottom: 10,
-    left: 0,
-    right: 0,
-
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",

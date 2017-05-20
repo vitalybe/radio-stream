@@ -13,7 +13,6 @@ import {
 
 const S = StyleSheet.create({
   flipCard: {
-    borderWidth: 1
   },
 
   face: {

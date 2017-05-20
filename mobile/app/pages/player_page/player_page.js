@@ -38,14 +38,18 @@ const styles = StyleSheet.create({
     color: colors.SEMI_WHITE.rgbString(),
     marginRight: 5,
   },
-  // Ratings
+  // Sections
+  albumArt: {
+    marginBottom: 20
+  },
   rating: {
     marginBottom: 20
   },
-  // Names (artist, title, album)
-  namesView: {
+  songDetails: {
     alignItems: "center",
+    marginBottom: 20
   },
+  // Names (artist, title, album)
   nameText: {
     fontSize: fontSizes.LARGE,
     marginBottom: 2
@@ -112,11 +116,11 @@ export default class PlayerPage extends Component {
         {!player.isLoading ?
           <View>
             {/* Album art */}
-            <AlbumArt song={song}/>
+            <AlbumArt style={[styles.albumArt]} song={song} />
             {/* Ratings */}
             <Rating style={[styles.rating]} song={song}/>
             {/* Names */}
-            <View style={styles.namesView}>
+            <View style={styles.songDetails}>
               <Text style={[styles.nameText]}>{`${song.title}`}</Text>
               <Text style={[styles.nameText, styles.artistText]}>{`${song.artist}`}</Text>
               <Text style={[styles.nameText]}>{`${song.album}`}</Text>
