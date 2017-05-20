@@ -2,7 +2,7 @@ import loggerCreator from '../utils/logger'
 const moduleLogger = loggerCreator("settings_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, View, BackAndroid, TextInput} from 'react-native';
+import {StyleSheet, View, BackHandler, TextInput} from 'react-native';
 import {observable} from "mobx";
 import {observer} from "mobx-react"
 
@@ -12,100 +12,6 @@ import Text from '../components/text'
 import Navigator from '../stores/navigator'
 import {globalSettings} from '../utils/settings'
 import backendMetadataApi from '../utils/backend_metadata_api'
-
-
-@observer
-export default class SettingsPage extends Component {
-
-  constructor(props) {
-    super(props);
-
-    let logger = loggerCreator("constructor", moduleLogger);
-    logger.info(`start`);
-
-    this.store = observable({
-      host: globalSettings.host,
-      password: globalSettings.password,
-
-      status: null,
-    });
-
-    BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
-  }
-
-  onPressHardwareBack() {
-    let logger = loggerCreator("onPressHardwareBack", moduleLogger);
-    logger.info(`start`);
-
-    if (globalSettings.host) {
-      logger.info(`cancelling setting changes`);
-      this.props.navigator.navigateToPlaylistCollection();
-    } else {
-      logger.info(`no host was configured - quitting`);
-      BackAndroid.exitApp();
-
-    }
-
-    return true;
-  }
-
-  onTextChange(label, text) {
-    let logger = loggerCreator("onTextChange", moduleLogger);
-    logger.info(`start - changing ${label}`);
-
-    this.store[label] = text;
-  }
-
-  onSavePress() {
-    let logger = loggerCreator("onSavePress", moduleLogger);
-    logger.info(`start`);
-
-    let host = this.store.host;
-    let password = this.store.password;
-
-    this.store.status = "Connecting...";
-    backendMetadataApi.testConnection(host, password)
-      .then(() => {
-        this.store.status = "Connected";
-
-        logger.info(`updating global settings`);
-
-        globalSettings.update(host, password);
-        return globalSettings.save().then(() => {
-          this.props.navigator.navigateToPlaylistCollection();
-        });
-      })
-      .catch(error => {
-        this.store.status = `Failed: ${error}`;
-      })
-  }
-
-  render() {
-    let logger = loggerCreator(this.render.name, moduleLogger);
-    logger.info(`start`);
-
-    return (
-      <View style={styles.container}>
-        <Text style={[styles.label]}>Host</Text>
-        <TextInput style={[styles.input]} value={this.store.host}
-                   onChangeText={text => this.onTextChange("host", text)}/>
-
-        <Text style={[styles.label]}>Password</Text>
-        <TextInput style={[styles.input]} value={this.store.password} secureTextEntry={true}
-                   onChangeText={text => this.onTextChange("password", text)}/>
-
-        <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
-          <Text>Save</Text>
-        </Button>
-        <Text style={[styles.status]}>{this.store.status}</Text>
-      </View>
-    );
-  }
-}
-
-SettingsPage.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator).isRequired
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -146,3 +52,92 @@ const styles = StyleSheet.create({
     marginTop: 10,
   }
 });
+
+@observer
+export default class SettingsPage extends Component {
+
+  constructor(props) {
+    super(props);
+
+    let logger = loggerCreator("constructor", moduleLogger);
+
+    this.store = observable({
+      host: globalSettings.host,
+      password: globalSettings.password,
+
+      status: null,
+    });
+
+    BackHandler.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
+  }
+
+  onPressHardwareBack() {
+    let logger = loggerCreator("onPressHardwareBack", moduleLogger);
+
+    if (globalSettings.host) {
+      logger.info(`cancelling setting changes`);
+      this.props.navigator.navigateToPlaylistCollection();
+    } else {
+      logger.info(`no host was configured - quitting`);
+      BackHandler.exitApp();
+
+    }
+
+    return true;
+  }
+
+  onTextChange(label, text) {
+    let logger = loggerCreator("onTextChange", moduleLogger);
+    logger.info(`changing ${label}`);
+
+    this.store[label] = text;
+  }
+
+  onSavePress() {
+    let logger = loggerCreator("onSavePress", moduleLogger);
+
+    let host = this.store.host;
+    let password = this.store.password;
+
+    this.store.status = "Connecting...";
+    backendMetadataApi.testConnection(host, password)
+      .then(() => {
+        this.store.status = "Connected";
+
+        logger.info(`updating global settings`);
+
+        globalSettings.update(host, password);
+        return globalSettings.save().then(() => {
+          this.props.navigator.navigateToPlaylistCollection();
+        });
+      })
+      .catch(error => {
+        this.store.status = `Failed: ${error}`;
+      })
+  }
+
+  render() {
+    let logger = loggerCreator(this.render.name, moduleLogger);
+
+    return (
+      <View style={styles.container}>
+        <Text style={[styles.label]}>Host</Text>
+        <TextInput style={[styles.input]} value={this.store.host}
+                   onChangeText={text => this.onTextChange("host", text)}/>
+
+        <Text style={[styles.label]}>Password</Text>
+        <TextInput style={[styles.input]} value={this.store.password} secureTextEntry={true}
+                   onChangeText={text => this.onTextChange("password", text)}/>
+
+        <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
+          <Text>Save</Text>
+        </Button>
+        <Text style={[styles.status]}>{this.store.status}</Text>
+      </View>
+    );
+  }
+}
+
+SettingsPage.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator).isRequired
+};

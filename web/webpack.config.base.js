@@ -27,7 +27,11 @@ module.exports = {
   },
   resolve: {
     extensions: ['', '.js', '.jsx'],
-    packageMains: ['webpack', 'browser', 'web', 'browserify', ['jam', 'main'], 'main']
+    packageMains: ['webpack', 'browser', 'web', 'browserify', ['jam', 'main'], 'main'],
+
+    root: [
+      path.resolve('./app')
+    ]
   },
   plugins: [
     new webpack.ProvidePlugin({

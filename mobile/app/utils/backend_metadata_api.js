@@ -3,14 +3,13 @@ var moduleLogger = loggerCreator("backend_metadata_api");
 
 const btoa = require('base-64').encode;
 import Ajax from '../utils/ajax'
-import { globalSettings } from '../utils/settings'
+import {globalSettings} from '../utils/settings'
 
 class BackendMetadataApi {
 
   // NOTE: Since the host might change, we create a new Ajax object every time
   _getAjax(customHost, customPassword) {
     let logger = loggerCreator("_getAjax", moduleLogger);
-    logger.info(`start`);
 
     let host = globalSettings.host;
     let password = globalSettings.password;
@@ -23,8 +22,8 @@ class BackendMetadataApi {
       logger.info(`using global host/password`);
     }
 
-    if(!host || !password) {
-      throw "host or password are empty"
+    if (!host || !password) {
+      throw new Error("host or password are empty")
     }
 
     const address = `http://${host}/radio-stream/api`;
@@ -46,9 +45,26 @@ class BackendMetadataApi {
       });
   }
 
+  playlistSongs(playlistName) {
+
+    return this._getAjax().get(`/playlists/${playlistName}`)
+      .then(response => response.json().then(json => json))
+      .then((json) => {
+        return json.results;
+      });
+  }
+
+  updateRating(songId, newRating) {
+    return this._getAjax().put(`/item/${songId}/rating`, {body: {newRating}});
+  }
+
+  updateLastPlayed(songId) {
+    return this._getAjax().post(`/item/${songId}/last-played`);
+  }
+
   testConnection(host, password) {
     let logger = loggerCreator("testConnection", moduleLogger);
-    logger.info(`start host: ${host}`);
+    logger.info(`host: ${host}`);
 
     return this._getAjax(host, password).get(`/playlists`);
   }

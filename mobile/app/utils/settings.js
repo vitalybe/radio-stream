@@ -17,7 +17,6 @@ class Settings {
 
   constructor() {
     let logger = loggerCreator(this.constructor.name, moduleLogger);
-    logger.info(`start`);
 
     this.load();
   }
@@ -36,11 +35,10 @@ class Settings {
 
   async load() {
     let logger = loggerCreator("load", moduleLogger);
-    logger.info(`start`);
 
 
-    this._host = await AsyncStorage.getItem(PERSISTENCE_HOST);
-    this._password = await AsyncStorage.getItem(PERSISTENCE_PASSWORD);
+    this._host = await AsyncStorage.getItem(PERSISTENCE_HOST) || "";
+    this._password = await AsyncStorage.getItem(PERSISTENCE_PASSWORD) || "";
   }
 
   async save() {

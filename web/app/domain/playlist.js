@@ -1,6 +1,5 @@
 import loggerCreator from '../utils/logger'
-//noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator(__filename);
+const moduleLogger = loggerCreator(__filename);
 
 import {observable, action} from "mobx";
 
@@ -15,7 +14,6 @@ export default class Playlist {
   _songs = [];
   _currentIndex = 0;
   _lastReloadDate = null;
-
 
   constructor(name) {
     this.name = name;

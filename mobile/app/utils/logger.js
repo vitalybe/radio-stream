@@ -4,8 +4,7 @@
 // import moduleLogger from './logger'
 // var logger = moduleLogger("file.js");
 // let logger = moduleLogger("method", moduleLogger);
-// logger.info(`start`);
-
+//
 var clim;
 
 module.exports = clim = function (prefix, parent, patch) {
@@ -54,6 +53,10 @@ module.exports = clim = function (prefix, parent, patch) {
   ob.warn = createLogger("warn", ob._prefixes, noFormat);
   ob.error = createLogger("error", ob._prefixes, noFormat);
   consoleProxy(ob);
+
+  if(parent) {
+    ob.info("created");
+  }
 
   return ob;
 };

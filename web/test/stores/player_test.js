@@ -16,7 +16,7 @@ describe('Player', () => {
   jsdom();
   let self = {};
 
-  beforeEach(() => {
+  beforeEach(async() => {
     // Mocks
 
     // mobx hack - related issue: https://github.com/mobxjs/mobx/issues/421
@@ -34,7 +34,8 @@ describe('Player', () => {
       })),
       peekNextSong: sinon.stub().returns(new Promise(resolve => {
         resolve(self.stubSong);
-      }))
+      })),
+      name: "StubPlaylist"
     });
 
     self.stubRetries = Object.create({
@@ -58,15 +59,13 @@ describe('Player', () => {
     });
 
     self.player = module.default;
-    self.player.changePlaylist(self.stubPlaylist);
+    await self.player.changePlaylist(self.stubPlaylist);
   });
 
-  it('next plays the next song', () => {
-    return self.player.next()
-      .then(() => {
-        expect(self.stubSong.playSound.callCount).to.equal(1);
-        expect(self.stubPlaylist.peekNextSong.callCount).to.equal(1);
-      })
+  it('next plays the next song', async() => {
+    await self.player.next()
+    expect(self.stubSong.playSound.callCount).to.equal(1);
+    expect(self.stubPlaylist.peekNextSong.callCount).to.equal(1);
   });
 
   it('next succeeds even if peeking fails', () => {

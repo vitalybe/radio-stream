@@ -20,7 +20,7 @@ function prevent_text() {
 
 function web_hook() {
 	echo "Running web pre-commit hook"
-	prevent_text web debugger;
+	prevent_text web "debugger;"
 	prevent_text web/test \.only\(
 
 	echo "Running tests..."

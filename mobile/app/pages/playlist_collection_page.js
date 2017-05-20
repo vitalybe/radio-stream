@@ -2,122 +2,15 @@ import loggerCreator from '../utils/logger'
 var moduleLogger = loggerCreator("playlist_collection_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, TouchableHighlight, Image, ActivityIndicator, BackAndroid} from 'react-native';
+import {StyleSheet, Text, View, Image, ActivityIndicator, BackHandler} from 'react-native';
+import {observer} from "mobx-react"
 
-import playerProxy from '../native_proxy/player_proxy'
+import player from '../stores/player'
 import {colors, fontSizes} from '../styles/styles'
 import Button from '../components/rectangle_button'
 import Navigator from '../stores/navigator'
 import backendMetadataApi from '../utils/backend_metadata_api'
 import {globalSettings} from '../utils/settings'
-
-
-export default class PlaylistCollectionPage extends Component {
-
-  async componentWillMount() {
-    let logger = loggerCreator("componentWillMount", moduleLogger);
-    logger.info(`start`);
-
-    this.state = {};
-    BackAndroid.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
-
-    logger.info(`fetching persisted settings`);
-    await globalSettings.load();
-    if (globalSettings.host) {
-
-      logger.info(`updating settings`);
-      await playerProxy.updateSettings(globalSettings.host, globalSettings.user, globalSettings.password);
-      logger.info(`settings updated`);
-
-      let status = await playerProxy.getPlayerStatus();
-      logger.info(`got status: ${JSON.stringify(status)}`);
-      const playlistPlayer = status.playlistPlayer;
-
-      if (playlistPlayer && playlistPlayer.isPlaying) {
-        logger.info(`player currently playing - navigating to player`);
-        this.props.navigator.navigateToPlayer(playlistPlayer.playlist.name)
-      } else {
-        logger.info(`proceed as usual - fetching playlists`);
-        this.fetchPlaylists();
-      }
-
-    } else {
-      logger.info(`host not found in settings - showing settings page`);
-      this.props.navigator.navigateToSettings();
-    }
-  }
-
-  async fetchPlaylists() {
-    let logger = loggerCreator("fetchPlaylists", moduleLogger);
-    logger.info(`start`);
-
-    try {
-      result = await backendMetadataApi.playlists();
-      logger.info(`got results: ${result}`);
-      this.setState({playlists: result})
-    } catch (err) {
-      logger.error(`failed to get playlists`);
-    }
-  }
-
-  onPressHardwareBack() {
-    let logger = loggerCreator("onPressHardwareBack", moduleLogger);
-    logger.info(`start`);
-    playerProxy.stopPlayer();
-
-    BackAndroid.exitApp();
-    return true;
-  }
-
-  onPlaylistClick(playlistName) {
-    let logger = loggerCreator(this.onPlaylistClick.name, moduleLogger);
-    logger.info(`start: ${playlistName}`);
-
-    this.props.navigator.navigateToPlayer(playlistName);
-  }
-
-  onSettingsClick() {
-    this.props.navigator.navigateToSettings();
-  }
-
-  render() {
-    let logger = loggerCreator(this.render.name, moduleLogger);
-    logger.info(`start`);
-
-    return (
-      <View style={styles.container}>
-        <Image source={require("../images/logo.png")}
-               style={styles.logo}/>
-
-        <Choose>
-          <When condition={this.state.playlists}>
-            {
-              this.state.playlists.map(playlist => {
-                return (
-                  <Button key={playlist} style={styles.playlistButton}
-                          className="playlist"
-                          onPress={() => this.onPlaylistClick(playlist)}>
-                    <Text style={styles.playlistText}>{playlist}</Text>
-                  </Button>)
-              })
-            }
-          </When>
-          <Otherwise>
-            <ActivityIndicator />
-          </Otherwise>
-        </Choose>
-        <Button style={styles.settingsButton}
-                onPress={() => this.onSettingsClick() }>
-          <Image style={styles.settingsIcon} source={require("../images/settings.png")}/>
-        </Button>
-      </View>
-    );
-  }
-}
-
-PlaylistCollectionPage.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator).isRequired
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -155,3 +48,101 @@ const styles = StyleSheet.create({
     resizeMode: "contain"
   },
 });
+
+@observer
+export default class PlaylistCollectionPage extends Component {
+
+  async componentWillMount() {
+    let logger = loggerCreator("componentWillMount", moduleLogger);
+
+    this.state = {};
+    BackHandler.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
+
+    logger.info(`fetching persisted settings`);
+    if (globalSettings.host) {
+
+      logger.info(`updated status. playing? ${player.isPlaying}`);
+      if (player.isPlaying) {
+        logger.info(`player currently playing - navigating to player`);
+        this.props.navigator.navigateToPlayer(player.currentPlaylist.name)
+      } else {
+        logger.info(`proceed as usual - fetching playlists`);
+        this.fetchPlaylists();
+      }
+
+    } else {
+      logger.info(`host not found in settings - showing settings page`);
+      this.props.navigator.navigateToSettings();
+    }
+  }
+
+  async fetchPlaylists() {
+    let logger = loggerCreator("fetchPlaylists", moduleLogger);
+
+    try {
+      let result = await backendMetadataApi.playlists();
+      logger.info(`got results: ${result}`);
+      this.setState({playlists: result})
+    } catch (err) {
+      logger.error(`failed to get playlists`);
+    }
+  }
+
+  onPressHardwareBack() {
+    let logger = loggerCreator("onPressHardwareBack", moduleLogger);
+    player.stopPlayer();
+
+    BackHandler.exitApp();
+    return true;
+  }
+
+  async onPlaylistClick(playlistName) {
+    let logger = loggerCreator(this.onPlaylistClick.name, moduleLogger);
+    logger.info(`${playlistName}`);
+
+    await player.changePlaylist(playlistName);
+    player.play();
+    this.props.navigator.navigateToPlayer(playlistName);
+  }
+
+  onSettingsClick() {
+    this.props.navigator.navigateToSettings();
+  }
+
+  render() {
+    let logger = loggerCreator(this.render.name, moduleLogger);
+
+    return (
+      <View style={styles.container}>
+        <Image source={require("../images/logo.png")}
+               style={styles.logo}/>
+
+        <Choose>
+          <When condition={this.state.playlists}>
+            {
+              this.state.playlists.map(playlist => {
+                return (
+                  <Button key={playlist} style={styles.playlistButton}
+                          className="playlist"
+                          onPress={() => this.onPlaylistClick(playlist)}>
+                    <Text style={styles.playlistText}>{playlist}</Text>
+                  </Button>)
+              })
+            }
+          </When>
+          <Otherwise>
+            <ActivityIndicator />
+          </Otherwise>
+        </Choose>
+        <Button style={styles.settingsButton}
+                onPress={() => this.onSettingsClick() }>
+          <Image style={styles.settingsIcon} source={require("../images/settings.png")}/>
+        </Button>
+      </View>
+    );
+  }
+}
+
+PlaylistCollectionPage.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator).isRequired
+};

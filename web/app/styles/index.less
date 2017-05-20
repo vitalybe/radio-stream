@@ -11,20 +11,26 @@ body {
 @semi-white: #e2e2e2;
 @red: #e25d24;
 
+@font-size-default: 1.3rem;
+
 .button-mixin {
-  background: fade(@cyan-dark, 25%);
+  background: fade(@cyan-dark, 50%);
   color: @cyan-bright;
   border: 1px solid @cyan-bright;
   cursor: pointer;
   border-radius: 5px;
+  font-size: @font-size-default;
 
   &:hover {
-    background: fade(@cyan-dark, 50%);
+    background: fade(@cyan-dark, 75%);
   }
 }
 
+input {
+  font-size: @font-size-default;
+}
+
 * {
-  font-size: 1rem;
   box-sizing: border-box;
 }
 
@@ -39,6 +45,7 @@ h1 {
   top: 0;
   bottom: 0;
   overflow: hidden;
+  font-size: @font-size-default;
 
   color: @semi-white;
 
@@ -74,21 +81,6 @@ h1 {
       span.prefix {
         color: @red;
       }
-    }
-  }
-
-  .top-bar {
-
-    padding: 1em;
-
-    .back {
-      @back-image: "../images/back.png";
-
-      height: image-height(@back-image);
-      width: image-width(@back-image);
-      background-image: url(@back-image);
-
-      cursor: pointer;
     }
   }
 
@@ -135,38 +127,12 @@ h1 {
     }
   }
 
-  .playlists-page {
-
-    margin: 0 auto;
-    width: 960px;
+  .startup-page {
+    position: absolute;
     text-align: center;
-
-    img.logo {
-      margin-bottom: 1em;
-    }
-
-    button.settings {
-      .button-mixin;
-
-      position: absolute;
-      right: 1em;
-      bottom: 1em;
-      padding: 0.5em;
-
-      img {
-        height: 2em;
-      }
-    }
-
-    button.playlist {
-      .button-mixin;
-
-      display: block;
-      margin: 1em auto;
-
-      padding: 1rem;
-      width: 15em;
-    }
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .player-page {
@@ -201,30 +167,58 @@ h1 {
         }
       }
 
-      .star-full, .star-empty {
-        width: 53px;
-        height: 50px;
-        display: inline-block;
-        background-size: auto;
-        margin-top: 20px;
-        margin-right: 10px;
-        cursor: pointer;
-      }
+      .stars {
 
-      .star-full {
-        background-image: url("../images/star.png");
-        -webkit-filter: brightness(200%);
-      }
+        position: relative;
 
-      .star-empty {
-        background-image: url("../images/star.png");
-        opacity: 0.8;
-        -webkit-filter: grayscale(100%) brightness(50%);
+        .star-full, .star-empty {
+          width: 53px;
+          height: 50px;
+          display: inline-block;
+          background-size: auto;
+          margin-top: 20px;
+          margin-right: 10px;
+          cursor: pointer;
+        }
+
+        .star-full {
+          background-image: url("../images/star.png");
+          -webkit-filter: brightness(200%);
+        }
+
+        .star-empty {
+          background-image: url("../images/star.png");
+          opacity: 0.8;
+          -webkit-filter: grayscale(100%) brightness(50%);
+        }
+
+        .dd-menu {
+          position: absolute;
+          right: 0;
+
+          img.context-menu {
+            padding: 1em 1em 0 1em;
+          }
+
+          .dd-menu-items {
+
+            ul {
+              background-color: #0c191c;
+              color: @cyan-bright;
+              border: 1px solid @cyan-bright;
+
+              li:hover {
+                background-color: lighten(#0c191c, 10%);
+                color: @cyan-bright;
+              }
+            }
+
+          }
+        }
       }
 
       .names {
         margin-top: 30px;
-        font-size: 30px;
 
         & > div {
           margin-top: 10px;
@@ -288,5 +282,81 @@ h1 {
       -webkit-filter: hue-rotate(225deg);
       margin-bottom: 1em;
     }
+  }
+
+  .sidebar {
+
+    img.open-close {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      padding: 1em;
+    }
+
+    .content {
+
+      position: absolute;
+      top: 3.5em;
+      bottom: -1px;
+
+      background: fade(@cyan-dark, 50%);
+      border: 1px solid @cyan-bright;
+      border-radius: 0 5px 5px 0;
+      color: @semi-white;
+      transform: translateX(-1px);
+
+      .title {
+        font-size: 1.5rem;
+        margin: 1rem;
+      }
+
+      .sidebar-button-mixin {
+        .button-mixin;
+
+        width: 100%;
+        text-align: left;
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        padding: 0.7rem 0.5rem;
+        margin-bottom: -1px;
+
+        img.icon {
+          height: @font-size-default;
+          vertical-align: bottom;
+          margin: 0 0.5rem 0 1rem;
+        }
+      }
+
+      button.settings {
+        .sidebar-button-mixin;
+      }
+
+      button.playlist {
+        .sidebar-button-mixin;
+
+        img.context-menu {
+          position: absolute;
+          right: 0;
+          vertical-align: bottom;
+          margin: 0 0.5rem 0 1rem;
+          padding: 0 0.5rem;
+        }
+      }
+
+      button.new-playlist {
+        opacity: 0.5;
+        .sidebar-button-mixin;
+      }
+
+      .spinner {
+        position: static;
+        text-align: center;
+        margin-top: 3em;
+        margin-bottom: 1em;
+        transform: initial;
+      }
+    }
+
   }
 }

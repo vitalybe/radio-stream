@@ -1,33 +1,57 @@
 import loggerCreator from '../utils/logger'
-var moduleLogger = loggerCreator(__filename);
+const moduleLogger = loggerCreator(__filename);
 
 import React, {Component} from 'react';
 import {observer} from "mobx-react"
 import classNames from 'classnames';
 import moment from 'moment';
-
-import assert from "../utils/assert"
-
 import Spinner from '../components/spinner'
-
 import player from '../stores/player'
+import playlistCollection from '../stores/playlist_collection'
+import DropdownMenu from 'react-dd-menu';
 
+require("react-dd-menu/dist/react-dd-menu.css");
 const infoImage = require("../images/info.png");
+const ellipsisImage = require("../images/ellipsis.png");
 
 @observer
 export class PlayerPage extends Component {
 
-  constructor(props, context) {
-    super(props, context);
+  async componentWillMount() {
+    let logger = loggerCreator("componentWillMount", moduleLogger);
+    logger.info(`start`);
+
+    this.state = {
+      contextMenuOpen: false
+    }
+
+    await this.playPlaylist(this.props.match.params.name);
   }
 
-  //noinspection JSUnusedGlobalSymbols
-  componentDidMount() {
-  }
-
-  //noinspection JSUnusedGlobalSymbols
   componentWillUnmount() {
     player.stop();
+  }
+
+  async componentWillReceiveProps(nextProps) {
+    let logger = loggerCreator("componentWillReceiveProps", moduleLogger);
+    logger.info(`start`);
+
+    await this.playPlaylist(nextProps.match.params.name);
+  }
+
+  async playPlaylist(playlistName) {
+    let logger = loggerCreator("playPlaylist", moduleLogger);
+    logger.info(`start`);
+    
+    logger.info(`playlist name: ${playlistName}`);
+    const playlist = await playlistCollection.playlistByName(playlistName)
+    if (playlist) {
+      logger.info(`playlist found`);
+      await player.changePlaylist(playlist);
+      player.play();
+    } else {
+      throw new Error(`playlist not found: ${playlistName}`)
+    }
   }
 
   onPlayPause() {
@@ -45,6 +69,19 @@ export class PlayerPage extends Component {
     let song = player.song;
     if (song) {
       song.changeRating(newRating);
+    } else {
+      logger.error("song doesn't exist")
+    }
+  }
+
+  async deleteSong() {
+    let logger = loggerCreator("deleteSong", moduleLogger);
+    logger.info(`start`);
+
+    let song = player.song;
+    if (song) {
+      player.next();
+      song.markAsDeleted()
     } else {
       logger.error("song doesn't exist")
     }
@@ -89,7 +126,17 @@ export class PlayerPage extends Component {
                     <img className="artist" src={song.loadedImageUrl} alt=""/>
                   </If>
                 </div>
-                <div className="stars">{ratingStars}</div>
+                <div className="stars">
+                  {ratingStars}
+                  <DropdownMenu
+                    isOpen={this.state.contextMenuOpen}
+                    close={() => this.setState({contextMenuOpen: false})}
+                    toggle={<img className="context-menu" src={ellipsisImage}
+                                 onClick={() => this.setState({contextMenuOpen: !this.state.contextMenuOpen})}/>}>
+                    <li><a href="#" onClick={() => this.onChangeRating(0)}>Clear rating</a></li>
+                    <li><a href="#" onClick={() => this.deleteSong()}>Delete song</a></li>
+                  </DropdownMenu>
+                </div>
                 <div className="names">
                   <div>{song.title}</div>
                   <div className="artist-name">{song.artist}</div>
