@@ -1,15 +1,6 @@
-import React,
-{
-  Component,
-  PropTypes
-} from "react";
-
-import {
-  View,
-  TouchableWithoutFeedback,
-  Animated,
-  StyleSheet
-} from "react-native";
+// Taken from https://github.com/moschan/react-native-flip-card/blob/master/lib/FlipCard.js
+import React, {Component, PropTypes } from "react";
+import {View, TouchableWithoutFeedback, Animated, StyleSheet } from "react-native";
 
 const S = StyleSheet.create({
   flipCard: {
@@ -40,11 +31,7 @@ export default class FlipCard extends Component {
       back: { width: 0, height: 0 }
     }
   }
-  componentWillReceiveProps (nextProps) {
-    if (this.state.isFlipped !== nextProps.flip) {
-      this._toggleCard()
-    }
-  }
+
   _toggleCard () {
     this.setState({isFlipping: true})
     this._animation(!this.state.isFlipped)
