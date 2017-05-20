@@ -14,9 +14,6 @@ stop() {
     echo "Done."
 }
 
-# needed for beet to know its library location
-source /root/.bashrc
-
 echo "Running radio-stream..."
 trap stop SIGINT SIGTERM
 beet radio &
