@@ -4,6 +4,8 @@ var moduleLogger = loggerCreator("AlbumArt");
 
 import React, {Component} from 'react';
 import {Image, StyleSheet, View, Dimensions} from 'react-native';
+import {observer} from "mobx-react"
+
 import FlipCard from '../../utils/flip_card'
 import Text from '../../shared_components/text'
 import moment from 'moment';
@@ -46,11 +48,8 @@ const styles = StyleSheet.create({
 
 });
 
+@observer
 export default class AlbumArt extends Component {
-
-  componentWillMount() {
-
-  }
 
   render() {
     let logger = loggerCreator("render", moduleLogger);

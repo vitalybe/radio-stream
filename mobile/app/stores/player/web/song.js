@@ -91,7 +91,7 @@ export class Song {
       logger.info(`loading artist image`);
       let imageUrl = await backendLastFm.getArtistImage(this.artist);
 
-      logger.info(`image loaded`);
+      logger.info(`image loaded: ${imageUrl}`);
       this.loadedImageUrl = imageUrl;
     }
 

@@ -34,6 +34,23 @@ const styles = StyleSheet.create({
 
 export default class PlayerControls extends Component {
 
+  onPressPlayPause() {
+    let logger = loggerCreator("onPressPlayPause", moduleLogger);
+
+    if (player.isPlaying) {
+      logger.info(`pause`);
+      player.pause();
+    } else {
+      logger.info(`play`);
+      player.play();
+    }
+
+  }
+
+  onPressNext() {
+    player.playNext();
+  }
+
   render() {
 
     return (

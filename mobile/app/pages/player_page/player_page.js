@@ -2,7 +2,7 @@ import loggerCreator from '../../utils/logger'
 var moduleLogger = loggerCreator("player_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, View, Image, ActivityIndicator} from 'react-native';
+import {StyleSheet, View, Image } from 'react-native';
 import BackHandler from '../../utils/back_handler/back_handler'
 import {observer} from "mobx-react"
 
@@ -77,22 +77,6 @@ export default class PlayerPage extends Component {
     let logger = loggerCreator("componentWillUnmount", moduleLogger);
   }
 
-  onPressPlayPause() {
-    let logger = loggerCreator("onPressPlayPause", moduleLogger);
-
-    if (player.isPlaying) {
-      logger.info(`pause`);
-      player.pause();
-    } else {
-      logger.info(`play`);
-      player.play();
-    }
-
-  }
-
-  onPressNext() {
-    player.playNext();
-  }
 
   onPressHardwareBack() {
     let logger = loggerCreator("hardwareBackPress", moduleLogger);

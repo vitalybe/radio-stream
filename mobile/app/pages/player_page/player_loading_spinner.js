@@ -3,7 +3,7 @@ import loggerCreator from '../../utils/logger'
 var moduleLogger = loggerCreator("PlayerLoadingSpinner");
 
 import React, {Component} from 'react';
-import {Image, StyleSheet, Text, View,} from 'react-native';
+import {Image, StyleSheet, Text, View, ActivityIndicator, } from 'react-native';
 
 import player from '../../stores/player/player'
 
@@ -55,5 +55,5 @@ export default class PlayerLoadingSpinner extends Component {
 }
 
 PlayerLoadingSpinner.propTypes = {
-  song: React.PropTypes.object.isRequired,
+  song: React.PropTypes.object,
 };
