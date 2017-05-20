@@ -49,6 +49,7 @@
     "jsx-control-statements": "^3.1.5",
     "mobx": "^2.6.3",
     "mobx-react": "^4.0.3",
+    "moment": "^2.18.1",
     "object-assign": "4.1.1",
     "postcss-loader": "1.2.2",
     "promise": "7.1.1",

@@ -23,10 +23,16 @@ class PlayerMock {
 
 const playerMock = new PlayerMock();
 playerMock.isLoading = false
-playerMock.song = new SongMock()
-playerMock.song.title = "Mock title"
-playerMock.song.album = "Mock album"
-playerMock.song.artist = "Mock title"
-playerMock.song.rating = 60;
+
+const song = new SongMock()
+song.title = "Mock title"
+song.album = "Mock album"
+song.artist = "Mock title"
+song.rating = 60
+song.playcount = 15
+song.lastplayed = 1495156518
+song.isMarkedAsPlayed = false
+
+playerMock.song = song
 
 export default playerMock;
