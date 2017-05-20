@@ -40,6 +40,9 @@ const styles = StyleSheet.create({
     height: artSize,
     padding: 10,
   },
+  additionalSongInfo: {
+    marginBottom: 5
+  }
 
 });
 
@@ -68,9 +71,9 @@ export default class AlbumArt extends Component {
             <Image style={styles.albumArt} source={albumArt}/>
           </View>
           <View style={styles.flippedAlbumArt}>
-            <Text>Last played: {moment.unix(song.lastplayed).fromNow()}</Text>
-            <Text>Play count: {song.playcount}</Text>
-            <Text>Marked as played: {song.isMarkedAsPlayed ? "✔" : "x"}</Text>
+            <Text style={styles.additionalSongInfo}>Last played: {moment.unix(song.lastplayed).fromNow()}</Text>
+            <Text style={styles.additionalSongInfo}>Play count: {song.playcount}</Text>
+            <Text style={styles.additionalSongInfo}>Marked as played: {song.isMarkedAsPlayed ? "✔" : "x"}</Text>
           </View>
         </FlipCard>
       </View>
