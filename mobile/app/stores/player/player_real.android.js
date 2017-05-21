@@ -102,13 +102,19 @@ class Player {
       this.currentPlaylist = newPlaylist;
 
       let song = playlistPlayer.song;
-      if(!song) {
+      if (!song) {
         logger.info(`no song`);
         this.song = null;
-      } else if (song && (!this.song || this.song.id !== song.id)) {
-        logger.info(`song changed`);
-        this.song = new Song(song);
+      } else {
+
+        if (!this.song || this.song.id !== song.id) {
+          logger.info(`song changed`);
+          this.song = new Song(song);
+        }
+        
+        this.song.isMarkedAsPlayed = song.isMarkedAsPlayed
       }
+
     }
   }
 

@@ -252,6 +252,11 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     }
 
     @Override
+    public void onSongMarkedAsPlayed() {
+        mStatusProvider.sendStatus();
+    }
+
+    @Override
     public void onSongError(Exception error) {
         Timber.e(error, "error occured in song '%s'", getCurrentSong());
         if (getCurrentSong() != null) {
