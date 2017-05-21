@@ -22,7 +22,7 @@ export default class Song {
   @observable loadedSound = null;
   @observable loadedImageUrl = null;
 
-  constructor({id, artist, title, album, rating}) {
+  constructor({id, artist, title, album, rating, playcount, lastplayed}) {
     let logger = loggerCreator("constructor", moduleLogger);
 
     this.id = id;
@@ -30,6 +30,8 @@ export default class Song {
     this.title = title;
     this.album = album;
     this.rating = rating;
+    this.playcount = playcount;
+    this.lastplayed = lastplayed
     this.loadedImageUrl = null;
 
     getArtistImage(this.artist).then(imageUri => {
