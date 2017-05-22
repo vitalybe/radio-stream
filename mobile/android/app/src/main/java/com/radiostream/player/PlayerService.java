@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaMetadata;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Binder;
@@ -117,10 +118,30 @@ public class PlayerService extends Service implements PlaylistControls {
                     Timber.i("showing song notification");
                     showSongNotification(playerBridge.playlistPlayerBridge.songBridge);
                 }
+
+                changeBluetoothMetadata(playerBridge);
             }
         }
     };
-    
+
+    private void changeBluetoothMetadata(PlayerBridge playerBridge) {
+        Timber.i("Function start");
+
+        if(playerBridge.playlistPlayerBridge != null && playerBridge.playlistPlayerBridge.songBridge != null) {
+            SongBridge song = playerBridge.playlistPlayerBridge.songBridge;
+            Timber.i("setting bluetooth information of song: %s - %s", song.title, song.artist);
+
+            MediaMetadata metadata = new MediaMetadata.Builder()
+                    .putString(MediaMetadata.METADATA_KEY_TITLE, song.title)
+                    .putString(MediaMetadata.METADATA_KEY_ARTIST, song.artist)
+                    .putString(MediaMetadata.METADATA_KEY_ALBUM, song.album)
+                    .build();
+
+            mMediaSession.setMetadata(metadata);
+        }
+
+    }
+
     private MediaSession.Callback mMediaSessionCallback = new MediaSession.Callback() {
 
         @Override
