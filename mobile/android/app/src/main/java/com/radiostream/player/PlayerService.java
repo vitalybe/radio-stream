@@ -25,7 +25,6 @@ import com.radiostream.di.components.DaggerPlayerServiceComponent;
 import com.radiostream.di.components.PlayerServiceComponent;
 import com.radiostream.di.modules.ContextModule;
 import com.radiostream.javascript.bridge.PlayerBridge;
-import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 import com.radiostream.javascript.bridge.PlayerEventsEmitter;
 import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.javascript.proxy.PlayerJsProxy;
@@ -54,6 +53,7 @@ public class PlayerService extends Service implements PlaylistControls {
     private boolean mServiceAlive = true;
     private Date mPausedDate = null;
     private boolean mPausedDuePhoneState = false;
+    private boolean mIsBoundToActivity = false;
 
     MediaSession mMediaSession = null;
 
@@ -151,7 +151,8 @@ public class PlayerService extends Service implements PlaylistControls {
 
     private void showSongNotification(SongBridge currentSong) {
         Timber.i("function start - show song notification for: %s - %s", currentSong.title, currentSong.artist);
-        startWithNotificaiton(currentSong.title, currentSong.artist, true);
+        boolean showHeadsUpNotification = !mIsBoundToActivity;
+        startWithNotificaiton(currentSong.title, currentSong.artist, showHeadsUpNotification);
     }
 
     private void showLoadingNotification() {
@@ -296,12 +297,23 @@ public class PlayerService extends Service implements PlaylistControls {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        Timber.i("function start");
+        mIsBoundToActivity = true;
         return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
+        Timber.i("function start");
+        mIsBoundToActivity = false;
+
         return false;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Timber.i("function start");
+        mIsBoundToActivity = true;
     }
 
     @Override
