@@ -8,7 +8,7 @@ let MenuContext = props => <View>{props.children}</View>
 
 let MenuTrigger = props => <View style={props.style}>{props.children}</View>
 let MenuOptions = props => <View style={props.style}>{props.children}</View>
-let MenuOption = props => <li style={StyleSheet.flatten(props.style)}><a href="#" onClick={props.onSelect}>{props.children}</a></li>
+let MenuOption = props => <View style={props.style} onClick={props.onSelect}>{props.children}</View>
 
 class Menu extends Component {
   componentWillMount() {
