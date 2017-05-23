@@ -88,19 +88,21 @@ export default class Rating extends Component {
     return (
       <View style={[styles.container, this.props.style]}>
         {stars}
-          <Menu onSelect={(value) => alert(`User selected the number ${value}`)}>
-            <MenuTrigger>
-              <Text style={{fontSize: 20, color: "white"}}>&#8942;</Text>
-            </MenuTrigger>
-            <MenuOptions>
-              <MenuOption value={1}>
-                <Text>One</Text>
-              </MenuOption>
-              <MenuOption value={2}>
-                <Text>Two</Text>
-              </MenuOption>
-            </MenuOptions>
-          </Menu>
+        {/*<Menu onSelect={(value) => alert(`User selected the number ${value}`)}>*/}
+        {/*<MenuTrigger>*/}
+        {/*<Text style={{fontSize: 20, color: "white"}}>&#8942;</Text>*/}
+        {/*</MenuTrigger>*/}
+        {/*<MenuOptions>*/}
+        {/*<MenuOption value={1}>*/}
+        {/*<Text>One</Text>*/}
+        {/*</MenuOption>*/}
+        {/*<MenuOption value={2}>*/}
+        {/*<Text>Two</Text>*/}
+        {/*</MenuOption>*/}
+        {/*</MenuOptions>*/}
+        {/*</Menu>*/}
+        <Menu/>
+
       </View>
     )
 

@@ -64,14 +64,13 @@ export default class RadioStream extends Component {
     }
 
     return (
-      <MenuContext>
-        <Image source={require("./images/background.jpg")}
-               resizeMode="cover"
-               style={styles.container}>
+      <Image source={require("./images/background.jpg")}
+             resizeMode="cover"
+             style={styles.container}>
+        <MenuContext>
           { this.state.ready ? page : null }
-        </Image>
-      </MenuContext>
-
+        </MenuContext>
+      </Image>
     );
   }
 }
