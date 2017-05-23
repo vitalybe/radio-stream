@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View} from 'react-native';
 
 import DropdownMenu from 'react-dd-menu';
-require("react-dd-menu/dist/react-dd-menu.css");
+require("./context_menu.css");
 
 let MenuContext = props => <View>{props.children}</View>
 
@@ -16,6 +16,7 @@ class Menu extends Component {
   render() {
     return (
       <DropdownMenu
+        animate={false}
         isOpen={this.state.contextMenuOpen}
         close={() => this.setState({contextMenuOpen: false})}
         toggle={<div onClick={() => this.setState({contextMenuOpen: !this.state.contextMenuOpen})}>Hello</div>}>

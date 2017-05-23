@@ -1,0 +1,27 @@
+.dd-menu {
+    position: absolute;
+    right: 0;
+}
+
+.dd-menu .dd-menu-items {
+    left: 50%;
+    transform: translateX(-50%);
+
+    position: absolute;
+    z-index: 7;
+    margin: .5em 0 0;
+
+    background-color: white;
+}
+
+.dd-menu .dd-menu-items ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    white-space: pre;
+}
+
+.dd-menu .dd-menu-items ul li>:not(.dd-item-ignore)  {
+    color: inherit;
+    text-decoration: none;
+}
