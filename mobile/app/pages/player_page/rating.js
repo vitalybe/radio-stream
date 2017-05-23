@@ -86,13 +86,13 @@ export default class Rating extends Component {
     });
 
     return (
-      <View style={[styles.container, this.props.style]}>
+      <View style={[styles.container, this.props.style, {backgroundColor: "green", paddingHorizontal: 20}]}>
         {stars}
-        <Menu>
-          <MenuTrigger>
-            <Text style={{fontSize: 20, color: "white"}}>&#8942;</Text>
+        <Menu style={{position: "absolute", right: 0}}>
+          <MenuTrigger >
+            <Text style={{paddingRight: 20, paddingLeft: 0, backgroundColor: "pink", fontSize: 20, color: "white"}}>&#8942;</Text>
           </MenuTrigger>
-          <MenuOptions>
+          <MenuOptions style={{backgroundColor: "yellow"}}>
             <MenuOption onSelect={(value) => alert(`User selected the number 1`)}>
               <Text>One</Text>
             </MenuOption>

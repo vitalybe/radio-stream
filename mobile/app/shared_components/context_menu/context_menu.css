@@ -1,6 +1,7 @@
 .dd-menu {
     position: absolute;
     right: 0;
+    cursor: pointer;
 }
 
 .dd-menu .dd-menu-items {
