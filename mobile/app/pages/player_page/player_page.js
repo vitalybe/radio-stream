@@ -2,7 +2,7 @@ import loggerCreator from '../../utils/logger'
 var moduleLogger = loggerCreator("player_page");
 
 import React, {Component} from 'react';
-import {StyleSheet, View, Image } from 'react-native';
+import {StyleSheet, View, Image} from 'react-native';
 import BackHandler from '../../utils/back_handler/back_handler'
 import {observer} from "mobx-react"
 
@@ -92,30 +92,30 @@ export default class PlayerPage extends Component {
     logger.info(`rendering song: ${song && song.toString()}`);
 
     return (
-      <View style={styles.container}>
-        <View style={styles.playlistNameView}>
-          <Icon name="music" style={styles.playlistIcon}/>
-          <Text>{this.props.playlistName}</Text>
-        </View>
-        {!player.isLoading ?
-          <View>
-            {/* Album art */}
-            <AlbumArt style={[styles.albumArt]} song={song} />
-            {/* Ratings */}
-            <Rating style={[styles.rating]} song={song}/>
-            {/* Names */}
-            <View style={styles.songDetails}>
-              <Text style={[styles.nameText]}>{`${song.title}`}</Text>
-              <Text style={[styles.nameText, styles.artistText]}>{`${song.artist}`}</Text>
-              <Text style={[styles.nameText]}>{`${song.album}`}</Text>
-            </View>
-            {/* Controls */}
-            <PlayerControls />
+        <View style={styles.container}>
+          <View style={styles.playlistNameView}>
+            <Icon name="music" style={styles.playlistIcon}/>
+            <Text>{this.props.playlistName}</Text>
           </View>
-          :
-          <PlayerLoadingSpinner song={song}/>
-        }
-      </View>
+          {!player.isLoading ?
+            <View>
+              {/* Album art */}
+              <AlbumArt style={[styles.albumArt]} song={song}/>
+              {/* Ratings */}
+              <Rating style={[styles.rating]} song={song}/>
+              {/* Names */}
+              <View style={styles.songDetails}>
+                <Text style={[styles.nameText]}>{`${song.title}`}</Text>
+                <Text style={[styles.nameText, styles.artistText]}>{`${song.artist}`}</Text>
+                <Text style={[styles.nameText]}>{`${song.album}`}</Text>
+              </View>
+              {/* Controls */}
+              <PlayerControls />
+            </View>
+            :
+            <PlayerLoadingSpinner song={song}/>
+          }
+        </View>
     );
   }
 }

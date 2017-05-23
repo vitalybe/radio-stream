@@ -4,6 +4,7 @@ const moduleLogger = loggerCreator("index.android");
 import React, {Component} from 'react';
 import {StyleSheet, Image} from 'react-native';
 import {observer} from "mobx-react"
+import {MenuContext} from 'react-native-popup-menu';
 
 import {globalSettings} from './utils/settings'
 import constants from './utils/constants'
@@ -52,7 +53,7 @@ export default class RadioStream extends Component {
           page = <PlaylistCollectionPage />;
           break;
         case constants.ROUTE_PLAYER_PAGE:
-          page = <PlayerPage playlistName={activeRoute.playlistName} />;
+          page = <PlayerPage playlistName={activeRoute.playlistName}/>;
           break;
         case constants.ROUTE_SETTINGS_PAGE:
           page = <SettingsPage />;
@@ -63,11 +64,14 @@ export default class RadioStream extends Component {
     }
 
     return (
-      <Image source={require("./images/background.jpg")}
-             resizeMode="cover"
-             style={styles.container}>
-        { this.state.ready ? page : null }
-      </Image>
+      <MenuContext>
+        <Image source={require("./images/background.jpg")}
+               resizeMode="cover"
+               style={styles.container}>
+          { this.state.ready ? page : null }
+        </Image>
+      </MenuContext>
+
     );
   }
 }

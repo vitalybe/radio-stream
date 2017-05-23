@@ -2,9 +2,10 @@ import loggerCreator from '../../utils/logger'
 var moduleLogger = loggerCreator("rating");
 
 import React, {Component} from 'react';
-import {StyleSheet, View, TouchableWithoutFeedback, Image, Vibration, ToastAndroid, Platform} from 'react-native';
+import {StyleSheet, View, TouchableWithoutFeedback, Image, Vibration, ToastAndroid, Platform, Text} from 'react-native';
 import _ from 'lodash'
 import {observer} from "mobx-react"
+import {MenuContext, Menu, MenuOptions, MenuOption, MenuTrigger,} from 'react-native-popup-menu';
 
 import BackendMetadataApi from '../../utils/backend_metadata_api'
 
@@ -87,6 +88,19 @@ export default class Rating extends Component {
     return (
       <View style={[styles.container, this.props.style]}>
         {stars}
+          <Menu onSelect={(value) => alert(`User selected the number ${value}`)}>
+            <MenuTrigger>
+              <Text style={{fontSize: 20, color: "white"}}>&#8942;</Text>
+            </MenuTrigger>
+            <MenuOptions>
+              <MenuOption value={1}>
+                <Text>One</Text>
+              </MenuOption>
+              <MenuOption value={2}>
+                <Text>Two</Text>
+              </MenuOption>
+            </MenuOptions>
+          </Menu>
       </View>
     )
 
