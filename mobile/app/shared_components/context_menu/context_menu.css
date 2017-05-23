@@ -1,13 +1,8 @@
 .dd-menu {
-    position: absolute;
-    right: 0;
     cursor: pointer;
 }
 
 .dd-menu .dd-menu-items {
-    left: 50%;
-    transform: translateX(-50%);
-
     position: absolute;
     z-index: 7;
     margin: .5em 0 0;
