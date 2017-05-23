@@ -4,7 +4,7 @@ const moduleLogger = loggerCreator("index.android");
 import React, {Component} from 'react';
 import {StyleSheet, Image} from 'react-native';
 import {observer} from "mobx-react"
-import {MenuContext} from 'react-native-popup-menu';
+import {MenuContext} from './shared_components/context_menu/context_menu';
 
 import {globalSettings} from './utils/settings'
 import constants from './utils/constants'

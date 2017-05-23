@@ -5,7 +5,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View, TouchableWithoutFeedback, Image, Vibration, ToastAndroid, Platform, Text} from 'react-native';
 import _ from 'lodash'
 import {observer} from "mobx-react"
-import {MenuContext, Menu, MenuOptions, MenuOption, MenuTrigger,} from 'react-native-popup-menu';
+import {Menu, MenuOptions, MenuOption, MenuTrigger} from '../../shared_components/context_menu/context_menu';
 
 import BackendMetadataApi from '../../utils/backend_metadata_api'
 
