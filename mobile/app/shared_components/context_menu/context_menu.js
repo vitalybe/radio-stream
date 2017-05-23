@@ -33,7 +33,6 @@ class Menu extends Component {
 
     return (
       <DropdownMenu
-        animate={false}
         isOpen={this.state.contextMenuOpen}
         close={() => this.setState({contextMenuOpen: false})}
         toggle={<View onClick={() => this.setState({contextMenuOpen: !this.state.contextMenuOpen})}>{toggle}</View>}>
