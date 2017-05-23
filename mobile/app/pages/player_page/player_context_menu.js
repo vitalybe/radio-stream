@@ -9,11 +9,14 @@ import {Menu, MenuOptions, MenuOption, MenuTrigger} from '../../shared_component
 import {colors} from '../../styles/styles'
 
 const styles = StyleSheet.create({
+  menu: {
+    position: "absolute",
+    right: 0,
+    top: -5},
   menuTrigger: {
     paddingRight: 20,
-    paddingLeft: 0,
-    backgroundColor: "pink",
-    fontSize: 20,
+    fontSize: 25,
+    fontWeight: "bold",
     color: colors.CYAN_BRIGHT.rgbString(),
   },
   menuOptions: {
@@ -39,7 +42,7 @@ export default class PlayerContextMenu extends Component {
 
   render() {
     return (
-      <Menu style={{position: "absolute", right: 0}}>
+      <Menu style={styles.menu}>
         <MenuTrigger>
           <Text style={styles.menuTrigger}>&#8942;</Text>
         </MenuTrigger>

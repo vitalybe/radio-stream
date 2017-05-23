@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   },
   rating: {
     marginBottom: 20,
-    paddingHorizontal: 20
+    paddingHorizontal: 30
   },
   songDetails: {
     alignItems: "center",
