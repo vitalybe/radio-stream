@@ -6,7 +6,20 @@ require("./context_menu.css");
 
 let MenuContext = props => <View>{props.children}</View>
 
+let MenuTrigger = props => props.children
+let MenuOptions = props => null
+
+class MenuOption extends Component {
+  render() {
+    return <li><a href="#" onClick={this.props.onSelect}>{this.props.children}</a></li>
+  }
+}
+
 class Menu extends Component {
+  isTrigger(component) {
+    return component.type === MenuTrigger
+  }
+
   componentWillMount() {
     this.state = {
       contextMenuOpen: false
@@ -14,21 +27,21 @@ class Menu extends Component {
   }
 
   render() {
+
+    const toggle = this.props.children.find(component => component.type === MenuTrigger)
+    const optionsContainer = this.props.children.find(component => component.type === MenuOptions)
+
     return (
       <DropdownMenu
         animate={false}
         isOpen={this.state.contextMenuOpen}
         close={() => this.setState({contextMenuOpen: false})}
-        toggle={<div onClick={() => this.setState({contextMenuOpen: !this.state.contextMenuOpen})}>Hello</div>}>
-        <li><a href="#" onClick={() => true}>Clear rating</a></li>
-        <li><a href="#" onClick={() => true}>Delete song</a></li>
+        toggle={<View onClick={() => this.setState({contextMenuOpen: !this.state.contextMenuOpen})}>{toggle}</View>}>
+        {optionsContainer.props.children}
       </DropdownMenu>
     )
   }
 }
 
-let MenuOptions = props => <View>{props.children}</View>
-let MenuOption = props => <View>{props.children}</View>
-let MenuTrigger = props => <View>{props.children}</View>
 
 export {MenuContext, Menu, MenuOptions, MenuOption, MenuTrigger}
