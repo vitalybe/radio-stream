@@ -5,7 +5,6 @@ import React, {Component} from 'react';
 import {StyleSheet, View, TouchableWithoutFeedback, Image, Vibration, ToastAndroid, Platform, Text} from 'react-native';
 import _ from 'lodash'
 import {observer} from "mobx-react"
-import {Menu, MenuOptions, MenuOption, MenuTrigger} from '../../shared_components/context_menu/context_menu';
 
 import BackendMetadataApi from '../../utils/backend_metadata_api'
 
@@ -17,7 +16,7 @@ const STAR_COUNT = 5;
 const RATING_STAR_RATIO = MAX_RATING / STAR_COUNT;
 
 const styles = StyleSheet.create({
-  container: {flexDirection: "row"},
+  container: {flexDirection: "row", justifyContent: "center"},
   star: {
     marginHorizontal: 2,
     height: 50,
@@ -86,23 +85,8 @@ export default class Rating extends Component {
     });
 
     return (
-      <View style={[styles.container, this.props.style, {backgroundColor: "green", paddingHorizontal: 20}]}>
+      <View style={[styles.container, this.props.style]}>
         {stars}
-        <Menu style={{position: "absolute", right: 0}}>
-          <MenuTrigger >
-            <Text style={{paddingRight: 20, paddingLeft: 0, backgroundColor: "pink", fontSize: 20, color: "white"}}>&#8942;</Text>
-          </MenuTrigger>
-          <MenuOptions style={{backgroundColor: "yellow"}}>
-            <MenuOption onSelect={(value) => alert(`User selected the number 1`)}>
-              <Text>One</Text>
-            </MenuOption>
-            <MenuOption onSelect={(value) => alert(`User selected the number 2`)}>
-              <Text>Two</Text>
-            </MenuOption>
-          </MenuOptions>
-        </Menu>
-        {/*<Menu/>*/}
-
       </View>
     )
 

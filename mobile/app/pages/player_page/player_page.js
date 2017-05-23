@@ -9,12 +9,14 @@ import {observer} from "mobx-react"
 import Icon from '../../shared_components/icon'
 import {colors, fontSizes} from '../../styles/styles'
 import Text from '../../shared_components/text'
+import PlayerContextMenu from './player_context_menu'
 import navigator from '../../stores/navigator/navigator'
 import player from '../../stores/player/player'
 import Rating from './rating'
 import AlbumArt from './album_art'
 import PlayerControls from './player_controls'
 import PlayerLoadingSpinner from './player_loading_spinner'
+
 
 const styles = StyleSheet.create({
   container: {
@@ -43,7 +45,8 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   rating: {
-    marginBottom: 20
+    marginBottom: 20,
+    paddingHorizontal: 20
   },
   songDetails: {
     alignItems: "center",
@@ -92,30 +95,33 @@ export default class PlayerPage extends Component {
     logger.info(`rendering song: ${song && song.toString()}`);
 
     return (
-        <View style={styles.container}>
-          <View style={styles.playlistNameView}>
-            <Icon name="music" style={styles.playlistIcon}/>
-            <Text>{this.props.playlistName}</Text>
-          </View>
-          {!player.isLoading ?
-            <View>
-              {/* Album art */}
-              <AlbumArt style={[styles.albumArt]} song={song}/>
-              {/* Ratings */}
-              <Rating style={[styles.rating]} song={song}/>
-              {/* Names */}
-              <View style={styles.songDetails}>
-                <Text style={[styles.nameText]}>{`${song.title}`}</Text>
-                <Text style={[styles.nameText, styles.artistText]}>{`${song.artist}`}</Text>
-                <Text style={[styles.nameText]}>{`${song.album}`}</Text>
-              </View>
-              {/* Controls */}
-              <PlayerControls />
-            </View>
-            :
-            <PlayerLoadingSpinner song={song}/>
-          }
+      <View style={styles.container}>
+        <View style={styles.playlistNameView}>
+          <Icon name="music" style={styles.playlistIcon}/>
+          <Text>{this.props.playlistName}</Text>
         </View>
+        {!player.isLoading ?
+          <View>
+            {/* Album art */}
+            <AlbumArt style={[styles.albumArt]} song={song}/>
+            {/* Ratings */}
+            <View style={styles.rating}>
+              <Rating song={song}/>
+              <PlayerContextMenu />
+            </View>
+            {/* Names */}
+            <View style={styles.songDetails}>
+              <Text style={[styles.nameText]}>{`${song.title}`}</Text>
+              <Text style={[styles.nameText, styles.artistText]}>{`${song.artist}`}</Text>
+              <Text style={[styles.nameText]}>{`${song.album}`}</Text>
+            </View>
+            {/* Controls */}
+            <PlayerControls />
+          </View>
+          :
+          <PlayerLoadingSpinner song={song}/>
+        }
+      </View>
     );
   }
 }
