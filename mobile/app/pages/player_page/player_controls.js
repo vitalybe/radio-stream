@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     paddingLeft: 80, // Causes the play button to be in the center
   },
   controlButtonText: {
-    color: colors.SEMI_WHITE.rgbString(),
+    color: colors.SEMI_WHITE,
     fontSize: 40
   },
   controlTextPlay: {

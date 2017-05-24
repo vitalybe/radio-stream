@@ -8,10 +8,10 @@ import { colors } from '../styles/styles'
 const styles = {
   button: {
     alignItems: "center",
-    backgroundColor: colors.CYAN_DARK.clone().clearer(0.5).rgbString(),
+    backgroundColor: colors.CYAN_DARK_CLEARER,
     paddingHorizontal: 40,
     paddingVertical: 15,
-    borderColor: colors.CYAN_BRIGHT.rgbString(),
+    borderColor: colors.CYAN_BRIGHT,
     borderStyle: "solid",
     borderWidth: 1,
     borderRadius: 5,
@@ -23,7 +23,7 @@ export default class RectangleButton extends Component {
     return (
       <TouchableHighlight onPress={this.props.onPress}
                           style={[styles.button, this.props.style]}
-                          underlayColor={colors.CYAN_DARK.clone().clearer(0.2).rgbString()}
+                          underlayColor={colors.CYAN_DARK_CLEAR}
                           activeOpacity={1}>
         {this.props.children}
       </TouchableHighlight>

@@ -33,10 +33,10 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
 
-    color: colors.SEMI_WHITE.rgbString(),
-    backgroundColor: colors.CYAN_DARK.clone().clearer(0.5).rgbString(),
+    color: colors.SEMI_WHITE,
+    backgroundColor: colors.CYAN_DARK_CLEARER,
 
-    borderColor: colors.CYAN_BRIGHT.rgbString(),
+    borderColor: colors.CYAN_BRIGHT,
     borderStyle: "solid",
     borderWidth: 1,
     borderRadius: 5,

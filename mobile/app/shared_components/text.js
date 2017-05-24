@@ -5,7 +5,7 @@ import { colors } from '../styles/styles'
 
 const styles = {
   text: {
-    color: colors.SEMI_WHITE.rgbString(),
+    color: colors.SEMI_WHITE,
     fontSize: 15
   }
 };

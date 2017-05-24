@@ -25,7 +25,7 @@ if (height > BIG_DEVICE_HEIGHT) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "black",
-    borderColor: colors.CYAN_DARK.rgbString(),
+    borderColor: colors.CYAN_DARK,
     borderWidth: 2,
 
     position: 'relative',

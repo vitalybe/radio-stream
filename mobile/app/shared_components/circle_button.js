@@ -10,10 +10,10 @@ const styles = {
   button: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.CYAN_DARK.clone().clearer(0.5).rgbString(),
+    backgroundColor: colors.CYAN_DARK_CLEARER,
     paddingHorizontal: 0,
     paddingVertical: 0,
-    borderColor: colors.CYAN_BRIGHT.rgbString(),
+    borderColor: colors.CYAN_BRIGHT,
     borderStyle: "solid",
     borderWidth: 1,
     borderRadius: 0, // will be calculated during button generation
@@ -30,7 +30,7 @@ export default class CircleButton extends Component {
     return (
       <TouchableHighlight onPress={this.props.onPress}
                           style={[styles.button, {height: height, width: width, borderRadius: borderRadius}, this.props.style]}
-                          underlayColor={colors.CYAN_DARK.clone().clearer(0.2).rgbString()}
+                          underlayColor={colors.CYAN_DARK_CLEAR}
                           activeOpacity={1}>
         <View>
           {this.props.children}

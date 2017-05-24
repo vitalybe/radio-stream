@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   playlistIcon: {
-    color: colors.SEMI_WHITE.rgbString(),
+    color: colors.SEMI_WHITE,
     marginRight: 5,
   },
   // Sections
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     marginBottom: 2
   },
   artistText: {
-    color: colors.CYAN_BRIGHT.rgbString()
+    color: colors.CYAN_BRIGHT
   },
 });
 

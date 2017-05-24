@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     fontSize: 25,
     fontWeight: "bold",
-    color: colors.CYAN_BRIGHT.rgbString(),
+    color: colors.CYAN_BRIGHT,
   },
 });
 
@@ -26,16 +26,16 @@ const menuOptionsCustomStyles = {
   OptionTouchableComponent: TouchableHighlight,
   optionsWrapper: {
     backgroundColor: colors.CYAN_DARKEST,
-    borderColor: colors.CYAN_BRIGHT.rgbString(),
+    borderColor: colors.CYAN_BRIGHT,
     borderStyle: "solid",
     borderWidth: 1,
   },
   optionTouchable: {
     activeOpacity: 1,
-    underlayColor: colors.CYAN_DARK.rgbaString(),
+    underlayColor: colors.CYAN_DARK,
   },
   optionText: {
-    color: colors.CYAN_BRIGHT.rgbString(),
+    color: colors.CYAN_BRIGHT,
     padding: 10,
     textAlign: "center",
   },

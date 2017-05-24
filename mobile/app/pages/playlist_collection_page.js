@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   playlistText: {
-    color: colors.SEMI_WHITE.rgbString(),
+    color: colors.SEMI_WHITE,
     fontSize: fontSizes.NORMAL,
   },
   settingsButton: {
