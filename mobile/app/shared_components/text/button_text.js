@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
 
-import { colors } from '../styles/styles'
+import { colors, fontSizes } from '../../styles/styles'
 
 const styles = {
   text: {
     color: colors.SEMI_WHITE,
-    fontSize: 15
+    fontSize: fontSizes.NORMAL
   }
 };
 
-export default class CustomText extends Component {
+export default class ButtonText extends Component {
 
   // Needed per: https://facebook.github.io/react-native/docs/direct-manipulation.html
   setNativeProps(nativeProps) {

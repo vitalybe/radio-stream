@@ -8,7 +8,7 @@ import {observer} from "mobx-react"
 
 import Icon from '../../shared_components/icon'
 import {colors, fontSizes} from '../../styles/styles'
-import Text from '../../shared_components/text'
+import BigText from '../../shared_components/text/big_text'
 import PlayerContextMenu from './player_context_menu'
 import navigator from '../../stores/navigator/navigator'
 import player from '../../stores/player/player'
@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
   },
   // Names (artist, title, album)
   nameText: {
-    fontSize: fontSizes.LARGE,
     marginBottom: 2
   },
   artistText: {
@@ -98,7 +97,7 @@ export default class PlayerPage extends Component {
       <View style={styles.container}>
         <View style={styles.playlistNameView}>
           <Icon name="music" style={styles.playlistIcon}/>
-          <Text>{this.props.playlistName}</Text>
+          <BigText>{this.props.playlistName}</BigText>
         </View>
         {!player.isLoading ?
           <View>
@@ -111,9 +110,9 @@ export default class PlayerPage extends Component {
             </View>
             {/* Names */}
             <View style={styles.songDetails}>
-              <Text style={[styles.nameText]}>{`${song.title}`}</Text>
-              <Text style={[styles.nameText, styles.artistText]}>{`${song.artist}`}</Text>
-              <Text style={[styles.nameText]}>{`${song.album}`}</Text>
+              <BigText style={[styles.nameText]}>{`${song.title}`}</BigText>
+              <BigText style={[styles.nameText, styles.artistText]}>{`${song.artist}`}</BigText>
+              <BigText style={[styles.nameText]}>{`${song.album}`}</BigText>
             </View>
             {/* Controls */}
             <PlayerControls />

@@ -9,7 +9,8 @@ import {observer} from "mobx-react"
 
 import {colors, fontSizes} from '../styles/styles'
 import Button from '../shared_components/rectangle_button'
-import Text from '../shared_components/text'
+import NormalText from '../shared_components/text/normal_text'
+import ButtonText from '../shared_components/text/button_text'
 import {globalSettings} from '../utils/settings'
 import backendMetadataApi from '../utils/backend_metadata_api'
 import navigator from '../stores/navigator/navigator'
@@ -122,18 +123,18 @@ export default class SettingsPage extends Component {
 
     return (
       <View style={styles.container}>
-        <Text style={[styles.label]}>Host</Text>
+        <NormalText style={[styles.label]}>Host</NormalText>
         <TextInput style={[styles.input]} value={this.store.host}
                    onChangeText={text => this.onTextChange("host", text)}/>
 
-        <Text style={[styles.label]}>Password</Text>
+        <NormalText style={[styles.label]}>Password</NormalText>
         <TextInput style={[styles.input]} value={this.store.password} secureTextEntry={true}
                    onChangeText={text => this.onTextChange("password", text)}/>
 
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
-          <Text>Save</Text>
+          <ButtonText>Save</ButtonText>
         </Button>
-        <Text style={[styles.status]}>{this.store.status}</Text>
+        <NormalText style={[styles.status]}>{this.store.status}</NormalText>
       </View>
     );
   }

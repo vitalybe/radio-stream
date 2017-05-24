@@ -7,7 +7,7 @@ import {Image, StyleSheet, View, Dimensions} from 'react-native';
 import {observer} from "mobx-react"
 
 import FlipCard from '../../utils/flip_card'
-import Text from '../../shared_components/text'
+import NormalText from '../../shared_components/text/normal_text'
 import moment from 'moment';
 import {colors, fontSizes} from '../../styles/styles'
 
@@ -70,9 +70,9 @@ export default class AlbumArt extends Component {
             <Image style={styles.albumArt} source={albumArt}/>
           </View>
           <View style={styles.flippedAlbumArt}>
-            <Text style={styles.additionalSongInfo}>Last played: {moment.unix(song.lastplayed).fromNow()}</Text>
-            <Text style={styles.additionalSongInfo}>Play count: {song.playcount}</Text>
-            <Text style={styles.additionalSongInfo}>Marked as played: {song.isMarkedAsPlayed ? "✔" : "x"}</Text>
+            <NormalText style={styles.additionalSongInfo}>Last played: {moment.unix(song.lastplayed).fromNow()}</NormalText>
+            <NormalText style={styles.additionalSongInfo}>Play count: {song.playcount}</NormalText>
+            <NormalText style={styles.additionalSongInfo}>Marked as played: {song.isMarkedAsPlayed ? "✔" : "x"}</NormalText>
           </View>
         </FlipCard>
       </View>
