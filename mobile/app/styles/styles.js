@@ -1,6 +1,7 @@
 import Color from 'color';
 
 const colors = {
+  CYAN_DARKEST: Color("#111f22").rgbString(),
   CYAN_DARK: Color("#335d66"),
   CYAN_BRIGHT: Color("#71cfe2"),
   SEMI_WHITE: Color("#e2e2e2"),
@@ -12,4 +13,4 @@ const fontSizes = {
   LARGE: 20,
 };
 
-export { colors, fontSizes }
+export { colors, fontSizes}
