@@ -24,19 +24,20 @@ const styles = StyleSheet.create({
 
 const menuOptionsCustomStyles = {
   OptionTouchableComponent: TouchableHighlight,
-  optionTouchable: {
-    activeOpacity: 1,
-    underlayColor: colors.CYAN_DARK.rgbaString(),
-  },
   optionsWrapper: {
     backgroundColor: colors.CYAN_DARKEST,
     borderColor: colors.CYAN_BRIGHT.rgbString(),
     borderStyle: "solid",
     borderWidth: 1,
   },
+  optionTouchable: {
+    activeOpacity: 1,
+    underlayColor: colors.CYAN_DARK.rgbaString(),
+  },
   optionText: {
     color: colors.CYAN_BRIGHT.rgbString(),
-    padding: 10, textAlign: "center",
+    padding: 10,
+    textAlign: "center",
   },
 }
 

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TouchableHighlight, Text} from 'react-native';
 
 import DropdownMenu from 'react-dd-menu';
 require("./context_menu.css");
@@ -7,8 +7,23 @@ require("./context_menu.css");
 let MenuContext = props => <View>{props.children}</View>
 
 let MenuTrigger = props => <View style={props.style}>{props.children}</View>
-let MenuOptions = props => <View style={props.style}>{props.children}</View>
-let MenuOption = props => <View style={props.style} onClick={props.onSelect}>{props.children}</View>
+let MenuOptions = props => (
+  <View style={props.customStyles.optionsWrapper}>
+    {
+      React.Children.map(props.children, child =>
+        React.cloneElement(child, {
+          optionTouchable: props.customStyles.optionTouchable,
+          optionText: props.customStyles.optionText
+        })
+      )
+    }
+  </View>
+)
+let MenuOption = props => (
+  <TouchableHighlight onPress={props.onSelect} {...props.optionTouchable}>
+    <Text style={[{whiteSpace: "pre"}, props.optionText]}>{props.text}</Text>
+  </TouchableHighlight>
+)
 
 class Menu extends Component {
   componentWillMount() {
