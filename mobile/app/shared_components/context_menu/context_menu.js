@@ -4,7 +4,7 @@ import {View, StyleSheet, TouchableHighlight, Text} from 'react-native';
 import DropdownMenu from 'react-dd-menu';
 require("./context_menu.css");
 
-let MenuContext = props => <View>{props.children}</View>
+let MenuContext = props => <View style={props.customStyles.menuContextWrapper}>{props.children}</View>
 
 let MenuTrigger = props => <View style={props.style}>{props.children}</View>
 let MenuOptions = props => (

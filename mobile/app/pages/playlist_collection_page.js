@@ -37,8 +37,9 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.NORMAL,
   },
   settingsButton: {
-    marginTop: 20,
-    alignSelf: "flex-end",
+    position: "absolute",
+    top: 10,
+    right: 10,
     paddingHorizontal: 10,
     paddingVertical: 10,
   },

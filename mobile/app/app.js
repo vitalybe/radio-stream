@@ -19,7 +19,11 @@ const styles = StyleSheet.create({
     // remove width and height to override fixed static size
     width: null,
     height: null,
-    alignItems: 'center',
+    alignSelf: 'stretch',
+  }, 
+  menuContext: {
+    flex: 1, 
+    alignSelf: "stretch"
   }
 });
 
@@ -67,7 +71,7 @@ export default class RadioStream extends Component {
       <Image source={require("./images/background.jpg")}
              resizeMode="cover"
              style={styles.container}>
-        <MenuContext>
+        <MenuContext customStyles={{menuContextWrapper: styles.menuContext}}>
           { this.state.ready ? page : null }
         </MenuContext>
       </Image>
