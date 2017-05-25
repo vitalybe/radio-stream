@@ -106,7 +106,7 @@ export default class PlayerPage extends Component {
             {/* Ratings */}
             <View style={styles.rating}>
               <Rating song={song}/>
-              <PlayerContextMenu />
+              <PlayerContextMenu song={song}/>
             </View>
             {/* Names */}
             <View style={styles.songDetails}>

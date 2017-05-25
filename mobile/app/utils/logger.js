@@ -55,7 +55,7 @@ module.exports = clim = function (prefix, parent, patch) {
   consoleProxy(ob);
 
   if(parent) {
-    ob.info("created");
+    ob.info("started");
   }
 
   return ob;

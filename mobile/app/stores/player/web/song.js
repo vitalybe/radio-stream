@@ -2,48 +2,43 @@ import loggerCreator from '../../../utils/logger'
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator(__filename);
 
-import {observable} from "mobx";
+import {extendObservable} from "mobx";
 import assert from "../../../utils/assert"
 import retries from "../../../utils/retries"
 
 import backendMetadataApi from '../../../utils/backend_metadata_api'
 import * as backendLastFm from '../../../utils/backend_lastfm_api'
 import * as wrappedSoundManager from './wrapped_sound_manager'
+import SongActions from '../song_actions'
 
 export class Song {
-  id = null;
-  title = null;
-  artist = null;
-  album = null;
-  playcount = null;
-  lastplayed = null;
-  path = null;
-  @observable rating = null;
-
-  @observable isMarkedAsPlayed = false;
-  markingAsPlayedPromise = null;
-
-  @observable loadedSound = null;
-  @observable loadedImageUrl = null;
-
   constructor(songData) {
     let logger = loggerCreator(this.constructor.name, moduleLogger);
 
-    this.title = songData.title;
-    this.id = songData.id;
-    this.artist = songData.artist;
-    this.album = songData.album;
-    // values: 0 to 100 in increments of 20
-    this.rating = songData.rating;
-    this.playcount = songData.playcount;
-    this.lastplayed = songData.lastplayed;
-    this.path = songData.path;
+    extendObservable(this, {
+      title: songData.title,
+      id: songData.id,
+      artist: songData.artist,
+      album: songData.album,
+      // values: 0 to 100 in increments of 20
+      rating: songData.rating,
+      playcount: songData.playcount,
+      lastplayed: songData.lastplayed,
+      path: songData.path,
+
+      isMarkedAsPlayed: false,
+      loadedImageUrl: null,
+    })
+
+    this.loadedSound = null
+    this.markingAsPlayedPromise = null
 
     this._onFinishCallback = null;
     this._onPlayProgressCallback = null;
 
     this._lastPositionSeconds = 0;
 
+    this.actions = new SongActions(this)
     logger.info(`new song: ${this.toString()}`);
   }
 
@@ -161,14 +156,6 @@ export class Song {
     }
 
     return this.markingAsPlayedPromise;
-  }
-
-  async markAsDeleted() {
-    let logger = loggerCreator("delete", moduleLogger);
-    logger.debug(`start: ${this.toString()}`);
-    await retries.promiseRetry(() => backendMetadataApi.markAsDeleted(this.id))
-    logger.debug(`complete: ${this.toString()}`);
-
   }
 
   toString() {

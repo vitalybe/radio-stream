@@ -62,6 +62,10 @@ class BackendMetadataApi {
     return this._getAjax().post(`/item/${songId}/last-played`);
   }
 
+  markAsDeleted(songId) {
+    return this._getAjax().delete(`/item/${songId}`);
+  }
+
   testConnection(host, password) {
     let logger = loggerCreator("testConnection", moduleLogger);
     logger.info(`host: ${host}`);

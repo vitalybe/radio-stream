@@ -34,12 +34,7 @@ export default class Rating extends Component {
       logger.info(`clicked star ${starIndex}`);
 
       let newRating = (starIndex + 1) * RATING_STAR_RATIO;
-      logger.info(`new rating: ${newRating}`);
-
-      logger.info(`updating song ${this.props.song.id} with new rating: ${newRating}`);
-      this.props.song.rating = newRating;
-      await BackendMetadataApi.updateRating(this.props.song.id, newRating);
-      logger.info(`update finished`);
+      await this.props.song.actions.changeRating(newRating)
 
       Vibration.vibrate(500);
     } catch (e) {

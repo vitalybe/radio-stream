@@ -51,10 +51,14 @@ export default class PlayerContextMenu extends Component {
           <Text style={styles.menuTrigger}>&#8942;</Text>
         </MenuTrigger>
         <MenuOptions customStyles={menuOptionsCustomStyles}>
-          <MenuOption onSelect={(value) => alert(`User selected the number 1`)} text="Clear rating"/>
-          <MenuOption onSelect={(value) => alert(`User selected the number 1`)} text="Delete song"/>
+          <MenuOption onSelect={() => this.props.song.actions.changeRating(0)} text="Clear rating"/>
+          <MenuOption onSelect={() => this.props.song.actions.markAsDeleted()} text="Delete song"/>
         </MenuOptions>
       </Menu>
     );
   }
 }
+
+PlayerContextMenu.propTypes = {
+  song: React.PropTypes.object.isRequired
+};
