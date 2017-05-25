@@ -3,5 +3,14 @@
     "*.js": "javascriptreact",
     "*.jsx": "javascriptreact"
   },
-  "javascript.validate.enable": true
+  "javascript.validate.enable": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "node_modules": true,
+    "android": true
+  }
 }
