@@ -328,7 +328,7 @@ public class PlayerService extends Service implements PlaylistControls {
         Timber.i("function start");
         mIsBoundToActivity = false;
 
-        return false;
+        return true;
     }
 
     @Override
