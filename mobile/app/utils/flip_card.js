@@ -1,6 +1,6 @@
 // Taken from https://github.com/moschan/react-native-flip-card/blob/master/lib/FlipCard.js
 import React, {Component, PropTypes } from "react";
-import {View, TouchableWithoutFeedback, Animated, StyleSheet } from "react-native";
+import {View, TouchableOpacity, Animated, StyleSheet } from "react-native";
 
 const S = StyleSheet.create({
   flipCard: {
@@ -33,6 +33,7 @@ export default class FlipCard extends Component {
   }
 
   _toggleCard () {
+    console.log("flipppping!")
     this.setState({isFlipping: true})
     this._animation(!this.state.isFlipped)
   }
@@ -156,7 +157,8 @@ export default class FlipCard extends Component {
         opacity = 1;
       }
         return (
-        <TouchableWithoutFeedback
+        <TouchableOpacity
+          activeOpacity={1}
           testID={this.props.testID}
           onPress={() => {
               this._toggleCard();
@@ -175,7 +177,7 @@ export default class FlipCard extends Component {
           >
             {render_side}
           </Animated.View>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
       )
     } else {
       return (

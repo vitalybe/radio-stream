@@ -11,12 +11,13 @@ import NormalText from '../../shared_components/text/normal_text'
 import moment from 'moment';
 import {colors, fontSizes} from '../../styles/styles'
 
-const BIG_DEVICE_HEIGHT = 600
+const BIG_DEVICE_HEIGHT = 700
 
 const SMALL_ART_SIZE = 200;
 const BIG_ART_SIZE = 300;
 
 let height = Dimensions.get('window').height;
+moduleLogger.info(`window height: ${height}`)
 let artSize = SMALL_ART_SIZE
 if (height > BIG_DEVICE_HEIGHT) {
   artSize = BIG_ART_SIZE;
