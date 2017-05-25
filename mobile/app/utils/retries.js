@@ -1,6 +1,6 @@
 import loggerCreator from '../utils/logger'
 //noinspection JSUnresolvedVariable
-const moduleLogger = loggerCreator(__filename);
+const moduleLogger = loggerCreator("Retries");
 
 import promiseRetryLib from "promise-retry";
 

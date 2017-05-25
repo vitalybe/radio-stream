@@ -2,9 +2,10 @@ import loggerCreator from '../../../utils/logger'
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator("song");
 
-import {observable} from "mobx";
+import { observable } from "mobx";
 
-import {getArtistImage} from '../../../utils/backend_lastfm_api'
+import { getArtistImage } from '../../../utils/backend_lastfm_api'
+import SongActions from '../song_actions'
 
 export default class Song {
   @observable id = null;
@@ -22,7 +23,7 @@ export default class Song {
   @observable loadedSound = null;
   @observable loadedImageUrl = null;
 
-  constructor({id, artist, title, album, rating, playcount, lastplayed, isMarkedAsPlayed}) {
+  constructor({ id, artist, title, album, rating, playcount, lastplayed, isMarkedAsPlayed }) {
     let logger = loggerCreator("constructor", moduleLogger);
 
     this.id = id;
@@ -39,6 +40,8 @@ export default class Song {
       logger.info(`got album art uri: ${imageUri}`);
       this.loadedImageUrl = imageUri;
     })
+
+    this.actions = new SongActions(this)
   }
 
   toString() {

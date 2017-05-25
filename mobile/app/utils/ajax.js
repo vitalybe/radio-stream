@@ -65,4 +65,8 @@ export default class Ajax {
   put(apiAddress, userConfig) {
     return this._ajaxCall(apiAddress, _.assign({method: "put"}, userConfig))
   }
+
+  delete(apiAddress, userConfig) {
+    return this._ajaxCall(apiAddress, _.assign({ method: "delete" }, userConfig))
+  }
 }

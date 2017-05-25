@@ -3,8 +3,9 @@ import loggerCreator from '../../utils/logger'
 var moduleLogger = loggerCreator("PlayerLoadingSpinner");
 
 import React, {Component} from 'react';
-import {Image, StyleSheet, Text, View, ActivityIndicator, } from 'react-native';
+import {Image, StyleSheet, View, ActivityIndicator, } from 'react-native';
 
+import NormalText from '../../shared_components/text/normal_text'
 import player from '../../stores/player/player'
 
 const styles = StyleSheet.create({
@@ -46,8 +47,8 @@ export default class PlayerLoadingSpinner extends Component {
           <ActivityIndicator size="large"/>
         </View>
         <View style={styles.progressStatus}>
-          <Text>{loadingStatus}</Text>
-          <Text style={styles.progressStatusError}>{loadingError}</Text>
+          <NormalText>{loadingStatus}</NormalText>
+          <NormalText style={styles.progressStatusError}>{loadingError}</NormalText>
         </View>
       </View>
     );
