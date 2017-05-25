@@ -28,9 +28,9 @@ export class Song {
 
       isMarkedAsPlayed: false,
       loadedImageUrl: null,
+      loadedSound: null,
     })
 
-    this.loadedSound = null
     this.markingAsPlayedPromise = null
 
     this._onFinishCallback = null;
