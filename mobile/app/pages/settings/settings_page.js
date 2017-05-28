@@ -88,8 +88,10 @@ export default class SettingsPage extends Component {
 
       logger.info(`updating global settings`);
 
-      settings.update(host, password);
+      settings.host = host;
+      settings.password = password;
       await settings.save();
+
       navigator.navigateToPlaylistCollection();
     } catch (error) {
       this.store.status = `Failed: ${error}`;
