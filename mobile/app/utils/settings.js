@@ -9,14 +9,12 @@ let PERSISTENCE_HOST = "host";
 let PERSISTENCE_PASSWORD = "password";
 
 class Settings {
-  _host = null;
-
-  _user = DEFAULT_USER;
-
-  _password = null;
-
   constructor() {
     let logger = loggerCreator(this.constructor.name, moduleLogger);
+
+    this._host = null;
+    this._user = DEFAULT_USER;
+    this._password = null;
 
     this.load();
   }

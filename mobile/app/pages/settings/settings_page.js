@@ -75,28 +75,25 @@ export default class SettingsPage extends Component {
     this.store[label] = text;
   }
 
-  onSavePress() {
+  async onSavePress() {
     let logger = loggerCreator("onSavePress", moduleLogger);
 
     let host = this.store.host;
     let password = this.store.password;
 
-    this.store.status = "Connecting...";
-    backendMetadataApi
-      .testConnection(host, password)
-      .then(() => {
-        this.store.status = "Connected";
+    try {
+      this.store.status = "Connecting...";
+      await backendMetadataApi.testConnection(host, password);
+      this.store.status = "Connected";
 
-        logger.info(`updating global settings`);
+      logger.info(`updating global settings`);
 
-        globalSettings.update(host, password);
-        return globalSettings.save().then(() => {
-          navigator.navigateToPlaylistCollection();
-        });
-      })
-      .catch(error => {
-        this.store.status = `Failed: ${error}`;
-      });
+      globalSettings.update(host, password);
+      await globalSettings.save();
+      navigator.navigateToPlaylistCollection();
+    } catch (error) {
+      this.store.status = `Failed: ${error}`;
+    }
   }
 
   render() {
