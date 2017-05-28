@@ -1,12 +1,11 @@
-import loggerCreator from '../../utils/logger'
+import loggerCreator from "../../utils/logger";
 const moduleLogger = loggerCreator("navigator_real");
 
 import { observable } from "mobx";
 
-import constants from '../../utils/constants'
+import constants from "../../utils/constants";
 
 class Navigator {
-
   @observable activeRoute = null;
 
   constructor() {
@@ -16,7 +15,7 @@ class Navigator {
   _navigateTo(address, params) {
     let logger = loggerCreator("_navigateTo", moduleLogger);
     logger.info(`${address}`);
-    this.activeRoute = observable(Object.assign({address: address}, params));
+    this.activeRoute = observable(Object.assign({ address: address }, params));
   }
 
   navigateToPlaylistCollection() {
@@ -26,7 +25,7 @@ class Navigator {
 
   navigateToPlayer(playlistName) {
     loggerCreator("navigateToPlayer", moduleLogger);
-    this._navigateTo(constants.ROUTE_PLAYER_PAGE, {playlistName: playlistName});
+    this._navigateTo(constants.ROUTE_PLAYER_PAGE, { playlistName: playlistName });
   }
 
   navigateToSettings() {
@@ -35,4 +34,4 @@ class Navigator {
   }
 }
 
-export default new Navigator()
+export default new Navigator();

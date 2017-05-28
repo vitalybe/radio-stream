@@ -1,13 +1,12 @@
-import loggerCreator from '../../../utils/logger'
+import loggerCreator from "../../../utils/logger";
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator(__filename);
 
 // wraps SoundManager2 sound object
 export default class WrappedSound {
-
   constructor(sound) {
     let logger = loggerCreator("constructor", moduleLogger);
-        this._sound = sound;
+    this._sound = sound;
   }
 
   play(options) {
@@ -45,5 +44,4 @@ export default class WrappedSound {
   get position() {
     return this._sound.position;
   }
-
 }

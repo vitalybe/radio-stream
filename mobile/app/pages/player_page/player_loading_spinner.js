@@ -1,12 +1,12 @@
-import loggerCreator from '../../utils/logger'
+import loggerCreator from "../../utils/logger";
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator("PlayerLoadingSpinner");
 
-import React, {Component} from 'react';
-import {Image, StyleSheet, View, ActivityIndicator, } from 'react-native';
+import React, { Component } from "react";
+import { Image, StyleSheet, View, ActivityIndicator } from "react-native";
 
-import NormalText from '../../shared_components/text/normal_text'
-import player from '../../stores/player/player'
+import NormalText from "../../shared_components/text/normal_text";
+import player from "../../stores/player/player";
 
 const styles = StyleSheet.create({
   // Progress
@@ -21,30 +21,27 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   progressStatusError: {
-    color: "red"
-  }
+    color: "red",
+  },
 });
 
 export default class PlayerLoadingSpinner extends Component {
-
   render() {
-
-    const song = this.props.song
+    const song = this.props.song;
     let loadingStatus = "Loading";
     if (song && song.title) {
-      loadingStatus = `${loadingStatus}: ${song.artist} - ${song.title}`
+      loadingStatus = `${loadingStatus}: ${song.artist} - ${song.title}`;
     }
 
     let loadingError = "";
     if (player.loadingError) {
-      loadingError = `Error occurred, retrying: ${player.loadingError}`
+      loadingError = `Error occurred, retrying: ${player.loadingError}`;
     }
-
 
     return (
       <View>
         <View style={styles.progressSpinner}>
-          <ActivityIndicator size="large"/>
+          <ActivityIndicator size="large" />
         </View>
         <View style={styles.progressStatus}>
           <NormalText>{loadingStatus}</NormalText>

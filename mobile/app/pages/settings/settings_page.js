@@ -1,21 +1,21 @@
-import loggerCreator from '../../utils/logger'
+import loggerCreator from "../../utils/logger";
 const moduleLogger = loggerCreator("settings_page");
 
-import React, {Component} from 'react';
-import {StyleSheet, View, TextInput} from 'react-native';
-import BackHandler from '../../utils/back_handler/back_handler'
-import {observable} from "mobx";
-import {observer} from "mobx-react"
+import React, { Component } from "react";
+import { StyleSheet, View, TextInput } from "react-native";
+import BackHandler from "../../utils/back_handler/back_handler";
+import { observable } from "mobx";
+import { observer } from "mobx-react";
 
-import {colors, fontSizes} from '../../styles/styles'
-import Button from '../../shared_components/rectangle_button'
-import NormalText from '../../shared_components/text/normal_text'
-import ButtonText from '../../shared_components/text/button_text'
-import SettingsPagePlatformSpecific from './settings_page_platform_specific';
-import {globalSettings} from '../../utils/settings'
-import backendMetadataApi from '../../utils/backend_metadata_api'
-import navigator from '../../stores/navigator/navigator'
-import SettingsTextInput from './settings_text_input'
+import { colors, fontSizes } from "../../styles/styles";
+import Button from "../../shared_components/rectangle_button";
+import NormalText from "../../shared_components/text/normal_text";
+import ButtonText from "../../shared_components/text/button_text";
+import SettingsPagePlatformSpecific from "./settings_page_platform_specific";
+import { globalSettings } from "../../utils/settings";
+import backendMetadataApi from "../../utils/backend_metadata_api";
+import navigator from "../../stores/navigator/navigator";
+import SettingsTextInput from "./settings_text_input";
 
 const styles = StyleSheet.create({
   container: {
@@ -27,19 +27,18 @@ const styles = StyleSheet.create({
 
     marginVertical: 20,
   },
-    submit: {
+  submit: {
     alignSelf: "flex-start",
     marginTop: 20,
   },
 
   saveButton: {
     marginTop: 10,
-  }
+  },
 });
 
 @observer
 export default class SettingsPage extends Component {
-
   constructor(props) {
     super(props);
 
@@ -52,7 +51,7 @@ export default class SettingsPage extends Component {
       status: null,
     });
 
-    BackHandler.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
+    BackHandler.addEventListener("hardwareBackPress", () => this.onPressHardwareBack());
   }
 
   onPressHardwareBack() {
@@ -64,7 +63,6 @@ export default class SettingsPage extends Component {
     } else {
       logger.info(`no host was configured - quitting`);
       BackHandler.exitApp();
-
     }
 
     return true;
@@ -84,7 +82,8 @@ export default class SettingsPage extends Component {
     let password = this.store.password;
 
     this.store.status = "Connecting...";
-    backendMetadataApi.testConnection(host, password)
+    backendMetadataApi
+      .testConnection(host, password)
       .then(() => {
         this.store.status = "Connected";
 
@@ -97,7 +96,7 @@ export default class SettingsPage extends Component {
       })
       .catch(error => {
         this.store.status = `Failed: ${error}`;
-      })
+      });
   }
 
   render() {
@@ -105,12 +104,20 @@ export default class SettingsPage extends Component {
 
     return (
       <View style={styles.container}>
-        <SettingsTextInput label="Host" value={this.store.host} onChangeText={text => this.onTextChange("host", text)}/>
-        <SettingsTextInput label="Password" value={this.store.password} secureTextEntry={true}
-                           onChangeText={text => this.onTextChange("password", text)}/>
+        <SettingsTextInput
+          label="Host"
+          value={this.store.host}
+          onChangeText={text => this.onTextChange("host", text)}
+        />
+        <SettingsTextInput
+          label="Password"
+          value={this.store.password}
+          secureTextEntry={true}
+          onChangeText={text => this.onTextChange("password", text)}
+        />
 
         <SettingsPagePlatformSpecific />
-        
+
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>
         </Button>

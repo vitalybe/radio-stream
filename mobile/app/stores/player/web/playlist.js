@@ -1,13 +1,13 @@
-import loggerCreator from '../../../utils/logger'
+import loggerCreator from "../../../utils/logger";
 const moduleLogger = loggerCreator(__filename);
 
-import {observable} from "mobx";
+import { observable } from "mobx";
 
-import {Song} from "./song"
-import backendMetadataApi from '../../../utils/backend_metadata_api'
+import { Song } from "./song";
+import backendMetadataApi from "../../../utils/backend_metadata_api";
 
 export default class Playlist {
-  static RELOAD_PLAYLIST_AFTER_MINUTES = 60
+  static RELOAD_PLAYLIST_AFTER_MINUTES = 60;
 
   @observable name = null;
 
@@ -29,7 +29,7 @@ export default class Playlist {
     } else {
       let secondsSinceReload = new Date() - this._lastReloadDate;
       logger.info(`seconds since reload ${secondsSinceReload}`);
-      let minutesSinceReload = secondsSinceReload / 1000 / 60
+      let minutesSinceReload = secondsSinceReload / 1000 / 60;
       logger.info(`is minutes since reload ${minutesSinceReload} more than ${Playlist.RELOAD_PLAYLIST_AFTER_MINUTES}?`);
 
       result = minutesSinceReload >= Playlist.RELOAD_PLAYLIST_AFTER_MINUTES;
@@ -60,29 +60,28 @@ export default class Playlist {
         this._lastReloadDate = new Date();
       });
     }
-  };
+  }
 
   nextSong() {
     let logger = loggerCreator(this.nextSong.name, moduleLogger);
 
-    return this.peekNextSong().then((song) => {
+    return this.peekNextSong().then(song => {
       this._currentIndex++;
       logger.info(`new index: ${this._currentIndex}`);
 
       return song;
-    })
+    });
   }
 
   peekNextSong() {
     let logger = loggerCreator(this.peekNextSong.name, moduleLogger);
 
-    return this._reloadSongsIfNeeded()
-      .then(() => {
-        logger.info(`returning song by index: ${this._currentIndex}`);
-        let song = this._songs[this._currentIndex];
-        logger.info(`returning song: ${song}`);
+    return this._reloadSongsIfNeeded().then(() => {
+      logger.info(`returning song by index: ${this._currentIndex}`);
+      let song = this._songs[this._currentIndex];
+      logger.info(`returning song: ${song}`);
 
-        return song;
-      })
+      return song;
+    });
   }
 }

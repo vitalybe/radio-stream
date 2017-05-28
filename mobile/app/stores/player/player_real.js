@@ -1,15 +1,14 @@
-import loggerCreator from '../../utils/logger'
+import loggerCreator from "../../utils/logger";
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator("player_real");
 
-import {observable, action, computed} from "mobx";
-import retries from "../../utils/retries"
-import assert from "../../utils/assert"
-import Playlist from './web/playlist'
-import * as wrappedSoundManager from './web/wrapped_sound_manager'
+import { observable, action, computed } from "mobx";
+import retries from "../../utils/retries";
+import assert from "../../utils/assert";
+import Playlist from "./web/playlist";
+import * as wrappedSoundManager from "./web/wrapped_sound_manager";
 
 class Player {
-
   MARK_PLAYED_AFTER_SECONDS = 20;
 
   @observable isPlaying = false;
@@ -65,7 +64,7 @@ class Player {
     if (this.song) {
       this.song.playSound();
     } else {
-      this.playNext()
+      this.playNext();
     }
 
     this.isPlaying = true;
@@ -75,14 +74,15 @@ class Player {
     let logger = loggerCreator(this._preloadNextSong.name, moduleLogger);
 
     logger.info(`peeking next song`);
-    return this.currentPlaylist.peekNextSong()
-      .then((peekedSong) => {
+    return this.currentPlaylist
+      .peekNextSong()
+      .then(peekedSong => {
         logger.info(`loading peeked song: ${peekedSong.toString()}`);
         return peekedSong.load();
       })
       .catch(err => {
         logger.warn(`failed to peek the next song: ${err.stack}`);
-      })
+      });
   }
 
   async playNext() {
@@ -116,7 +116,7 @@ class Player {
       this.loadingError = lastError && lastError.toString();
       let nextSong = await this.currentPlaylist.nextSong();
 
-      if(nextSong !== null) {
+      if (nextSong !== null) {
         logger.info(`got next song: ${nextSong.toString()}`);
 
         if (this.song !== nextSong || this.song === null) {
@@ -131,9 +131,9 @@ class Player {
         await this.song.playSound();
       } else {
         logger.info(`no next song returned - playlist is empty`);
-        this.loadingError = "Playlist is empty - No additional songs found"
+        this.loadingError = "Playlist is empty - No additional songs found";
       }
-    })
+    });
 
     await this._preloadNextSong();
   }

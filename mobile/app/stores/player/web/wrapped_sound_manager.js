@@ -1,13 +1,13 @@
-import loggerCreator from '../../../utils/logger'
+import loggerCreator from "../../../utils/logger";
 //noinspection JSUnresolvedVariable
 const logger = loggerCreator(__filename);
 
-import {soundManager} from 'soundmanager2';
-import WrappedSound from './wrapped_sound.js'
-import { globalSettings } from '../../../utils/settings'
+import { soundManager } from "soundmanager2";
+import WrappedSound from "./wrapped_sound.js";
+import { globalSettings } from "../../../utils/settings";
 
 function soundId(songId) {
-  return "i" + songId.toString()
+  return "i" + songId.toString();
 }
 
 export function setup() {
@@ -17,7 +17,7 @@ export function setup() {
     // optional: ignore Flash where possible, use 100% HTML5 mode
     preferFlash: false,
     html5PollingInterval: 1000,
-    debugMode: true
+    debugMode: true,
   });
 }
 
@@ -52,12 +52,12 @@ export function loadSound(song) {
     loadingPromise = loadingSongs[id];
   } else {
     flogger.debug(`Starting createSound for song...`);
-    loadingPromise = new Promise(function (resolve, reject) {
+    loadingPromise = new Promise(function(resolve, reject) {
       let soundUrl = `http://${globalSettings.host}/radio-stream/music/${song.path}`;
-      let sound = soundManager.createSound({id: id, url: soundUrl, stream: false});
+      let sound = soundManager.createSound({ id: id, url: soundUrl, stream: false });
       sound.load({
         stream: true,
-        onload: function (success) {
+        onload: function(success) {
           delete loadingSongs[id];
 
           flogger.debug(`Callback 'onload' - Success: ${success}`);
@@ -82,7 +82,7 @@ export function loadSound(song) {
             soundManager.destroySound(id);
             reject(error);
           }
-        }
+        },
       });
     });
 

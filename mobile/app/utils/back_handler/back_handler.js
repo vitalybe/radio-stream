@@ -1,3 +1,3 @@
-import {BackAndroid} from 'react-native';
+import { BackAndroid } from "react-native";
 // This is the deprecated form
 export default BackAndroid;

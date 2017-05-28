@@ -1,18 +1,16 @@
-'use strict';
-import loggerCreator from '../../utils/logger'
+"use strict";
+import loggerCreator from "../../utils/logger";
 const moduleLogger = loggerCreator("player_real.android");
 
-import {observable, computed, action} from "mobx";
-import {NativeModules, DeviceEventEmitter, AppState} from 'react-native';
+import { observable, computed, action } from "mobx";
+import { NativeModules, DeviceEventEmitter, AppState } from "react-native";
 
-import Playlist from './android/playlist'
-import Song from './android/song'
-import {globalSettings} from '../../utils/settings'
-import navigator from '../navigator/navigator'
-
+import Playlist from "./android/playlist";
+import Song from "./android/song";
+import { globalSettings } from "../../utils/settings";
+import navigator from "../navigator/navigator";
 
 class Player {
-
   PLAYLIST_PLAYER_STATUS_EVENT = "PLAYLIST_PLAYER_STATUS_EVENT";
 
   @observable isPlaying = false;
@@ -29,12 +27,11 @@ class Player {
     this.statusCallback = null;
 
     DeviceEventEmitter.addListener(this.PLAYLIST_PLAYER_STATUS_EVENT, event => this.onPlayerStatusChanged(event));
-    AppState.addEventListener('change', this.onHandleAppStateChange);
+    AppState.addEventListener("change", this.onHandleAppStateChange);
   }
 
   _sleep(millisecond) {
-    return new Promise(resolve => setTimeout(resolve, millisecond)
-    )
+    return new Promise(resolve => setTimeout(resolve, millisecond));
   }
 
   _updateSettings(host, user, password) {
@@ -52,7 +49,7 @@ class Player {
     } else {
       logger.info(`not available - retrying soon...`);
       await this._sleep(500);
-      await this._resolveWhenPlayerAvailable()
+      await this._resolveWhenPlayerAvailable();
     }
   }
 
@@ -76,11 +73,10 @@ class Player {
     let logger = loggerCreator("updatePlayerStatus", moduleLogger);
 
     const nativePlayerStatus = await this._resolveWhenPlayerAvailable().then(() => this.proxy.getPlayerStatus());
-    this.onPlayerStatusChanged(nativePlayerStatus)
+    this.onPlayerStatusChanged(nativePlayerStatus);
   }
 
-  @action
-  onPlayerStatusChanged(nativePlayerStatus) {
+  @action onPlayerStatusChanged(nativePlayerStatus) {
     let logger = loggerCreator("onPlayerStatusChanged", moduleLogger);
     logger.info(`${JSON.stringify(nativePlayerStatus)}`);
 
@@ -106,15 +102,13 @@ class Player {
         logger.info(`no song`);
         this.song = null;
       } else {
-
         if (!this.song || this.song.id !== song.id) {
           logger.info(`song changed`);
           this.song = new Song(song);
         }
-        
-        this.song.isMarkedAsPlayed = song.isMarkedAsPlayed
-      }
 
+        this.song.isMarkedAsPlayed = song.isMarkedAsPlayed;
+      }
     }
   }
 
@@ -122,11 +116,11 @@ class Player {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.stopPlayer());
   }
 
-  onHandleAppStateChange = async (currentAppState) => {
+  onHandleAppStateChange = async currentAppState => {
     let logger = loggerCreator("onHandleAppStateChange", moduleLogger);
     logger.info(`${currentAppState}`);
 
-    if (currentAppState === 'active') {
+    if (currentAppState === "active") {
       logger.info(`updating player status`);
       await this.updatePlayerStatus();
       logger.info(`finishing getting status`);
@@ -142,11 +136,10 @@ class Player {
       if (this.song) {
         return `${this.song.artist} - ${this.song.title}`;
       } else {
-        return "Loading..."
+        return "Loading...";
       }
     }
   }
-
 }
 
 export default new Player();

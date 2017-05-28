@@ -1,7 +1,7 @@
-import loggerCreator from '../utils/logger'
+import loggerCreator from "../utils/logger";
 const moduleLogger = loggerCreator("settings");
 
-import {AsyncStorage} from 'react-native'
+import { AsyncStorage } from "react-native";
 
 let DEFAULT_USER = "radio";
 
@@ -36,9 +36,8 @@ class Settings {
   async load() {
     let logger = loggerCreator("load", moduleLogger);
 
-
-    this._host = await AsyncStorage.getItem(PERSISTENCE_HOST) || "";
-    this._password = await AsyncStorage.getItem(PERSISTENCE_PASSWORD) || "";
+    this._host = (await AsyncStorage.getItem(PERSISTENCE_HOST)) || "";
+    this._password = (await AsyncStorage.getItem(PERSISTENCE_PASSWORD)) || "";
   }
 
   async save() {

@@ -1,20 +1,19 @@
-import loggerCreator from '../../utils/logger'
+import loggerCreator from "../../utils/logger";
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator("PlayerContextMenu");
 
-import React, { Component } from 'react';
-import { Image, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import React, { Component } from "react";
+import { Image, StyleSheet, Text, View, TouchableHighlight } from "react-native";
 
-import { colors } from '../../styles/styles'
-import { Menu, MenuOptions, MenuOption, MenuTrigger } from '../../shared_components/context_menu/context_menu';
-import player from '../../stores/player/player'
-
+import { colors } from "../../styles/styles";
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from "../../shared_components/context_menu/context_menu";
+import player from "../../stores/player/player";
 
 const styles = StyleSheet.create({
   menu: {
     position: "absolute",
     right: 0,
-    top: -5
+    top: -5,
   },
   menuTrigger: {
     paddingRight: 20,
@@ -41,11 +40,9 @@ const menuOptionsCustomStyles = {
     padding: 10,
     textAlign: "center",
   },
-}
-
+};
 
 export default class PlayerContextMenu extends Component {
-
   async deleteSong() {
     let logger = loggerCreator("deleteSong", moduleLogger);
     logger.info(`start`);
@@ -53,9 +50,9 @@ export default class PlayerContextMenu extends Component {
     let song = this.props.song;
     if (song) {
       player.playNext();
-      song.actions.markAsDeleted()
+      song.actions.markAsDeleted();
     } else {
-      logger.error("song doesn't exist")
+      logger.error("song doesn't exist");
     }
   }
 
@@ -63,7 +60,7 @@ export default class PlayerContextMenu extends Component {
     return (
       <Menu style={styles.menu}>
         <MenuTrigger>
-          <Text style={styles.menuTrigger}>&#8942;</Text>
+          <Text style={styles.menuTrigger}>⋮</Text>
         </MenuTrigger>
         <MenuOptions customStyles={menuOptionsCustomStyles}>
           <MenuOption onSelect={() => this.props.song.actions.changeRating(0)} text="Clear rating" />
@@ -75,5 +72,5 @@ export default class PlayerContextMenu extends Component {
 }
 
 PlayerContextMenu.propTypes = {
-  song: React.PropTypes.object.isRequired
+  song: React.PropTypes.object.isRequired,
 };

@@ -1,8 +1,8 @@
-import loggerCreator from '../../../utils/logger'
+import loggerCreator from "../../../utils/logger";
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator("song");
 
-import {observable} from "mobx";
+import { observable } from "mobx";
 
 export default class Song {
   @observable id = null;

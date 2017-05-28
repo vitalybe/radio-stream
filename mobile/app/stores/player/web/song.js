@@ -1,15 +1,15 @@
-import loggerCreator from '../../../utils/logger'
+import loggerCreator from "../../../utils/logger";
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator(__filename);
 
-import {extendObservable} from "mobx";
-import assert from "../../../utils/assert"
-import retries from "../../../utils/retries"
+import { extendObservable } from "mobx";
+import assert from "../../../utils/assert";
+import retries from "../../../utils/retries";
 
-import backendMetadataApi from '../../../utils/backend_metadata_api'
-import * as backendLastFm from '../../../utils/backend_lastfm_api'
-import * as wrappedSoundManager from './wrapped_sound_manager'
-import SongActions from '../song_actions'
+import backendMetadataApi from "../../../utils/backend_metadata_api";
+import * as backendLastFm from "../../../utils/backend_lastfm_api";
+import * as wrappedSoundManager from "./wrapped_sound_manager";
+import SongActions from "../song_actions";
 
 export class Song {
   constructor(songData) {
@@ -29,16 +29,16 @@ export class Song {
       isMarkedAsPlayed: false,
       loadedImageUrl: null,
       loadedSound: null,
-    })
+    });
 
-    this.markingAsPlayedPromise = null
+    this.markingAsPlayedPromise = null;
 
     this._onFinishCallback = null;
     this._onPlayProgressCallback = null;
 
     this._lastPositionSeconds = 0;
 
-    this.actions = new SongActions(this)
+    this.actions = new SongActions(this);
     logger.info(`new song: ${this.toString()}`);
   }
 
@@ -67,13 +67,12 @@ export class Song {
     logger.info(`${this.toString()}`);
 
     // NOTE: This will not load sound again it was loaded before
-    return wrappedSoundManager.loadSound(this)
-      .then(sound => {
-        assert(sound && sound.loaded, "sound was not loaded");
-        logger.info(`loaded successfully`);
+    return wrappedSoundManager.loadSound(this).then(sound => {
+      assert(sound && sound.loaded, "sound was not loaded");
+      logger.info(`loaded successfully`);
 
-        this.loadedSound = sound;
-      });
+      this.loadedSound = sound;
+    });
   }
 
   async _loadImage() {
@@ -89,8 +88,6 @@ export class Song {
       logger.info(`image loaded: ${imageUrl}`);
       this.loadedImageUrl = imageUrl;
     }
-
-
   }
 
   async load() {
@@ -110,22 +107,21 @@ export class Song {
     let that = this;
 
     return this.load().then(() => {
-
       logger.info(`loaded`);
 
       let options = {};
 
       if (this._onFinishCallback) {
         logger.info(`providing onfinish callback`);
-        options.onfinish = this._onFinishCallback
+        options.onfinish = this._onFinishCallback;
       }
 
       if (this._onPlayProgressCallback) {
         logger.info(`providing whileplaying callback`);
-        options.whileplaying = function () {
+        options.whileplaying = function() {
           // NOTE: callback functions of soundmanager provide the sound in "this" parameter
           // so we can't alter "this"
-          that._onPlayProgress(this)
+          that._onPlayProgress(this);
         };
       }
 
@@ -138,8 +134,8 @@ export class Song {
     let logger = loggerCreator(this.pauseSound.name, moduleLogger);
 
     return this.load().then(() => {
-      this.loadedSound.pause()
-    })
+      this.loadedSound.pause();
+    });
   }
 
   markAsPlayed() {
@@ -147,7 +143,8 @@ export class Song {
 
     logger.debug(`start: ${this.toString()}`);
     if (!this.markingAsPlayedPromise) {
-      this.markingAsPlayedPromise = retries.promiseRetry(() => backendMetadataApi.updateLastPlayed(this.id))
+      this.markingAsPlayedPromise = retries
+        .promiseRetry(() => backendMetadataApi.updateLastPlayed(this.id))
         .then(() => {
           logger.debug(`complete: ${this.toString()}`);
 
