@@ -10,7 +10,7 @@ import {globalSettings} from './utils/settings'
 import constants from './utils/constants'
 import PlaylistCollectionPage from './pages/playlist_collection_page'
 import PlayerPage from './pages/player_page/player_page'
-import SettingsPage from './pages/settings_page'
+import SettingsPage from './pages/settings/settings_page'
 import navigator from  './stores/navigator/navigator'
 
 const styles = StyleSheet.create({

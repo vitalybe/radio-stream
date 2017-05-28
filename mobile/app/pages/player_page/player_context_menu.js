@@ -9,6 +9,7 @@ import { colors } from '../../styles/styles'
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from '../../shared_components/context_menu/context_menu';
 import player from '../../stores/player/player'
 
+
 const styles = StyleSheet.create({
   menu: {
     position: "absolute",

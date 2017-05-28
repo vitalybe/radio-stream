@@ -1,19 +1,21 @@
-import loggerCreator from '../utils/logger'
+import loggerCreator from '../../utils/logger'
 const moduleLogger = loggerCreator("settings_page");
 
 import React, {Component} from 'react';
 import {StyleSheet, View, TextInput} from 'react-native';
-import BackHandler from '../utils/back_handler/back_handler'
+import BackHandler from '../../utils/back_handler/back_handler'
 import {observable} from "mobx";
 import {observer} from "mobx-react"
 
-import {colors, fontSizes} from '../styles/styles'
-import Button from '../shared_components/rectangle_button'
-import NormalText from '../shared_components/text/normal_text'
-import ButtonText from '../shared_components/text/button_text'
-import {globalSettings} from '../utils/settings'
-import backendMetadataApi from '../utils/backend_metadata_api'
-import navigator from '../stores/navigator/navigator'
+import {colors, fontSizes} from '../../styles/styles'
+import Button from '../../shared_components/rectangle_button'
+import NormalText from '../../shared_components/text/normal_text'
+import ButtonText from '../../shared_components/text/button_text'
+import SettingsPagePlatformSpecific from './settings_page_platform_specific';
+import {globalSettings} from '../../utils/settings'
+import backendMetadataApi from '../../utils/backend_metadata_api'
+import navigator from '../../stores/navigator/navigator'
+import SettingsTextInput from './settings_text_input'
 
 const styles = StyleSheet.create({
   container: {
@@ -25,27 +27,7 @@ const styles = StyleSheet.create({
 
     marginVertical: 20,
   },
-
-  label: {
-    fontSize: fontSizes.NORMAL,
-    marginBottom: 10,
-  },
-
-  input: {
-    height: 50,
-
-    color: colors.SEMI_WHITE,
-    backgroundColor: colors.CYAN_DARK_CLEARER,
-
-    borderColor: colors.CYAN_BRIGHT,
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRadius: 5,
-
-    marginBottom: 25,
-  },
-
-  submit: {
+    submit: {
     alignSelf: "flex-start",
     marginTop: 20,
   },
@@ -123,14 +105,12 @@ export default class SettingsPage extends Component {
 
     return (
       <View style={styles.container}>
-        <NormalText style={[styles.label]}>Host</NormalText>
-        <TextInput style={[styles.input]} value={this.store.host}
-                   onChangeText={text => this.onTextChange("host", text)}/>
+        <SettingsTextInput label="Host" value={this.store.host} onChangeText={text => this.onTextChange("host", text)}/>
+        <SettingsTextInput label="Password" value={this.store.password} secureTextEntry={true}
+                           onChangeText={text => this.onTextChange("password", text)}/>
 
-        <NormalText style={[styles.label]}>Password</NormalText>
-        <TextInput style={[styles.input]} value={this.store.password} secureTextEntry={true}
-                   onChangeText={text => this.onTextChange("password", text)}/>
-
+        <SettingsPagePlatformSpecific />
+        
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>
         </Button>
@@ -139,6 +119,3 @@ export default class SettingsPage extends Component {
     );
   }
 }
-
-SettingsPage.propTypes = {
-};
