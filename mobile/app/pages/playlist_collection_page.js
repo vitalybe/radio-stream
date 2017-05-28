@@ -11,7 +11,7 @@ import { colors, fontSizes } from "../styles/styles";
 import Button from "../shared_components/rectangle_button";
 import navigator from "../stores/navigator/navigator";
 import backendMetadataApi from "../utils/backend_metadata_api";
-import { globalSettings } from "../utils/settings";
+import settings from "../utils/settings";
 
 const styles = StyleSheet.create({
   container: {
@@ -59,7 +59,7 @@ export default class PlaylistCollectionPage extends Component {
     BackHandler.addEventListener("hardwareBackPress", () => this.onPressHardwareBack());
 
     logger.info(`fetching persisted settings`);
-    if (globalSettings.host) {
+    if (settings.host) {
       logger.info(`updated status. playing? ${player.isPlaying}`);
       if (player.isPlaying) {
         logger.info(`player currently playing - navigating to player`);

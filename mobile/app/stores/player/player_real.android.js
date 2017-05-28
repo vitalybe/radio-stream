@@ -7,7 +7,7 @@ import { NativeModules, DeviceEventEmitter, AppState } from "react-native";
 
 import Playlist from "./android/playlist";
 import Song from "./android/song";
-import { globalSettings } from "../../utils/settings";
+import settings from "../../utils/settings";
 import navigator from "../navigator/navigator";
 
 class Player {
@@ -45,7 +45,7 @@ class Player {
     let isAvailable = await this.proxy.isPlayerAvailable();
     if (isAvailable) {
       logger.info(`available - updating settings`);
-      await this._updateSettings(globalSettings.host, globalSettings.user, globalSettings.password);
+      await this._updateSettings(settings.host, settings.user, settings.password);
     } else {
       logger.info(`not available - retrying soon...`);
       await this._sleep(500);

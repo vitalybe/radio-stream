@@ -6,7 +6,7 @@ import { StyleSheet, Image } from "react-native";
 import { observer } from "mobx-react";
 import { MenuContext } from "./shared_components/context_menu/context_menu";
 
-import { globalSettings } from "./utils/settings";
+import settings from "./utils/settings";
 import constants from "./utils/constants";
 import PlaylistCollectionPage from "./pages/playlist_collection_page";
 import PlayerPage from "./pages/player_page/player_page";
@@ -37,7 +37,7 @@ export default class RadioStream extends Component {
     };
 
     logger.info(`loading settings`);
-    await globalSettings.load();
+    await settings.load();
 
     logger.info(`settings loaded`);
     this.setState({ ready: true });

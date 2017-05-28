@@ -4,7 +4,7 @@ const logger = loggerCreator(__filename);
 
 import { soundManager } from "soundmanager2";
 import WrappedSound from "./wrapped_sound.js";
-import { globalSettings } from "../../../utils/settings";
+import settings from "../../../utils/settings";
 
 function soundId(songId) {
   return "i" + songId.toString();
@@ -53,7 +53,7 @@ export function loadSound(song) {
   } else {
     flogger.debug(`Starting createSound for song...`);
     loadingPromise = new Promise(function(resolve, reject) {
-      let soundUrl = `http://${globalSettings.host}/radio-stream/music/${song.path}`;
+      let soundUrl = `http://${settings.host}/radio-stream/music/${song.path}`;
       let sound = soundManager.createSound({ id: id, url: soundUrl, stream: false });
       sound.load({
         stream: true,

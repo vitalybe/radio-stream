@@ -52,4 +52,5 @@ class Settings {
   }
 }
 
-export let globalSettings = new Settings();
+const settings = new Settings();
+export default settings;

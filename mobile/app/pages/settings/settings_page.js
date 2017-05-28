@@ -12,7 +12,7 @@ import Button from "../../shared_components/rectangle_button";
 import NormalText from "../../shared_components/text/normal_text";
 import ButtonText from "../../shared_components/text/button_text";
 import SettingsPagePlatformSpecific from "./settings_page_platform_specific";
-import { globalSettings } from "../../utils/settings";
+import settings from "../../utils/settings";
 import backendMetadataApi from "../../utils/backend_metadata_api";
 import navigator from "../../stores/navigator/navigator";
 import SettingsTextInput from "./settings_text_input";
@@ -45,8 +45,8 @@ export default class SettingsPage extends Component {
     let logger = loggerCreator("constructor", moduleLogger);
 
     this.store = observable({
-      host: globalSettings.host,
-      password: globalSettings.password,
+      host: settings.host,
+      password: settings.password,
 
       status: null,
     });
@@ -57,7 +57,7 @@ export default class SettingsPage extends Component {
   onPressHardwareBack() {
     let logger = loggerCreator("onPressHardwareBack", moduleLogger);
 
-    if (globalSettings.host) {
+    if (settings.host) {
       logger.info(`cancelling setting changes`);
       navigator.navigateToPlaylistCollection();
     } else {
@@ -88,8 +88,8 @@ export default class SettingsPage extends Component {
 
       logger.info(`updating global settings`);
 
-      globalSettings.update(host, password);
-      await globalSettings.save();
+      settings.update(host, password);
+      await settings.save();
       navigator.navigateToPlaylistCollection();
     } catch (error) {
       this.store.status = `Failed: ${error}`;
