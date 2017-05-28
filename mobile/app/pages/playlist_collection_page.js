@@ -11,7 +11,7 @@ import { colors, fontSizes } from "../styles/styles";
 import Button from "../shared_components/rectangle_button";
 import navigator from "../stores/navigator/navigator";
 import backendMetadataApi from "../utils/backend_metadata_api";
-import settings from "../utils/settings";
+import settings from "../utils/settings/settings";
 
 const styles = StyleSheet.create({
   container: {

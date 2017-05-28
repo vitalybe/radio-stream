@@ -7,7 +7,7 @@ import { NativeModules, DeviceEventEmitter, AppState } from "react-native";
 
 import Playlist from "./android/playlist";
 import Song from "./android/song";
-import settings from "../../utils/settings";
+import settings from "../../utils/settings/settings";
 import navigator from "../navigator/navigator";
 
 class Player {

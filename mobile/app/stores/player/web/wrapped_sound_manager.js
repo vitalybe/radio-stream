@@ -4,7 +4,7 @@ const logger = loggerCreator(__filename);
 
 import { soundManager } from "soundmanager2";
 import WrappedSound from "./wrapped_sound.js";
-import settings from "../../../utils/settings";
+import settings from "../../../utils/settings/settings";
 
 function soundId(songId) {
   return "i" + songId.toString();

@@ -1,4 +1,4 @@
-import loggerCreator from "../utils/logger";
+import loggerCreator from "../logger";
 const moduleLogger = loggerCreator("settings");
 
 import { AsyncStorage } from "react-native";

@@ -12,7 +12,7 @@ import Button from "../../shared_components/rectangle_button";
 import NormalText from "../../shared_components/text/normal_text";
 import ButtonText from "../../shared_components/text/button_text";
 import SettingsPagePlatformSpecific from "./settings_page_platform_specific";
-import settings from "../../utils/settings";
+import settings from "../../utils/settings/settings";
 import backendMetadataApi from "../../utils/backend_metadata_api";
 import navigator from "../../stores/navigator/navigator";
 import SettingsTextInput from "./settings_text_input";
