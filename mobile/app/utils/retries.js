@@ -25,4 +25,5 @@ class Retries {
   }
 }
 
-export default new Retries();
+const retries = new Retries();
+export default retries;

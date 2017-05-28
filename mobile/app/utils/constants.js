@@ -6,4 +6,5 @@ class Constants {
   ROUTE_PLAYER_PAGE = "PLAYER_PAGE";
 }
 
-export default new Constants();
+const constants = new Constants();
+export default constants;

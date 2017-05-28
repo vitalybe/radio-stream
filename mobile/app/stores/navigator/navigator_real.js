@@ -34,4 +34,5 @@ class Navigator {
   }
 }
 
-export default new Navigator();
+const navigator = new Navigator();
+export default navigator;

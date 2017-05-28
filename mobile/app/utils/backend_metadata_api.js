@@ -70,4 +70,5 @@ class BackendMetadataApi {
   }
 }
 
-export default new BackendMetadataApi();
+const backendMetadataApi = new BackendMetadataApi();
+export default backendMetadataApi;

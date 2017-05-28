@@ -152,4 +152,5 @@ class Player {
   }
 }
 
-export default new Player();
+const player = new Player();
+export default player;
