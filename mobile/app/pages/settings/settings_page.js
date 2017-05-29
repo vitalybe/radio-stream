@@ -44,7 +44,7 @@ export default class SettingsPage extends Component {
 
     let logger = loggerCreator("constructor", moduleLogger);
 
-    this.store = observable({
+    this.settingsValues = observable({
       host: settings.host,
       password: settings.password,
 
@@ -72,19 +72,19 @@ export default class SettingsPage extends Component {
     let logger = loggerCreator("onTextChange", moduleLogger);
     logger.info(`changing ${label}`);
 
-    this.store[label] = text;
+    this.settingsValues[label] = text;
   }
 
   async onSavePress() {
     let logger = loggerCreator("onSavePress", moduleLogger);
 
-    let host = this.store.host;
-    let password = this.store.password;
+    let host = this.settingsValues.host;
+    let password = this.settingsValues.password;
 
     try {
-      this.store.status = "Connecting...";
+      this.settingsValues.status = "Connecting...";
       await backendMetadataApi.testConnection(host, password);
-      this.store.status = "Connected";
+      this.settingsValues.status = "Connected";
 
       logger.info(`updating global settings`);
 
@@ -94,7 +94,7 @@ export default class SettingsPage extends Component {
 
       navigator.navigateToPlaylistCollection();
     } catch (error) {
-      this.store.status = `Failed: ${error}`;
+      this.settingsValues.status = `Failed: ${error}`;
     }
   }
 
@@ -105,12 +105,12 @@ export default class SettingsPage extends Component {
       <View style={styles.container}>
         <SettingsTextInput
           label="Host"
-          value={this.store.host}
+          value={this.settingsValues.host}
           onChangeText={text => this.onTextChange("host", text)}
         />
         <SettingsTextInput
           label="Password"
-          value={this.store.password}
+          value={this.settingsValues.password}
           textInputProps={{ secureTextEntry: true }}
           onChangeText={text => this.onTextChange("password", text)}
         />
@@ -120,7 +120,7 @@ export default class SettingsPage extends Component {
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>
         </Button>
-        <NormalText style={[styles.status]}>{this.store.status}</NormalText>
+        <NormalText style={[styles.status]}>{this.settingsValues.status}</NormalText>
       </View>
     );
   }
