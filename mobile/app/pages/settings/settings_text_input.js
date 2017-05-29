@@ -38,7 +38,7 @@ export default class SettingsTextInput extends Component {
           style={[styles.input]}
           value={this.props.value}
           onChangeText={this.props.onChangeText}
-          secureTextEntry={this.props.secureTextEntry}
+          {...this.props.textInputProps}
         />
       </View>
     );
@@ -48,7 +48,7 @@ export default class SettingsTextInput extends Component {
 SettingsTextInput.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
-  onChangeText: PropTypes.func.isRequired,
+  onChangeText: PropTypes.func,
 
-  secureTextEntry: PropTypes.bool,
+  textInputProps: PropTypes.object,
 };

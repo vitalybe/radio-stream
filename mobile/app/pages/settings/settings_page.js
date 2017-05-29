@@ -111,7 +111,7 @@ export default class SettingsPage extends Component {
         <SettingsTextInput
           label="Password"
           value={this.store.password}
-          secureTextEntry={true}
+          textInputProps={{ secureTextEntry: true }}
           onChangeText={text => this.onTextChange("password", text)}
         />
 
