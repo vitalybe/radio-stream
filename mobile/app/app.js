@@ -1,5 +1,5 @@
 import loggerCreator from "./utils/logger";
-const moduleLogger = loggerCreator("index.android");
+const moduleLogger = loggerCreator("RadioStream");
 
 import React, { Component } from "react";
 import { StyleSheet, Image } from "react-native";

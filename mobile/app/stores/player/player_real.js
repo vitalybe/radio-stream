@@ -70,6 +70,18 @@ class Player {
     this.isPlaying = true;
   }
 
+  @action playPauseToggle() {
+    let logger = loggerCreator("playPauseToggle", moduleLogger);
+
+    if (this.isPlaying) {
+      logger.info(`pause`);
+      this.pause();
+    } else {
+      logger.info(`play`);
+      this.play();
+    }
+  }
+
   _preloadNextSong() {
     let logger = loggerCreator(this._preloadNextSong.name, moduleLogger);
 

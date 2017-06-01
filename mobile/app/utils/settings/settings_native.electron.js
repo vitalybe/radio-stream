@@ -2,6 +2,7 @@ import loggerCreator from "../logger";
 const moduleLogger = loggerCreator("SettingsNative");
 
 import { AsyncStorage } from "react-native";
+import { ipcRenderer } from "electron";
 
 let PERSISTENCE_PLAY_PAUSE_KEY = "playPauseKey";
 
@@ -23,8 +24,9 @@ class SettingsNative {
     logger.info(`playPauseKey: ${playPauseKey}`);
     this.playPauseKey = playPauseKey;
     await AsyncStorage.setItem(PERSISTENCE_PLAY_PAUSE_KEY, playPauseKey);
+
+    ipcRenderer.send("onPlayPauseKeyChanged", playPauseKey);
   }
 }
 
-const settingsNative = new SettingsNative();
-export default settingsNative;
+export default new SettingsNative();
