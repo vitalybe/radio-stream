@@ -1,17 +1,20 @@
 import loggerCreator from "../../utils/logger";
 //noinspection JSUnresolvedVariable
-const moduleLogger = loggerCreator("SettingsPagePlatformSpecific");
+const moduleLogger = loggerCreator("SettingsPageNative");
 
-import React, { Component } from "react";
+import React, { Component, PropTypes } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import keycode from "keycode";
 import _ from "lodash";
+import { observable } from "mobx";
+import { observer } from "mobx-react";
+import settingsNative from "../../utils/settings/settings_native";
 
 import SettingsTextInput from "./settings_text_input";
-
 const styles = StyleSheet.create({});
 
-export default class SettingsPagePlatformSpecific extends Component {
+@observer
+export default class SettingsPageNative extends Component {
   componentWillMount() {
     this._modifierKeys = [
       keycode("left command"),
@@ -21,7 +24,14 @@ export default class SettingsPagePlatformSpecific extends Component {
       keycode("alt"),
     ];
 
-    this.state = { playPauseKey: "" };
+    this.props.settingsValuesNative.set("playPauseKey", settingsNative.playPauseKey);
+  }
+
+  onPlayPauseKeyDown(event) {
+    let logger = loggerCreator("onPlayPauseKeyDown", moduleLogger);
+    let keyboardEvent = this.keyboardEventToString(event);
+    logger.info(`keyboardEvent: ${keyboardEvent}`);
+    this.props.settingsValuesNative.set("playPauseKey", keyboardEvent);
   }
 
   keyboardEventToString(keyboardEvent) {
@@ -63,15 +73,15 @@ export default class SettingsPagePlatformSpecific extends Component {
     return (
       <View>
         <SettingsTextInput
-          textInputProps={{
-            onKeyDown: event => this.setState({ ...this.state, playPauseKey: this.keyboardEventToString(event) }),
-          }}
+          textInputProps={{ onKeyDown: event => this.onPlayPauseKeyDown(event) }}
           label="Play/Pause shortcut"
-          value={this.state.playPauseKey}
+          value={this.props.settingsValuesNative.get("playPauseKey")}
         />
       </View>
     );
   }
 }
 
-SettingsPagePlatformSpecific.propTypes = {};
+SettingsPageNative.propTypes = {
+  settingsValuesNative: PropTypes.object.isRequired,
+};

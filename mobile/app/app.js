@@ -7,6 +7,7 @@ import { observer } from "mobx-react";
 import { MenuContext } from "./shared_components/context_menu/context_menu";
 
 import settings from "./utils/settings/settings";
+import settingsNative from "./utils/settings/settings_native";
 import constants from "./utils/constants";
 import PlaylistCollectionPage from "./pages/playlist_collection_page";
 import PlayerPage from "./pages/player_page/player_page";
@@ -38,6 +39,7 @@ export default class RadioStream extends Component {
 
     logger.info(`loading settings`);
     await settings.load();
+    await settingsNative.load();
 
     logger.info(`settings loaded`);
     this.setState({ ready: true });

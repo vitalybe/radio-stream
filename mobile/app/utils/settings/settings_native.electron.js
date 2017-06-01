@@ -1,17 +1,15 @@
 import loggerCreator from "../logger";
-const moduleLogger = loggerCreator("SettingsElectron");
+const moduleLogger = loggerCreator("SettingsNative");
 
 import { AsyncStorage } from "react-native";
 
 let PERSISTENCE_PLAY_PAUSE_KEY = "playPauseKey";
 
-class SettingsElectron {
+class SettingsNative {
   constructor() {
     let logger = loggerCreator(this.constructor.name, moduleLogger);
 
     this.playPauseKey = null;
-
-    this.load();
   }
 
   async load() {
@@ -20,10 +18,13 @@ class SettingsElectron {
     this.playPauseKey = (await AsyncStorage.getItem(PERSISTENCE_PLAY_PAUSE_KEY)) || "";
   }
 
-  async save() {
-    await AsyncStorage.setItem(PERSISTENCE_PLAY_PAUSE_KEY, this.playPauseKey);
+  async save({ playPauseKey }) {
+    let logger = loggerCreator("save", moduleLogger);
+    logger.info(`playPauseKey: ${playPauseKey}`);
+    this.playPauseKey = playPauseKey;
+    await AsyncStorage.setItem(PERSISTENCE_PLAY_PAUSE_KEY, playPauseKey);
   }
 }
 
-const settingsElectron = new SettingsElectron();
-export default settingsElectronc;
+const settingsNative = new SettingsNative();
+export default settingsNative;

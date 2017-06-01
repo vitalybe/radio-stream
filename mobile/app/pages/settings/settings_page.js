@@ -4,15 +4,15 @@ const moduleLogger = loggerCreator("settings_page");
 import React, { Component } from "react";
 import { StyleSheet, View, TextInput } from "react-native";
 import BackHandler from "../../utils/back_handler/back_handler";
-import { observable } from "mobx";
+import mobx from "mobx";
 import { observer } from "mobx-react";
 
-import { colors, fontSizes } from "../../styles/styles";
 import Button from "../../shared_components/rectangle_button";
 import NormalText from "../../shared_components/text/normal_text";
 import ButtonText from "../../shared_components/text/button_text";
-import SettingsPagePlatformSpecific from "./settings_page_platform_specific";
+import SettingsPageNative from "./settings_page_native";
 import settings from "../../utils/settings/settings";
+import settingsNative from "../../utils/settings/settings_native";
 import backendMetadataApi from "../../utils/backend_metadata_api";
 import navigator from "../../stores/navigator/navigator";
 import SettingsTextInput from "./settings_text_input";
@@ -44,12 +44,14 @@ export default class SettingsPage extends Component {
 
     let logger = loggerCreator("constructor", moduleLogger);
 
-    this.settingsValues = observable({
+    this.settingsValues = mobx.observable({
       host: settings.host,
       password: settings.password,
 
       status: null,
     });
+
+    this.settingsValuesNative = mobx.asMap();
 
     BackHandler.addEventListener("hardwareBackPress", () => this.onPressHardwareBack());
   }
@@ -75,6 +77,10 @@ export default class SettingsPage extends Component {
     this.settingsValues[label] = text;
   }
 
+  onPlatformSettingsChanged = newPlatformSettings => {
+    this.platformSettings = newPlatformSettings;
+  };
+
   async onSavePress() {
     let logger = loggerCreator("onSavePress", moduleLogger);
 
@@ -91,6 +97,7 @@ export default class SettingsPage extends Component {
       settings.host = host;
       settings.password = password;
       await settings.save();
+      await settingsNative.save(this.settingsValuesNative.toJS());
 
       navigator.navigateToPlaylistCollection();
     } catch (error) {
@@ -115,7 +122,7 @@ export default class SettingsPage extends Component {
           onChangeText={text => this.onTextChange("password", text)}
         />
 
-        <SettingsPagePlatformSpecific />
+        <SettingsPageNative settingsValuesNative={this.settingsValuesNative} />
 
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>

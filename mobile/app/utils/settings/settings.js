@@ -15,8 +15,6 @@ class Settings {
     this.host = null;
     this.user = DEFAULT_USER;
     this.password = null;
-
-    this.load();
   }
 
   async load() {
