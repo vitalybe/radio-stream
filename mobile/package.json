@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "main": "main.electron.js",
+  "###": "per https://medium.freecodecamp.com/building-an-electron-application-with-create-react-app-97945861647c",
+  "homepage": "./",
   "scripts": {
     "web": "node webpack/scripts/start.js",
     "web-build": "node webpack/scripts/build.js",
