@@ -10,16 +10,24 @@ class ElectronIpcBrowserSide {
     let logger = loggerCreator("constructor", moduleLogger);
   }
 
-  connect() {
-    ipcRenderer.on("playPauseGlobalKey", function() {
-      let logger = loggerCreator("playPauseToggle", moduleLogger);
-      logger.info("received message: playPauseToggle");
+  onPlayPauseToggle() {
+    let logger = loggerCreator("playPauseToggle", moduleLogger);
+    logger.info("received message: playPauseToggle");
 
-      if (player && player.currentPlaylist) {
-        logger.info(`pausing current playlist: ${player.currentPlaylist.name}`);
-        player.playPauseToggle();
-      }
-    });
+    if (player && player.currentPlaylist) {
+      logger.info(`pausing current playlist: ${player.currentPlaylist.name}`);
+      player.playPauseToggle();
+    }
+  }
+
+  onNativeLog(event, message) {
+    let logger = loggerCreator("onNativeLog", moduleLogger);
+    logger.info(`from native side: ${message}`);
+  }
+
+  connect() {
+    ipcRenderer.on("playPauseGlobalKey", this.onPlayPauseToggle);
+    ipcRenderer.on("nativeLog", this.onNativeLog);
   }
 }
 

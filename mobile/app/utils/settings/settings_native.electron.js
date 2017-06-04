@@ -17,6 +17,7 @@ class SettingsNative {
     let logger = loggerCreator("load", moduleLogger);
 
     this.playPauseKey = (await AsyncStorage.getItem(PERSISTENCE_PLAY_PAUSE_KEY)) || "";
+    ipcRenderer.send("onPlayPauseKeyChanged", this.playPauseKey);
   }
 
   async save({ playPauseKey }) {

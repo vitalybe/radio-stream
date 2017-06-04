@@ -8,7 +8,17 @@ let _mainWindow = null;
 
 function onPlayPauseKey() {
   nativeLog.log("play/pause toggle key pressed");
-  mainWindow.webContents.send("playPauseGlobalKey");
+  _mainWindow.webContents.send("playPauseGlobalKey");
+}
+
+function onPlayPauseKeyChanged(event, newKey) {
+  nativeLog.log(`registering key: ${newKey}`);
+
+  globalShortcut.unregisterAll();
+
+  if (newKey) {
+    globalShortcut.register(newKey, onPlayPauseKey);
+  }
 }
 
 function onQuit() {
@@ -18,15 +28,6 @@ function onQuit() {
 
 module.exports.registerKeyboardShortcuts = function(mainWindow) {
   _mainWindow = mainWindow;
-  ipcMain.on("onPlayPauseKeyChanged", (event, newKey) => {
-    nativeLog.log(`registering key: ${newKey}`);
-
-    globalShortcut.unregisterAll();
-
-    if (newKey) {
-      globalShortcut.register(newKey, onPlayPauseKey);
-    }
-  });
-
-  app.on("will-quit", onQuit);
+  ipcMain.on("onPlayPauseKeyChanged", onPlayPauseKeyChanged);
+  electron.app.on("will-quit", onQuit);
 };

@@ -5,5 +5,5 @@ module.exports.setMainWindow = function(window) {
 };
 
 module.exports.log = function(msg) {
-  mainWindow.webContents.send("native-log", msg);
+  mainWindow.webContents.send("nativeLog", msg);
 };
