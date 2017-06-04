@@ -6,28 +6,33 @@ const ipcMain = electron.ipcMain;
 
 let _mainWindow = null;
 
-function onPlayPauseKey() {
-  nativeLog.log("play/pause toggle key pressed");
-  _mainWindow.webContents.send("playPauseGlobalKey");
-}
-
-function onPlayPauseKeyChanged(event, newKey) {
-  nativeLog.log(`registering key: ${newKey}`);
-
-  globalShortcut.unregisterAll();
-
-  if (newKey) {
-    globalShortcut.register(newKey, onPlayPauseKey);
+module.exports = class ElectronIpcNativeSide {
+  constructor(mainWindow) {
+    this._mainWindow = mainWindow;
   }
-}
 
-function onQuit() {
-  // Unregister all shortcuts.
-  globalShortcut.unregisterAll();
-}
+  onPlayPauseKey() {
+    nativeLog.log("play/pause toggle key pressed");
+    this._mainWindow.webContents.send("playPauseGlobalKey");
+  }
 
-module.exports.registerKeyboardShortcuts = function(mainWindow) {
-  _mainWindow = mainWindow;
-  ipcMain.on("onPlayPauseKeyChanged", onPlayPauseKeyChanged);
-  electron.app.on("will-quit", onQuit);
+  onPlayPauseKeyChanged(event, newKey) {
+    nativeLog.log(`registering key: ${newKey}`);
+
+    globalShortcut.unregisterAll();
+
+    if (newKey) {
+      globalShortcut.register(newKey, this.onPlayPauseKey.bind(this));
+    }
+  }
+
+  onQuit() {
+    // Unregister all shortcuts.
+    globalShortcut.unregisterAll();
+  }
+
+  registerKeyboardShortcuts() {
+    ipcMain.on("onPlayPauseKeyChanged", this.onPlayPauseKeyChanged.bind(this));
+    electron.app.on("will-quit", this.onQuit.bind(this));
+  }
 };

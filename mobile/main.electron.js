@@ -4,18 +4,20 @@ const url = require("url");
 const process = require("process");
 
 const nativeLog = require("./app/utils/electron_ipc/native_log");
-const electronIpcNativeSide = require("./app/utils/electron_ipc/electron_ipc_native_side");
+const ElectronIpcNativeSide = require("./app/utils/electron_ipc/electron_ipc_native_side");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+let electronIpcNativeSide = null;
 
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({ width: 800, height: 600, webPreferences: { webSecurity: false } });
+  electronIpcNativeSide = new ElectronIpcNativeSide(win);
 
   nativeLog.setMainWindow(win);
-  electronIpcNativeSide.registerKeyboardShortcuts(win);
+  electronIpcNativeSide.registerKeyboardShortcuts();
 
   const startUrl =
     process.env.ELECTRON_START_URL ||
