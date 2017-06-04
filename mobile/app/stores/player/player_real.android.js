@@ -57,6 +57,18 @@ class Player {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.changePlaylist(playlistName));
   }
 
+  playPauseToggle() {
+    let logger = loggerCreator("playPauseToggle", moduleLogger);
+
+    if (this.isPlaying) {
+      logger.info(`pause`);
+      this.pause();
+    } else {
+      logger.info(`play`);
+      this.play();
+    }
+  }
+
   play() {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.play());
   }
@@ -76,7 +88,8 @@ class Player {
     this.onPlayerStatusChanged(nativePlayerStatus);
   }
 
-  @action onPlayerStatusChanged(nativePlayerStatus) {
+  @action
+  onPlayerStatusChanged(nativePlayerStatus) {
     let logger = loggerCreator("onPlayerStatusChanged", moduleLogger);
     logger.info(`${JSON.stringify(nativePlayerStatus)}`);
 
@@ -131,7 +144,8 @@ class Player {
     }
   };
 
-  @computed get loadingAction() {
+  @computed
+  get loadingAction() {
     if (this.isLoading) {
       if (this.song) {
         return `${this.song.artist} - ${this.song.title}`;

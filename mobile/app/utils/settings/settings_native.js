@@ -5,8 +5,11 @@ const moduleLogger = loggerCreator("SettingsNativeDummy");
 class SettingsNativeDummy {
   //noinspection JSUnusedGlobalSymbols
   async save() {
-    let logger = loggerCreator("save", moduleLogger);
-    logger.info(`start`);
+    loggerCreator("save", moduleLogger);
+  }
+
+  async load() {
+    loggerCreator("load", moduleLogger);
   }
 }
 
