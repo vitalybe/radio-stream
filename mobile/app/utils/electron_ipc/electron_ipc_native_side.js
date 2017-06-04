@@ -1,5 +1,3 @@
-const nativeLog = require("./native_log");
-
 const electron = require("electron");
 const globalShortcut = electron.globalShortcut;
 const ipcMain = electron.ipcMain;
@@ -11,13 +9,17 @@ module.exports = class ElectronIpcNativeSide {
     this._mainWindow = mainWindow;
   }
 
+  log(message) {
+    this._mainWindow.webContents.send("nativeLog", message);
+  }
+
   onPlayPauseKey() {
-    nativeLog.log("play/pause toggle key pressed");
+    this.log("play/pause toggle key pressed");
     this._mainWindow.webContents.send("playPauseGlobalKey");
   }
 
   onPlayPauseKeyChanged(event, newKey) {
-    nativeLog.log(`registering key: ${newKey}`);
+    this.log(`registering key: ${newKey}`);
 
     globalShortcut.unregisterAll();
 
