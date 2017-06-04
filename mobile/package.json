@@ -10,7 +10,7 @@
     "web-build": "node webpack/scripts/build.js",
     "android": "adb logcat -c && react-native run-android && ./logcat.sh",
     "desktop": "concurrently 'node webpack/scripts/start.js --electron' 'wait-on tcp:localhost:3000 && while true; do ELECTRON_START_URL=http://localhost:3000 node_modules/.bin/electron .; done;'",
-    "desktop-build": "node webpack/scripts/build.js --electron && electron-packager --overwrite --out=build-electron --icon=app/images/app.icns .",
+    "desktop-build": "node webpack/scripts/build.js --electron && electron-packager --overwrite --out=build/electron --icon=app/images/app.icns .",
     "precommit": "lint-staged"
   },
   "lint-staged": {
