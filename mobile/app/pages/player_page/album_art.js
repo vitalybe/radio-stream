@@ -16,10 +16,9 @@ const BIG_DEVICE_HEIGHT = 700;
 const SMALL_ART_SIZE = 200;
 const BIG_ART_SIZE = 300;
 
-let height = Dimensions.get("window").height;
-moduleLogger.info(`window height: ${height}`);
 let artSize = SMALL_ART_SIZE;
-if (height > BIG_DEVICE_HEIGHT) {
+if (Dimensions.get("window").height > BIG_DEVICE_HEIGHT) {
+  moduleLogger.info(`using bigger art size`);
   artSize = BIG_ART_SIZE;
 }
 

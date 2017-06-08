@@ -2,7 +2,7 @@ import loggerCreator from "./utils/logger";
 const moduleLogger = loggerCreator("RadioStream");
 
 import React, { Component } from "react";
-import { StyleSheet, Image } from "react-native";
+import { StyleSheet, Image, Dimensions } from "react-native";
 import { observer } from "mobx-react";
 import { MenuContext } from "./shared_components/context_menu/context_menu";
 
@@ -32,6 +32,9 @@ const styles = StyleSheet.create({
 export default class RadioStream extends Component {
   async componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
+
+    const { height, width } = Dimensions.get("window");
+    moduleLogger.info(`available dimensions: width=${width} height=${height}`);
 
     this.state = {
       ready: false,
