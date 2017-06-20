@@ -1,7 +1,7 @@
 package com.radiostream.player;
 
 import com.radiostream.javascript.bridge.PlayerBridge;
-import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
+import com.radiostream.javascript.bridge.PlayerEventsEmitter;
 
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
@@ -10,18 +10,16 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
-/**
- * Created by vitaly on 18/11/2016.
- */
-
 public class Player implements PlaylistControls {
     private PlaylistPlayerFactory mPlaylistPlayerFactory;
+    private PlayerEventsEmitter mPlayerEventsEmitter;
 
     private PlaylistPlayer mCurrentPlaylistPlayer = null;
 
     @Inject
-    public Player(PlaylistPlayerFactory playlistPlayerFactory) {
+    public Player(PlaylistPlayerFactory playlistPlayerFactory, PlayerEventsEmitter playerEventsEmitter) {
         mPlaylistPlayerFactory = playlistPlayerFactory;
+        mPlayerEventsEmitter = playerEventsEmitter;
     }
 
     public void changePlaylist(String playlistName) {
@@ -31,7 +29,12 @@ public class Player implements PlaylistControls {
             mCurrentPlaylistPlayer.close();
         }
 
-        mCurrentPlaylistPlayer = mPlaylistPlayerFactory.build(playlistName);
+        mCurrentPlaylistPlayer = mPlaylistPlayerFactory.build(playlistName, new StatusProvider() {
+            @Override
+            public void sendStatus() {
+                mPlayerEventsEmitter.sendPlayerStatus(toBridgeObject());
+            }
+        });
     }
 
     @Override
@@ -79,7 +82,6 @@ public class Player implements PlaylistControls {
     public PlayerBridge toBridgeObject() {
         PlayerBridge bridge = new PlayerBridge();
 
-        bridge.id = this.hashCode();
         if(mCurrentPlaylistPlayer != null) {
             bridge.playlistPlayerBridge = mCurrentPlaylistPlayer.toBridgeObject();
         }

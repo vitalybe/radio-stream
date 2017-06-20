@@ -12,6 +12,9 @@ public class SongBridge {
     public String artist;
     public String album;
     public int rating;
+    public double lastplayed;
+    public int playcount;
+    public boolean isMarkedAsPlayed;
 
     public SongBridge() {
 
@@ -24,6 +27,9 @@ public class SongBridge {
         map.putString("title", title);
         map.putString("album", album);
         map.putInt("rating", rating);
+        map.putDouble("lastplayed", lastplayed);
+        map.putInt("playcount", playcount);
+        map.putBoolean("isMarkedAsPlayed", isMarkedAsPlayed);
 
         return map;
     }

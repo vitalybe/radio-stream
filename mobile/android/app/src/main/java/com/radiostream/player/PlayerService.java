@@ -8,11 +8,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaMetadata;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
@@ -26,8 +26,7 @@ import com.radiostream.di.components.DaggerPlayerServiceComponent;
 import com.radiostream.di.components.PlayerServiceComponent;
 import com.radiostream.di.modules.ContextModule;
 import com.radiostream.javascript.bridge.PlayerBridge;
-import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
-import com.radiostream.javascript.bridge.PlaylistPlayerEventsEmitter;
+import com.radiostream.javascript.bridge.PlayerEventsEmitter;
 import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.javascript.proxy.PlayerJsProxy;
 import com.radiostream.util.SetTimeout;
@@ -36,7 +35,6 @@ import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;
 
 import java.util.Date;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -56,13 +54,14 @@ public class PlayerService extends Service implements PlaylistControls {
     private boolean mServiceAlive = true;
     private Date mPausedDate = null;
     private boolean mPausedDuePhoneState = false;
+    private boolean mIsBoundToActivity = false;
 
     MediaSession mMediaSession = null;
 
     @Inject
     Player mPlayer;
     @Inject
-    PlaylistPlayerEventsEmitter mPlaylistPlayerEventsEmitter;
+    PlayerEventsEmitter mPlayerEventsEmitter;
     @Inject
     SetTimeout mSetTimeout;
 
@@ -106,23 +105,43 @@ public class PlayerService extends Service implements PlaylistControls {
         }
     };
 
-    private PlaylistPlayerEventsEmitter.EventCallback onPlaylistPlayerEvent = new PlaylistPlayerEventsEmitter.EventCallback() {
+    private PlayerEventsEmitter.EventCallback onPlaylistPlayerEvent = new PlayerEventsEmitter.EventCallback() {
         @Override
-        public void onEvent(PlaylistPlayerBridge playlistPlayerBridge) {
+        public void onEvent(PlayerBridge playerBridge) {
             Timber.i("onPlaylistPlayerEvent - function start");
 
-            if (playlistPlayerBridge != null) {
-                if (playlistPlayerBridge.isLoading) {
+            if (playerBridge.playlistPlayerBridge != null) {
+                if (playerBridge.playlistPlayerBridge.isLoading) {
                     Timber.i("showing loading notification");
                     showLoadingNotification();
-                } else if (playlistPlayerBridge.isPlaying) {
+                } else if (playerBridge.playlistPlayerBridge.isPlaying) {
                     Timber.i("showing song notification");
-                    showSongNotification(playlistPlayerBridge.songBridge);
+                    showSongNotification(playerBridge.playlistPlayerBridge.songBridge);
                 }
+
+                changeBluetoothMetadata(playerBridge);
             }
         }
     };
-    
+
+    private void changeBluetoothMetadata(PlayerBridge playerBridge) {
+        Timber.i("Function start");
+
+        if(playerBridge.playlistPlayerBridge != null && playerBridge.playlistPlayerBridge.songBridge != null) {
+            SongBridge song = playerBridge.playlistPlayerBridge.songBridge;
+            Timber.i("setting bluetooth information of song: %s - %s", song.title, song.artist);
+
+            MediaMetadata metadata = new MediaMetadata.Builder()
+                    .putString(MediaMetadata.METADATA_KEY_TITLE, song.title)
+                    .putString(MediaMetadata.METADATA_KEY_ARTIST, song.artist)
+                    .putString(MediaMetadata.METADATA_KEY_ALBUM, song.album)
+                    .build();
+
+            mMediaSession.setMetadata(metadata);
+        }
+
+    }
+
     private MediaSession.Callback mMediaSessionCallback = new MediaSession.Callback() {
 
         @Override
@@ -153,7 +172,8 @@ public class PlayerService extends Service implements PlaylistControls {
 
     private void showSongNotification(SongBridge currentSong) {
         Timber.i("function start - show song notification for: %s - %s", currentSong.title, currentSong.artist);
-        startWithNotificaiton(currentSong.title, currentSong.artist, true);
+        boolean showHeadsUpNotification = !mIsBoundToActivity;
+        startWithNotificaiton(currentSong.title, currentSong.artist, showHeadsUpNotification);
     }
 
     private void showLoadingNotification() {
@@ -189,7 +209,7 @@ public class PlayerService extends Service implements PlaylistControls {
         mMediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
         Timber.i("registering to player events");
-        mPlaylistPlayerEventsEmitter.subscribe(onPlaylistPlayerEvent);
+        mPlayerEventsEmitter.subscribe(onPlaylistPlayerEvent);
         scheduleStopSelfOnPause();
     }
 
@@ -298,12 +318,23 @@ public class PlayerService extends Service implements PlaylistControls {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        Timber.i("function start");
+        mIsBoundToActivity = true;
         return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        return false;
+        Timber.i("function start");
+        mIsBoundToActivity = false;
+
+        return true;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Timber.i("function start");
+        mIsBoundToActivity = true;
     }
 
     @Override

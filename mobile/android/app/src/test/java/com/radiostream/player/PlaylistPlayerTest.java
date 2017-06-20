@@ -1,7 +1,7 @@
  package com.radiostream.player;
 
 import com.facebook.react.bridge.Arguments;
-import com.radiostream.javascript.bridge.PlaylistPlayerEventsEmitter;
+import com.radiostream.javascript.bridge.PlayerEventsEmitter;
 import com.radiostream.javascript.bridge.PlaylistBridge;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 import com.radiostream.javascript.bridge.SongBridge;
@@ -46,13 +46,14 @@ public class PlaylistPlayerTest {
     PlaylistFactory mockPlaylistFactory;
 
     @Mock
-    PlaylistPlayerEventsEmitter mockPlayerEventsEmitter;
-
-    @Mock
     MetadataBackend mockMetadataBackend;
 
     @Mock
     SetTimeout mockSetTimeout;
+
+    @Mock
+    StatusProvider mockStatusProvider;
+
 
     @Before
     public void setUp() throws Exception {
@@ -86,30 +87,8 @@ public class PlaylistPlayerTest {
     }
 
     @Test
-    public void play_preloadSongOnlyOnFirstCall() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout, mockMetadataBackend);
-        playlistPlayer.play();
-
-        verify(mockFirstSong, times(1)).play();
-
-        ArgumentCaptor<PlaylistPlayerBridge> captor = ArgumentCaptor.forClass(PlaylistPlayerBridge.class);
-        verify(mockPlayerEventsEmitter, times(4)).sendPlaylistPlayerStatus(captor.capture());
-
-        final List<PlaylistPlayerBridge> bridges = captor.getAllValues();
-
-        final PlaylistPlayerBridge loadingStartedState = bridges.get(0);
-        assertEquals(true, loadingStartedState.isLoading);
-        assertNull(loadingStartedState.songBridge);
-
-        final PlaylistPlayerBridge songPlayingState = bridges.get(2);
-        assertEquals(false, songPlayingState.isLoading);
-        assertNotNull(songPlayingState.songBridge);
-
-    }
-
-    @Test
     public void play_playSongIfSongAvailable() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout, mockMetadataBackend);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackend, mockStatusProvider);
         playlistPlayer.play();
 
         verify(mockPlaylist, atLeastOnce()).peekCurrentSong();
@@ -122,7 +101,7 @@ public class PlaylistPlayerTest {
 
     @Test
     public void playNext_playingSecondSong() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout, mockMetadataBackend);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackend, mockStatusProvider);
         playlistPlayer.playNext();
 
         verify(mockPlaylist, times(1)).nextSong();
@@ -131,7 +110,7 @@ public class PlaylistPlayerTest {
 
     @Test
     public void playNext_playFirstSong() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout, mockMetadataBackend);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackend, mockStatusProvider);
         playlistPlayer.playNext();
 
         verify(mockFirstSong, times(1)).play();
@@ -139,19 +118,19 @@ public class PlaylistPlayerTest {
 
     @Test(expected=IllegalStateException.class)
     public void pause_throwsExceptionIfNoSong() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout, mockMetadataBackend);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackend, mockStatusProvider);
         playlistPlayer.pause();
     }
 
     @Test
     public void close_closesPlaylist() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout, mockMetadataBackend);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackend, mockStatusProvider);
         playlistPlayer.close();
     }
 
     @Test
     public void close_closesSongIfExists() throws Exception {
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout, mockMetadataBackend);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackend, mockStatusProvider);
         playlistPlayer.play();
         playlistPlayer.close();
 
@@ -166,7 +145,7 @@ public class PlaylistPlayerTest {
 
         when(mockSetTimeout.run(anyInt())).thenReturn(resolvedPromise((Void)null));
 
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockPlayerEventsEmitter, mockSetTimeout, mockMetadataBackend);
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackend, mockStatusProvider);
         playlistPlayer.play();
 
         // song will be loaded if preloading the first one failed

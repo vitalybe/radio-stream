@@ -1,6 +1,5 @@
 package com.radiostream.player;
 
-import com.radiostream.javascript.bridge.PlaylistPlayerEventsEmitter;
 import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.util.SetTimeout;
@@ -16,7 +15,7 @@ import javax.inject.Inject;
 import timber.log.Timber;
 
 public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
-    private PlaylistPlayerEventsEmitter mPlayerEventsEmitter;
+    private final StatusProvider mStatusProvider;
     private SetTimeout mSetTimeout;
     private Playlist mPlaylist;
     private Song mCurrentSong;
@@ -29,11 +28,11 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
 
     @Inject
-    public PlaylistPlayer(Playlist playlist, PlaylistPlayerEventsEmitter playerEventsEmitter,
-                          SetTimeout setTimeout, MetadataBackend metadataBackend) {
+    public PlaylistPlayer(Playlist playlist, SetTimeout setTimeout,
+                          MetadataBackend metadataBackend, StatusProvider statusProvider) {
 
         mPlaylist = playlist;
-        mPlayerEventsEmitter = playerEventsEmitter;
+        mStatusProvider = statusProvider;
         mSetTimeout = setTimeout;
         mMetadataBackend = metadataBackend;
     }
@@ -44,7 +43,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             Timber.i("value changed");
             mIsLoading = isLoading;
             mLastLoadingError = error;
-            mPlayerEventsEmitter.sendPlaylistPlayerStatus(this.toBridgeObject());
+            mStatusProvider.sendStatus();
         } else {
             Timber.i("value didn't change");
         }
@@ -63,7 +62,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
             Timber.i("changing current song to: %s", value.toString());
             mCurrentSong = value;
-            mPlayerEventsEmitter.sendPlaylistPlayerStatus(this.toBridgeObject());
+            mStatusProvider.sendStatus();
         }
     }
 
@@ -82,7 +81,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             getCurrentSong().subscribeToEvents(PlaylistPlayer.this);
             getCurrentSong().play();
 
-            mPlayerEventsEmitter.sendPlaylistPlayerStatus(PlaylistPlayer.this.toBridgeObject());
+            mStatusProvider.sendStatus();
 
             promise = new DeferredObject<Song, Exception, Void>().resolve(getCurrentSong()).promise();
         } else {
@@ -108,7 +107,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         }
 
         getCurrentSong().pause();
-        mPlayerEventsEmitter.sendPlaylistPlayerStatus(this.toBridgeObject());
+        mStatusProvider.sendStatus();
     }
 
     public boolean getIsPlaying() {
@@ -136,6 +135,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         // NOTE: the last error to the function is sent since merely retrying
         // the function doesn't clear the erro
         setSongLoadingStatus(true, mLastLoadingError);
+        mStatusProvider.sendStatus();
 
         waitForCurrentSongMarkedAsPlayed().then(new DonePipe<Boolean, Song, Exception, Void>() {
             @Override
@@ -252,6 +252,11 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     }
 
     @Override
+    public void onSongMarkedAsPlayed() {
+        mStatusProvider.sendStatus();
+    }
+
+    @Override
     public void onSongError(Exception error) {
         Timber.e(error, "error occured in song '%s'", getCurrentSong());
         if (getCurrentSong() != null) {
@@ -286,7 +291,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
                     updatedSong.setRating(newRating);
 
                     Timber.i("song rating updated - sending status update");
-                    mPlayerEventsEmitter.sendPlaylistPlayerStatus(PlaylistPlayer.this.toBridgeObject());
+                    mStatusProvider.sendStatus();
                 }
             });
         } else {

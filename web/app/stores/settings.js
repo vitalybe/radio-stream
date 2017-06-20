@@ -1,19 +1,18 @@
 import loggerCreator from '../utils/logger'
-//noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator(__filename);
+const moduleLogger = loggerCreator(__filename);
 
-import {observable, action} from "mobx";
+import {observable} from "mobx";
 
 export class Settings {
 
-  _values = {
+  @observable _values = {
     host: "",
     password: "",
     playPauseKey: ""
   };
 
   // i am unable to get proxyquire, in tests, to require electron, so I have to hide it inside
-  _electronSettings = require('electron-settings');
+  _electronSettings = require('electron-json-storage');
 
   constructor() {
     let logger = loggerCreator(this.constructor.name, moduleLogger);
@@ -23,6 +22,9 @@ export class Settings {
   }
 
   get values() {
+    let logger = loggerCreator("values", moduleLogger);
+    logger.info(`start: ${this._values.host}`);
+    
     return this._values;
   }
 
@@ -43,15 +45,42 @@ export class Settings {
   }
 
   update(newValues) {
+    let logger = loggerCreator("update", moduleLogger);
+    logger.info(`start: ${JSON.stringify(newValues)}`);
+
     this._values = _.clone(newValues);
   }
 
   load() {
-    this._values = this._electronSettings.getSync("values");
+    let logger = loggerCreator("load", moduleLogger);
+    logger.info(`start`);
+
+    return new Promise((resolve, reject) => {
+      this._electronSettings.get("values", (error, data) => {
+        if (error) throw reject(error);
+
+        if(Object.keys(data).length) {
+          logger.info(`loaded values: ${JSON.stringify(data)}`);
+          this._values = data;
+        } else {
+          logger.info(`got no values from settings`);
+        }
+        resolve();
+      });
+    })
   }
 
   save() {
-    return this._electronSettings.setSync("values", this.values);
+    let logger = loggerCreator("save", moduleLogger);
+    logger.info(`start`);
+
+    return new Promise((resolve, reject) => {
+      this._electronSettings.set('values', this._values, function (error) {
+        if (error) throw reject(error);
+
+        resolve();
+      });
+    });
   }
 }
 

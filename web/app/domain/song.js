@@ -179,6 +179,14 @@ export class Song {
     return this.markingAsPlayedPromise;
   }
 
+  async markAsDeleted() {
+    let logger = loggerCreator("delete", moduleLogger);
+    logger.debug(`start: ${this.toString()}`);
+    await retries.promiseRetry(() => backendMetadataApi.markAsDeleted(this.id))
+    logger.debug(`complete: ${this.toString()}`);
+
+  }
+
   toString() {
     return `Song[Artist=${this.artist} Title=${this.title}]`;
   }

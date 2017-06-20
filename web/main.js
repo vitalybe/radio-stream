@@ -28,6 +28,8 @@ app.on('ready', () => {
   globalShortcuts.register(app, mainWindow);
   menu.setup();
 
+  console.log("App settings are at: " + app.getPath('userData'));
+
   if (process.env.HOT) {
     mainWindow.loadURL(`file://${__dirname}/app/hot-dev-index.html`);
   } else {
