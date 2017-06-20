@@ -70,15 +70,15 @@ export default class PlayerPage extends Component {
   }
 
   componentDidMount() {
-    let logger = loggerCreator("componentDidMount", moduleLogger);
+    loggerCreator("componentDidMount", moduleLogger);
   }
 
   componentWillUnmount() {
-    let logger = loggerCreator("componentWillUnmount", moduleLogger);
+    loggerCreator("componentWillUnmount", moduleLogger);
   }
 
   onPressHardwareBack() {
-    let logger = loggerCreator("hardwareBackPress", moduleLogger);
+    loggerCreator("hardwareBackPress", moduleLogger);
     player.pause();
     navigator.navigateToPlaylistCollection();
     return true;
