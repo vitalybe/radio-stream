@@ -3,12 +3,14 @@ import loggerCreator from "../../utils/logger";
 const moduleLogger = loggerCreator("MasterFramePage");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableHighlight } from "react-native";
+import { observer } from "mobx-react";
 
 import { MenuContext } from "../../shared_components/context_menu/context_menu";
 import Sidebar from "./sidebar";
 import constants from "../../utils/constants";
 import navigator from "../../stores/navigator/navigator";
+import masterFrame from "../../stores/master_frame";
 
 import PlaylistCollectionPage from "../../pages/playlist_collection_page";
 import PlayerPage from "../../pages/player_page/player_page";
@@ -32,10 +34,18 @@ const styles = StyleSheet.create({
   },
 });
 
+@observer
 export default class MasterFramePage extends Component {
   componentWillMount() {
     loggerCreator("componentWillMount", moduleLogger);
   }
+
+  onHamburgerClick = () => {
+    let logger = loggerCreator("onHamburgerClick", moduleLogger);
+
+    masterFrame.isNavigationSidebarOpen = !masterFrame.isNavigationSidebarOpen;
+    logger.info(`navigation sidebar should be now open? ${masterFrame.isNavigationSidebarOpen}`);
+  };
 
   render() {
     let logger = loggerCreator(this.render.name, moduleLogger);
@@ -63,7 +73,9 @@ export default class MasterFramePage extends Component {
     return (
       <Image source={backgroundImage} resizeMode="cover" style={styles.container}>
         <MenuContext customStyles={{ menuContextWrapper: styles.menuContext }}>
-          <Image source={hamburgerImage} height={34} width={34} />
+          <TouchableHighlight onPress={this.onHamburgerClick}>
+            <Image source={hamburgerImage} height={34} width={34} />
+          </TouchableHighlight>
           {page}
         </MenuContext>
         <Sidebar />

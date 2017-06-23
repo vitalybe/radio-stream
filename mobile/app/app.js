@@ -3,13 +3,11 @@ const moduleLogger = loggerCreator("app");
 
 import React, { Component } from "react";
 import { StyleSheet, Image, Dimensions, View } from "react-native";
-import { observer } from "mobx-react";
 
 import settings from "./utils/settings/settings";
 import settingsNative from "./utils/settings/settings_native";
 import MasterFramePage from "./pages/master_frame_page/master_frame_page";
 
-@observer
 export default class RadioStream extends Component {
   async componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);

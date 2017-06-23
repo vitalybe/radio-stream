@@ -4,7 +4,9 @@ var moduleLogger = loggerCreator("Sidebar");
 
 import React, { Component } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
+import { observer } from "mobx-react";
 
+import masterFrame from "../../stores/master_frame";
 import { colors } from "../../styles/styles";
 
 const styles = StyleSheet.create({
@@ -14,7 +16,6 @@ const styles = StyleSheet.create({
     top: 66,
     bottom: -1,
     left: -1,
-    width: -1, //336,
     borderColor: colors.CYAN_BRIGHT,
     borderStyle: "solid",
     borderWidth: 1,
@@ -22,9 +23,15 @@ const styles = StyleSheet.create({
   },
 });
 
+OPEN_WIDTH = 336;
+CLOSED_WIDTH = -1;
+
+@observer
 export default class Sidebar extends Component {
   render() {
-    return <View style={styles.sidebar} />;
+    const width = masterFrame.isNavigationSidebarOpen ? OPEN_WIDTH : CLOSED_WIDTH;
+
+    return <View style={[styles.sidebar, { width: width }]} />;
   }
 }
 
