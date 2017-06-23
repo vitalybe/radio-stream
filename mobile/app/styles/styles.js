@@ -9,6 +9,8 @@ const _rawColor = {
 };
 
 const colors = {
+  CONTAINER_BACKGROUND_NORMAL: _rawColor.CYAN_DARKEST.clone().clearer(0.05).rgbString(),
+
   CYAN_DARKEST: _rawColor.CYAN_DARKEST.rgbString(),
 
   CYAN_DARK: _rawColor.CYAN_DARK.rgbString(),
