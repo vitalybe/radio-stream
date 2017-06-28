@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
     top: 66,
     bottom: -1,
-    left: -1,
+    left: -2,
     borderColor: colors.CYAN_BRIGHT,
     borderStyle: "solid",
     borderWidth: 1,
