@@ -1,9 +1,9 @@
-import loggerCreator from "./utils/logger";
+import loggerCreator from "../../utils/logger";
 const moduleLogger = loggerCreator("RadioStreamElectron");
 import React, { Component } from "react";
 
-import App from "./app.js";
-import ElectronIpcBrowserSide from "./utils/electron_ipc/electron_ipc_browser_side";
+import MasterPage from "./master_page";
+import ElectronIpcBrowserSide from "../../utils/electron_ipc/electron_ipc_browser_side";
 
 export default class RadioStreamElectron extends Component {
   async componentWillMount() {
@@ -12,8 +12,7 @@ export default class RadioStreamElectron extends Component {
   }
 
   render() {
-    let logger = loggerCreator(this.render.name, moduleLogger);
-
-    return <App />;
+    loggerCreator(this.render.name, moduleLogger);
+    return <MasterPage />;
   }
 }

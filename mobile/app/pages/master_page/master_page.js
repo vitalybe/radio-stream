@@ -1,16 +1,18 @@
 import loggerCreator from "../../utils/logger";
 //noinspection JSUnresolvedVariable
-const moduleLogger = loggerCreator("MasterFramePage");
+const moduleLogger = loggerCreator("MasterPage");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, Text, View, TouchableHighlight } from "react-native";
+import { Image, StyleSheet, TouchableHighlight, Dimensions } from "react-native";
 import { observer } from "mobx-react";
 
 import { MenuContext } from "../../shared_components/context_menu/context_menu";
 import Sidebar from "./sidebar";
 import constants from "../../utils/constants";
 import navigator from "../../stores/navigator/navigator";
-import masterFrame from "../../stores/master_frame";
+import masterStore from "../../stores/master_store";
+import settings from "../../utils/settings/settings";
+import settingsNative from "../../utils/settings/settings_native";
 
 import PlaylistCollectionPage from "../../pages/playlist_collection_page";
 import PlayerPage from "../../pages/player_page/player_page";
@@ -35,16 +37,32 @@ const styles = StyleSheet.create({
 });
 
 @observer
-export default class MasterFramePage extends Component {
-  componentWillMount() {
+export default class MasterPage extends Component {
+  async componentWillMount() {
     loggerCreator("componentWillMount", moduleLogger);
+
+    let logger = loggerCreator("componentWillMount", moduleLogger);
+
+    const { height, width } = Dimensions.get("window");
+    moduleLogger.info(`available dimensions: width=${width} height=${height}`);
+
+    this.state = {
+      ready: false,
+    };
+
+    logger.info(`loading settings`);
+    await settings.load();
+    await settingsNative.load();
+
+    logger.info(`settings loaded`);
+    this.setState({ ready: true });
   }
 
   onHamburgerClick = () => {
     let logger = loggerCreator("onHamburgerClick", moduleLogger);
 
-    masterFrame.isNavigationSidebarOpen = !masterFrame.isNavigationSidebarOpen;
-    logger.info(`navigation sidebar should be now open? ${masterFrame.isNavigationSidebarOpen}`);
+    masterStore.isNavigationSidebarOpen = !masterStore.isNavigationSidebarOpen;
+    logger.info(`navigation sidebar should be now open? ${masterStore.isNavigationSidebarOpen}`);
   };
 
   render() {
@@ -70,18 +88,22 @@ export default class MasterFramePage extends Component {
       }
     }
 
-    return (
-      <Image source={backgroundImage} resizeMode="cover" style={styles.container}>
-        <MenuContext customStyles={{ menuContextWrapper: styles.menuContext }}>
-          <TouchableHighlight onPress={this.onHamburgerClick}>
-            <Image source={hamburgerImage} height={34} width={34} />
-          </TouchableHighlight>
-          {page}
-        </MenuContext>
-        <Sidebar />
-      </Image>
-    );
+    if (this.state.ready) {
+      return (
+        <Image source={backgroundImage} resizeMode="cover" style={styles.container}>
+          <MenuContext customStyles={{ menuContextWrapper: styles.menuContext }}>
+            <TouchableHighlight onPress={this.onHamburgerClick}>
+              <Image source={hamburgerImage} height={34} width={34} />
+            </TouchableHighlight>
+            {page}
+          </MenuContext>
+          <Sidebar />
+        </Image>
+      );
+    } else {
+      return null;
+    }
   }
 }
 
-MasterFramePage.propTypes = {};
+MasterPage.propTypes = {};

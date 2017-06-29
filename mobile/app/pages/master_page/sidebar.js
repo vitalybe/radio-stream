@@ -6,7 +6,7 @@ import React, { Component } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { observer } from "mobx-react";
 
-import masterFrame from "../../stores/master_frame";
+import masterStore from "../../stores/master_store";
 import { colors } from "../../styles/styles";
 
 const styles = StyleSheet.create({
@@ -29,7 +29,7 @@ CLOSED_WIDTH = -1;
 @observer
 export default class Sidebar extends Component {
   render() {
-    const width = masterFrame.isNavigationSidebarOpen ? OPEN_WIDTH : CLOSED_WIDTH;
+    const width = masterStore.isNavigationSidebarOpen ? OPEN_WIDTH : CLOSED_WIDTH;
 
     return <View style={[styles.sidebar, { width: width }]} />;
   }
