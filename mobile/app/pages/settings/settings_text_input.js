@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     height: 50,
 
     color: colors.SEMI_WHITE,
-    backgroundColor: colors.CYAN_DARK_CLEARER,
+    backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
 
     borderColor: colors.CYAN_BRIGHT,
     borderStyle: "solid",
@@ -33,7 +33,9 @@ export default class SettingsTextInput extends Component {
   render() {
     return (
       <View>
-        <NormalText style={[styles.label]}>{this.props.label}</NormalText>
+        <NormalText style={[styles.label]}>
+          {this.props.label}
+        </NormalText>
         <TextInput
           style={[styles.input]}
           value={this.props.value}
