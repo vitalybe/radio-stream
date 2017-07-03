@@ -55,7 +55,7 @@ export default class AlbumArt extends Component {
 
     const song = this.props.song;
 
-    let albumArt = require("../../images/no-album2.png");
+    let albumArt = require("../../images/no-album.png");
     if (song.loadedImageUrl) {
       logger.info(`uri: ${song.loadedImageUrl}`);
       albumArt = { uri: song.loadedImageUrl };
@@ -71,7 +71,9 @@ export default class AlbumArt extends Component {
             <NormalText style={styles.additionalSongInfo}>
               Last played: {moment.unix(song.lastplayed).fromNow()}
             </NormalText>
-            <NormalText style={styles.additionalSongInfo}>Play count: {song.playcount}</NormalText>
+            <NormalText style={styles.additionalSongInfo}>
+              Play count: {song.playcount}
+            </NormalText>
             <NormalText style={styles.additionalSongInfo}>
               Marked as played: {song.isMarkedAsPlayed ? "✔" : "x"}
             </NormalText>
