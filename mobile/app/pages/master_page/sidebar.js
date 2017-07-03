@@ -14,8 +14,8 @@ import SidebarMenuTitle from "./sidebar_menu_title";
 import playIcon from "../../images/play-icon.png";
 import pencilIcon from "../../images/pencil-icon.png";
 
-OPEN_LEFT = -2;
-OPEN_WIDTH = 336;
+const OPEN_LEFT = -2;
+const OPEN_WIDTH = 336;
 
 const styles = StyleSheet.create({
   sidebar: {

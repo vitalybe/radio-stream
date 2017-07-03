@@ -45,8 +45,8 @@ export default class SidebarMenuItem extends Component {
 
 SidebarMenuItem.propTypes = {
   text: React.PropTypes.string.isRequired,
-  leftImage: React.PropTypes.number.isRequired,
-  rightImage: React.PropTypes.number,
+  leftImage: React.PropTypes.any.isRequired,
+  rightImage: React.PropTypes.any,
 
   isActive: React.PropTypes.bool,
 };
