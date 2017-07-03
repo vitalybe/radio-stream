@@ -93,7 +93,7 @@ export default class MasterPage extends Component {
         <Image source={backgroundImage} resizeMode="cover" style={styles.container}>
           <MenuContext customStyles={{ menuContextWrapper: styles.menuContext }}>
             <TouchableHighlight onPress={this.onHamburgerClick}>
-              <Image source={hamburgerImage} height={34} width={34} />
+              <Image source={hamburgerImage} style={{ height: 34, width: 34 }} />
             </TouchableHighlight>
             {page}
           </MenuContext>
