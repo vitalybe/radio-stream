@@ -10,9 +10,13 @@ import { colors } from "../../styles/styles";
 
 const styles = StyleSheet.create({
   itemContainer: { flexDirection: "row", height: 45, alignItems: "center" },
-  image: { flex: 1 },
-  imageContainer: { marginLeft: 10, height: 25, width: 25 },
   itemText: { marginLeft: 5, color: colors.CYAN_BRIGHT },
+
+  leftImage: { flex: 1 },
+  leftImageContainer: { marginLeft: 10, height: 25, width: 25 },
+
+  rightImage: { flex: 1 },
+  rightImageContainer: { marginLeft: "auto", marginRight: 5, height: 25, width: 25 },
 });
 
 @observer
@@ -25,12 +29,15 @@ export default class SidebarMenuItem extends Component {
 
     return (
       <View style={[styles.itemContainer, { backgroundColor: itemContainerBackground }]}>
-        <View style={styles.imageContainer}>
-          <Image source={this.props.image} resizeMode="contain" style={styles.image} />
+        <View style={styles.leftImageContainer}>
+          <Image source={this.props.leftImage} resizeMode="contain" style={styles.leftImage} />
         </View>
         <NormalText style={styles.itemText}>
           {this.props.text}
         </NormalText>
+        <View style={styles.rightImageContainer}>
+          <Image source={this.props.rightImage} resizeMode="contain" style={styles.rightImage} />
+        </View>
       </View>
     );
   }
@@ -38,7 +45,8 @@ export default class SidebarMenuItem extends Component {
 
 SidebarMenuItem.propTypes = {
   text: React.PropTypes.string.isRequired,
-  image: React.PropTypes.number.isRequired,
+  leftImage: React.PropTypes.number.isRequired,
+  rightImage: React.PropTypes.number,
 
   isActive: React.PropTypes.bool,
 };

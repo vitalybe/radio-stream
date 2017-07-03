@@ -12,6 +12,7 @@ import SidebarMenuItem from "./sidebar_menu_item";
 import SidebarMenuTitle from "./sidebar_menu_title";
 
 import playIcon from "../../images/play-icon.png";
+import pencilIcon from "../../images/pencil-icon.png";
 
 OPEN_LEFT = -2;
 OPEN_WIDTH = 336;
@@ -41,11 +42,11 @@ export default class Sidebar extends Component {
     return (
       <View style={[styles.sidebar, { left: left }]}>
         <SidebarMenuTitle text="Radio Stream" />
-        <SidebarMenuItem text="Player" image={playIcon} />
-        <SidebarMenuItem text="Player" image={playIcon} isActive={true} />
-        <SidebarMenuTitle text="Radio Stream" />
-        <SidebarMenuItem text="Player" image={playIcon} />
-        <SidebarMenuItem text="Player" image={playIcon} />
+        <SidebarMenuItem text="Player" leftImage={playIcon} />
+        <SidebarMenuItem text="Player" leftImage={playIcon} isActive={true} />
+        <SidebarMenuTitle text="Playlists" />
+        <SidebarMenuItem text="Peaceful" leftImage={playIcon} rightImage={pencilIcon} />
+        <SidebarMenuItem text="Metal" leftImage={playIcon} rightImage={pencilIcon} />
       </View>
     );
   }
