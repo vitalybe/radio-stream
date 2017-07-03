@@ -9,10 +9,10 @@ import NormalText from "../../shared_components/text/normal_text";
 import { colors } from "../../styles/styles";
 
 const styles = StyleSheet.create({
-  itemContainer: { flexDirection: "row", height: 51, alignItems: "center" },
+  itemContainer: { flexDirection: "row", height: 45, alignItems: "center" },
   image: { flex: 1 },
   imageContainer: { marginLeft: 10, height: 25, width: 25 },
-  itemText: { marginLeft: 10, color: colors.CYAN_BRIGHT },
+  itemText: { marginLeft: 5, color: colors.CYAN_BRIGHT },
 });
 
 @observer

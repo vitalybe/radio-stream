@@ -7,6 +7,7 @@ import NormalText from "./normal_text";
 const styles = {
   text: {
     fontSize: fontSizes.LARGE,
+    fontWeight: "bold",
   },
 };
 
