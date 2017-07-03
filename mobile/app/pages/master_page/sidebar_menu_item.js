@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   leftImageContainer: { marginLeft: 10, height: 25, width: 25 },
 
   rightImage: { flex: 1 },
-  rightImageContainer: { marginLeft: "auto", marginRight: 5, height: 25, width: 25 },
+  rightImageContainer: { marginLeft: "auto", marginRight: 10, height: 25, width: 25 },
 });
 
 @observer
