@@ -8,12 +8,15 @@ import { observer } from "mobx-react";
 
 import masterStore from "../../stores/master_store";
 import { colors } from "../../styles/styles";
+import SidebarMenuItem from "./sidebar_menu_item";
+
+import playIcon from "../../images/play-icon.png";
 
 const styles = StyleSheet.create({
   sidebar: {
     position: "absolute",
     backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
-    top: 66,
+    top: 59,
     bottom: -1,
     left: -2,
     borderColor: colors.CYAN_BRIGHT,
@@ -29,9 +32,16 @@ CLOSED_WIDTH = -1;
 @observer
 export default class Sidebar extends Component {
   render() {
+    loggerCreator(this.render.name, moduleLogger);
+
     const width = masterStore.isNavigationSidebarOpen ? OPEN_WIDTH : CLOSED_WIDTH;
 
-    return <View style={[styles.sidebar, { width: width }]} />;
+    return (
+      <View style={[styles.sidebar, { width: width }]}>
+        <SidebarMenuItem text="Player" image={playIcon} />
+        <SidebarMenuItem text="Player" image={playIcon} />
+      </View>
+    );
   }
 }
 

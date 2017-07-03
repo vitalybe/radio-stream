@@ -1,10 +1,10 @@
 import loggerCreator from "../utils/logger";
 //noinspection JSUnresolvedVariable
-const moduleLogger = loggerCreator("MasterFrame");
+const moduleLogger = loggerCreator("MasterStore");
 
 import { observable } from "mobx";
 
-class MasterFrame {
+class MasterStore {
   @observable isNavigationSidebarOpen = true;
 
   constructor() {
@@ -12,4 +12,4 @@ class MasterFrame {
   }
 }
 
-export default new MasterFrame();
+export default new MasterStore();
