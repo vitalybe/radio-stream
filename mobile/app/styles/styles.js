@@ -25,6 +25,7 @@ const colors = {
 const fontSizes = {
   NORMAL: 18,
   LARGE: 20,
+  SMALL: 14,
 };
 
 export { colors, fontSizes };

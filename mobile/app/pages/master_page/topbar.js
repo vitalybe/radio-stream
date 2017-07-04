@@ -9,7 +9,13 @@ import NormalText from "../../shared_components/text/normal_text";
 
 import dimensionsStore from "app/stores/dimensions_store/dimensions_store";
 import masterStore from "app/stores/master_store";
+import BigText from "app/shared_components/text/big_text";
+import { colors } from "app/styles/styles";
+import SmallText from "app/shared_components/text/small_text";
+
 import hamburgerImage from "app/images/hamburger.png";
+import playlistImage from "app/images/playlist-icon.png";
+import playImage from "app/images/play-icon.png";
 
 const styles = StyleSheet.create({
   topBar: {
@@ -19,17 +25,29 @@ const styles = StyleSheet.create({
   topBarLeft: {
     flex: 0.2,
     flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "green",
   },
+  hamburgerContainer: {},
+  hamburgerContent: { flexDirection: "row", alignItems: "center" },
+  hamburgerImage: { height: 30, width: 34 },
+  currentPageText: { color: colors.CYAN_BRIGHT, marginLeft: 10 },
   topBarRight: {
-    flex: 1,
+    flex: 0.8,
     flexDirection: "row-reverse",
     alignItems: "center",
-    backgroundColor: "red",
+    paddingRight: 10,
   },
-  hamburgerImage: { height: 34, width: 34 },
-  hamburgerContainer: {},
+  playlistButton: {},
+  playlistImage: { height: 34, width: 30 },
+  playButton: { marginRight: 10 },
+  playImage: { height: 25, width: 20 },
+
+  songInfo: {
+    alignItems: "flex-start",
+    marginRight: 10,
+    flexShrink: 1,
+  },
+  songInfoTitle: {},
+  songInfoArtist: { fontWeight: "bold" },
 });
 
 @observer
@@ -46,12 +64,23 @@ export default class Topbar extends Component {
       <View style={styles.topBar}>
         <View style={styles.topBarLeft}>
           <TouchableHighlight onPress={this.onHamburgerClick} style={styles.hamburgerContainer}>
-            <Image source={hamburgerImage} style={styles.hamburgerImage} />
+            <View style={styles.hamburgerContent}>
+              <Image source={hamburgerImage} style={styles.hamburgerImage} />
+              {dimensionsStore.isBigWidth ? <BigText style={styles.currentPageText}>Player</BigText> : null}
+            </View>
           </TouchableHighlight>
-          {dimensionsStore.isBigWidth ? <NormalText style={{ flex: 1 }}>Player</NormalText> : null}
         </View>
         <View style={styles.topBarRight}>
-          <NormalText>Player</NormalText>
+          <TouchableHighlight style={styles.playlistButton}>
+            <Image resizeMode="contain" source={playlistImage} style={styles.playlistImage} />
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.playButton}>
+            <Image resizeMode="contain" source={playImage} style={styles.playImage} />
+          </TouchableHighlight>
+          <View style={styles.songInfo}>
+            <SmallText style={styles.songInfoTitle}>The lamb lies down on Broadway</SmallText>
+            <SmallText style={styles.songInfoArtist}>Genesis</SmallText>
+          </View>
         </View>
       </View>
     );

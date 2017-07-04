@@ -1,8 +1,8 @@
 import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
-const moduleLogger = loggerCreator("DimensionsProvider");
+const moduleLogger = loggerCreator("DimensionsChangedEmitter");
 
-class DimensionsProvider {
+class DimensionsChangedEmitter {
   callback = null;
 
   constructor() {
@@ -15,9 +15,9 @@ class DimensionsProvider {
     });
   }
 
-  subscribeDimensionsChanged(callback) {
+  subscribe(callback) {
     this.callback = callback;
   }
 }
 
-export default new DimensionsProvider();
+export default new DimensionsChangedEmitter();

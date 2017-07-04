@@ -5,7 +5,7 @@ const moduleLogger = loggerCreator("DimensionsStore");
 import _ from "lodash";
 import { computed, observable } from "mobx";
 import { Dimensions } from "react-native";
-import dimensionsProvider from "./dimensions_provider";
+import DimensionsChangedEmitter from "./dimensions_changed_emitter";
 
 const BIG_WIDTH = 500;
 
@@ -35,7 +35,7 @@ class DimensionsStore {
   constructor() {
     let logger = loggerCreator("constructor", moduleLogger);
     this._updateDimensions();
-    dimensionsProvider.subscribeDimensionsChanged(this._updateDimensions);
+    DimensionsChangedEmitter.subscribe(this._updateDimensions);
     logger.info(`subscribed to dimensions change`);
   }
 }
