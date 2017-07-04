@@ -2,9 +2,10 @@ import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator("DimensionsStore");
 
+import _ from "lodash";
 import { computed, observable } from "mobx";
 import { Dimensions } from "react-native";
-import _ from "lodash";
+import dimensionsProvider from "./dimensions_provider";
 
 const BIG_WIDTH = 500;
 
@@ -32,10 +33,10 @@ class DimensionsStore {
   );
 
   constructor() {
-    loggerCreator("constructor", moduleLogger);
+    let logger = loggerCreator("constructor", moduleLogger);
     this._updateDimensions();
-
-    window.addEventListener("resize", this._updateDimensions);
+    dimensionsProvider.subscribeDimensionsChanged(this._updateDimensions);
+    logger.info(`subscribed to dimensions change`);
   }
 }
 

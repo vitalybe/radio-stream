@@ -7,7 +7,7 @@ import { Image, StyleSheet, TouchableHighlight, View } from "react-native";
 import { observer } from "mobx-react";
 import NormalText from "../../shared_components/text/normal_text";
 
-import dimensionsStore from "app/stores/dimensions_store";
+import dimensionsStore from "app/stores/dimensions_store/dimensions_store";
 import masterStore from "app/stores/master_store";
 import hamburgerImage from "app/images/hamburger.png";
 
