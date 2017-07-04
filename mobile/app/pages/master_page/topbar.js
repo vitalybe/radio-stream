@@ -3,11 +3,11 @@ import loggerCreator from "../../utils/logger";
 var moduleLogger = loggerCreator("Topbar");
 
 import React, { Component } from "react";
-import { Platform, Image, StyleSheet, TouchableHighlight, View } from "react-native";
+import { Image, StyleSheet, TouchableHighlight, View } from "react-native";
 import { observer } from "mobx-react";
 import NormalText from "../../shared_components/text/normal_text";
 
-import deviceSize from "app/utils/device_size";
+import dimensionsStore from "app/stores/dimensions_store";
 import masterStore from "app/stores/master_store";
 import hamburgerImage from "app/images/hamburger.png";
 
@@ -48,7 +48,7 @@ export default class Topbar extends Component {
           <TouchableHighlight onPress={this.onHamburgerClick} style={styles.hamburgerContainer}>
             <Image source={hamburgerImage} style={styles.hamburgerImage} />
           </TouchableHighlight>
-          {deviceSize.isBigWidth() ? <NormalText style={{ flex: 1 }}>Player</NormalText> : null}
+          {dimensionsStore.isBigWidth ? <NormalText style={{ flex: 1 }}>Player</NormalText> : null}
         </View>
         <View style={styles.topBarRight}>
           <NormalText>Player</NormalText>

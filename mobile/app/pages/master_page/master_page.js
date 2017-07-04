@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("MasterPage");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, Dimensions } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import { observer } from "mobx-react";
 
 import { MenuContext } from "app/shared_components/context_menu/context_menu";
@@ -35,12 +35,7 @@ const styles = StyleSheet.create({
 @observer
 export default class MasterPage extends Component {
   async componentWillMount() {
-    loggerCreator("componentWillMount", moduleLogger);
-
     let logger = loggerCreator("componentWillMount", moduleLogger);
-
-    const { height, width } = Dimensions.get("window");
-    moduleLogger.info(`available dimensions: width=${width} height=${height}`);
 
     this.state = {
       ready: false,
