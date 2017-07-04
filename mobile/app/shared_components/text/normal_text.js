@@ -13,7 +13,7 @@ const styles = {
 export default class NormalText extends Component {
   render() {
     return (
-      <Text style={[styles.text, this.props.style]}>
+      <Text style={[styles.text, this.props.style]} numberOfLines={1}>
         {this.props.children}
       </Text>
     );
