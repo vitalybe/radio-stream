@@ -3,10 +3,11 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("SidebarMenuItem");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
 import NormalText from "app/shared_components/text/normal_text";
 import { colors } from "app/styles/styles";
+import HoverableOpacity from "app/utils/hoverable_opacity";
 
 const styles = StyleSheet.create({
   itemContainer: { flexDirection: "row", height: 45, alignItems: "center" },
@@ -28,9 +29,10 @@ export default class SidebarMenuItem extends Component {
     }
 
     return (
-      <TouchableOpacity
+      <HoverableOpacity
         activeOpacity={1}
         style={[styles.itemContainer, { backgroundColor: itemContainerBackground }]}
+        hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}
         onMouseEnter={this.onMouseEnter}>
         <View style={styles.leftImageContainer}>
           <Image source={this.props.leftImage} resizeMode="contain" style={styles.leftImage} />
@@ -41,7 +43,7 @@ export default class SidebarMenuItem extends Component {
         <View style={styles.rightImageContainer}>
           <Image source={this.props.rightImage} resizeMode="contain" style={styles.rightImage} />
         </View>
-      </TouchableOpacity>
+      </HoverableOpacity>
     );
   }
 }
