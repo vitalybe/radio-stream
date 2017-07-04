@@ -1,4 +1,4 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator("AlbumArt");
 
@@ -6,10 +6,10 @@ import React, { Component } from "react";
 import { Image, StyleSheet, View, Dimensions } from "react-native";
 import { observer } from "mobx-react";
 
-import FlipCard from "../../utils/flip_card";
-import NormalText from "../../shared_components/text/normal_text";
+import FlipCard from "app/utils/flip_card";
+import NormalText from "app/shared_components/text/normal_text";
 import moment from "moment";
-import { colors, fontSizes } from "../../styles/styles";
+import { colors, fontSizes } from "app/styles/styles";
 
 const BIG_DEVICE_HEIGHT = 700;
 
@@ -55,7 +55,7 @@ export default class AlbumArt extends Component {
 
     const song = this.props.song;
 
-    let albumArt = require("../../images/no-album.png");
+    let albumArt = require("app/images/no-album.png");
     if (song.loadedImageUrl) {
       logger.info(`uri: ${song.loadedImageUrl}`);
       albumArt = { uri: song.loadedImageUrl };

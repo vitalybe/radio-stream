@@ -1,9 +1,9 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("navigator_real");
 
 import { observable } from "mobx";
 
-import constants from "../../utils/constants";
+import constants from "app/utils/constants";
 
 class Navigator {
   @observable activeRoute = null;

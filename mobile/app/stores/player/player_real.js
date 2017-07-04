@@ -1,10 +1,10 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator("player_real");
 
 import { observable, action, computed } from "mobx";
-import retries from "../../utils/retries";
-import assert from "../../utils/assert";
+import retries from "app/utils/retries";
+import assert from "app/utils/assert";
 import Playlist from "./web/playlist";
 import * as wrappedSoundManager from "./web/wrapped_sound_manager";
 
@@ -42,7 +42,8 @@ class Player {
     this.currentPlaylist = new Playlist(playlistName);
   }
 
-  @action pause() {
+  @action
+  pause() {
     let logger = loggerCreator("pause", moduleLogger);
 
     let promise = Promise.resolve();
@@ -56,7 +57,8 @@ class Player {
     return promise;
   }
 
-  @action play() {
+  @action
+  play() {
     let logger = loggerCreator("play", moduleLogger);
 
     assert(this.currentPlaylist, "unexpected: playlist isn't set");
@@ -70,7 +72,8 @@ class Player {
     this.isPlaying = true;
   }
 
-  @action playPauseToggle() {
+  @action
+  playPauseToggle() {
     let logger = loggerCreator("playPauseToggle", moduleLogger);
 
     if (this.isPlaying) {
@@ -150,7 +153,8 @@ class Player {
     await this._preloadNextSong();
   }
 
-  @action stop() {
+  @action
+  stop() {
     let logger = loggerCreator("stop", moduleLogger);
 
     return this.pause().then(() => {
@@ -159,7 +163,8 @@ class Player {
     });
   }
 
-  @computed get isLoading() {
+  @computed
+  get isLoading() {
     return !(this.song && this.song.loadedSound);
   }
 }

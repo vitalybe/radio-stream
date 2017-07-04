@@ -1,7 +1,7 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("navigator");
 
-import constants from "../../utils/constants";
+import constants from "app/utils/constants";
 
 import navigatorReal from "./navigator_real";
 import navigatorMock from "./navigator_mock";

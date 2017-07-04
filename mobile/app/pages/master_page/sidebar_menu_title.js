@@ -1,11 +1,11 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator("SidebarMenuTitle");
 
 import React, { Component } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { observer } from "mobx-react";
-import BigText from "../../shared_components/text/big_text";
+import BigText from "app/shared_components/text/big_text";
 
 const styles = StyleSheet.create({
   text: {

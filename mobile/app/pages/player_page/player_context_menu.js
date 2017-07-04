@@ -1,13 +1,13 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator("PlayerContextMenu");
 
 import React, { Component } from "react";
 import { Image, StyleSheet, Text, View, TouchableHighlight } from "react-native";
 
-import { colors } from "../../styles/styles";
-import { Menu, MenuOptions, MenuOption, MenuTrigger } from "../../shared_components/context_menu/context_menu";
-import player from "../../stores/player/player";
+import { colors } from "app/styles/styles";
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from "app/shared_components/context_menu/context_menu";
+import player from "app/stores/player/player";
 
 const styles = StyleSheet.create({
   menu: {

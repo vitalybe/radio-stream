@@ -1,5 +1,5 @@
 "use strict";
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("player_real.android");
 
 import { observable, computed, action } from "mobx";
@@ -7,8 +7,8 @@ import { NativeModules, DeviceEventEmitter, AppState } from "react-native";
 
 import Playlist from "./android/playlist";
 import Song from "./android/song";
-import settings from "../../utils/settings/settings";
-import navigator from "../navigator/navigator";
+import settings from "app/utils/settings/settings";
+import navigator from "app/stores/navigator/navigator";
 
 class Player {
   PLAYLIST_PLAYER_STATUS_EVENT = "PLAYLIST_PLAYER_STATUS_EVENT";

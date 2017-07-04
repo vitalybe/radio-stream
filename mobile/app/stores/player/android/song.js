@@ -1,10 +1,10 @@
-import loggerCreator from "../../../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator("song");
 
 import { observable } from "mobx";
 
-import { getArtistImage } from "../../../utils/backend_lastfm_api";
+import { getArtistImage } from "app/utils/backend_lastfm_api";
 import SongActions from "../song_actions";
 
 export default class Song {

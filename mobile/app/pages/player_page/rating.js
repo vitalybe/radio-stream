@@ -1,4 +1,4 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("rating");
 
 import React, { Component } from "react";
@@ -15,10 +15,10 @@ import {
 import _ from "lodash";
 import { observer } from "mobx-react";
 
-import BackendMetadataApi from "../../utils/backend_metadata_api";
+import BackendMetadataApi from "app/utils/backend_metadata_api";
 
-let starFullSource = require("../../images/star-full.png");
-let starEmptySource = require("../../images/star-empty.png");
+let starFullSource = require("app/images/star-full.png");
+let starEmptySource = require("app/images/star-empty.png");
 
 const MAX_RATING = 100;
 const STAR_COUNT = 5;
@@ -83,7 +83,9 @@ export default class Rating extends Component {
           key={i}
           onPress={() => this.onStarPress(i)}
           onLongPress={() => this.onStarLongPress(i)}>
-          <View><Image style={[styles.star]} source={imageSource} /></View>
+          <View>
+            <Image style={[styles.star]} source={imageSource} />
+          </View>
         </TouchableWithoutFeedback>
       );
     });

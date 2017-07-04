@@ -1,17 +1,17 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("player_page");
 
 import React, { Component } from "react";
 import { StyleSheet, View, Image } from "react-native";
-import BackHandler from "../../utils/back_handler/back_handler";
+import BackHandler from "app/utils/back_handler/back_handler";
 import { observer } from "mobx-react";
 
-import Icon from "../../shared_components/icon";
-import { colors, fontSizes } from "../../styles/styles";
-import BigText from "../../shared_components/text/big_text";
+import Icon from "app/shared_components/icon";
+import { colors, fontSizes } from "app/styles/styles";
+import BigText from "app/shared_components/text/big_text";
 import PlayerContextMenu from "./player_context_menu";
-import navigator from "../../stores/navigator/navigator";
-import player from "../../stores/player/player";
+import navigator from "app/stores/navigator/navigator";
+import player from "app/stores/player/player";
 import Rating from "./rating";
 import AlbumArt from "./album_art";
 import PlayerControls from "./player_controls";
@@ -94,7 +94,9 @@ export default class PlayerPage extends Component {
       <View style={styles.container}>
         <View style={styles.playlistNameView}>
           <Icon name="music" style={styles.playlistIcon} />
-          <BigText>{this.props.playlistName}</BigText>
+          <BigText>
+            {this.props.playlistName}
+          </BigText>
         </View>
         {!player.isLoading
           ? <View>

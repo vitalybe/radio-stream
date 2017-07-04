@@ -1,20 +1,20 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("settings_page");
 
 import React, { Component } from "react";
 import { StyleSheet, View, TextInput } from "react-native";
-import BackHandler from "../../utils/back_handler/back_handler";
+import BackHandler from "app/utils/back_handler/back_handler";
 import mobx from "mobx";
 import { observer } from "mobx-react";
 
-import Button from "../../shared_components/rectangle_button";
-import NormalText from "../../shared_components/text/normal_text";
-import ButtonText from "../../shared_components/text/button_text";
+import Button from "app/shared_components/rectangle_button";
+import NormalText from "app/shared_components/text/normal_text";
+import ButtonText from "app/shared_components/text/button_text";
 import SettingsPageNative from "./settings_page_native";
-import settings from "../../utils/settings/settings";
-import settingsNative from "../../utils/settings/settings_native";
-import backendMetadataApi from "../../utils/backend_metadata_api";
-import navigator from "../../stores/navigator/navigator";
+import settings from "app/utils/settings/settings";
+import settingsNative from "app/utils/settings/settings_native";
+import backendMetadataApi from "app/utils/backend_metadata_api";
+import navigator from "app/stores/navigator/navigator";
 import SettingsTextInput from "./settings_text_input";
 
 const styles = StyleSheet.create({
@@ -127,7 +127,9 @@ export default class SettingsPage extends Component {
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>
         </Button>
-        <NormalText style={[styles.status]}>{this.settingsValues.status}</NormalText>
+        <NormalText style={[styles.status]}>
+          {this.settingsValues.status}
+        </NormalText>
       </View>
     );
   }

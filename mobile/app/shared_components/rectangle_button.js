@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { TouchableHighlight } from "react-native";
 
-import { colors } from "../styles/styles";
+import { colors } from "app/styles/styles";
 
 const styles = {
   button: {

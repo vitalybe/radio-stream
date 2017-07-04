@@ -1,9 +1,9 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator("ElectronIpcBrowserSide");
 
 import { ipcRenderer } from "electron";
-import player from "../../stores/player/player";
+import player from "app/stores/player/player";
 
 class ElectronIpcBrowserSide {
   constructor() {

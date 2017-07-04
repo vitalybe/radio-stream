@@ -1,8 +1,8 @@
-import loggerCreator from "../utils/logger";
+import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("backend_metadata_api");
 
 const btoa = require("base-64").encode;
-import Ajax from "../utils/ajax";
+import Ajax from "app/utils/ajax";
 import settings from "./settings/settings";
 
 class BackendMetadataApi {

@@ -1,4 +1,4 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator("MasterPage");
 
@@ -6,20 +6,20 @@ import React, { Component } from "react";
 import { Image, StyleSheet, TouchableHighlight, Dimensions } from "react-native";
 import { observer } from "mobx-react";
 
-import { MenuContext } from "../../shared_components/context_menu/context_menu";
+import { MenuContext } from "app/shared_components/context_menu/context_menu";
 import Sidebar from "./sidebar";
-import constants from "../../utils/constants";
-import navigator from "../../stores/navigator/navigator";
-import masterStore from "../../stores/master_store";
-import settings from "../../utils/settings/settings";
-import settingsNative from "../../utils/settings/settings_native";
+import constants from "app/utils/constants";
+import navigator from "app/stores/navigator/navigator";
+import masterStore from "app/stores/master_store";
+import settings from "app/utils/settings/settings";
+import settingsNative from "app/utils/settings/settings_native";
 
-import PlaylistCollectionPage from "../../pages/playlist_collection_page";
-import PlayerPage from "../../pages/player_page/player_page";
-import SettingsPage from "../../pages/settings/settings_page";
+import PlaylistCollectionPage from "app/pages/playlist_collection_page";
+import PlayerPage from "app/pages/player_page/player_page";
+import SettingsPage from "app/pages/settings/settings_page";
 
-import backgroundImage from "../../images/background.jpg";
-import hamburgerImage from "../../images/hamburger.png";
+import backgroundImage from "app/images/background.jpg";
+import hamburgerImage from "app/images/hamburger.png";
 
 const styles = StyleSheet.create({
   container: {

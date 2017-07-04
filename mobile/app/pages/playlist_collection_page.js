@@ -1,17 +1,17 @@
-import loggerCreator from "../utils/logger";
+import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("playlist_collection_page");
 
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Image, ActivityIndicator } from "react-native";
-import BackHandler from "../utils/back_handler/back_handler";
+import BackHandler from "app/utils/back_handler/back_handler";
 import { observer } from "mobx-react";
 
-import player from "../stores/player/player";
-import { colors, fontSizes } from "../styles/styles";
-import Button from "../shared_components/rectangle_button";
-import navigator from "../stores/navigator/navigator";
-import backendMetadataApi from "../utils/backend_metadata_api";
-import settings from "../utils/settings/settings";
+import player from "app/stores/player/player";
+import { colors, fontSizes } from "app/styles/styles";
+import Button from "app/shared_components/rectangle_button";
+import navigator from "app/stores/navigator/navigator";
+import backendMetadataApi from "app/utils/backend_metadata_api";
+import settings from "app/utils/settings/settings";
 
 const styles = StyleSheet.create({
   container: {
@@ -112,7 +112,7 @@ export default class PlaylistCollectionPage extends Component {
 
     return (
       <View style={styles.container}>
-        <Image source={require("../images/logo.png")} style={styles.logo} />
+        <Image source={require("app/images/logo.png")} style={styles.logo} />
 
         <Choose>
           <When condition={this.state.playlists}>
@@ -123,7 +123,9 @@ export default class PlaylistCollectionPage extends Component {
                   style={styles.playlistButton}
                   className="playlist"
                   onPress={() => this.onPlaylistClick(playlist)}>
-                  <Text style={styles.playlistText}>{playlist}</Text>
+                  <Text style={styles.playlistText}>
+                    {playlist}
+                  </Text>
                 </Button>
               );
             })}
@@ -133,7 +135,7 @@ export default class PlaylistCollectionPage extends Component {
           </Otherwise>
         </Choose>
         <Button style={styles.settingsButton} onPress={() => this.onSettingsClick()}>
-          <Image style={styles.settingsIcon} source={require("../images/settings.png")} />
+          <Image style={styles.settingsIcon} source={require("app/images/settings.png")} />
         </Button>
       </View>
     );

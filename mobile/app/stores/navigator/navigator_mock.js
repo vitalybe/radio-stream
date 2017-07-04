@@ -1,9 +1,9 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("navigator_mock");
 
 import { observable } from "mobx";
 
-import constants from "../../utils/constants";
+import constants from "app/utils/constants";
 import navigatorReal from "./navigator_real";
 
 class NavigatorMock {

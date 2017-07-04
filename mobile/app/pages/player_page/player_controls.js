@@ -1,4 +1,4 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator("PlayerControls");
 
@@ -6,10 +6,10 @@ import React, { Component } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { observer } from "mobx-react";
 
-import Icon from "../../shared_components/icon";
-import CircleButton from "../../shared_components/circle_button";
-import { colors } from "../../styles/styles";
-import player from "../../stores/player/player";
+import Icon from "app/shared_components/icon";
+import CircleButton from "app/shared_components/circle_button";
+import { colors } from "app/styles/styles";
+import player from "app/stores/player/player";
 
 const styles = StyleSheet.create({
   controlsView: {

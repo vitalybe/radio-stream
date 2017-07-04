@@ -1,4 +1,4 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator("Sidebar");
 
@@ -6,13 +6,13 @@ import React, { Component } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { observer } from "mobx-react";
 
-import masterStore from "../../stores/master_store";
-import { colors } from "../../styles/styles";
+import masterStore from "app/stores/master_store";
+import { colors } from "app/styles/styles";
 import SidebarMenuItem from "./sidebar_menu_item";
 import SidebarMenuTitle from "./sidebar_menu_title";
 
-import playIcon from "../../images/play-icon.png";
-import pencilIcon from "../../images/pencil-icon.png";
+import playIcon from "app/images/play-icon.png";
+import pencilIcon from "app/images/pencil-icon.png";
 
 const OPEN_LEFT = -2;
 const OPEN_WIDTH = 336;

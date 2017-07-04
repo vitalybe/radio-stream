@@ -1,4 +1,4 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("player_mock");
 
 import { observable, action } from "mobx";
@@ -15,8 +15,10 @@ class PlayerMock {
   @observable loadingError = null;
 
   async changePlaylist(playlistName) {}
-  @action pause() {}
-  @action play() {}
+  @action
+  pause() {}
+  @action
+  play() {}
   async playNext() {}
 }
 

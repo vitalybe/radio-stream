@@ -1,4 +1,4 @@
-import loggerCreator from "../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator("MasterStore");
 

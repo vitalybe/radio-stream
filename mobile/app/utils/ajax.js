@@ -1,8 +1,8 @@
-import loggerCreator from "../utils/logger";
+import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("ajax");
 
 import _ from "lodash";
-import NetworkError from "../utils/network_error";
+import NetworkError from "app/utils/network_error";
 
 export default class Ajax {
   // responseMiddleware: optional. function that accepts a response. Returns the response.
