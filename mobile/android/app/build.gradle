@@ -94,7 +94,7 @@ android {
             keyPassword RADIO_STREAM_RELEASE_KEY_PASSWORD        }
     }
     compileSdkVersion 23
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.radiostream"
         minSdkVersion 22

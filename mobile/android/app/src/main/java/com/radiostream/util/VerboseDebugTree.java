@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import timber.log.Timber;
 
 public class VerboseDebugTree extends Timber.Tree {
+    private static final String TAG_NAME = "RadioStream";
     private static final int MAX_LOG_LENGTH = 4000;
     private static final int CALL_STACK_INDEX = 5;
     private static final Pattern ANONYMOUS_CLASS = Pattern.compile("(\\$\\d+)+$");
@@ -39,16 +40,16 @@ public class VerboseDebugTree extends Timber.Tree {
             final StackTraceElement stackTraceElement = stackTrace[CALL_STACK_INDEX];
             tag = this.createStackElementTag(stackTraceElement);
 
-            message = String.format("[%s] %s", stackTraceElement.getMethodName(), message);
+            message = String.format("[%s] [%s] %s", tag, stackTraceElement.getMethodName(), message);
         } catch (Exception e) {
             Log.println(priority, "log-error", "failed to format message: " + e.toString());
         }
 
         if (message.length() < MAX_LOG_LENGTH) {
             if (priority == Log.ASSERT) {
-                Log.wtf(tag, message);
+                Log.wtf(TAG_NAME, message);
             } else {
-                Log.println(priority, tag, message);
+                Log.println(priority, TAG_NAME, message);
             }
             return;
         }

@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-var path = require('path');
-var fs = require('fs');
-var url = require('url');
+var path = require("path");
+var fs = require("fs");
+var url = require("url");
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebookincubator/create-react-app/issues/637
@@ -26,8 +26,8 @@ function resolveApp(relativePath) {
 // Otherwise, we risk importing Node.js core modules into an app instead of Webpack shims.
 // https://github.com/facebookincubator/create-react-app/issues/1023#issuecomment-265344421
 
-var nodePaths = (process.env.NODE_PATH || '')
-  .split(process.platform === 'win32' ? ';' : ':')
+var nodePaths = (process.env.NODE_PATH || "")
+  .split(process.platform === "win32" ? ";" : ":")
   .filter(Boolean)
   .filter(folder => !path.isAbsolute(folder))
   .map(resolveApp);
@@ -35,11 +35,11 @@ var nodePaths = (process.env.NODE_PATH || '')
 var envPublicUrl = process.env.PUBLIC_URL;
 
 function ensureSlash(path, needsSlash) {
-  var hasSlash = path.endsWith('/');
+  var hasSlash = path.endsWith("/");
   if (hasSlash && !needsSlash) {
     return path.substr(path, path.length - 1);
   } else if (!hasSlash && needsSlash) {
-    return path + '/';
+    return path + "/";
   } else {
     return path;
   }
@@ -57,24 +57,22 @@ function getPublicUrl(appPackageJson) {
 // like /todos/42/static/js/bundle.7289d.js. We have to know the root.
 function getServedPath(appPackageJson) {
   var publicUrl = getPublicUrl(appPackageJson);
-  var servedUrl = envPublicUrl || (
-    publicUrl ? url.parse(publicUrl).pathname : '/'
-  );
+  var servedUrl = envPublicUrl || (publicUrl ? url.parse(publicUrl).pathname : "/");
   return ensureSlash(servedUrl, true);
 }
 
 // config after eject: we're in ./config/
 module.exports = {
-  appBuild: resolveApp('build'),
-  appPublic: resolveApp('public'),
-  appHtml: resolveApp('index.html'),
-  appIndexJs: resolveApp('index.web.js'),
-  appPackageJson: resolveApp('package.json'),
-  appSrc: resolveApp('app'),
-  yarnLockFile: resolveApp('yarn.lock'),
-  testsSetup: resolveApp('src/setupTests.js'),
-  appNodeModules: resolveApp('node_modules'),
+  appBuild: resolveApp("build/web"),
+  appPublic: resolveApp("public"),
+  appHtml: resolveApp("index.html"),
+  appIndexJs: resolveApp("index.web.js"),
+  appPackageJson: resolveApp("package.json"),
+  appSrc: resolveApp("app"),
+  yarnLockFile: resolveApp("yarn.lock"),
+  testsSetup: resolveApp("src/setupTests.js"),
+  appNodeModules: resolveApp("node_modules"),
   nodePaths: nodePaths,
-  publicUrl: getPublicUrl(resolveApp('package.json')),
-  servedPath: getServedPath(resolveApp('package.json'))
+  publicUrl: getPublicUrl(resolveApp("package.json")),
+  servedPath: getServedPath(resolveApp("package.json")),
 };

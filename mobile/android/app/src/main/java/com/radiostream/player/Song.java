@@ -35,6 +35,8 @@ public class Song {
     private final String mAlbum;
     private final String mTitle;
     private final String mPath;
+    private final double mLastPlayed;
+    private final int mPlayCount;
     private int mRating;
 
     private SetTimeout mSetTimeout;
@@ -56,6 +58,8 @@ public class Song {
         this.mSetTimeout = setTimeout;
         this.mMetadataBackend = metadataBackend;
         this.mRating = songResult.rating;
+        this.mLastPlayed = songResult.lastplayed;
+        this.mPlayCount = songResult.playcount;
 
         String pathBuilder = "";
         String[] pathParts = songResult.path.split("/");
@@ -88,7 +92,15 @@ public class Song {
             Timber.i("marking song as played since its current position %d is after %d",
                 mMediaPlayer.getCurrentPosition(), markPlayedAfterMs);
 
-            this.markedAsPlayedPromise = retryMarkAsPlayed();
+            this.markedAsPlayedPromise = retryMarkAsPlayed().then(new DoneCallback<Boolean>() {
+                @Override
+                public void onDone(Boolean result) {
+                    if(mEventsListener != null) {
+                        Timber.i("finished marking as played - notifying subscribers");
+                        mEventsListener.onSongMarkedAsPlayed();
+                    }
+                }
+            });
         } else {
             Timber.i("this is not the time to mark as played %dms, retrying again in %dms",
                 mMediaPlayer.getCurrentPosition(), markPlayedRetryMs);
@@ -277,6 +289,10 @@ public class Song {
         bridge.album = mAlbum;
         bridge.title = mTitle;
         bridge.rating = mRating;
+        bridge.playcount = mPlayCount;
+        bridge.lastplayed = mLastPlayed;
+        bridge.rating = mRating;
+        bridge.isMarkedAsPlayed = markedAsPlayedPromise != null && markedAsPlayedPromise.isResolved();
 
         return bridge;
     }
@@ -300,7 +316,7 @@ public class Song {
 
     public interface EventsListener {
         void onSongFinish(Song song);
-
+        void onSongMarkedAsPlayed();
         void onSongError(Exception error);
     }
 }

@@ -1,16 +1,17 @@
-import loggerCreator from '../utils/logger'
+import loggerCreator from "../utils/logger";
 var moduleLogger = loggerCreator("playlist_collection_page");
 
-import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, ActivityIndicator, BackHandler} from 'react-native';
-import {observer} from "mobx-react"
+import React, { Component } from "react";
+import { StyleSheet, Text, View, Image, ActivityIndicator } from "react-native";
+import BackHandler from "../utils/back_handler/back_handler";
+import { observer } from "mobx-react";
 
-import player from '../stores/player'
-import {colors, fontSizes} from '../styles/styles'
-import Button from '../components/rectangle_button'
-import Navigator from '../stores/navigator'
-import backendMetadataApi from '../utils/backend_metadata_api'
-import {globalSettings} from '../utils/settings'
+import player from "../stores/player/player";
+import { colors, fontSizes } from "../styles/styles";
+import Button from "../shared_components/rectangle_button";
+import navigator from "../stores/navigator/navigator";
+import backendMetadataApi from "../utils/backend_metadata_api";
+import settings from "../utils/settings/settings";
 
 const styles = StyleSheet.create({
   container: {
@@ -19,25 +20,25 @@ const styles = StyleSheet.create({
     width: null,
     height: null,
     alignItems: "center",
-    alignSelf: "stretch"
+    alignSelf: "stretch",
   },
   logo: {
     width: 90,
     height: 90,
     marginVertical: 20,
-    resizeMode: "contain"
+    resizeMode: "contain",
   },
   playlistButton: {
     width: 150,
     marginBottom: 10,
   },
   playlistText: {
-    color: colors.SEMI_WHITE.rgbString(),
+    color: colors.SEMI_WHITE,
     fontSize: fontSizes.NORMAL,
   },
   settingsButton: {
     position: "absolute",
-    bottom: 10,
+    top: 10,
     right: 10,
     paddingHorizontal: 10,
     paddingVertical: 10,
@@ -45,34 +46,31 @@ const styles = StyleSheet.create({
   settingsIcon: {
     width: 30,
     height: 30,
-    resizeMode: "contain"
+    resizeMode: "contain",
   },
 });
 
 @observer
 export default class PlaylistCollectionPage extends Component {
-
   async componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
 
     this.state = {};
-    BackHandler.addEventListener('hardwareBackPress', () => this.onPressHardwareBack());
+    BackHandler.addEventListener("hardwareBackPress", () => this.onPressHardwareBack());
 
     logger.info(`fetching persisted settings`);
-    if (globalSettings.host) {
-
+    if (settings.host) {
       logger.info(`updated status. playing? ${player.isPlaying}`);
       if (player.isPlaying) {
         logger.info(`player currently playing - navigating to player`);
-        this.props.navigator.navigateToPlayer(player.currentPlaylist.name)
+        navigator.navigateToPlayer(player.currentPlaylist.name);
       } else {
         logger.info(`proceed as usual - fetching playlists`);
         this.fetchPlaylists();
       }
-
     } else {
       logger.info(`host not found in settings - showing settings page`);
-      this.props.navigator.navigateToSettings();
+      navigator.navigateToSettings();
     }
   }
 
@@ -82,7 +80,7 @@ export default class PlaylistCollectionPage extends Component {
     try {
       let result = await backendMetadataApi.playlists();
       logger.info(`got results: ${result}`);
-      this.setState({playlists: result})
+      this.setState({ playlists: result });
     } catch (err) {
       logger.error(`failed to get playlists`);
     }
@@ -102,11 +100,11 @@ export default class PlaylistCollectionPage extends Component {
 
     await player.changePlaylist(playlistName);
     player.play();
-    this.props.navigator.navigateToPlayer(playlistName);
+    navigator.navigateToPlayer(playlistName);
   }
 
   onSettingsClick() {
-    this.props.navigator.navigateToSettings();
+    navigator.navigateToSettings();
   }
 
   render() {
@@ -114,35 +112,30 @@ export default class PlaylistCollectionPage extends Component {
 
     return (
       <View style={styles.container}>
-        <Image source={require("../images/logo.png")}
-               style={styles.logo}/>
+        <Image source={require("../images/logo.png")} style={styles.logo} />
 
         <Choose>
           <When condition={this.state.playlists}>
-            {
-              this.state.playlists.map(playlist => {
-                return (
-                  <Button key={playlist} style={styles.playlistButton}
-                          className="playlist"
-                          onPress={() => this.onPlaylistClick(playlist)}>
-                    <Text style={styles.playlistText}>{playlist}</Text>
-                  </Button>)
-              })
-            }
+            {this.state.playlists.map(playlist => {
+              return (
+                <Button
+                  key={playlist}
+                  style={styles.playlistButton}
+                  className="playlist"
+                  onPress={() => this.onPlaylistClick(playlist)}>
+                  <Text style={styles.playlistText}>{playlist}</Text>
+                </Button>
+              );
+            })}
           </When>
           <Otherwise>
             <ActivityIndicator />
           </Otherwise>
         </Choose>
-        <Button style={styles.settingsButton}
-                onPress={() => this.onSettingsClick() }>
-          <Image style={styles.settingsIcon} source={require("../images/settings.png")}/>
+        <Button style={styles.settingsButton} onPress={() => this.onSettingsClick()}>
+          <Image style={styles.settingsIcon} source={require("../images/settings.png")} />
         </Button>
       </View>
     );
   }
 }
-
-PlaylistCollectionPage.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator).isRequired
-};

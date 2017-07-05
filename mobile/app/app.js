@@ -1,15 +1,18 @@
-import loggerCreator from './utils/logger'
-const moduleLogger = loggerCreator("index.android");
+import loggerCreator from "./utils/logger";
+const moduleLogger = loggerCreator("RadioStream");
 
-import React, {Component} from 'react';
-import {StyleSheet, Image} from 'react-native';
-import {observer} from "mobx-react"
+import React, { Component } from "react";
+import { StyleSheet, Image, Dimensions } from "react-native";
+import { observer } from "mobx-react";
+import { MenuContext } from "./shared_components/context_menu/context_menu";
 
-import {globalSettings} from './utils/settings'
-import PlaylistCollectionPage from './pages/playlist_collection_page'
-import PlayerPage from './pages/player_page'
-import SettingsPage from './pages/settings_page'
-import Navigator from  './stores/navigator'
+import settings from "./utils/settings/settings";
+import settingsNative from "./utils/settings/settings_native";
+import constants from "./utils/constants";
+import PlaylistCollectionPage from "./pages/playlist_collection_page";
+import PlayerPage from "./pages/player_page/player_page";
+import SettingsPage from "./pages/settings/settings_page";
+import navigator from "./stores/navigator/navigator";
 
 const styles = StyleSheet.create({
   container: {
@@ -17,57 +20,62 @@ const styles = StyleSheet.create({
     // remove width and height to override fixed static size
     width: null,
     height: null,
-    alignItems: 'center',
-  }
+    alignSelf: "stretch",
+  },
+  menuContext: {
+    flex: 1,
+    alignSelf: "stretch",
+  },
 });
 
 @observer
 export default class RadioStream extends Component {
-
   async componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
+
+    const { height, width } = Dimensions.get("window");
+    moduleLogger.info(`available dimensions: width=${width} height=${height}`);
 
     this.state = {
       ready: false,
     };
 
-    this.navigator = new Navigator();
     logger.info(`loading settings`);
-
-    await globalSettings.load();
+    await settings.load();
+    await settingsNative.load();
 
     logger.info(`settings loaded`);
-    this.setState({ready: true})
+    this.setState({ ready: true });
   }
 
   render() {
     let logger = loggerCreator(this.render.name, moduleLogger);
-    logger.info(`activate route: ${this.navigator.activeRoute}`);
+    logger.info(`activate route: ${navigator.activeRoute}`);
 
     let page = null;
-    let activeRoute = this.navigator.activeRoute;
+    let activeRoute = navigator.activeRoute;
 
     if (activeRoute) {
       switch (activeRoute.address) {
-        case this.navigator.ROUTE_PLAYLIST_COLLECTION_PAGE:
-          page = <PlaylistCollectionPage navigator={this.navigator}/>;
+        case constants.ROUTE_PLAYLIST_COLLECTION_PAGE:
+          page = <PlaylistCollectionPage />;
           break;
-        case this.navigator.ROUTE_PLAYER_PAGE:
-          page = <PlayerPage playlistName={activeRoute.playlistName} navigator={this.navigator}/>;
+        case constants.ROUTE_PLAYER_PAGE:
+          page = <PlayerPage playlistName={activeRoute.playlistName} />;
           break;
-        case this.navigator.ROUTE_SETTINGS_PAGE:
-          page = <SettingsPage navigator={this.navigator}/>;
+        case constants.ROUTE_SETTINGS_PAGE:
+          page = <SettingsPage />;
           break;
         default:
-          throw new Error("unexpected route")
+          throw new Error("unexpected route");
       }
     }
 
     return (
-      <Image source={require("./images/background.jpg")}
-             resizeMode="cover"
-             style={styles.container}>
-        { this.state.ready ? page : null }
+      <Image source={require("./images/background.jpg")} resizeMode="cover" style={styles.container}>
+        <MenuContext customStyles={{ menuContextWrapper: styles.menuContext }}>
+          {this.state.ready ? page : null}
+        </MenuContext>
       </Image>
     );
   }

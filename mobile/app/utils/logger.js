@@ -7,12 +7,12 @@
 //
 var clim;
 
-module.exports = clim = function (prefix, parent, patch) {
+module.exports = clim = function(prefix, parent, patch) {
   var ob;
   var noFormat = false;
   // Fiddle optional arguments
   patch = Array.prototype.slice.call(arguments, -1)[0];
-  if (typeof patch === 'object') {
+  if (typeof patch === "object") {
     noFormat = patch.noFormat;
     patch = patch.patch;
   }
@@ -27,14 +27,13 @@ module.exports = clim = function (prefix, parent, patch) {
   let lastSlashUnix = prefix.lastIndexOf("/");
   let lastSlash = lastSlashWin > -1 ? lastSlashWin : lastSlashUnix;
   if (lastSlash > -1) {
-    prefix = prefix.substr(lastSlash + 1)
+    prefix = prefix.substr(lastSlash + 1);
   }
 
   if (patch && parent) {
     // Modify given object when patching is requested
     ob = parent;
-  }
-  else {
+  } else {
     // Otherwise create new object
     ob = {};
     if (parent && parent._prefixes) {
@@ -54,22 +53,21 @@ module.exports = clim = function (prefix, parent, patch) {
   ob.error = createLogger("error", ob._prefixes, noFormat);
   consoleProxy(ob);
 
-  if(parent) {
-    ob.info("created");
+  if (parent) {
+    ob.info("started");
   }
 
   return ob;
 };
 
 // By default write all logs to stderr
-clim.logWrite = function (level, prefixes, msg) {
+clim.logWrite = function(level, prefixes, msg) {
   var line = clim.getTime();
   line += " - " + level.toUpperCase();
   if (prefixes.length > 0) line += " - " + prefixes.join(" ");
   line += " " + msg;
   console[level].call(console, line);
 };
-
 
 function pad(num, size) {
   var numString = num + "";
@@ -81,7 +79,7 @@ function pad(num, size) {
   return numString;
 }
 
-clim.getTime = function () {
+clim.getTime = function() {
   var d = new Date();
   var hours = pad(d.getHours(), 2);
   var minutes = pad(d.getMinutes(), 2);
@@ -91,22 +89,20 @@ clim.getTime = function () {
   return `${hours}:${minutes}:${seconds},${milliseconds}`;
 };
 
-
 // Just proxy methods we don't care about to original console object
 function consoleProxy(ob) {
   // list from http://nodejs.org/api/stdio.html
   var methods = ["dir", "time", "timeEnd", "trace", "assert"];
-  methods.forEach(function (method) {
+  methods.forEach(function(method) {
     if (ob[method]) return;
-    ob[method] = function () {
+    ob[method] = function() {
       return console[method].apply(console, arguments);
     };
   });
 }
 
 function createLogger(method, prefixes, noFormat) {
-
-  return function () {
+  return function() {
     // Handle formatting and circular objects like in the original
     var msg = Array.prototype.slice.call(arguments);
 

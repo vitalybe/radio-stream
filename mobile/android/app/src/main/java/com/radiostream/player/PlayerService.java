@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaMetadata;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Binder;
@@ -25,7 +26,6 @@ import com.radiostream.di.components.DaggerPlayerServiceComponent;
 import com.radiostream.di.components.PlayerServiceComponent;
 import com.radiostream.di.modules.ContextModule;
 import com.radiostream.javascript.bridge.PlayerBridge;
-import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
 import com.radiostream.javascript.bridge.PlayerEventsEmitter;
 import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.javascript.proxy.PlayerJsProxy;
@@ -54,6 +54,7 @@ public class PlayerService extends Service implements PlaylistControls {
     private boolean mServiceAlive = true;
     private Date mPausedDate = null;
     private boolean mPausedDuePhoneState = false;
+    private boolean mIsBoundToActivity = false;
 
     MediaSession mMediaSession = null;
 
@@ -117,10 +118,30 @@ public class PlayerService extends Service implements PlaylistControls {
                     Timber.i("showing song notification");
                     showSongNotification(playerBridge.playlistPlayerBridge.songBridge);
                 }
+
+                changeBluetoothMetadata(playerBridge);
             }
         }
     };
-    
+
+    private void changeBluetoothMetadata(PlayerBridge playerBridge) {
+        Timber.i("Function start");
+
+        if(playerBridge.playlistPlayerBridge != null && playerBridge.playlistPlayerBridge.songBridge != null) {
+            SongBridge song = playerBridge.playlistPlayerBridge.songBridge;
+            Timber.i("setting bluetooth information of song: %s - %s", song.title, song.artist);
+
+            MediaMetadata metadata = new MediaMetadata.Builder()
+                    .putString(MediaMetadata.METADATA_KEY_TITLE, song.title)
+                    .putString(MediaMetadata.METADATA_KEY_ARTIST, song.artist)
+                    .putString(MediaMetadata.METADATA_KEY_ALBUM, song.album)
+                    .build();
+
+            mMediaSession.setMetadata(metadata);
+        }
+
+    }
+
     private MediaSession.Callback mMediaSessionCallback = new MediaSession.Callback() {
 
         @Override
@@ -151,7 +172,8 @@ public class PlayerService extends Service implements PlaylistControls {
 
     private void showSongNotification(SongBridge currentSong) {
         Timber.i("function start - show song notification for: %s - %s", currentSong.title, currentSong.artist);
-        startWithNotificaiton(currentSong.title, currentSong.artist, true);
+        boolean showHeadsUpNotification = !mIsBoundToActivity;
+        startWithNotificaiton(currentSong.title, currentSong.artist, showHeadsUpNotification);
     }
 
     private void showLoadingNotification() {
@@ -296,12 +318,23 @@ public class PlayerService extends Service implements PlaylistControls {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        Timber.i("function start");
+        mIsBoundToActivity = true;
         return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        return false;
+        Timber.i("function start");
+        mIsBoundToActivity = false;
+
+        return true;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Timber.i("function start");
+        mIsBoundToActivity = true;
     }
 
     @Override
