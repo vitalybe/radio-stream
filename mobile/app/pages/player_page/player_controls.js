@@ -11,6 +11,10 @@ import CircleButton from "app/shared_components/circle_button";
 import { colors } from "app/styles/styles";
 import player from "app/stores/player/player";
 
+import playImage from "app/images/play.png";
+import nextImage from "app/images/next.png";
+import pauseImage from "app/images/pause.png";
+
 const styles = StyleSheet.create({
   controlsView: {
     flexDirection: "row",
@@ -22,15 +26,12 @@ const styles = StyleSheet.create({
     color: colors.CYAN_BRIGHT,
     fontSize: 40,
   },
-  controlTextPlay: {
-    paddingLeft: 10,
-  },
-  controlTextPause: {
-    paddingLeft: 0,
-  },
+  controlImagePlay: { width: 54, height: 54, position: "relative", left: 5 },
+  controlImagePause: { width: 45, height: 45 },
   controlButtonPlay: {
     marginRight: 20,
   },
+  controlImageNext: { width: 28, height: 28 },
 });
 
 @observer
@@ -49,13 +50,12 @@ export default class PlayerControls extends Component {
     return (
       <View style={styles.controlsView}>
         <CircleButton size={90} onPress={() => this.onPressPlayPause()} style={[styles.controlButtonPlay]}>
-          <Icon
-            name={player.isPlaying ? "pause" : "play"}
-            style={[styles.controlButtonText, player.isPlaying ? styles.controlTextPause : styles.controlTextPlay]}
-          />
+          {player.isPlaying == false
+            ? <Image source={playImage} style={styles.controlImagePlay} resizeMode={"contain"} />
+            : <Image source={pauseImage} style={styles.controlImagePause} resizeMode={"contain"} />}
         </CircleButton>
         <CircleButton size={60} onPress={() => this.onPressNext()}>
-          <Icon name="step-forward" style={styles.controlButtonText} />
+          <Image source={nextImage} style={styles.controlImageNext} resizeMode={"contain"} />
         </CircleButton>
       </View>
     );
