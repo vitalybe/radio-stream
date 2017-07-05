@@ -9,17 +9,20 @@ import { colors } from "app/styles/styles";
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from "app/shared_components/context_menu/context_menu";
 import player from "app/stores/player/player";
 
+import ellipsesImage from "app/images/ellipsis.png";
+
 const styles = StyleSheet.create({
   menu: {
     position: "absolute",
-    right: 0,
+    right: -10,
     top: -5,
   },
-  menuTrigger: {
-    paddingRight: 20,
-    fontSize: 25,
-    fontWeight: "bold",
-    color: colors.CYAN_BRIGHT,
+  menuTriggerContainer: {},
+
+  menuTriggerImage: {
+    paddingHorizontal: 15,
+    width: 6,
+    height: 22,
   },
 });
 
@@ -59,8 +62,8 @@ export default class PlayerContextMenu extends Component {
   render() {
     return (
       <Menu style={styles.menu}>
-        <MenuTrigger>
-          <Text style={styles.menuTrigger}>⋮</Text>
+        <MenuTrigger style={styles.menuTriggerContainer}>
+          <Image style={styles.menuTriggerImage} source={ellipsesImage} resizeMode={"contain"} />
         </MenuTrigger>
         <MenuOptions customStyles={menuOptionsCustomStyles}>
           <MenuOption onSelect={() => this.props.song.actions.changeRating(0)} text="Clear rating" />

@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   },
   rating: {
     marginBottom: 20,
-    paddingHorizontal: 30,
+    paddingHorizontal: 10,
   },
   songDetails: {
     alignItems: "center",
@@ -92,12 +92,6 @@ export default class PlayerPage extends Component {
 
     return (
       <View style={styles.container}>
-        <View style={styles.playlistNameView}>
-          <Icon name="music" style={styles.playlistIcon} />
-          <BigText>
-            {this.props.playlistName}
-          </BigText>
-        </View>
         {!player.isLoading
           ? <View>
               {/* Album art */}

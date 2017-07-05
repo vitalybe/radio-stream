@@ -27,9 +27,9 @@ const RATING_STAR_RATIO = MAX_RATING / STAR_COUNT;
 const styles = StyleSheet.create({
   container: { flexDirection: "row", justifyContent: "center" },
   star: {
-    marginHorizontal: 2,
-    height: 50,
-    width: 53,
+    marginHorizontal: 5,
+    height: 43,
+    width: 44,
   },
 });
 

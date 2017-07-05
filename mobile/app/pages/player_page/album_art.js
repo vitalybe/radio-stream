@@ -11,16 +11,7 @@ import NormalText from "app/shared_components/text/normal_text";
 import moment from "moment";
 import { colors, fontSizes } from "app/styles/styles";
 
-const BIG_DEVICE_HEIGHT = 700;
-
-const SMALL_ART_SIZE = 200;
-const BIG_ART_SIZE = 300;
-
-let artSize = SMALL_ART_SIZE;
-if (Dimensions.get("window").height > BIG_DEVICE_HEIGHT) {
-  moduleLogger.info(`using bigger art size`);
-  artSize = BIG_ART_SIZE;
-}
+let artSize = 280;
 
 const styles = StyleSheet.create({
   container: {
@@ -34,8 +25,8 @@ const styles = StyleSheet.create({
   albumArt: {
     resizeMode: "contain",
 
-    width: artSize,
-    height: artSize,
+    width: 280,
+    height: 280,
   },
   flippedAlbumArt: {
     width: artSize,

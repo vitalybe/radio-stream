@@ -5,7 +5,7 @@ const moduleLogger = loggerCreator("MasterStore");
 import { observable } from "mobx";
 
 class MasterStore {
-  @observable isNavigationSidebarOpen = true;
+  @observable isNavigationSidebarOpen = false;
 
   constructor() {
     loggerCreator("constructor", moduleLogger);
