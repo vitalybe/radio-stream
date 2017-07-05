@@ -11,7 +11,7 @@ import { colors } from "app/styles/styles";
 import SidebarMenuItem from "./sidebar_menu_item";
 import SidebarMenuTitle from "./sidebar_menu_title";
 
-import playIcon from "app/images/play-icon.png";
+import playIcon from "app/images/play.png";
 import pencilIcon from "app/images/pencil-icon.png";
 
 const OPEN_LEFT = -2;

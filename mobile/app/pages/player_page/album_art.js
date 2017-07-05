@@ -11,7 +11,7 @@ import NormalText from "app/shared_components/text/normal_text";
 import moment from "moment";
 import { colors, fontSizes } from "app/styles/styles";
 
-let artSize = 280;
+let artSize = 260;
 
 const styles = StyleSheet.create({
   container: {
@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
   albumArt: {
     resizeMode: "contain",
 
-    width: 260,
-    height: 260,
+    width: artSize,
+    height: artSize,
   },
   flippedAlbumArt: {
     width: artSize,
@@ -54,7 +54,12 @@ export default class AlbumArt extends Component {
 
     return (
       <View style={this.props.style}>
-        <FlipCard style={styles.container} flipHorizontal={true} flipVertical={false}>
+        <FlipCard
+          style={styles.container}
+          flipHorizontal={true}
+          flipVertical={false}
+          alignHeight={true}
+          alignWidth={true}>
           <View>
             <Image style={styles.albumArt} source={albumArt} />
           </View>

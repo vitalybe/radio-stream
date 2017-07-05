@@ -15,7 +15,7 @@ import SmallText from "app/shared_components/text/small_text";
 
 import hamburgerImage from "app/images/hamburger.png";
 import playlistImage from "app/images/playlist-icon.png";
-import playImage from "app/images/play-icon.png";
+import playImage from "app/images/play.png";
 
 const styles = StyleSheet.create({
   topBar: {
