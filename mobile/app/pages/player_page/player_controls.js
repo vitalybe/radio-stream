@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     paddingLeft: 80, // Causes the play button to be in the center
   },
   controlButtonText: {
-    color: colors.SEMI_WHITE,
+    color: colors.CYAN_BRIGHT,
     fontSize: 40,
   },
   controlTextPlay: {
@@ -48,7 +48,7 @@ export default class PlayerControls extends Component {
   render() {
     return (
       <View style={styles.controlsView}>
-        <CircleButton size={100} onPress={() => this.onPressPlayPause()} style={[styles.controlButtonPlay]}>
+        <CircleButton size={90} onPress={() => this.onPressPlayPause()} style={[styles.controlButtonPlay]}>
           <Icon
             name={player.isPlaying ? "pause" : "play"}
             style={[styles.controlButtonText, player.isPlaying ? styles.controlTextPause : styles.controlTextPlay]}

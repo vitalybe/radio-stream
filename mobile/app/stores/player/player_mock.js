@@ -26,9 +26,9 @@ const playerMock = new PlayerMock();
 playerMock.isLoading = false;
 
 const song = new SongMock();
-song.title = "Mock title";
-song.album = "Mock album";
-song.artist = "Mock title";
+song.title = "Mock Title";
+song.album = "Mock Album";
+song.artist = "Mock Artist";
 song.rating = 60;
 song.playcount = 15;
 song.lastplayed = 1495156518;

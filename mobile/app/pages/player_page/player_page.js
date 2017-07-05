@@ -16,6 +16,7 @@ import Rating from "./rating";
 import AlbumArt from "./album_art";
 import PlayerControls from "./player_controls";
 import PlayerLoadingSpinner from "./player_loading_spinner";
+import NormalText from "../../shared_components/text/normal_text";
 
 const styles = StyleSheet.create({
   container: {
@@ -49,14 +50,14 @@ const styles = StyleSheet.create({
   },
   songDetails: {
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 15,
   },
   // Names (artist, title, album)
   nameText: {
-    marginBottom: 2,
+    marginBottom: 5,
   },
   artistText: {
-    color: colors.CYAN_BRIGHT,
+    fontWeight: "bold",
   },
 });
 
@@ -103,9 +104,9 @@ export default class PlayerPage extends Component {
               </View>
               {/* Names */}
               <View style={styles.songDetails}>
-                <BigText style={[styles.nameText]}>{`${song.title}`}</BigText>
-                <BigText style={[styles.nameText, styles.artistText]}>{`${song.artist}`}</BigText>
-                <BigText style={[styles.nameText]}>{`${song.album}`}</BigText>
+                <NormalText style={[styles.nameText]}>{`${song.title}`}</NormalText>
+                <NormalText style={[styles.nameText, styles.artistText]}>{`${song.artist}`}</NormalText>
+                <NormalText style={[styles.nameText]}>{`${song.album}`}</NormalText>
               </View>
               {/* Controls */}
               <PlayerControls />

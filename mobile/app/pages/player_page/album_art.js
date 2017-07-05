@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
   albumArt: {
     resizeMode: "contain",
 
-    width: 280,
-    height: 280,
+    width: 260,
+    height: 260,
   },
   flippedAlbumArt: {
     width: artSize,
