@@ -10,6 +10,7 @@ import FlipCard from "app/utils/flip_card";
 import NormalText from "app/shared_components/text/normal_text";
 import moment from "moment";
 import { colors, fontSizes } from "app/styles/styles";
+import dimensionsStore from "app/stores/dimensions_store/dimensions_store";
 
 let artSize = 260;
 
@@ -38,20 +39,39 @@ const styles = StyleSheet.create({
 
 @observer
 export default class AlbumArt extends Component {
+  _containerRef = null;
+
   componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
     this.state = {
       artSize: 260,
     };
 
-    // window.addEventListener("resize", () => {
-    //   logger.info(`resize occured`);
-    //   if (this.containerView) {
-    //     logger.info(`measuring...`);
-    //     this.containerView.measure((a, b, width, height, px, py) => logger.log(`measure: ${width} ${height}`));
-    //   }
-    // });
+    window.addEventListener("resize", () => {
+      logger.info(`resize occured`);
+      if (this._containerRef) {
+        logger.info(`measuring...`);
+        this._containerRef.measure((a, b, width, height, px, py) => {
+          this._onContainerHeightChanged(height);
+        });
+      }
+    });
   }
+
+  _onContainerHeightChanged(newHeight) {
+    const logger = loggerCreator("_onContainerHeightChanged", moduleLogger);
+
+    logger.log(`New height: ${newHeight}. Window width: ${dimensionsStore.width}`);
+    const newArtSize = Math.min(dimensionsStore.width - 20, newHeight);
+    this.setState({ artSize: newArtSize });
+  }
+
+  _onContainerLayout = event => {
+    loggerCreator("_onContainerLayout", moduleLogger);
+    let { height } = event.nativeEvent.layout;
+
+    this._onContainerHeightChanged(height);
+  };
 
   render() {
     let logger = loggerCreator("render", moduleLogger);
@@ -66,25 +86,8 @@ export default class AlbumArt extends Component {
     }
 
     return (
-      <View
-        style={this.props.style}
-        onLayout={event => {
-          let { x, y, width, height } = event.nativeEvent.layout;
-          this.setState({ artSize: height });
-          logger.log(`Layout: ${width} ${height}`);
-          // logger.info(`measuring...`);
-          // this.containerView.measure((a, b, width, height, px, py) => logger.log(`measure: ${width} ${height}`));
-        }}
-        ref={containerView => {
-          logger.info(`Got ref for container view`);
-          this.containerView = containerView;
-        }}>
-        <FlipCard
-          style={styles.container}
-          flipHorizontal={true}
-          flipVertical={false}
-          alignHeight={false}
-          alignWidth={false}>
+      <View style={this.props.style} onLayout={this._onContainerLayout} ref={ref => (this._containerRef = ref)}>
+        <FlipCard style={styles.container} flipHorizontal={true} flipVertical={false}>
           <View>
             <Image
               style={[styles.albumArt, { width: this.state.artSize, height: this.state.artSize }]}
