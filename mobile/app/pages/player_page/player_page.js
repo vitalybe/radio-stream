@@ -43,6 +43,8 @@ const styles = StyleSheet.create({
   // Sections
   albumArt: {
     marginBottom: 20,
+    backgroundColor: "green",
+    flex: 1,
   },
   rating: {
     marginBottom: 20,
@@ -94,7 +96,7 @@ export default class PlayerPage extends Component {
     return (
       <View style={styles.container}>
         {!player.isLoading
-          ? <View>
+          ? <View style={{ flex: 1 }}>
               {/* Album art */}
               <AlbumArt style={[styles.albumArt]} song={song} />
               {/* Ratings */}

@@ -29,8 +29,6 @@ const styles = StyleSheet.create({
     height: artSize,
   },
   flippedAlbumArt: {
-    width: artSize,
-    height: artSize,
     padding: 10,
   },
   additionalSongInfo: {
@@ -40,6 +38,21 @@ const styles = StyleSheet.create({
 
 @observer
 export default class AlbumArt extends Component {
+  componentWillMount() {
+    let logger = loggerCreator("componentWillMount", moduleLogger);
+    this.state = {
+      artSize: 260,
+    };
+
+    // window.addEventListener("resize", () => {
+    //   logger.info(`resize occured`);
+    //   if (this.containerView) {
+    //     logger.info(`measuring...`);
+    //     this.containerView.measure((a, b, width, height, px, py) => logger.log(`measure: ${width} ${height}`));
+    //   }
+    // });
+  }
+
   render() {
     let logger = loggerCreator("render", moduleLogger);
     logger.info(`start`);
@@ -53,17 +66,32 @@ export default class AlbumArt extends Component {
     }
 
     return (
-      <View style={this.props.style}>
+      <View
+        style={this.props.style}
+        onLayout={event => {
+          let { x, y, width, height } = event.nativeEvent.layout;
+          this.setState({ artSize: height });
+          logger.log(`Layout: ${width} ${height}`);
+          // logger.info(`measuring...`);
+          // this.containerView.measure((a, b, width, height, px, py) => logger.log(`measure: ${width} ${height}`));
+        }}
+        ref={containerView => {
+          logger.info(`Got ref for container view`);
+          this.containerView = containerView;
+        }}>
         <FlipCard
           style={styles.container}
           flipHorizontal={true}
           flipVertical={false}
-          alignHeight={true}
-          alignWidth={true}>
+          alignHeight={false}
+          alignWidth={false}>
           <View>
-            <Image style={styles.albumArt} source={albumArt} />
+            <Image
+              style={[styles.albumArt, { width: this.state.artSize, height: this.state.artSize }]}
+              source={albumArt}
+            />
           </View>
-          <View style={styles.flippedAlbumArt}>
+          <View style={[styles.flippedAlbumArt, { width: this.state.artSize, height: this.state.artSize }]}>
             <NormalText style={styles.additionalSongInfo}>
               Last played: {moment.unix(song.lastplayed).fromNow()}
             </NormalText>
