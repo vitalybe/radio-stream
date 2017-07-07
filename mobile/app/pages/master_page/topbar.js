@@ -3,7 +3,7 @@ import loggerCreator from "../../utils/logger";
 var moduleLogger = loggerCreator("Topbar");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, TouchableHighlight, View } from "react-native";
+import { Platform, Image, StyleSheet, TouchableHighlight, View } from "react-native";
 import { observer } from "mobx-react";
 import NormalText from "../../shared_components/text/normal_text";
 
@@ -25,16 +25,24 @@ const styles = StyleSheet.create({
   topBarLeft: {
     flex: 0.2,
     flexDirection: "row",
+    ...Platform.select({
+      web: {
+        minWidth: "-webkit-min-content",
+      },
+    }),
   },
   hamburgerContainer: {},
   hamburgerContent: { flexDirection: "row", alignItems: "center" },
-  hamburgerImage: { height: 30, width: 34 },
-  currentPageText: { color: colors.CYAN_BRIGHT, marginLeft: 10 },
+  hamburgerImage: {
+    height: 30,
+    width: 34,
+    marginRight: 10,
+  },
+  currentPageText: { color: colors.CYAN_BRIGHT },
   topBarRight: {
     flex: 0.8,
     flexDirection: "row-reverse",
     alignItems: "center",
-    paddingRight: 10,
   },
   playlistButton: {},
   playlistImage: { height: 34, width: 30 },
