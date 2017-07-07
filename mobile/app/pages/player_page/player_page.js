@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
   rating: {
     marginBottom: 20,
     paddingHorizontal: 10,
+    alignSelf: "center",
   },
   songDetails: {
     alignItems: "center",

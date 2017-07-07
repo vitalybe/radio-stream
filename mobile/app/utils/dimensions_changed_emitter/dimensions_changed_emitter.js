@@ -7,7 +7,7 @@ import _ from "lodash";
 export default class DimensionsChangedEmitter {
   callback = null;
 
-  _onResize = _.throttle(
+  _onResize = _.debounce(
     () => {
       loggerCreator("_OnResize", moduleLogger);
 
@@ -15,8 +15,8 @@ export default class DimensionsChangedEmitter {
         this.callback();
       }
     },
-    500,
-    { leading: true, trailing: true }
+    250,
+    { leading: false, trailing: true }
   );
 
   subscribe(callback) {

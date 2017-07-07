@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingLeft: 80, // Causes the play button to be in the center
+    marginBottom: 10,
   },
   controlButtonText: {
     color: colors.CYAN_BRIGHT,

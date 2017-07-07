@@ -81,6 +81,10 @@ export default class AlbumArt extends Component {
     this._onContainerHeightChanged(height);
   };
 
+  _onContainerRef = ref => {
+    this._containerRef = ref;
+  };
+
   render() {
     let logger = loggerCreator("render", moduleLogger);
     logger.info(`start`);
@@ -94,7 +98,7 @@ export default class AlbumArt extends Component {
     }
 
     return (
-      <View style={this.props.style} onLayout={this._onContainerLayout} ref={ref => (this._containerRef = ref)}>
+      <View style={this.props.style} onLayout={this._onContainerLayout} ref={this._onContainerRef}>
         <FlipCard style={styles.container} flipHorizontal={true} flipVertical={false}>
           <View>
             <Image
