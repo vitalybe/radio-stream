@@ -7,7 +7,6 @@ import { Image, StyleSheet, TouchableHighlight, View } from "react-native";
 import { observer } from "mobx-react";
 import NormalText from "../../shared_components/text/normal_text";
 
-import dimensionsStore from "app/stores/dimensions_store/dimensions_store";
 import masterStore from "app/stores/master_store";
 import BigText from "app/shared_components/text/big_text";
 import { colors } from "app/styles/styles";
@@ -16,6 +15,7 @@ import SmallText from "app/shared_components/text/small_text";
 import hamburgerImage from "app/images/hamburger.png";
 import playlistImage from "app/images/playlist-icon.png";
 import playImage from "app/images/play.png";
+import { dimensionsStoreInstance } from "app/stores/dimensions_store";
 
 const styles = StyleSheet.create({
   topBar: {
@@ -66,7 +66,7 @@ export default class Topbar extends Component {
           <TouchableHighlight onPress={this.onHamburgerClick} style={styles.hamburgerContainer}>
             <View style={styles.hamburgerContent}>
               <Image source={hamburgerImage} style={styles.hamburgerImage} />
-              {dimensionsStore.isBigWidth ? <BigText style={styles.currentPageText}>Player</BigText> : null}
+              {dimensionsStoreInstance.isBigWidth ? <BigText style={styles.currentPageText}>Player</BigText> : null}
             </View>
           </TouchableHighlight>
         </View>

@@ -43,7 +43,6 @@ const styles = StyleSheet.create({
   // Sections
   albumArt: {
     marginBottom: 20,
-    backgroundColor: "green",
     flex: 1,
   },
   rating: {

@@ -4,11 +4,12 @@ const moduleLogger = loggerCreator("DimensionsChangedEmitter.android");
 
 import Orientation from "react-native-orientation";
 
-class DimensionsChangedEmitter {
+export default class DimensionsChangedEmitter {
   callback = null;
 
   constructor() {
     let logger = loggerCreator("constructor", moduleLogger);
+    // HACk: For some reason not able to get events when Android orientation changes. Locking to portrait instead.
     Orientation.lockToPortrait();
   }
 
@@ -16,5 +17,3 @@ class DimensionsChangedEmitter {
     // only for web
   }
 }
-
-export default new DimensionsChangedEmitter();

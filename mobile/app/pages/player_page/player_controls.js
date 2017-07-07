@@ -50,7 +50,7 @@ export default class PlayerControls extends Component {
     return (
       <View style={styles.controlsView}>
         <CircleButton size={90} onPress={() => this.onPressPlayPause()} style={[styles.controlButtonPlay]}>
-          {player.isPlaying == false
+          {player.isPlaying === false
             ? <Image source={playImage} style={styles.controlImagePlay} resizeMode={"contain"} />
             : <Image source={pauseImage} style={styles.controlImagePause} resizeMode={"contain"} />}
         </CircleButton>
