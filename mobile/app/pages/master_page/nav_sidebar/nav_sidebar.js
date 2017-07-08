@@ -1,6 +1,6 @@
 import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator("Sidebar");
+var moduleLogger = loggerCreator("NavSidebar");
 
 import React, { Component } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -8,8 +8,8 @@ import { observer } from "mobx-react";
 
 import masterStore from "app/stores/master_store";
 import { colors } from "app/styles/styles";
-import SidebarMenuItem from "./sidebar_menu_item";
-import SidebarMenuTitle from "./sidebar_menu_title";
+import NavSidebarMenuItem from "./nav_sidebar_menu_item";
+import NavSidebarMenuTitle from "./nav_sidebar_menu_title";
 
 import playIcon from "app/images/play.png";
 import pencilIcon from "app/images/pencil-icon.png";
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
 });
 
 @observer
-export default class Sidebar extends Component {
+export default class NavSidebar extends Component {
   render() {
     loggerCreator(this.render.name, moduleLogger);
 
@@ -41,15 +41,15 @@ export default class Sidebar extends Component {
 
     return (
       <View style={[styles.sidebar, { left: left }]}>
-        <SidebarMenuTitle text="Radio Stream" />
-        <SidebarMenuItem text="Player" leftImage={playIcon} />
-        <SidebarMenuItem text="Player" leftImage={playIcon} isActive={true} />
-        <SidebarMenuTitle text="Playlists" />
-        <SidebarMenuItem text="Peaceful" leftImage={playIcon} rightImage={pencilIcon} />
-        <SidebarMenuItem text="Metal" leftImage={playIcon} rightImage={pencilIcon} />
+        <NavSidebarMenuTitle text="Radio Stream" />
+        <NavSidebarMenuItem text="Player" leftImage={playIcon} />
+        <NavSidebarMenuItem text="Player" leftImage={playIcon} isActive={true} />
+        <NavSidebarMenuTitle text="Playlists" />
+        <NavSidebarMenuItem text="Peaceful" leftImage={playIcon} rightImage={pencilIcon} />
+        <NavSidebarMenuItem text="Metal" leftImage={playIcon} rightImage={pencilIcon} />
       </View>
     );
   }
 }
 
-Sidebar.propTypes = {};
+NavSidebar.propTypes = {};

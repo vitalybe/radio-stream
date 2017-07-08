@@ -1,6 +1,6 @@
 import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator("SidebarMenuTitle");
+var moduleLogger = loggerCreator("NavSidebarMenuTitle");
 
 import React, { Component } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
 });
 
 @observer
-export default class SidebarMenuTitle extends Component {
+export default class NavSidebarMenuTitle extends Component {
   render() {
     return (
       <BigText style={[styles.text]}>
@@ -25,6 +25,6 @@ export default class SidebarMenuTitle extends Component {
   }
 }
 
-SidebarMenuTitle.propTypes = {
+NavSidebarMenuTitle.propTypes = {
   text: React.PropTypes.string.isRequired,
 };

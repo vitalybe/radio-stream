@@ -7,7 +7,7 @@ import { Image, StyleSheet } from "react-native";
 import { observer } from "mobx-react";
 
 import { MenuContext } from "app/shared_components/context_menu/context_menu";
-import Sidebar from "./sidebar";
+import NavSidebar from "./nav_sidebar/nav_sidebar";
 import constants from "app/utils/constants";
 import navigator from "app/stores/navigator/navigator";
 import settings from "app/utils/settings/settings";
@@ -79,7 +79,7 @@ export default class MasterPage extends Component {
             <Topbar />
             {page}
           </MenuContext>
-          <Sidebar />
+          <NavSidebar />
         </Image>
       );
     } else {

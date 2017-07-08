@@ -1,6 +1,6 @@
 import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator("SidebarMenuItem");
+var moduleLogger = loggerCreator("NavSidebarMenuItem");
 
 import React, { Component } from "react";
 import { Image, StyleSheet, View } from "react-native";
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 });
 
 @observer
-export default class SidebarMenuItem extends Component {
+export default class NavSidebarMenuItem extends Component {
   render() {
     let itemContainerBackground = "transparent";
     if (this.props.isActive) {
@@ -52,7 +52,7 @@ export default class SidebarMenuItem extends Component {
   }
 }
 
-SidebarMenuItem.propTypes = {
+NavSidebarMenuItem.propTypes = {
   text: React.PropTypes.string.isRequired,
   leftImage: React.PropTypes.any.isRequired,
   rightImage: React.PropTypes.any,
