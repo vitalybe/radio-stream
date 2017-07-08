@@ -10,11 +10,16 @@ import { colors } from "app/styles/styles";
 import HoverableOpacity from "app/utils/hoverable_opacity";
 
 const styles = StyleSheet.create({
-  itemContainer: { flexDirection: "row", height: 45, alignItems: "center" },
+  itemContainer: {
+    flexDirection: "row",
+    height: 45,
+    alignItems: "center",
+    paddingLeft: 10,
+  },
   itemText: { marginLeft: 5, color: colors.CYAN_BRIGHT },
 
-  leftImage: { flex: 1 },
-  leftImageContainer: { marginLeft: 10, height: 25, width: 25 },
+  leftImage: { height: 25, width: 25, resizeMode: "contain" },
+  leftImageContainer: {},
 
   rightImage: { flex: 1 },
   rightImageContainer: { marginLeft: "auto", marginRight: 10, height: 25, width: 25 },
@@ -32,10 +37,9 @@ export default class SidebarMenuItem extends Component {
       <HoverableOpacity
         activeOpacity={1}
         style={[styles.itemContainer, { backgroundColor: itemContainerBackground }]}
-        hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}
-        onMouseEnter={this.onMouseEnter}>
+        hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}>
         <View style={styles.leftImageContainer}>
-          <Image source={this.props.leftImage} resizeMode="contain" style={styles.leftImage} />
+          <Image source={this.props.leftImage} style={styles.leftImage} />
         </View>
         <NormalText style={styles.itemText}>
           {this.props.text}
