@@ -14,8 +14,9 @@ import NavSidebarMenuTitle from "./nav_sidebar_menu_title";
 import playIcon from "app/images/play.png";
 import pencilIcon from "app/images/pencil-icon.png";
 
+const WIDTH = 336;
 const OPEN_LEFT = -2;
-const OPEN_WIDTH = 336;
+const CLOSED_LEFT = OPEN_LEFT - WIDTH;
 
 const styles = StyleSheet.create({
   sidebar: {
@@ -23,8 +24,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
     top: 59,
     bottom: -1,
-    left: OPEN_LEFT,
-    width: OPEN_WIDTH,
+    width: WIDTH,
     borderColor: colors.CYAN_BRIGHT,
     borderStyle: "solid",
     borderWidth: 1,
@@ -37,7 +37,7 @@ export default class NavSidebar extends Component {
   render() {
     loggerCreator(this.render.name, moduleLogger);
 
-    const left = masterStore.isNavigationSidebarOpen ? OPEN_LEFT : OPEN_LEFT - OPEN_WIDTH;
+    const left = masterStore.isNavigationSidebarOpen ? OPEN_LEFT : CLOSED_LEFT;
 
     return (
       <View style={[styles.sidebar, { left: left }]}>

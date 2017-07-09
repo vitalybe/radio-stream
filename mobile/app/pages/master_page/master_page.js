@@ -19,6 +19,7 @@ import SettingsPage from "app/pages/settings/settings_page";
 
 import backgroundImage from "app/images/background.jpg";
 import Topbar from "./topbar";
+import PlaylistSidebar from "app/pages/master_page/playlist_sidebar/playlist_sidebar";
 
 const styles = StyleSheet.create({
   container: {
@@ -28,6 +29,8 @@ const styles = StyleSheet.create({
     width: null,
     height: null,
     alignSelf: "stretch",
+    resizeMode: "cover",
+    overflow: "hidden",
   },
   menuContext: { flex: 1, alignSelf: "stretch" },
 });
@@ -74,12 +77,13 @@ export default class MasterPage extends Component {
 
     if (this.state.ready) {
       return (
-        <Image source={backgroundImage} resizeMode="cover" style={styles.container}>
+        <Image source={backgroundImage} style={styles.container}>
           <MenuContext customStyles={{ menuContextWrapper: styles.menuContext }}>
             <Topbar />
             {page}
           </MenuContext>
           <NavSidebar />
+          <PlaylistSidebar />
         </Image>
       );
     } else {

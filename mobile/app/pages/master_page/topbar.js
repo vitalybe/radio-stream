@@ -67,6 +67,13 @@ export default class Topbar extends Component {
     logger.info(`navigation sidebar should be now open? ${masterStore.isNavigationSidebarOpen}`);
   };
 
+  onPlaylistClick = () => {
+    const logger = loggerCreator("onPlaylistClick", moduleLogger);
+
+    masterStore.isPlaylistSidebarOpen = !masterStore.isPlaylistSidebarOpen;
+    logger.info(`playlist sidebar should be now open? ${masterStore.isPlaylistSidebarOpen}`);
+  };
+
   render() {
     return (
       <View style={styles.topBar}>
@@ -79,7 +86,7 @@ export default class Topbar extends Component {
           </TouchableHighlight>
         </View>
         <View style={styles.topBarRight}>
-          <TouchableHighlight style={styles.playlistButton}>
+          <TouchableHighlight style={styles.playlistButton} onPress={this.onPlaylistClick}>
             <Image resizeMode="contain" source={playlistImage} style={styles.playlistImage} />
           </TouchableHighlight>
           <TouchableHighlight style={styles.playButton}>
