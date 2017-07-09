@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   sidebar: {
     position: "absolute",
     backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
-    top: 59,
+    top: 54,
     bottom: -1,
     width: WIDTH,
     borderColor: colors.CYAN_BRIGHT,
