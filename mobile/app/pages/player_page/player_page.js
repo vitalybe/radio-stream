@@ -6,17 +6,15 @@ import { StyleSheet, View, Image } from "react-native";
 import BackHandler from "app/utils/back_handler/back_handler";
 import { observer } from "mobx-react";
 
-import Icon from "app/shared_components/icon";
-import { colors, fontSizes } from "app/styles/styles";
-import BigText from "app/shared_components/text/big_text";
+import { colors } from "app/styles/styles";
 import PlayerContextMenu from "./player_context_menu";
 import navigator from "app/stores/navigator/navigator";
 import player from "app/stores/player/player";
-import Rating from "./rating";
+import Rating from "../../shared_components/rating";
 import AlbumArt from "./album_art";
 import PlayerControls from "./player_controls";
 import PlayerLoadingSpinner from "./player_loading_spinner";
-import NormalText from "../../shared_components/text/normal_text";
+import NormalText from "app/shared_components/text/normal_text";
 
 const styles = StyleSheet.create({
   container: {
@@ -101,7 +99,7 @@ export default class PlayerPage extends Component {
               <AlbumArt style={[styles.albumArt]} song={song} />
               {/* Ratings */}
               <View style={styles.rating}>
-                <Rating song={song} />
+                <Rating song={song} starSize={43} starMargin={5} />
                 <PlayerContextMenu song={song} />
               </View>
               {/* Names */}

@@ -27,9 +27,7 @@ const RATING_STAR_RATIO = MAX_RATING / STAR_COUNT;
 const styles = StyleSheet.create({
   container: { flexDirection: "row", justifyContent: "center" },
   star: {
-    marginHorizontal: 5,
-    height: 43,
-    width: 44,
+    resizeMode: "contain",
   },
 });
 
@@ -84,7 +82,17 @@ export default class Rating extends Component {
           onPress={() => this.onStarPress(i)}
           onLongPress={() => this.onStarLongPress(i)}>
           <View>
-            <Image style={[styles.star]} source={imageSource} />
+            <Image
+              style={[
+                styles.star,
+                {
+                  marginHorizontal: this.props.starMargin,
+                  height: this.props.starSize,
+                  width: this.props.starSize,
+                },
+              ]}
+              source={imageSource}
+            />
           </View>
         </TouchableWithoutFeedback>
       );
@@ -100,4 +108,6 @@ export default class Rating extends Component {
 
 Rating.propTypes = {
   song: React.PropTypes.object.isRequired,
+  starMargin: React.PropTypes.number.isRequired,
+  starSize: React.PropTypes.number.isRequired,
 };
