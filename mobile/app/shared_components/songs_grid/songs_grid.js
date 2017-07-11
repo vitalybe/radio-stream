@@ -10,21 +10,21 @@ import SmallText from "app/shared_components/text/small_text";
 
 import playImage from "app/images/play.png";
 
-const MIN_CELL_WIDTH = 120;
+const MIN_CELL_WIDTH = 110;
 
 const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
+    flex: 1,
   },
   nameCell: {
-    flex: 0.9,
+    flexGrow: 9,
   },
   headerText: {
     fontWeight: "bold",
   },
   gridCell: {
-    flex: 0.1,
-    flexBasis: "0%",
+    flexGrow: 1,
     minWidth: MIN_CELL_WIDTH,
 
     flexDirection: "row",
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
+    flex: 1,
   },
   playImage: {
     width: 15,
@@ -77,47 +78,27 @@ export default class SongsGrid extends Component {
             <NormalText key="playCount" style={[styles.gridCell, styles.headerText]}>
               Play count
             </NormalText>,
-          ]
-            .slice(0, this.state.visibleColumns)
-            // The map is needed only for react-native - Seems like a bug
-            .map(
-              (component, i) =>
-                Platform.OS === "web"
-                  ? component
-                  : <View key={i}>
-                      {component}
-                    </View>
-            )}
+          ].slice(0, this.state.visibleColumns)}
         </View>
         <View style={styles.row}>
           {[
-            <View style={[styles.gridCell, styles.nameCell]}>
+            <View key="name" style={[styles.gridCell, styles.nameCell]}>
               <Image source={playImage} style={styles.playImage} />
               <View style={styles.nameContainer}>
                 <SmallText>Title</SmallText>
                 <SmallText style={styles.artistText}>Artist</SmallText>
               </View>
             </View>,
-            <View style={[styles.gridCell]}>
+            <View key="rating" style={[styles.gridCell]}>
               <SmallText>**oo.</SmallText>
             </View>,
-            <View style={[styles.gridCell]}>
+            <View key="lastPlayed" style={[styles.gridCell]}>
               <SmallText>Just now</SmallText>
             </View>,
-            <View style={[styles.gridCell]}>
+            <View key="playCount" style={[styles.gridCell]}>
               <SmallText>35</SmallText>
             </View>,
-          ]
-            .slice(0, this.state.visibleColumns)
-            // The map is needed only for react-native - Seems like a bug
-            .map(
-              (component, i) =>
-                Platform.OS === "web"
-                  ? component
-                  : <View key={i}>
-                      {component}
-                    </View>
-            )}
+          ].slice(0, this.state.visibleColumns)}
         </View>
       </View>
     );
