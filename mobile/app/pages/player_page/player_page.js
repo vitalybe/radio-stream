@@ -99,7 +99,7 @@ export default class PlayerPage extends Component {
               <AlbumArt style={[styles.albumArt]} song={song} />
               {/* Ratings */}
               <View style={styles.rating}>
-                <Rating song={song} starSize={43} starMargin={5} />
+                <Rating song={song} starSize={43} starMargin={5} canChangeRating={true} />
                 <PlayerContextMenu song={song} />
               </View>
               {/* Names */}

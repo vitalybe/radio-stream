@@ -76,25 +76,31 @@ export default class Rating extends Component {
         imageSource = starEmptySource;
       }
 
-      return (
-        <TouchableWithoutFeedback
-          key={i}
-          onPress={() => this.onStarPress(i)}
-          onLongPress={() => this.onStarLongPress(i)}>
-          <View>
-            <Image
-              style={[
-                styles.star,
-                {
-                  marginHorizontal: this.props.starMargin,
-                  height: this.props.starSize,
-                  width: this.props.starSize,
-                },
-              ]}
-              source={imageSource}
-            />
-          </View>
-        </TouchableWithoutFeedback>
+      let starContainer = null;
+      if (this.props.canChangeRating) {
+        starContainer = (
+          <TouchableWithoutFeedback onPress={() => this.onStarPress(i)} onLongPress={() => this.onStarLongPress(i)} />
+        );
+      } else {
+        starContainer = <View />;
+      }
+
+      return React.cloneElement(
+        starContainer,
+        { key: i },
+        <View>
+          <Image
+            style={[
+              styles.star,
+              {
+                marginHorizontal: this.props.starMargin,
+                height: this.props.starSize,
+                width: this.props.starSize,
+              },
+            ]}
+            source={imageSource}
+          />
+        </View>
       );
     });
 
@@ -110,4 +116,6 @@ Rating.propTypes = {
   song: React.PropTypes.object.isRequired,
   starMargin: React.PropTypes.number.isRequired,
   starSize: React.PropTypes.number.isRequired,
+
+  canChangeRating: React.PropTypes.bool.isRequired,
 };
