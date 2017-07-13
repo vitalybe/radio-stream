@@ -4,7 +4,7 @@ const moduleLogger = loggerCreator("song");
 
 import { observable } from "mobx";
 
-export default class Song {
+export default class SongMock {
   @observable id = null;
   @observable title = null;
   @observable artist = null;

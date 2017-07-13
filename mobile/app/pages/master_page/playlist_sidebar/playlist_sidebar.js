@@ -13,6 +13,7 @@ import playlistImage from "app/images/playlist-white.png";
 import BigText from "app/shared_components/text/big_text";
 import SongsGrid from "app/shared_components/songs_grid/songs_grid";
 import { dimensionsStoreInstance } from "app/stores/dimensions_store";
+import player from "app/stores/player/player";
 
 const BIG_WIDTH = 638;
 const SMALL_WIDTH = 336;
@@ -57,13 +58,15 @@ export default class PlaylistSidebar extends Component {
       <ScrollView horizontal={false} style={[styles.sidebar, { width: width, right: right }]}>
         <View style={styles.header}>
           <Image source={playlistImage} style={styles.playlistImage} />
-          <BigText style={styles.playlistName}>Peaceful</BigText>
+          <BigText style={styles.playlistName}>
+            {player.currentPlaylist.name}
+          </BigText>
         </View>
         {/* HACK - unusedWindowWidth is given only to force re-render of SongsGrid which doesn't happen on resize. In theory
          the render should've happened automatically, but it doesn't (I think it is React Fiber bug). The other
           alternative would be to listen to DimensionsEmitter in SongsGrid but that would only covert resizes that
           were triggered by Window resizing */}
-        <SongsGrid unusedWindowWidth={width} />
+        <SongsGrid unusedWindowWidth={width} playlist={player.currentPlaylist} />
       </ScrollView>
     );
   }

@@ -10,8 +10,12 @@ export default class Playlist {
   static RELOAD_PLAYLIST_AFTER_MINUTES = 60;
 
   @observable name = null;
+  @observable songs = [];
 
-  _songs = [];
+  get currentIndex() {
+    return this._currentIndex;
+  }
+
   _currentIndex = 0;
   _lastReloadDate = null;
 
@@ -42,8 +46,8 @@ export default class Playlist {
   _reloadSongsIfNeeded() {
     let logger = loggerCreator(this._reloadSongsIfNeeded.name, moduleLogger);
 
-    logger.info(`songs length: ${this._songs.length}. Current index: ${this._currentIndex}`);
-    var isEnoughSongsInList = this._songs.length > 0 && this._currentIndex < this._songs.length;
+    logger.info(`songs length: ${this.songs.length}. Current index: ${this._currentIndex}`);
+    var isEnoughSongsInList = this.songs.length > 0 && this._currentIndex < this.songs.length;
     logger.info(`enough songs in list? ${isEnoughSongsInList}`);
 
     if (isEnoughSongsInList && this._areSongsOutOfDate() === false) {
@@ -54,7 +58,7 @@ export default class Playlist {
       logger.info(`reloading songs`);
       return backendMetadataApi.playlistSongs(this.name).then(songsData => {
         logger.info(`loaded songs: ${songsData.length}`);
-        this._songs = songsData.map(songData => new Song(songData));
+        this.songs = songsData.map(songData => new Song(songData));
         this._currentIndex = 0;
 
         this._lastReloadDate = new Date();
@@ -78,7 +82,7 @@ export default class Playlist {
 
     return this._reloadSongsIfNeeded().then(() => {
       logger.info(`returning song by index: ${this._currentIndex}`);
-      let song = this._songs[this._currentIndex];
+      let song = this.songs[this._currentIndex];
       logger.info(`returning song: ${song}`);
 
       return song;

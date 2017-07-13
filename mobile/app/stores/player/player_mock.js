@@ -4,6 +4,7 @@ const moduleLogger = loggerCreator("player_mock");
 import { observable, action } from "mobx";
 
 import SongMock from "./mock/song_mock";
+import PlaylistMock from "app/stores/player/mock/playlist_mock";
 
 class PlayerMock {
   @observable isPlaying = false;
@@ -34,6 +35,11 @@ song.playcount = 15;
 song.lastplayed = 1495156518;
 song.isMarkedAsPlayed = false;
 
+const currentPlaylist = new PlaylistMock();
+currentPlaylist.name = "Mock playlist";
+currentPlaylist.songs.push(song);
+
 playerMock.song = song;
+playerMock.currentPlaylist = currentPlaylist;
 
 export default playerMock;
