@@ -16,6 +16,7 @@ import hamburgerImage from "app/images/hamburger.png";
 import playlistImage from "app/images/playlist-icon.png";
 import playImage from "app/images/play.png";
 import { dimensionsStoreInstance } from "app/stores/dimensions_store";
+import player from "app/stores/player/player";
 
 const styles = StyleSheet.create({
   topBar: {
@@ -85,18 +86,20 @@ export default class Topbar extends Component {
             </View>
           </TouchableHighlight>
         </View>
-        <View style={styles.topBarRight}>
-          <TouchableHighlight style={styles.playlistButton} onPress={this.onPlaylistClick}>
-            <Image resizeMode="contain" source={playlistImage} style={styles.playlistImage} />
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.playButton}>
-            <Image resizeMode="contain" source={playImage} style={styles.playImage} />
-          </TouchableHighlight>
-          <View style={styles.songInfo}>
-            <SmallText style={styles.songInfoTitle}>The lamb lies down on Broadway</SmallText>
-            <SmallText style={styles.songInfoArtist}>Genesis</SmallText>
-          </View>
-        </View>
+        {player.currentPlaylist
+          ? <View style={styles.topBarRight}>
+              <TouchableHighlight style={styles.playlistButton} onPress={this.onPlaylistClick}>
+                <Image resizeMode="contain" source={playlistImage} style={styles.playlistImage} />
+              </TouchableHighlight>
+              <TouchableHighlight style={styles.playButton}>
+                <Image resizeMode="contain" source={playImage} style={styles.playImage} />
+              </TouchableHighlight>
+              <View style={styles.songInfo}>
+                <SmallText style={styles.songInfoTitle}>The lamb lies down on Broadway</SmallText>
+                <SmallText style={styles.songInfoArtist}>Genesis</SmallText>
+              </View>
+            </View>
+          : null}
       </View>
     );
   }

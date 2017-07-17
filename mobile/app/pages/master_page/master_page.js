@@ -20,6 +20,7 @@ import SettingsPage from "app/pages/settings/settings_page";
 import backgroundImage from "app/images/background.jpg";
 import Topbar from "./topbar";
 import PlaylistSidebar from "app/pages/master_page/playlist_sidebar/playlist_sidebar";
+import player from "app/stores/player/player";
 
 const styles = StyleSheet.create({
   container: {
@@ -83,7 +84,7 @@ export default class MasterPage extends Component {
             {page}
           </MenuContext>
           <NavSidebar />
-          <PlaylistSidebar />
+          {player.currentPlaylist ? <PlaylistSidebar /> : null}
         </Image>
       );
     } else {

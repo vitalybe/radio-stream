@@ -142,7 +142,6 @@ class Player {
         logger.info(`got next song: ${nextSong.toString()}`);
 
         if (this.currentSong !== nextSong || this.currentSong === null) {
-          this.currentSong = nextSong;
           logger.info(`subscribing to song events`);
           this.currentSong.subscribePlayProgress(this._onPlayProgress.bind(this));
           this.currentSong.subscribeFinish(this.playNext.bind(this));
@@ -166,7 +165,6 @@ class Player {
 
     return this.pause().then(() => {
       logger.info(`setting song to null`);
-      this.currentSong = null;
     });
   }
 

@@ -1,6 +1,6 @@
 import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator("PlayerLoadingSpinner");
+const moduleLogger = loggerCreator("PlayerLoadingSpinner");
 
 import React, { Component } from "react";
 import { Image, StyleSheet, View, ActivityIndicator } from "react-native";
@@ -27,6 +27,8 @@ const styles = StyleSheet.create({
 
 export default class PlayerLoadingSpinner extends Component {
   render() {
+    loggerCreator("render", moduleLogger);
+
     const song = this.props.song;
     let loadingStatus = "Loading";
     if (song && song.title) {
