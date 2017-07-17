@@ -11,6 +11,7 @@ import SmallText from "app/shared_components/text/small_text";
 
 import playImage from "app/images/play.png";
 import Rating from "app/shared_components/rating";
+import { colors } from "app/styles/styles";
 
 const MIN_CELL_WIDTH = 110;
 
@@ -18,6 +19,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     flex: 1,
+    marginBottom: 5,
   },
   nameCell: {
     flexGrow: 9,
@@ -35,13 +37,29 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     flex: 1,
+    padding: 5,
+    position: "relative",
   },
   playImage: {
     width: 15,
     height: 27,
     resizeMode: "contain",
   },
-  nameContainer: {},
+  nameContainer: {
+    marginLeft: 5,
+  },
+  artistText: {
+    marginTop: 5,
+    fontWeight: "bold",
+  },
+  selectedRow: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.CYAN_DARK,
+  },
 });
 
 export class HeaderRow extends Component {
@@ -76,6 +94,7 @@ export class SongRow extends Component {
   render() {
     return (
       <View style={styles.row}>
+        {this.props.isHighlighted ? <View style={styles.selectedRow} /> : null}
         {[
           <View key="name" style={[styles.gridCell, styles.nameCell]}>
             <Image source={playImage} style={styles.playImage} />
@@ -110,4 +129,5 @@ export class SongRow extends Component {
 SongRow.propTypes = {
   visibleColumns: React.PropTypes.number.isRequired,
   song: React.PropTypes.object.isRequired,
+  isHighlighted: React.PropTypes.bool.isRequired,
 };

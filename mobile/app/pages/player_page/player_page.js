@@ -88,7 +88,7 @@ export default class PlayerPage extends Component {
   render() {
     let logger = loggerCreator("render", moduleLogger);
 
-    const song = player.song;
+    const song = player.currentSong;
     logger.info(`rendering song: ${song && song.toString()}`);
 
     return (

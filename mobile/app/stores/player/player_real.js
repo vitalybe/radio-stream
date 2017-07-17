@@ -13,10 +13,14 @@ class Player {
 
   @observable isPlaying = false;
   @observable currentPlaylist = null;
-  @observable song = null;
 
   @observable loadingAction = null;
   @observable loadingError = null;
+
+  @computed
+  get currentSong() {
+    return this.currentPlaylist.currentSong;
+  }
 
   constructor() {
     let logger = loggerCreator("constructor", moduleLogger);
@@ -26,10 +30,14 @@ class Player {
   }
 
   _onPlayProgress(seconds) {
-    if (this.song && this.song.markingAsPlayedPromise === null && seconds >= this.MARK_PLAYED_AFTER_SECONDS) {
+    if (
+      this.currentSong &&
+      this.currentSong.markingAsPlayedPromise === null &&
+      seconds >= this.MARK_PLAYED_AFTER_SECONDS
+    ) {
       let logger = loggerCreator(this._onPlayProgress.name, moduleLogger);
 
-      return this.song.markAsPlayed();
+      return this.currentSong.markAsPlayed();
     }
   }
 
@@ -48,8 +56,8 @@ class Player {
 
     let promise = Promise.resolve();
 
-    if (this.song) {
-      promise = this.song.pauseSound();
+    if (this.currentSong) {
+      promise = this.currentSong.pauseSound();
     }
 
     this.isPlaying = false;
@@ -63,8 +71,8 @@ class Player {
 
     assert(this.currentPlaylist, "unexpected: playlist isn't set");
 
-    if (this.song) {
-      this.song.playSound();
+    if (this.currentSong) {
+      this.currentSong.playSound();
     } else {
       this.playNext();
     }
@@ -106,8 +114,7 @@ class Player {
     // time since last player - toggle-pause.
     // if too long, stop and clear playlist
 
-    let previousSong = this.song;
-    this.song = null;
+    let previousSong = this.currentSong;
 
     assert(this.currentPlaylist, "invalid state");
 
@@ -134,16 +141,16 @@ class Player {
       if (nextSong !== null) {
         logger.info(`got next song: ${nextSong.toString()}`);
 
-        if (this.song !== nextSong || this.song === null) {
-          this.song = nextSong;
+        if (this.currentSong !== nextSong || this.currentSong === null) {
+          this.currentSong = nextSong;
           logger.info(`subscribing to song events`);
-          this.song.subscribePlayProgress(this._onPlayProgress.bind(this));
-          this.song.subscribeFinish(this.playNext.bind(this));
+          this.currentSong.subscribePlayProgress(this._onPlayProgress.bind(this));
+          this.currentSong.subscribeFinish(this.playNext.bind(this));
         }
 
         this.loadingAction = `${nextSong.artist} - ${nextSong.title}`;
         logger.info(`playing sound`);
-        await this.song.playSound();
+        await this.currentSong.playSound();
       } else {
         logger.info(`no next song returned - playlist is empty`);
         this.loadingError = "Playlist is empty - No additional songs found";
@@ -159,13 +166,13 @@ class Player {
 
     return this.pause().then(() => {
       logger.info(`setting song to null`);
-      this.song = null;
+      this.currentSong = null;
     });
   }
 
   @computed
   get isLoading() {
-    return !(this.song && this.song.loadedSound);
+    return !(this.currentSong && this.currentSong.loadedSound);
   }
 }
 

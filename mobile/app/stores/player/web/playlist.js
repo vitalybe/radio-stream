@@ -1,7 +1,7 @@
 import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator(__filename);
 
-import { observable } from "mobx";
+import { computed, observable } from "mobx";
 
 import { Song } from "./song";
 import backendMetadataApi from "app/utils/backend_metadata_api";
@@ -11,12 +11,18 @@ export default class Playlist {
 
   @observable name = null;
   @observable songs = [];
+  @observable _currentIndex = 0;
 
+  @computed
   get currentIndex() {
     return this._currentIndex;
   }
 
-  _currentIndex = 0;
+  @computed
+  get currentSong() {
+    return this.songs[this.currentIndex];
+  }
+
   _lastReloadDate = null;
 
   constructor(name) {

@@ -6,10 +6,10 @@ import { observable, computed } from "mobx";
 export default class PlaylistMock {
   @observable name = null;
   @observable songs = [];
-  @observable currentIndex = 0;
+  @observable _currentIndex = 1;
 
   @computed
   get currentSong() {
-    return this.songs[this.currentIndex];
+    return this.songs[this._currentIndex];
   }
 }
