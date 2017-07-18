@@ -19,7 +19,7 @@ public class Playlist {
     private MetadataBackend mMetadataBackend;
     private SongFactory mSongFactory;
 
-    private List<Song> mSongs = new ArrayList<Song>();
+    private List<Song> mSongs = new ArrayList<>();
     private int mIndex = 0;
 
     public Playlist(String playlistName, MetadataBackend metadataBackend, SongFactory songFactory) {
