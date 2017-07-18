@@ -13,7 +13,7 @@ import playImage from "app/images/play.png";
 import Rating from "app/shared_components/rating";
 import { colors } from "app/styles/styles";
 
-const MIN_CELL_WIDTH = 110;
+const MIN_CELL_WIDTH = 100;
 
 const styles = StyleSheet.create({
   header: {
@@ -23,14 +23,13 @@ const styles = StyleSheet.create({
   },
   nameCell: {
     flexGrow: 9,
-    flexBasis: 0,
   },
   headerText: {
     fontWeight: "bold",
   },
   gridCell: {
     flexGrow: 1,
-    minWidth: MIN_CELL_WIDTH,
+    flexBasis: MIN_CELL_WIDTH,
 
     flexDirection: "row",
     alignItems: "center",
