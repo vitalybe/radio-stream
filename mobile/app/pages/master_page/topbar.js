@@ -11,12 +11,13 @@ import masterStore from "app/stores/master_store";
 import BigText from "app/shared_components/text/big_text";
 import { colors } from "app/styles/styles";
 import SmallText from "app/shared_components/text/small_text";
+import { dimensionsStoreInstance } from "app/stores/dimensions_store";
+import player from "app/stores/player/player";
 
 import hamburgerImage from "app/images/hamburger.png";
 import playlistImage from "app/images/playlist-icon.png";
 import playImage from "app/images/play.png";
-import { dimensionsStoreInstance } from "app/stores/dimensions_store";
-import player from "app/stores/player/player";
+import pauseImage from "app/images/pause.png";
 
 const styles = StyleSheet.create({
   topBar: {
@@ -61,42 +62,54 @@ const styles = StyleSheet.create({
 
 @observer
 export default class Topbar extends Component {
-  onHamburgerClick = () => {
-    let logger = loggerCreator("onHamburgerClick", moduleLogger);
+  onHamburgerPress = () => {
+    let logger = loggerCreator("onHamburgerPress", moduleLogger);
 
     masterStore.isNavigationSidebarOpen = !masterStore.isNavigationSidebarOpen;
     logger.info(`navigation sidebar should be now open? ${masterStore.isNavigationSidebarOpen}`);
   };
 
-  onPlaylistClick = () => {
-    const logger = loggerCreator("onPlaylistClick", moduleLogger);
+  onPlaylistPress = () => {
+    const logger = loggerCreator("onPlaylistPress", moduleLogger);
 
     masterStore.isPlaylistSidebarOpen = !masterStore.isPlaylistSidebarOpen;
     logger.info(`playlist sidebar should be now open? ${masterStore.isPlaylistSidebarOpen}`);
+  };
+
+  onPlayPausePress = () => {
+    player.playPauseToggle();
   };
 
   render() {
     return (
       <View style={styles.topBar}>
         <View style={styles.topBarLeft}>
-          <TouchableHighlight onPress={this.onHamburgerClick} style={styles.hamburgerContainer}>
+          <TouchableHighlight onPress={this.onHamburgerPress} style={styles.hamburgerContainer}>
             <View style={styles.hamburgerContent}>
               <Image source={hamburgerImage} style={styles.hamburgerImage} />
               {dimensionsStoreInstance.isBigWidth ? <BigText style={styles.currentPageText}>Player</BigText> : null}
             </View>
           </TouchableHighlight>
         </View>
-        {player.currentPlaylist
+        {player.currentSong
           ? <View style={styles.topBarRight}>
-              <TouchableHighlight style={styles.playlistButton} onPress={this.onPlaylistClick}>
+              <TouchableHighlight style={styles.playlistButton} onPress={this.onPlaylistPress}>
                 <Image resizeMode="contain" source={playlistImage} style={styles.playlistImage} />
               </TouchableHighlight>
-              <TouchableHighlight style={styles.playButton}>
-                <Image resizeMode="contain" source={playImage} style={styles.playImage} />
+              <TouchableHighlight style={styles.playButton} onPress={this.onPlayPausePress}>
+                <Image
+                  resizeMode="contain"
+                  source={player.isPlaying ? pauseImage : playImage}
+                  style={styles.playImage}
+                />
               </TouchableHighlight>
               <View style={styles.songInfo}>
-                <SmallText style={styles.songInfoTitle}>The lamb lies down on Broadway</SmallText>
-                <SmallText style={styles.songInfoArtist}>Genesis</SmallText>
+                <SmallText style={styles.songInfoTitle}>
+                  {player.currentSong.title}
+                </SmallText>
+                <SmallText style={styles.songInfoArtist}>
+                  {player.currentSong.artist}
+                </SmallText>
               </View>
             </View>
           : null}
