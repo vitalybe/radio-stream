@@ -35,6 +35,13 @@ class BackendMetadataApi {
     });
   }
 
+  testConnection(host, password) {
+    let logger = loggerCreator("testConnection", moduleLogger);
+    logger.info(`host: ${host}`);
+
+    return this._getAjax(host, password).get(`/playlists`);
+  }
+
   playlists() {
     return this._getAjax().get(`/playlists`).then(response => response.json().then(json => json)).then(json => {
       return json.playlists;

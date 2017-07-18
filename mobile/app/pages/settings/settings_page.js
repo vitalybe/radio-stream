@@ -85,16 +85,20 @@ export default class SettingsPage extends Component {
     let password = this.settingsValues.password;
 
     try {
-      this.settingsValues.status = "Connecting...";
-      await playlistsStore.updatePlaylists();
+      this.settingsValues.status = "Connecting with the given host/password...";
+      await backendMetadataApi.testConnection(host, password);
       this.settingsValues.status = "Connected";
 
       logger.info(`updating global settings`);
 
       settings.host = host;
       settings.password = password;
+      logger.info(`saving settings`);
       await settings.save();
       await settingsNative.save(this.settingsValuesNative.toJS());
+
+      logger.info(`upadting playlists`);
+      await playlistsStore.updatePlaylists();
 
       navigator.navigateToNoPlaylistSelected();
     } catch (error) {
