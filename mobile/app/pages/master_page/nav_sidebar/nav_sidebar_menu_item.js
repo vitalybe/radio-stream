@@ -37,7 +37,8 @@ export default class NavSidebarMenuItem extends Component {
       <HoverableOpacity
         activeOpacity={1}
         style={[styles.itemContainer, { backgroundColor: itemContainerBackground }]}
-        hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}>
+        hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}
+        onPress={this.props.onPress}>
         <View style={styles.leftImageContainer}>
           <Image source={this.props.leftImage} style={styles.leftImage} />
         </View>
@@ -56,6 +57,7 @@ NavSidebarMenuItem.propTypes = {
   text: React.PropTypes.string.isRequired,
   leftImage: React.PropTypes.any.isRequired,
   rightImage: React.PropTypes.any,
-
   isActive: React.PropTypes.bool,
+
+  onPress: React.PropTypes.func,
 };

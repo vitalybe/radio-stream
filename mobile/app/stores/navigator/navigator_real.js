@@ -9,7 +9,7 @@ class Navigator {
   @observable activeRoute = null;
 
   constructor() {
-    this.navigateToPlaylistCollection();
+    this.navigateToNoPlaylistSelected();
   }
 
   _navigateTo(address, params) {
@@ -18,9 +18,9 @@ class Navigator {
     this.activeRoute = observable(Object.assign({ address: address }, params));
   }
 
-  navigateToPlaylistCollection() {
-    loggerCreator("navigateToPlaylistCollection", moduleLogger);
-    this._navigateTo(constants.ROUTE_PLAYLIST_COLLECTION_PAGE);
+  navigateToNoPlaylistSelected() {
+    loggerCreator("navigateToNoPlaylistSelected", moduleLogger);
+    this._navigateTo(constants.ROUTE_NO_PLAYLIST_SELECTED_PAGE);
   }
 
   navigateToPlayer(playlistName) {

@@ -81,7 +81,7 @@ export default class PlayerPage extends Component {
   onPressHardwareBack() {
     loggerCreator("hardwareBackPress", moduleLogger);
     player.pause();
-    navigator.navigateToPlaylistCollection();
+    navigator.navigateToNoPlaylistSelected();
     return true;
   }
 

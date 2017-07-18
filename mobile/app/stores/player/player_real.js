@@ -19,7 +19,7 @@ class Player {
 
   @computed
   get currentSong() {
-    return this.currentPlaylist.currentSong;
+    return this.currentPlaylist ? this.currentPlaylist.currentSong : null;
   }
 
   constructor() {
@@ -30,13 +30,13 @@ class Player {
   }
 
   _onPlayProgress(seconds) {
+    let logger = loggerCreator(this._onPlayProgress.name, moduleLogger);
+
     if (
       this.currentSong &&
       this.currentSong.markingAsPlayedPromise === null &&
       seconds >= this.MARK_PLAYED_AFTER_SECONDS
     ) {
-      let logger = loggerCreator(this._onPlayProgress.name, moduleLogger);
-
       return this.currentSong.markAsPlayed();
     }
   }

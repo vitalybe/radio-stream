@@ -15,7 +15,7 @@ export async function getArtistImage(artist) {
     );
     const responseJson = await response.json();
     logger.info(`got response: ${responseJson}`);
-    return responseJson.artist.image[3]["#text"];
+    return responseJson.artist.image[4]["#text"];
   } catch (e) {
     logger.warn(`failed to fetch song art`);
   }

@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   albumArt: {
-    resizeMode: "contain",
+    resizeMode: "cover",
 
     width: artSize,
     height: artSize,

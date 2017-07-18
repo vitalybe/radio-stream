@@ -139,7 +139,7 @@ class Player {
       logger.info(`finishing getting status`);
       if (this.currentPlaylist && this.currentPlaylist.name) {
         logger.info(`no playlist selected - navigating to playlist collection`);
-        navigator.navigateToPlaylistCollection();
+        navigator.navigateToNoPlaylistSelected();
       }
     }
   };

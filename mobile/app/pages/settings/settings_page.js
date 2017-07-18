@@ -16,6 +16,7 @@ import settingsNative from "app/utils/settings/settings_native";
 import backendMetadataApi from "app/utils/backend_metadata_api";
 import navigator from "app/stores/navigator/navigator";
 import SettingsTextInput from "./settings_text_input";
+import { playlistsStore } from "app/stores/playlists_store";
 
 const styles = StyleSheet.create({
   container: {
@@ -61,7 +62,7 @@ export default class SettingsPage extends Component {
 
     if (settings.host) {
       logger.info(`cancelling setting changes`);
-      navigator.navigateToPlaylistCollection();
+      navigator.navigateToNoPlaylistSelected();
     } else {
       logger.info(`no host was configured - quitting`);
       BackHandler.exitApp();
@@ -77,10 +78,6 @@ export default class SettingsPage extends Component {
     this.settingsValues[label] = text;
   }
 
-  onPlatformSettingsChanged = newPlatformSettings => {
-    this.platformSettings = newPlatformSettings;
-  };
-
   async onSavePress() {
     let logger = loggerCreator("onSavePress", moduleLogger);
 
@@ -89,7 +86,7 @@ export default class SettingsPage extends Component {
 
     try {
       this.settingsValues.status = "Connecting...";
-      await backendMetadataApi.testConnection(host, password);
+      await playlistsStore.updatePlaylists();
       this.settingsValues.status = "Connected";
 
       logger.info(`updating global settings`);
@@ -99,7 +96,7 @@ export default class SettingsPage extends Component {
       await settings.save();
       await settingsNative.save(this.settingsValuesNative.toJS());
 
-      navigator.navigateToPlaylistCollection();
+      navigator.navigateToNoPlaylistSelected();
     } catch (error) {
       this.settingsValues.status = `Failed: ${error}`;
     }
