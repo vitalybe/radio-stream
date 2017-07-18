@@ -108,9 +108,11 @@ class Player {
       this.isPlaying = playlistPlayer.isPlaying;
       this.isLoading = playlistPlayer.isLoading;
       this.loadingError = playlistPlayer.loadingError;
-
-      // TODO: Inefficient. Consider only updating what changed
-      this.currentPlaylist = new Playlist(playlistPlayer.playlist);
+      if (!this.currentPlaylist) {
+        this.currentPlaylist = new Playlist(playlistPlayer.playlist);
+      } else {
+        this.currentPlaylist.update(playlistPlayer.playlist);
+      }
     }
   }
 

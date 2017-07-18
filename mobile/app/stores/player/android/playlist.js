@@ -17,18 +17,33 @@ export default class Playlist {
   @computed
   get currentSong() {
     if (this.songs.length > this._currentIndex) {
-      let song = this.songs[this.currentIndex];
-      if (!song.loadedImageUrl) {
-        song.loadImage();
-      }
-      return song;
+      return this.songs[this.currentIndex];
     } else {
       return null;
     }
   }
-  constructor(playlistData) {
+
+  _updateAllData(playlistData) {
     this.name = playlistData.name;
     this._currentIndex = playlistData.currentIndex;
     this.songs = playlistData.songs.map(songData => new Song(songData));
+  }
+
+  constructor(playlistData) {
+    loggerCreator("constructor", moduleLogger);
+    this._updateAllData(playlistData);
+  }
+
+  update(playlistData) {
+    const logger = loggerCreator("update", moduleLogger);
+
+    let songData = playlistData.songs[playlistData.currentIndex];
+    if (this.name === playlistData.name && this.currentSong && this.currentSong.id === songData.id) {
+      logger.info(`updating current song information`);
+      this.currentSong.isMarkedAsPlayed = songData.isMarkedAsPlayed;
+    } else {
+      logger.info(`updating all the data in the playlist`);
+      this._updateAllData(playlistData);
+    }
   }
 }

@@ -2,7 +2,7 @@ import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator("song");
 
-import { observable } from "mobx";
+import { observable, computed } from "mobx";
 
 import { getArtistImage } from "app/utils/backend_lastfm_api";
 import SongActions from "../song_actions";
@@ -21,7 +21,23 @@ export default class Song {
   markingAsPlayedPromise = null;
 
   @observable loadedSound = null;
-  @observable loadedImageUrl = null;
+  @observable _loadedImageUrl = null;
+
+  @computed
+  get loadedImageUrl() {
+    const logger = loggerCreator("loadedImageUrl", moduleLogger);
+
+    if (this._loadedImageUrl) {
+      logger.info(`returning an existing image`);
+      return this._loadedImageUrl;
+    } else {
+      logger.info(`image isn't loaded - loading...`);
+      getArtistImage(this.artist).then(imageUri => {
+        logger.info(`got album art uri: ${imageUri}`);
+        this._loadedImageUrl = imageUri;
+      });
+    }
+  }
 
   constructor({ id, artist, title, album, rating, playcount, lastplayed, isMarkedAsPlayed }) {
     loggerCreator("constructor", moduleLogger);
@@ -34,17 +50,8 @@ export default class Song {
     this.playcount = playcount;
     this.lastplayed = lastplayed;
     this.isMarkedAsPlayed = isMarkedAsPlayed;
-    this.loadedImageUrl = null;
+    this._loadedImageUrl = null;
     this.actions = new SongActions(this);
-  }
-
-  loadImage() {
-    const logger = loggerCreator("loadImage", moduleLogger);
-
-    return getArtistImage(this.artist).then(imageUri => {
-      logger.info(`got album art uri: ${imageUri}`);
-      this.loadedImageUrl = imageUri;
-    });
   }
 
   toString() {
