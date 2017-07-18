@@ -1,6 +1,7 @@
 package com.radiostream.javascript.bridge;
 
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import javax.inject.Inject;
@@ -21,9 +22,10 @@ public class PlayerEventsEmitter {
         mContext = context;
     }
 
-    public void sendPlayerStatus(PlayerBridge playerBridge) {
-        sendToJavascript(playerStatusEvent, playerBridge.asMap());
-        sendToSubscribers(playerBridge);
+    public void sendPlayerStatus(WritableMap status) {
+        sendToJavascript(playerStatusEvent, status);
+        // TODO: Fix notifications
+        // sendToSubscribers(playerBridge);
     }
 
     public void subscribe(EventCallback callback) {

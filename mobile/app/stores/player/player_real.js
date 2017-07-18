@@ -14,7 +14,6 @@ class Player {
   @observable isPlaying = false;
   @observable currentPlaylist = null;
 
-  @observable loadingAction = null;
   @observable loadingError = null;
 
   @computed
@@ -134,7 +133,6 @@ class Player {
     }
 
     await retries.promiseRetry(async lastError => {
-      this.loadingAction = `Loading next song...`;
       this.loadingError = lastError && lastError.toString();
       let nextSong = await this.currentPlaylist.nextSong();
 
@@ -147,7 +145,6 @@ class Player {
           this.currentSong.subscribeFinish(this.playNext.bind(this));
         }
 
-        this.loadingAction = `${nextSong.artist} - ${nextSong.title}`;
         logger.info(`playing sound`);
         await this.currentSong.playSound();
       } else {

@@ -20,6 +20,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 
+import com.facebook.react.bridge.WritableMap;
 import com.radiostream.MainActivity;
 import com.radiostream.R;
 import com.radiostream.di.components.DaggerPlayerServiceComponent;
@@ -368,7 +369,7 @@ public class PlayerService extends Service implements PlaylistControls {
         this.mPlayer.changePlaylist(playlistName);
     }
 
-    public PlayerBridge getPlayerBridgeObject() {
+    public WritableMap getPlayerBridgeObject() {
         return mPlayer.toBridgeObject();
     }
 

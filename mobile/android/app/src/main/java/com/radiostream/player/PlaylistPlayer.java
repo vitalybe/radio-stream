@@ -1,6 +1,7 @@
 package com.radiostream.player;
 
-import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableMap;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.util.SetTimeout;
 
@@ -268,17 +269,14 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         play();
     }
 
-    public PlaylistPlayerBridge toBridgeObject() {
-        PlaylistPlayerBridge bridge = new PlaylistPlayerBridge();
-        bridge.isLoading = mIsLoading;
-        bridge.loadingError = mLastLoadingError;
-        bridge.isPlaying = getIsPlaying();
-        bridge.playlistBridge = mPlaylist.toBridgeObject();
-        if (mCurrentSong != null) {
-            bridge.songBridge = mCurrentSong.toBridgeObject();
-        }
+    public WritableMap toBridgeObject() {
+        WritableMap map = Arguments.createMap();
+        map.putBoolean("isLoading", mIsLoading);
+        map.putBoolean("isPlaying", getIsPlaying());
+        map.putMap("playlist", mPlaylist != null ? mPlaylist.toBridgeObject() : null);
+        map.putString("loadingError", mLastLoadingError != null ? mLastLoadingError.getMessage() : "");
 
-        return bridge;
+        return map;
     }
 
     public Promise<Void, Exception, Void> updateSongRating(int songId, final int newRating) {

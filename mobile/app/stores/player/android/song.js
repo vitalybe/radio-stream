@@ -24,7 +24,7 @@ export default class Song {
   @observable loadedImageUrl = null;
 
   constructor({ id, artist, title, album, rating, playcount, lastplayed, isMarkedAsPlayed }) {
-    let logger = loggerCreator("constructor", moduleLogger);
+    loggerCreator("constructor", moduleLogger);
 
     this.id = id;
     this.artist = artist;
@@ -35,13 +35,16 @@ export default class Song {
     this.lastplayed = lastplayed;
     this.isMarkedAsPlayed = isMarkedAsPlayed;
     this.loadedImageUrl = null;
+    this.actions = new SongActions(this);
+  }
 
-    getArtistImage(this.artist).then(imageUri => {
+  loadImage() {
+    const logger = loggerCreator("loadImage", moduleLogger);
+
+    return getArtistImage(this.artist).then(imageUri => {
       logger.info(`got album art uri: ${imageUri}`);
       this.loadedImageUrl = imageUri;
     });
-
-    this.actions = new SongActions(this);
   }
 
   toString() {

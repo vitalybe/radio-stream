@@ -215,8 +215,7 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     public void getPlayerStatus(final Promise promise) {
         try {
             Timber.i("function start");
-            PlayerBridge bridge = mPlayerService.getPlayerBridgeObject();
-            promise.resolve(bridge.asMap());
+            promise.resolve(mPlayerService.getPlayerBridgeObject());
         } catch (Exception e) {
             Timber.e(e);
             promise.reject(e);

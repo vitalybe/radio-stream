@@ -1,6 +1,10 @@
 package com.radiostream.player;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
 import com.radiostream.javascript.bridge.PlaylistBridge;
+import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
 
@@ -101,10 +105,18 @@ public class Playlist {
         });
     }
 
-    public PlaylistBridge toBridgeObject() {
-        final PlaylistBridge playlistBridge = new PlaylistBridge();
-        playlistBridge.name = mPlaylistName;
-        return playlistBridge;
+    public WritableMap toBridgeObject() {
+        WritableMap map = Arguments.createMap();
+        map.putString("name", this.mPlaylistName);
+        map.putInt("currentIndex", this.mIndex);
+
+        WritableArray songsArray = Arguments.createArray();
+        for (Song song : this.mSongs) {
+            songsArray.pushMap(song.toBridgeObject());
+        }
+        map.putArray("songs", songsArray);
+
+        return map;
     }
 
     public void close() {

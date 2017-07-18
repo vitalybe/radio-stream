@@ -15,7 +15,11 @@ class Player {
 
   @observable isPlaying = false;
   @observable currentPlaylist = null;
-  @observable song = null;
+
+  @computed
+  get currentSong() {
+    return this.currentPlaylist ? this.currentPlaylist.currentSong : null;
+  }
 
   @observable isLoading = true;
   @observable loadingError = null;
@@ -97,7 +101,6 @@ class Player {
     if (!playlistPlayer) {
       logger.info(`no playlist is currently active`);
       this.playlist = null;
-      this.song = null;
       this.isLoading = true;
       this.loadingError = null;
     } else {
@@ -106,22 +109,8 @@ class Player {
       this.isLoading = playlistPlayer.isLoading;
       this.loadingError = playlistPlayer.loadingError;
 
-      let newPlaylist = new Playlist();
-      newPlaylist.name = playlistPlayer.playlist.name;
-      this.currentPlaylist = newPlaylist;
-
-      let song = playlistPlayer.song;
-      if (!song) {
-        logger.info(`no song`);
-        this.song = null;
-      } else {
-        if (!this.song || this.song.id !== song.id) {
-          logger.info(`song changed`);
-          this.song = new Song(song);
-        }
-
-        this.song.isMarkedAsPlayed = song.isMarkedAsPlayed;
-      }
+      // TODO: Inefficient. Consider only updating what changed
+      this.currentPlaylist = new Playlist(playlistPlayer.playlist);
     }
   }
 
@@ -143,17 +132,6 @@ class Player {
       }
     }
   };
-
-  @computed
-  get loadingAction() {
-    if (this.isLoading) {
-      if (this.song) {
-        return `${this.song.artist} - ${this.song.title}`;
-      } else {
-        return "Loading...";
-      }
-    }
-  }
 }
 
 const player = new Player();

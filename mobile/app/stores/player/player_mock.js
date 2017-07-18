@@ -16,7 +16,6 @@ class PlayerMock {
   }
 
   @observable isLoading = null;
-  @observable loadingAction = null;
   @observable loadingError = null;
 
   async changePlaylist(playlistName) {}

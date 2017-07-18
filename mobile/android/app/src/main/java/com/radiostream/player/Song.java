@@ -6,8 +6,9 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.PowerManager;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableMap;
 import com.radiostream.Settings;
-import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.networking.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
 import com.radiostream.util.SetTimeout;
@@ -281,20 +282,18 @@ public class Song {
         return mTitle;
     }
 
-    public SongBridge toBridgeObject() {
-        SongBridge bridge = new SongBridge();
+    public WritableMap toBridgeObject() {
+        WritableMap map = Arguments.createMap();
+        map.putInt("id", mId);
+        map.putString("artist", mArtist);
+        map.putString("title", mTitle);
+        map.putString("album", mAlbum);
+        map.putInt("rating", mRating);
+        map.putDouble("lastplayed", mLastPlayed);
+        map.putInt("playcount", mPlayCount);
+        map.putBoolean("isMarkedAsPlayed", markedAsPlayedPromise != null && markedAsPlayedPromise.isResolved());
 
-        bridge.id = mId;
-        bridge.artist = mArtist;
-        bridge.album = mAlbum;
-        bridge.title = mTitle;
-        bridge.rating = mRating;
-        bridge.playcount = mPlayCount;
-        bridge.lastplayed = mLastPlayed;
-        bridge.rating = mRating;
-        bridge.isMarkedAsPlayed = markedAsPlayedPromise != null && markedAsPlayedPromise.isResolved();
-
-        return bridge;
+        return map;
     }
 
     @Override
