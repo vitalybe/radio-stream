@@ -28,7 +28,7 @@ class PlayerMock {
 }
 
 const playerMock = new PlayerMock();
-playerMock.isLoading = true;
+playerMock.isLoading = false;
 
 const song1 = new SongMock();
 song1.title = "Mock Title";

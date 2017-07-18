@@ -15,7 +15,7 @@ import SongsGrid from "app/shared_components/songs_grid/songs_grid";
 import { dimensionsStoreInstance } from "app/stores/dimensions_store";
 import player from "app/stores/player/player";
 
-const BIG_WIDTH = 638;
+const BIG_WIDTH = 900;
 const SMALL_WIDTH = 336;
 const OPEN_RIGHT = -2;
 

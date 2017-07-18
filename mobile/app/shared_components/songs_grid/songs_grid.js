@@ -36,7 +36,7 @@ export default class SongsGrid extends Component {
         {this.props.playlist.songs.map(song => {
           return (
             <SongRow
-              key={song.title}
+              key={song.id}
               visibleColumns={this.state.visibleColumns}
               song={song}
               isHighlighted={this.props.playlist.currentSong === song}

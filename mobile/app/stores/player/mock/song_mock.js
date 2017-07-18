@@ -4,6 +4,8 @@ const moduleLogger = loggerCreator("song");
 
 import { observable } from "mobx";
 
+let lastId = 0;
+
 export default class SongMock {
   @observable id = null;
   @observable title = null;
@@ -18,6 +20,11 @@ export default class SongMock {
 
   @observable loadedSound = null;
   @observable loadedImageUrl = null;
+
+  constructor() {
+    this.id = lastId;
+    lastId++;
+  }
 
   toString() {
     return `Song[Artist=${this.artist} Title=${this.title}]`;

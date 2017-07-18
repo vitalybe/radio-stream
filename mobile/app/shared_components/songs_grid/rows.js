@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
   },
   nameCell: {
     flexGrow: 9,
+    flexBasis: 0,
   },
   headerText: {
     fontWeight: "bold",
@@ -47,6 +48,7 @@ const styles = StyleSheet.create({
   },
   nameContainer: {
     marginLeft: 5,
+    flexShrink: 1,
   },
   artistText: {
     marginTop: 5,
