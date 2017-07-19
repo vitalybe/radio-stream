@@ -25,39 +25,10 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     resizeMode: "contain",
   },
-  playlistButton: {
-    width: 150,
-    marginBottom: 10,
-  },
-  playlistText: {
-    color: colors.SEMI_WHITE,
-    fontSize: fontSizes.NORMAL,
-  },
-  settingsButton: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-  },
-  settingsIcon: {
-    width: 30,
-    height: 30,
-    resizeMode: "contain",
-  },
 });
 
 @observer
-export default class NoPlaylistSelectedPage extends Component {
-  async onPlaylistClick(playlistName) {
-    let logger = loggerCreator(this.onPlaylistClick.name, moduleLogger);
-    logger.info(`${playlistName}`);
-
-    await player.changePlaylist(playlistName);
-    player.play();
-    navigator.navigateToPlayer(playlistName);
-  }
-
+export default class NoPlaylistSelected extends Component {
   render() {
     loggerCreator(this.render.name, moduleLogger);
 

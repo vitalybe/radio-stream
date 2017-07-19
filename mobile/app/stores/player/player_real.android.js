@@ -128,10 +128,6 @@ class Player {
       logger.info(`updating player status`);
       await this.updatePlayerStatus();
       logger.info(`finishing getting status`);
-      if (this.currentPlaylist && this.currentPlaylist.name) {
-        logger.info(`no playlist selected - navigating to playlist collection`);
-        navigator.navigateToNoPlaylistSelected();
-      }
     }
   };
 }

@@ -8,14 +8,13 @@ import { observer } from "mobx-react";
 
 import { colors } from "app/styles/styles";
 import PlayerContextMenu from "./player_context_menu";
-import navigator from "app/stores/navigator/navigator";
 import player from "app/stores/player/player";
 import Rating from "../../shared_components/rating";
 import AlbumArt from "./album_art";
 import PlayerControls from "./player_controls";
 import PlayerLoadingSpinner from "./player_loading_spinner";
-import NormalText from "app/shared_components/text/normal_text";
 import SongDetails from "app/pages/player_page/song_details";
+import NoPlaylistSelected from "app/pages/player_page/no_playlist_selected";
 
 const styles = StyleSheet.create({
   container: {
@@ -59,8 +58,6 @@ export default class PlayerPage extends Component {
   componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
     logger.info(`playlist: ${this.props.playlistName}`);
-
-    BackHandler.addEventListener("hardwareBackPress", () => this.onPressHardwareBack());
   }
 
   componentDidMount() {
@@ -71,13 +68,6 @@ export default class PlayerPage extends Component {
     loggerCreator("componentWillUnmount", moduleLogger);
   }
 
-  onPressHardwareBack() {
-    loggerCreator("hardwareBackPress", moduleLogger);
-    player.pause();
-    navigator.navigateToNoPlaylistSelected();
-    return true;
-  }
-
   render() {
     let logger = loggerCreator("render", moduleLogger);
 
@@ -86,21 +76,29 @@ export default class PlayerPage extends Component {
 
     return (
       <View style={styles.container}>
-        {!player.isLoading
-          ? <View style={{ flex: 1 }}>
-              {/* Album art */}
-              <AlbumArt style={[styles.albumArt]} song={song} />
-              {/* Ratings */}
-              <View style={styles.rating}>
-                <Rating song={song} starSize={43} starMargin={5} canChangeRating={true} />
-                <PlayerContextMenu song={song} />
+        {(() => {
+          if (!player.currentPlaylist) {
+            return <NoPlaylistSelected />;
+          } else if (player.isLoading) {
+            return <PlayerLoadingSpinner song={song} />;
+          } else {
+            return (
+              <View style={{ flex: 1 }}>
+                {/* Album art */}
+                <AlbumArt style={[styles.albumArt]} song={song} />
+                {/* Ratings */}
+                <View style={styles.rating}>
+                  <Rating song={song} starSize={43} starMargin={5} canChangeRating={true} />
+                  <PlayerContextMenu song={song} />
+                </View>
+                {/* Names */}
+                <SongDetails song={song} style={styles.songDetails} />
+                {/* Controls */}
+                <PlayerControls />
               </View>
-              {/* Names */}
-              <SongDetails song={song} style={styles.songDetails} />
-              {/* Controls */}
-              <PlayerControls />
-            </View>
-          : <PlayerLoadingSpinner song={song} />}
+            );
+          }
+        })()}
       </View>
     );
   }

@@ -17,6 +17,7 @@ import backendMetadataApi from "app/utils/backend_metadata_api";
 import navigator from "app/stores/navigator/navigator";
 import SettingsTextInput from "./settings_text_input";
 import { playlistsStore } from "app/stores/playlists_store";
+import { masterStoreInstance } from "app/stores/master_store";
 
 const styles = StyleSheet.create({
   container: {
@@ -53,22 +54,6 @@ export default class SettingsPage extends Component {
     });
 
     this.settingsValuesNative = mobx.asMap();
-
-    BackHandler.addEventListener("hardwareBackPress", () => this.onPressHardwareBack());
-  }
-
-  onPressHardwareBack() {
-    let logger = loggerCreator("onPressHardwareBack", moduleLogger);
-
-    if (settings.host) {
-      logger.info(`cancelling setting changes`);
-      navigator.navigateToNoPlaylistSelected();
-    } else {
-      logger.info(`no host was configured - quitting`);
-      BackHandler.exitApp();
-    }
-
-    return true;
   }
 
   onTextChange(label, text) {
@@ -100,7 +85,10 @@ export default class SettingsPage extends Component {
       logger.info(`upadting playlists`);
       await playlistsStore.updatePlaylists();
 
-      navigator.navigateToNoPlaylistSelected();
+      masterStoreInstance.closeSidebars();
+      masterStoreInstance.isNavigationSidebarOpen = true;
+
+      navigator.navigateToPlayer();
     } catch (error) {
       this.settingsValues.status = `Failed: ${error}`;
     }

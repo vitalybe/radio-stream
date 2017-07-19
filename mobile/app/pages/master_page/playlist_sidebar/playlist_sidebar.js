@@ -6,7 +6,7 @@ import React, { Component } from "react";
 import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
 import { observer } from "mobx-react";
 
-import masterStore from "app/stores/master_store";
+import { masterStoreInstance } from "app/stores/master_store";
 import { colors } from "app/styles/styles";
 
 import playlistImage from "app/images/playlist-white.png";
@@ -53,7 +53,7 @@ export default class PlaylistSidebar extends Component {
 
     const width = dimensionsStoreInstance.width > BIG_WIDTH ? BIG_WIDTH : SMALL_WIDTH;
     const closedRight = OPEN_RIGHT - width;
-    const right = masterStore.isPlaylistSidebarOpen ? OPEN_RIGHT : closedRight;
+    const right = masterStoreInstance.isPlaylistSidebarOpen ? OPEN_RIGHT : closedRight;
 
     return (
       <ScrollView horizontal={false} style={[styles.sidebar, { width: width, right: right }]}>

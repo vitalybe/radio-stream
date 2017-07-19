@@ -8,9 +8,14 @@ class MasterStore {
   @observable isNavigationSidebarOpen = true;
   @observable isPlaylistSidebarOpen = false;
 
+  closeSidebars() {
+    this.isNavigationSidebarOpen = false;
+    this.isPlaylistSidebarOpen = false;
+  }
+
   constructor() {
     loggerCreator("constructor", moduleLogger);
   }
 }
 
-export default new MasterStore();
+export const masterStoreInstance = new MasterStore();

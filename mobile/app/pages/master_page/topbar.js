@@ -7,7 +7,7 @@ import { Platform, Image, StyleSheet, TouchableHighlight, View } from "react-nat
 import { observer } from "mobx-react";
 import NormalText from "../../shared_components/text/normal_text";
 
-import masterStore from "app/stores/master_store";
+import { masterStoreInstance } from "app/stores/master_store";
 import BigText from "app/shared_components/text/big_text";
 import { colors } from "app/styles/styles";
 import SmallText from "app/shared_components/text/small_text";
@@ -65,15 +65,15 @@ export default class Topbar extends Component {
   onHamburgerPress = () => {
     let logger = loggerCreator("onHamburgerPress", moduleLogger);
 
-    masterStore.isNavigationSidebarOpen = !masterStore.isNavigationSidebarOpen;
-    logger.info(`navigation sidebar should be now open? ${masterStore.isNavigationSidebarOpen}`);
+    masterStoreInstance.isNavigationSidebarOpen = !masterStoreInstance.isNavigationSidebarOpen;
+    logger.info(`navigation sidebar should be now open? ${masterStoreInstance.isNavigationSidebarOpen}`);
   };
 
   onPlaylistPress = () => {
     const logger = loggerCreator("onPlaylistPress", moduleLogger);
 
-    masterStore.isPlaylistSidebarOpen = !masterStore.isPlaylistSidebarOpen;
-    logger.info(`playlist sidebar should be now open? ${masterStore.isPlaylistSidebarOpen}`);
+    masterStoreInstance.isPlaylistSidebarOpen = !masterStoreInstance.isPlaylistSidebarOpen;
+    logger.info(`playlist sidebar should be now open? ${masterStoreInstance.isPlaylistSidebarOpen}`);
   };
 
   onPlayPausePress = () => {

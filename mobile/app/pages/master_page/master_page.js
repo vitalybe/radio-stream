@@ -21,7 +21,7 @@ import Topbar from "./topbar";
 import PlaylistSidebar from "app/pages/master_page/playlist_sidebar/playlist_sidebar";
 import player from "app/stores/player/player";
 import { playlistsStore } from "app/stores/playlists_store";
-import NoPlaylistSelectedPage from "app/pages/no_playlist_selected_page";
+import { masterStoreInstance } from "app/stores/master_store";
 
 const styles = StyleSheet.create({
   container: {
@@ -64,6 +64,7 @@ export default class MasterPage extends Component {
     } else {
       logger.info(`host not found in settings - showing settings page`);
       navigator.navigateToSettings();
+      masterStoreInstance.closeSidebars();
     }
 
     logger.info(`initialization finished`);
@@ -79,9 +80,6 @@ export default class MasterPage extends Component {
 
     if (activeRoute) {
       switch (activeRoute.address) {
-        case constants.ROUTE_NO_PLAYLIST_SELECTED_PAGE:
-          page = <NoPlaylistSelectedPage />;
-          break;
         case constants.ROUTE_PLAYER_PAGE:
           page = <PlayerPage playlistName={activeRoute.playlistName} />;
           break;

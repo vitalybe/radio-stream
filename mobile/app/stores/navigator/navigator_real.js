@@ -9,18 +9,13 @@ class Navigator {
   @observable activeRoute = null;
 
   constructor() {
-    this.navigateToNoPlaylistSelected();
+    this.navigateToPlayer();
   }
 
   _navigateTo(address, params) {
     let logger = loggerCreator("_navigateTo", moduleLogger);
     logger.info(`${address}`);
     this.activeRoute = observable(Object.assign({ address: address }, params));
-  }
-
-  navigateToNoPlaylistSelected() {
-    loggerCreator("navigateToNoPlaylistSelected", moduleLogger);
-    this._navigateTo(constants.ROUTE_NO_PLAYLIST_SELECTED_PAGE);
   }
 
   navigateToPlayer(playlistName) {

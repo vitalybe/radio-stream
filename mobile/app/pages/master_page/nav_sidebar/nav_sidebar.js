@@ -6,7 +6,7 @@ import React, { Component } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { observer } from "mobx-react";
 
-import masterStore from "app/stores/master_store";
+import { masterStoreInstance } from "app/stores/master_store";
 import { colors } from "app/styles/styles";
 import NavSidebarMenuItem from "./nav_sidebar_menu_item";
 import NavSidebarMenuTitle from "./nav_sidebar_menu_title";
@@ -41,12 +41,19 @@ export default class NavSidebar extends Component {
   async componentWillMount() {}
 
   onPlaylistPress = async playlistName => {
+    masterStoreInstance.closeSidebars();
     await player.changePlaylist(playlistName);
     player.play();
     navigator.navigateToPlayer(playlistName);
   };
 
+  onPlayerPress = () => {
+    masterStoreInstance.closeSidebars();
+    navigator.navigateToPlayer();
+  };
+
   onSettingsPress = () => {
+    masterStoreInstance.closeSidebars();
     navigator.navigateToSettings();
   };
 
@@ -60,12 +67,12 @@ export default class NavSidebar extends Component {
   render() {
     loggerCreator(this.render.name, moduleLogger);
 
-    const left = masterStore.isNavigationSidebarOpen ? OPEN_LEFT : CLOSED_LEFT;
+    const left = masterStoreInstance.isNavigationSidebarOpen ? OPEN_LEFT : CLOSED_LEFT;
 
     return (
       <View style={[styles.sidebar, { left: left }]}>
         <NavSidebarMenuTitle text="Radio Stream" />
-        <NavSidebarMenuItem text="Player" leftImage={playIcon} />
+        <NavSidebarMenuItem text="Player" leftImage={playIcon} onPress={this.onPlayerPress} />
         <NavSidebarMenuItem text="Settings" leftImage={playIcon} onPress={this.onSettingsPress} />
         <NavSidebarMenuItem text="Exit" leftImage={playIcon} onPress={this.onExitPress} />
         <NavSidebarMenuTitle text="Playlists" />
