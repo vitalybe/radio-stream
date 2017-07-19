@@ -11,7 +11,7 @@ import NormalText from "app/shared_components/text/normal_text";
 import moment from "moment";
 import { colors, fontSizes } from "app/styles/styles";
 import DimensionsChangedEmitter from "app/utils/dimensions_changed_emitter/dimensions_changed_emitter";
-import { dimensionsStoreInstance } from "app/stores/dimensions_store";
+import { dimensionsStore } from "app/stores/dimensions_store";
 
 let artSize = 260;
 
@@ -59,8 +59,8 @@ export default class AlbumArt extends Component {
   _onContainerHeightChanged(newHeight) {
     const logger = loggerCreator("_onContainerHeightChanged", moduleLogger);
 
-    logger.log(`New height: ${newHeight}. Window width: ${dimensionsStoreInstance.width}`);
-    const newArtSize = Math.min(dimensionsStoreInstance.width - 20, newHeight - 5);
+    logger.log(`New height: ${newHeight}. Window width: ${dimensionsStore.width}`);
+    const newArtSize = Math.min(dimensionsStore.width - 20, newHeight - 5);
     this.setState({ artSize: newArtSize });
   }
 

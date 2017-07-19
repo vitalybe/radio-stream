@@ -6,17 +6,17 @@ import React, { Component } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { observer } from "mobx-react";
 
-import { masterStoreInstance } from "app/stores/master_store";
+import { masterStore } from "app/stores/master_store";
 import { colors } from "app/styles/styles";
 import NavSidebarMenuItem from "./nav_sidebar_menu_item";
 import NavSidebarMenuTitle from "./nav_sidebar_menu_title";
 import BackHandler from "app/utils/back_handler/back_handler";
-import player from "app/stores/player/player";
+import { player } from "app/stores/player/player";
 
 import playIcon from "app/images/play.png";
 import pencilIcon from "app/images/pencil-icon.png";
 import { playlistsStore } from "app/stores/playlists_store";
-import navigator from "app/stores/navigator/navigator";
+import { navigator } from "app/stores/navigator.js";
 
 const WIDTH = 336;
 const OPEN_LEFT = -2;
@@ -44,16 +44,16 @@ export default class NavSidebar extends Component {
     await player.changePlaylist(playlistName);
     player.play();
     navigator.navigateToPlayer(playlistName);
-    masterStoreInstance.closeSidebars();
+    masterStore.closeSidebars();
   };
 
   onPlayerPress = () => {
-    masterStoreInstance.closeSidebars();
+    masterStore.closeSidebars();
     navigator.navigateToPlayer();
   };
 
   onSettingsPress = () => {
-    masterStoreInstance.closeSidebars();
+    masterStore.closeSidebars();
     navigator.navigateToSettings();
   };
 
@@ -67,7 +67,7 @@ export default class NavSidebar extends Component {
   render() {
     loggerCreator(this.render.name, moduleLogger);
 
-    const left = masterStoreInstance.isNavigationSidebarOpen ? OPEN_LEFT : CLOSED_LEFT;
+    const left = masterStore.isNavigationSidebarOpen ? OPEN_LEFT : CLOSED_LEFT;
 
     return (
       <View style={[styles.sidebar, { left: left }]}>

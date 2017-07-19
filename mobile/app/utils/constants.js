@@ -1,5 +1,5 @@
 class Constants {
-  MOCK_MODE = false;
+  MOCK_MODE = true;
 
   ROUTE_SETTINGS_PAGE = "SETTINGS_PAGE";
   ROUTE_PLAYER_PAGE = "PLAYER_PAGE";

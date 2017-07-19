@@ -2,7 +2,7 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("playlist");
 
 import { computed, observable } from "mobx";
-import Song from "./song";
+import Song from "../song/song";
 
 export default class Playlist {
   @observable name = null;

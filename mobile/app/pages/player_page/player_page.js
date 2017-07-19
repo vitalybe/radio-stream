@@ -7,7 +7,7 @@ import { observer } from "mobx-react";
 
 import { colors } from "app/styles/styles";
 import PlayerContextMenu from "./player_context_menu";
-import player from "app/stores/player/player";
+import { player } from "app/stores/player/player";
 import Rating from "../../shared_components/rating";
 import AlbumArt from "./album_art";
 import PlayerControls from "./player_controls";

@@ -13,11 +13,11 @@ import ButtonText from "app/shared_components/text/button_text";
 import SettingsPageNative from "./settings_page_native";
 import settings from "app/utils/settings/settings";
 import settingsNative from "app/utils/settings/settings_native";
-import backendMetadataApi from "app/utils/backend_metadata_api";
-import navigator from "app/stores/navigator/navigator";
+import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
+import { navigator } from "app/stores/navigator.js";
 import SettingsTextInput from "./settings_text_input";
 import { playlistsStore } from "app/stores/playlists_store";
-import { masterStoreInstance } from "app/stores/master_store";
+import { masterStore } from "app/stores/master_store";
 
 const styles = StyleSheet.create({
   container: {
@@ -85,8 +85,8 @@ export default class SettingsPage extends Component {
       logger.info(`upadting playlists`);
       await playlistsStore.updatePlaylists();
 
-      masterStoreInstance.closeSidebars();
-      masterStoreInstance.isNavigationSidebarOpen = true;
+      masterStore.closeSidebars();
+      masterStore.isNavigationSidebarOpen = true;
 
       navigator.navigateToPlayer();
     } catch (error) {

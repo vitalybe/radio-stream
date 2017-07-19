@@ -5,9 +5,6 @@ import React, { Component } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { observer } from "mobx-react";
 
-import player from "app/stores/player/player";
-import { colors, fontSizes } from "app/styles/styles";
-import navigator from "app/stores/navigator/navigator";
 import NormalText from "app/shared_components/text/normal_text";
 
 const styles = StyleSheet.create({

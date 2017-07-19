@@ -6,14 +6,14 @@ import React, { Component } from "react";
 import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
 import { observer } from "mobx-react";
 
-import { masterStoreInstance } from "app/stores/master_store";
+import { masterStore } from "app/stores/master_store";
 import { colors } from "app/styles/styles";
 
 import playlistImage from "app/images/playlist-white.png";
 import BigText from "app/shared_components/text/big_text";
 import SongsGrid from "app/shared_components/songs_grid/songs_grid";
-import { dimensionsStoreInstance } from "app/stores/dimensions_store";
-import player from "app/stores/player/player";
+import { dimensionsStore } from "app/stores/dimensions_store";
+import { player } from "app/stores/player/player";
 
 const BIG_WIDTH = 900;
 const SMALL_WIDTH = 336;
@@ -51,9 +51,9 @@ export default class PlaylistSidebar extends Component {
   render() {
     loggerCreator(this.render.name, moduleLogger);
 
-    const width = dimensionsStoreInstance.width > BIG_WIDTH ? BIG_WIDTH : SMALL_WIDTH;
+    const width = dimensionsStore.width > BIG_WIDTH ? BIG_WIDTH : SMALL_WIDTH;
     const closedRight = OPEN_RIGHT - width;
-    const right = masterStoreInstance.isPlaylistSidebarOpen ? OPEN_RIGHT : closedRight;
+    const right = masterStore.isPlaylistSidebarOpen ? OPEN_RIGHT : closedRight;
 
     return (
       <ScrollView horizontal={false} style={[styles.sidebar, { width: width, right: right }]}>

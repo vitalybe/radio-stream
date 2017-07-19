@@ -7,12 +7,12 @@ import { Platform, Image, StyleSheet, TouchableHighlight, View } from "react-nat
 import { observer } from "mobx-react";
 import NormalText from "../../shared_components/text/normal_text";
 
-import { masterStoreInstance } from "app/stores/master_store";
+import { masterStore } from "app/stores/master_store";
 import BigText from "app/shared_components/text/big_text";
 import { colors } from "app/styles/styles";
 import SmallText from "app/shared_components/text/small_text";
-import { dimensionsStoreInstance } from "app/stores/dimensions_store";
-import player from "app/stores/player/player";
+import { dimensionsStore } from "app/stores/dimensions_store";
+import { player } from "app/stores/player/player";
 
 import hamburgerImage from "app/images/hamburger.png";
 import playlistImage from "app/images/playlist-icon.png";
@@ -65,17 +65,17 @@ export default class Topbar extends Component {
   onHamburgerPress = () => {
     let logger = loggerCreator("onHamburgerPress", moduleLogger);
 
-    masterStoreInstance.isPlaylistSidebarOpen = false;
-    masterStoreInstance.isNavigationSidebarOpen = !masterStoreInstance.isNavigationSidebarOpen;
-    logger.info(`navigation sidebar should be now open? ${masterStoreInstance.isNavigationSidebarOpen}`);
+    masterStore.isPlaylistSidebarOpen = false;
+    masterStore.isNavigationSidebarOpen = !masterStore.isNavigationSidebarOpen;
+    logger.info(`navigation sidebar should be now open? ${masterStore.isNavigationSidebarOpen}`);
   };
 
   onPlaylistPress = () => {
     const logger = loggerCreator("onPlaylistPress", moduleLogger);
 
-    masterStoreInstance.isNavigationSidebarOpen = false;
-    masterStoreInstance.isPlaylistSidebarOpen = !masterStoreInstance.isPlaylistSidebarOpen;
-    logger.info(`playlist sidebar should be now open? ${masterStoreInstance.isPlaylistSidebarOpen}`);
+    masterStore.isNavigationSidebarOpen = false;
+    masterStore.isPlaylistSidebarOpen = !masterStore.isPlaylistSidebarOpen;
+    logger.info(`playlist sidebar should be now open? ${masterStore.isPlaylistSidebarOpen}`);
   };
 
   onPlayPausePress = () => {
@@ -89,7 +89,7 @@ export default class Topbar extends Component {
           <TouchableHighlight onPress={this.onHamburgerPress} style={styles.hamburgerContainer}>
             <View style={styles.hamburgerContent}>
               <Image source={hamburgerImage} style={styles.hamburgerImage} />
-              {dimensionsStoreInstance.isBigWidth ? <BigText style={styles.currentPageText}>Player</BigText> : null}
+              {dimensionsStore.isBigWidth ? <BigText style={styles.currentPageText}>Player</BigText> : null}
             </View>
           </TouchableHighlight>
         </View>

@@ -6,12 +6,12 @@ import { extendObservable } from "mobx";
 import assert from "app/utils/assert";
 import retries from "app/utils/retries";
 
-import backendMetadataApi from "app/utils/backend_metadata_api";
+import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
 import * as backendLastFm from "app/utils/backend_lastfm_api";
-import * as wrappedSoundManager from "./wrapped_sound_manager";
+import * as wrappedSoundManager from "../wrapped_sound/wrapped_sound_manager";
 import SongActions from "../song_actions";
 
-export class Song {
+export default class Song {
   constructor(songData) {
     let logger = loggerCreator(this.constructor.name, moduleLogger);
 

@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("ElectronIpcBrowserSide");
 
 import { ipcRenderer } from "electron";
-import player from "app/stores/player/player";
+import { player } from "app/stores/player/player";
 
 class ElectronIpcBrowserSide {
   constructor() {

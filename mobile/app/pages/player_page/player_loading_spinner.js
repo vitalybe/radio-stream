@@ -6,7 +6,7 @@ import React, { Component } from "react";
 import { Image, StyleSheet, View, ActivityIndicator } from "react-native";
 
 import NormalText from "app/shared_components/text/normal_text";
-import player from "app/stores/player/player";
+import { player } from "app/stores/player/player";
 import SongDetails from "app/pages/player_page/song_details";
 
 const styles = StyleSheet.create({

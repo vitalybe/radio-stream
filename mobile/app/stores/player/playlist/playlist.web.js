@@ -3,8 +3,8 @@ const moduleLogger = loggerCreator(__filename);
 
 import { computed, observable } from "mobx";
 
-import { Song } from "./song";
-import backendMetadataApi from "app/utils/backend_metadata_api";
+import Song from "../song/song.web";
+import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
 
 export default class Playlist {
   static RELOAD_PLAYLIST_AFTER_MINUTES = 60;

@@ -15,8 +15,6 @@ import {
 import _ from "lodash";
 import { observer } from "mobx-react";
 
-import BackendMetadataApi from "app/utils/backend_metadata_api";
-
 let starFullSource = require("app/images/star-full.png");
 let starEmptySource = require("app/images/star-empty.png");
 

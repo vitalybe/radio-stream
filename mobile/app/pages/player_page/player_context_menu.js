@@ -7,7 +7,7 @@ import { Image, StyleSheet, Text, View, TouchableHighlight } from "react-native"
 
 import { colors } from "app/styles/styles";
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from "app/shared_components/context_menu/context_menu";
-import player from "app/stores/player/player";
+import { player } from "app/stores/player/player";
 
 import ellipsesImage from "app/images/ellipsis.png";
 

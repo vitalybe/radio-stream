@@ -18,4 +18,4 @@ class MasterStore {
   }
 }
 
-export const masterStoreInstance = new MasterStore();
+export const masterStore = new MasterStore();

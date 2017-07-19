@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { MenuContext } from "app/shared_components/context_menu/context_menu";
 import NavSidebar from "./nav_sidebar/nav_sidebar";
 import constants from "app/utils/constants";
-import navigator from "app/stores/navigator/navigator";
+import { navigator } from "app/stores/navigator.js";
 import settings from "app/utils/settings/settings";
 import settingsNative from "app/utils/settings/settings_native";
 
@@ -19,9 +19,9 @@ import SettingsPage from "app/pages/settings/settings_page";
 import backgroundImage from "app/images/background.jpg";
 import Topbar from "./topbar";
 import PlaylistSidebar from "app/pages/master_page/playlist_sidebar/playlist_sidebar";
-import player from "app/stores/player/player";
+import { player } from "app/stores/player/player";
 import { playlistsStore } from "app/stores/playlists_store";
-import { masterStoreInstance } from "app/stores/master_store";
+import { masterStore } from "app/stores/master_store";
 
 const styles = StyleSheet.create({
   container: {
@@ -64,7 +64,7 @@ export default class MasterPage extends Component {
     } else {
       logger.info(`host not found in settings - showing settings page`);
       navigator.navigateToSettings();
-      masterStoreInstance.closeSidebars();
+      masterStore.closeSidebars();
     }
 
     logger.info(`initialization finished`);

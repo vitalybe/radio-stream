@@ -37,4 +37,4 @@ class DimensionsStore {
   }
 }
 
-export const dimensionsStoreInstance = new DimensionsStore();
+export const dimensionsStore = new DimensionsStore();

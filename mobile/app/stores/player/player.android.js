@@ -5,10 +5,9 @@ const moduleLogger = loggerCreator("player_real.android");
 import { observable, computed, action } from "mobx";
 import { NativeModules, DeviceEventEmitter, AppState } from "react-native";
 
-import Playlist from "./android/playlist";
-import Song from "./android/song";
+import Playlist from "./playlist/playlist.android";
 import settings from "app/utils/settings/settings";
-import navigator from "app/stores/navigator/navigator";
+import sleep from "app/utils/sleep";
 
 class Player {
   PLAYLIST_PLAYER_STATUS_EVENT = "PLAYLIST_PLAYER_STATUS_EVENT";
@@ -34,10 +33,6 @@ class Player {
     AppState.addEventListener("change", this.onHandleAppStateChange);
   }
 
-  _sleep(millisecond) {
-    return new Promise(resolve => setTimeout(resolve, millisecond));
-  }
-
   _updateSettings(host, user, password) {
     return this.proxy.updateSettings(host, user, password);
   }
@@ -52,7 +47,7 @@ class Player {
       await this._updateSettings(settings.host, settings.user, settings.password);
     } else {
       logger.info(`not available - retrying soon...`);
-      await this._sleep(500);
+      await sleep(500);
       await this._resolveWhenPlayerAvailable();
     }
   }

@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import Icon from "app/shared_components/icon";
 import CircleButton from "app/shared_components/circle_button";
 import { colors } from "app/styles/styles";
-import player from "app/stores/player/player";
+import { player } from "app/stores/player/player";
 
 import playImage from "app/images/play.png";
 import nextImage from "app/images/next.png";

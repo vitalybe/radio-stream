@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("SongActions");
 
 import retries from "app/utils/retries";
-import backendMetadataApi from "app/utils/backend_metadata_api";
+import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
 
 export default class SongActions {
   constructor(song) {

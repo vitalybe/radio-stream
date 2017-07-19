@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("PlaylistsStore");
 
 import { observable } from "mobx";
-import backendMetadataApi from "app/utils/backend_metadata_api";
+import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
 
 class PlaylistsStore {
   @observable playlistNames = [];
