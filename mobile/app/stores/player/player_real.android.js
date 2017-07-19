@@ -100,7 +100,7 @@ class Player {
     const playlistPlayer = nativePlayerStatus.playlistPlayer;
     if (!playlistPlayer) {
       logger.info(`no playlist is currently active`);
-      this.playlist = null;
+      this.currentPlaylist = null;
       this.isLoading = true;
       this.loadingError = null;
     } else {

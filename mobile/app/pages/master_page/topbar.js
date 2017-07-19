@@ -65,6 +65,7 @@ export default class Topbar extends Component {
   onHamburgerPress = () => {
     let logger = loggerCreator("onHamburgerPress", moduleLogger);
 
+    masterStoreInstance.isPlaylistSidebarOpen = false;
     masterStoreInstance.isNavigationSidebarOpen = !masterStoreInstance.isNavigationSidebarOpen;
     logger.info(`navigation sidebar should be now open? ${masterStoreInstance.isNavigationSidebarOpen}`);
   };
@@ -72,6 +73,7 @@ export default class Topbar extends Component {
   onPlaylistPress = () => {
     const logger = loggerCreator("onPlaylistPress", moduleLogger);
 
+    masterStoreInstance.isNavigationSidebarOpen = false;
     masterStoreInstance.isPlaylistSidebarOpen = !masterStoreInstance.isPlaylistSidebarOpen;
     logger.info(`playlist sidebar should be now open? ${masterStoreInstance.isPlaylistSidebarOpen}`);
   };

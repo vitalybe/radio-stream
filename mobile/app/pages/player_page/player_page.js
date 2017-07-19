@@ -3,7 +3,6 @@ var moduleLogger = loggerCreator("player_page");
 
 import React, { Component } from "react";
 import { StyleSheet, View, Image } from "react-native";
-import BackHandler from "app/utils/back_handler/back_handler";
 import { observer } from "mobx-react";
 
 import { colors } from "app/styles/styles";
@@ -57,7 +56,6 @@ const styles = StyleSheet.create({
 export default class PlayerPage extends Component {
   componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
-    logger.info(`playlist: ${this.props.playlistName}`);
   }
 
   componentDidMount() {
@@ -104,6 +102,4 @@ export default class PlayerPage extends Component {
   }
 }
 
-PlayerPage.propTypes = {
-  playlistName: React.PropTypes.string.isRequired,
-};
+PlayerPage.propTypes = {};

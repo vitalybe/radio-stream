@@ -41,10 +41,10 @@ export default class NavSidebar extends Component {
   async componentWillMount() {}
 
   onPlaylistPress = async playlistName => {
-    masterStoreInstance.closeSidebars();
     await player.changePlaylist(playlistName);
     player.play();
     navigator.navigateToPlayer(playlistName);
+    masterStoreInstance.closeSidebars();
   };
 
   onPlayerPress = () => {

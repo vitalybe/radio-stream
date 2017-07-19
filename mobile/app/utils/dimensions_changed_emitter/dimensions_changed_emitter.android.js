@@ -16,4 +16,8 @@ export default class DimensionsChangedEmitter {
   subscribe(callback) {
     // only for web
   }
+
+  unsubscribe(callback) {
+    // only for web
+  }
 }
