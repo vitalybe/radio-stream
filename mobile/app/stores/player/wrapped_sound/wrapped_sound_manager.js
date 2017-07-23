@@ -5,6 +5,7 @@ const logger = loggerCreator(__filename);
 import { soundManager } from "soundmanager2";
 import WrappedSound from "./wrapped_sound.js";
 import settings from "app/utils/settings/settings";
+import constants from "app/utils/constants";
 
 function soundId(songId) {
   return "i" + songId.toString();
@@ -41,7 +42,7 @@ let loadingSongs = {};
 
 // returns promise.
 // resolves to WrappedSound
-export function loadSound(song) {
+export function loadSound(song, options) {
   let flogger = loggerCreator(loadSound.name, logger);
   flogger.debug(song.toString());
 
@@ -53,8 +54,19 @@ export function loadSound(song) {
   } else {
     flogger.debug(`Starting createSound for song...`);
     loadingPromise = new Promise(function(resolve, reject) {
-      let soundUrl = `http://${settings.host}/radio-stream/music/${song.path}`;
-      let sound = soundManager.createSound({ id: id, url: soundUrl, stream: false });
+      let soundUrl = !constants.MOCK_MODE ? `http://${settings.host}/radio-stream/music/${song.path}` : song.path;
+      let sound = soundManager.createSound(
+        Object.assign(
+          {
+            id: id,
+            url: soundUrl,
+            stream: false,
+            multiShotEvents: true,
+          },
+          options
+        )
+      );
+
       sound.load({
         stream: true,
         onload: function(success) {
@@ -94,12 +106,4 @@ export function loadSound(song) {
 
 export function stopAll() {
   soundManager.stopAll();
-}
-
-export function fastForward(song) {
-  let fLogger = loggerCreator(fastForward.name, logger);
-  fLogger.debug(song.toString());
-
-  let sound = getSoundBySong(song);
-  sound.setPosition(sound.duration - 10000);
 }

@@ -12,7 +12,7 @@ import * as wrappedSoundManager from "../wrapped_sound/wrapped_sound_manager";
 import SongActions from "../song_actions";
 
 export default class Song {
-  constructor(songData) {
+  constructor(songData, onPlayProgressCallback, onFinishCallback) {
     let logger = loggerCreator(this.constructor.name, moduleLogger);
 
     extendObservable(this, {
@@ -33,8 +33,8 @@ export default class Song {
 
     this.markingAsPlayedPromise = null;
 
-    this._onFinishCallback = null;
-    this._onPlayProgressCallback = null;
+    this._onFinishCallback = onFinishCallback;
+    this._onPlayProgressCallback = onPlayProgressCallback;
 
     this._lastPositionSeconds = 0;
 
@@ -54,20 +54,12 @@ export default class Song {
     }
   }
 
-  subscribePlayProgress(callback) {
-    this._onPlayProgressCallback = callback;
-  }
-
-  subscribeFinish(callback) {
-    this._onFinishCallback = callback;
-  }
-
-  _loadSound() {
+  _loadSound(options) {
     let logger = loggerCreator(this._loadSound.name, moduleLogger);
     logger.info(`${this.toString()}`);
 
     // NOTE: This will not load sound again it was loaded before
-    return wrappedSoundManager.loadSound(this).then(sound => {
+    return wrappedSoundManager.loadSound(this, options).then(sound => {
       assert(sound && sound.loaded, "sound was not loaded");
       logger.info(`loaded successfully`);
 
@@ -82,18 +74,38 @@ export default class Song {
       logger.info(`image already loaded`);
       return Promise.resolve();
     } else {
-      logger.info(`loading artist image`);
-      let imageUrl = await backendLastFm.getArtistImage(this.artist);
+      try {
+        logger.info(`loading artist image`);
+        let imageUrl = await backendLastFm.getArtistImage(this.artist);
 
-      logger.info(`image loaded: ${imageUrl}`);
-      this.loadedImageUrl = imageUrl;
+        logger.info(`image loaded: ${imageUrl}`);
+        this.loadedImageUrl = imageUrl;
+      } catch (err) {
+        logger.warn(`failed to load artist image: ${err}`);
+      }
     }
   }
 
   async load() {
     let logger = loggerCreator(this.load.name, moduleLogger);
 
-    await this._loadSound();
+    let options = {};
+    if (this._onFinishCallback) {
+      logger.info(`providing onfinish callback`);
+      options.onfinish = this._onFinishCallback;
+    }
+
+    if (this._onPlayProgressCallback) {
+      logger.info(`providing whileplaying callback`);
+      let that = this;
+      options.whileplaying = function() {
+        // NOTE: callback functions of soundmanager provide the sound in "this" parameter
+        // so we can't alter "this"
+        that._onPlayProgress(this);
+      };
+    }
+
+    await this._loadSound(options);
     try {
       await this._loadImage();
     } catch (err) {
@@ -104,35 +116,13 @@ export default class Song {
   playSound() {
     let logger = loggerCreator(this.playSound.name, moduleLogger);
 
-    let that = this;
-
     return this.load().then(() => {
-      logger.info(`loaded`);
-
-      let options = {};
-
-      if (this._onFinishCallback) {
-        logger.info(`providing onfinish callback`);
-        options.onfinish = this._onFinishCallback;
-      }
-
-      if (this._onPlayProgressCallback) {
-        logger.info(`providing whileplaying callback`);
-        options.whileplaying = function() {
-          // NOTE: callback functions of soundmanager provide the sound in "this" parameter
-          // so we can't alter "this"
-          that._onPlayProgress(this);
-        };
-      }
-
-      logger.info(`playing sound`);
-      this.loadedSound.play(options);
+      logger.info(`loaded - playing sound`);
+      this.loadedSound.play();
     });
   }
 
   pauseSound() {
-    let logger = loggerCreator(this.pauseSound.name, moduleLogger);
-
     return this.load().then(() => {
       this.loadedSound.pause();
     });

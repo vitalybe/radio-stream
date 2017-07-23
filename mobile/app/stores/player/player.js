@@ -29,8 +29,6 @@ class Player {
   }
 
   _onPlayProgress(seconds) {
-    let logger = loggerCreator(this._onPlayProgress.name, moduleLogger);
-
     if (
       this.currentSong &&
       this.currentSong.markingAsPlayedPromise === null &&
@@ -46,7 +44,12 @@ class Player {
     await this.stop();
 
     logger.info(`setting playlist to ${playlistName}`);
+
     this.currentPlaylist = new Playlist(playlistName);
+
+    logger.info(`subscribing to playlist events`);
+    this.currentPlaylist.subscribePlayProgress(this._onPlayProgress.bind(this));
+    this.currentPlaylist.subscribeFinish(this.playNext.bind(this));
   }
 
   @action
@@ -92,19 +95,17 @@ class Player {
     }
   }
 
-  _preloadNextSong() {
+  async _preloadNextSong() {
     let logger = loggerCreator(this._preloadNextSong.name, moduleLogger);
 
-    logger.info(`peeking next song`);
-    return this.currentPlaylist
-      .peekNextSong()
-      .then(peekedSong => {
-        logger.info(`loading peeked song: ${peekedSong.toString()}`);
-        return peekedSong.load();
-      })
-      .catch(err => {
-        logger.warn(`failed to peek the next song: ${err.stack}`);
-      });
+    try {
+      logger.info(`peeking next song`);
+      let peekedSong = await this.currentPlaylist.peekNextSong();
+      logger.info(`loading peeked song: ${peekedSong.toString()}`);
+      return peekedSong.load();
+    } catch (err) {
+      logger.warn(`failed to peek the next song: ${err.stack}`);
+    }
   }
 
   async playNext() {
@@ -139,14 +140,8 @@ class Player {
       if (nextSong !== null) {
         logger.info(`got next song: ${nextSong.toString()}`);
 
-        if (this.currentSong !== nextSong || this.currentSong === null) {
-          logger.info(`subscribing to song events`);
-          this.currentSong.subscribePlayProgress(this._onPlayProgress.bind(this));
-          this.currentSong.subscribeFinish(this.playNext.bind(this));
-        }
-
         logger.info(`playing sound`);
-        await this.currentSong.playSound();
+        await nextSong.playSound();
       } else {
         logger.info(`no next song returned - playlist is empty`);
         this.loadingError = "Playlist is empty - No additional songs found";
