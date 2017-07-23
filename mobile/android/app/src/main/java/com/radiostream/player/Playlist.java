@@ -3,12 +3,9 @@ package com.radiostream.player;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.radiostream.javascript.bridge.PlaylistBridge;
-import com.radiostream.javascript.bridge.SongBridge;
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
 
-import org.jdeferred.DoneFilter;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;

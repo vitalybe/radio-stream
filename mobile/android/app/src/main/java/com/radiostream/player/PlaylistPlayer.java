@@ -2,7 +2,7 @@ package com.radiostream.player;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackend;
 import com.radiostream.util.SetTimeout;
 
 import org.jdeferred.DoneCallback;

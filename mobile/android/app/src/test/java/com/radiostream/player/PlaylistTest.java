@@ -1,7 +1,7 @@
 package com.radiostream.player;
 
 import com.facebook.react.bridge.Arguments;
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackendImpl;
 import com.radiostream.networking.models.SongResult;
 
 import org.jdeferred.DoneCallback;
@@ -40,7 +40,7 @@ public class PlaylistTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock
-    MetadataBackend mockMetadataBackend;
+    MetadataBackendImpl mockMetadataBackend;
     @Mock
     SongFactory mockSongFactory;
     @Mock

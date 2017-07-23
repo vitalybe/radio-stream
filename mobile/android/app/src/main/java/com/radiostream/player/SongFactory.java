@@ -3,7 +3,7 @@ package com.radiostream.player;
 import android.content.Context;
 
 import com.radiostream.Settings;
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
 import com.radiostream.util.SetTimeout;
 

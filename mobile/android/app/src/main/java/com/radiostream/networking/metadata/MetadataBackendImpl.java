@@ -1,6 +1,7 @@
-package com.radiostream.networking;
+package com.radiostream.networking.metadata;
 
 import com.radiostream.Settings;
+import com.radiostream.networking.HttpServiceFactory;
 import com.radiostream.networking.models.PlaylistListResult;
 import com.radiostream.networking.models.PlaylistResult;
 import com.radiostream.networking.models.SongResult;
@@ -27,39 +28,13 @@ import retrofit2.http.Path;
 import timber.log.Timber;
 
 @DebugLog
-public class MetadataBackend {
+public class MetadataBackendImpl implements MetadataBackend {
 
     private Settings mSettings;
 
     @Inject
-    public MetadataBackend(Settings settings) {
+    public MetadataBackendImpl(Settings settings) {
         mSettings = settings;
-    }
-
-    public Promise<PlaylistListResult, Exception, Void> fetchAllPlaylist() throws IOException {
-        final Deferred<PlaylistListResult, Exception, Void> deferred = new DeferredObject<>();
-
-        BackendMetadataClient client = getService();
-        Call<PlaylistListResult> playlistsCall = client.allPlaylists();
-        playlistsCall.enqueue(new Callback<PlaylistListResult>() {
-            @Override
-            public void onResponse(Call<PlaylistListResult> call, Response<PlaylistListResult> response) {
-                if (response.isSuccessful()) {
-                    deferred.resolve(response.body());
-                } else {
-                    deferred.reject(new IOException(String.format(Locale.ENGLISH,
-                        "Playlist call failed - Returned status: %d", response.code())));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PlaylistListResult> call, Throwable t) {
-                deferred.reject(new IOException(String.format(Locale.ENGLISH,
-                    "Playlist call failed - %s", t.toString())));
-            }
-        });
-
-        return deferred.promise();
     }
 
     private BackendMetadataClient getService() {
@@ -69,6 +44,7 @@ public class MetadataBackend {
             address, mSettings.getUser(), mSettings.getPassword());
     }
 
+    @Override
     public Promise<List<SongResult>, Exception, Void> fetchPlaylist(String playlistName) {
         final Deferred<List<SongResult>, Exception, Void> deferred = new DeferredObject<>();
 
@@ -95,6 +71,7 @@ public class MetadataBackend {
         return deferred.promise();
     }
 
+    @Override
     public Promise<Void, Exception, Void> markAsPlayed(Integer songId) {
         Timber.i("function start for song id: %d", songId);
         final Deferred<Void, Exception, Void> deferred = new DeferredObject<>();
@@ -125,6 +102,7 @@ public class MetadataBackend {
         return deferred.promise();
     }
 
+    @Override
     public Promise<Void, Exception, Void> updateSongRating(int songId, int newRating) {
         Timber.i("updateSongRating for song %d with new rating: %d", songId, newRating);
         final Deferred<Void, Exception, Void> deferred = new DeferredObject<>();

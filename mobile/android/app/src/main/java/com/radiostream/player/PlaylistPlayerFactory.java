@@ -1,6 +1,6 @@
 package com.radiostream.player;
 
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackend;
 import com.radiostream.util.SetTimeout;
 
 import javax.inject.Inject;

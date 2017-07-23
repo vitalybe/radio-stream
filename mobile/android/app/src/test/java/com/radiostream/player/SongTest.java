@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
 import com.radiostream.Settings;
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackendImpl;
 import com.radiostream.networking.models.SongResult;
 import com.radiostream.util.SetTimeout;
 
@@ -59,7 +59,7 @@ public class SongTest {
     SetTimeout mockSetTimeout;
 
     @Mock
-    MetadataBackend mockMetadataBackend;
+    MetadataBackendImpl mockMetadataBackend;
 
     final String settingsUrl = "http://wwww.fake-url.com";
 

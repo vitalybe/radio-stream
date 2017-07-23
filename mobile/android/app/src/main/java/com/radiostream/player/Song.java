@@ -4,12 +4,13 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.PowerManager;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.radiostream.Settings;
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackend;
 import com.radiostream.networking.models.SongResult;
 import com.radiostream.util.SetTimeout;
 
@@ -40,6 +41,7 @@ public class Song {
     private final int mPlayCount;
     private int mRating;
 
+    private Context mContext;
     private SetTimeout mSetTimeout;
     private MetadataBackend mMetadataBackend;
     private Promise<Song, Exception, Void> mSongLoadingPromise = null;
@@ -61,18 +63,25 @@ public class Song {
         this.mRating = songResult.rating;
         this.mLastPlayed = songResult.lastplayed;
         this.mPlayCount = songResult.playcount;
+        this.mContext = context;
 
-        String pathBuilder = "";
-        String[] pathParts = songResult.path.split("/");
-        for (String pathPart : pathParts) {
-            try {
-                pathBuilder += "/" + URLEncoder.encode(pathPart, "UTF-8").replace("+", "%20");
-            } catch (UnsupportedEncodingException e) {
-                Timber.e(e, "failed to encode path part: %s", pathPart);
+        // In various mock modes we will provide the full MP3 path
+        if(!songResult.path.startsWith("android.resource")) {
+            String pathBuilder = "";
+            String[] pathParts = songResult.path.split("/");
+            for (String pathPart : pathParts) {
+                try {
+                    pathBuilder += "/" + URLEncoder.encode(pathPart, "UTF-8").replace("+", "%20");
+                } catch (UnsupportedEncodingException e) {
+                    Timber.e(e, "failed to encode path part: %s", pathPart);
+                }
             }
+
+            this.mPath = mSettings.getAddress() + "/music/" + pathBuilder.substring(1);
+        } else {
+            this.mPath = songResult.path;
         }
 
-        this.mPath = pathBuilder.substring(1);
         mMediaPlayer = mediaPlayer;
         mSettings = settings;
 
@@ -96,7 +105,7 @@ public class Song {
             this.markedAsPlayedPromise = retryMarkAsPlayed().then(new DoneCallback<Boolean>() {
                 @Override
                 public void onDone(Boolean result) {
-                    if(mEventsListener != null) {
+                    if (mEventsListener != null) {
                         Timber.i("finished marking as played - notifying subscribers");
                         mEventsListener.onSongMarkedAsPlayed();
                     }
@@ -105,7 +114,7 @@ public class Song {
         } else {
             Timber.i("this is not the time to mark as played %dms, retrying again in %dms",
                 mMediaPlayer.getCurrentPosition(), markPlayedRetryMs);
-            
+
             this.mSetTimeout.run(markPlayedRetryMs).then(new DoneCallback<Void>() {
                 @Override
                 public void onDone(Void result) {
@@ -201,10 +210,9 @@ public class Song {
                 }
             });
 
-            String url = mSettings.getAddress() + "/music/" + this.mPath;
-            Timber.i("loading song from url: %s", url);
+            Timber.i("loading song from url: %s", this.mPath);
             try {
-                mMediaPlayer.setDataSource(url);
+                mMediaPlayer.setDataSource(this.mContext, Uri.parse(this.mPath));
                 mMediaPlayer.prepareAsync();
             } catch (IOException e) {
                 deferredObject.reject(new NetworkErrorException("Failed to set data source", e));
@@ -256,7 +264,7 @@ public class Song {
 
     public void close() {
         Timber.i("function start: %s", this.toString());
-        if(mMediaPlayer != null) {
+        if (mMediaPlayer != null) {
             pause();
 
             Timber.i("resetting and releasing the media player");
@@ -315,7 +323,9 @@ public class Song {
 
     public interface EventsListener {
         void onSongFinish(Song song);
+
         void onSongMarkedAsPlayed();
+
         void onSongError(Exception error);
     }
 }
