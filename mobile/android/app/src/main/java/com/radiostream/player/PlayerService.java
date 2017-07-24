@@ -191,7 +191,7 @@ public class PlayerService extends Service implements PlaylistControls {
         PlayerServiceComponent component = DaggerPlayerServiceComponent.builder()
             .jsProxyComponent(PlayerJsProxy.JsProxyComponent())
             .contextModule(new ContextModule(this))
-            .metadataBackendModule(new MetadataBackendModule(PlayerJsProxy.JsProxyComponent().provideSettings()))
+            .metadataBackendModule(new MetadataBackendModule())
             .build();
 
         component.inject(this);

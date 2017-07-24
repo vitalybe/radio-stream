@@ -64,6 +64,8 @@ public class Song {
         this.mLastPlayed = songResult.lastplayed;
         this.mPlayCount = songResult.playcount;
         this.mContext = context;
+        mMediaPlayer = mediaPlayer;
+        mSettings = settings;
 
         // In various mock modes we will provide the full MP3 path
         if(!songResult.path.startsWith("android.resource")) {
@@ -81,9 +83,6 @@ public class Song {
         } else {
             this.mPath = songResult.path;
         }
-
-        mMediaPlayer = mediaPlayer;
-        mSettings = settings;
 
         // NOTE: Wake lock will only be relevant when a song is playing
         mMediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);

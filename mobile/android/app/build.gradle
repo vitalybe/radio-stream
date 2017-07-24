@@ -1,6 +1,8 @@
 apply plugin: "com.android.application"
 // Dagger 2
 apply plugin: 'com.neenbedankt.android-apt'
+// react-native-config
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 import com.android.build.OutputFile
 
@@ -139,6 +141,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-config')
     compile project(':react-native-orientation')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.0.1'

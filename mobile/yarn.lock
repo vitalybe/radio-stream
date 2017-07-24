@@ -5274,6 +5274,10 @@ react-fontawesome@^1.6.1:
   dependencies:
     prop-types "^15.5.6"
 
+react-native-config@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-0.5.0.tgz#109aaee511b81851b22e1fd3372d86c9d6c797d4"
+
 react-native-flip-card@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/react-native-flip-card/-/react-native-flip-card-3.4.0.tgz#e07d88900f71acad1364ef138d40b1e6dbd48fc7"

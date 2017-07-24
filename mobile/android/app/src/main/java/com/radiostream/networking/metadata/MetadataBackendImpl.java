@@ -49,13 +49,16 @@ public class MetadataBackendImpl implements MetadataBackend {
         final Deferred<List<SongResult>, Exception, Void> deferred = new DeferredObject<>();
 
         BackendMetadataClient client = getService();
+        Timber.i("fetchings songs for playlist: " + playlistName);
         Call<PlaylistResult> playlistCall = client.playlist(playlistName);
         playlistCall.enqueue(new Callback<PlaylistResult>() {
             @Override
             public void onResponse(Call<PlaylistResult> call, Response<PlaylistResult> response) {
                 if (response.isSuccessful()) {
+                    Timber.i("success");
                     deferred.resolve(response.body().results);
                 } else {
+                    Timber.i("failed");
                     deferred.reject(new IOException(String.format(Locale.ENGLISH,
                         "Playlist call failed - Returned status: %d", response.code())));
                 }
