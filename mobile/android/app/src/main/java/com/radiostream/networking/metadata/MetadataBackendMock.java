@@ -31,7 +31,7 @@ import retrofit2.http.Path;
 import timber.log.Timber;
 
 @DebugLog
-public class MetadataBackendMock implements MetadataBackend {
+class MetadataBackendMock implements MetadataBackend {
 
     private int lastId = 0;
 

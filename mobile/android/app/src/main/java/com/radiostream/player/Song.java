@@ -10,7 +10,7 @@ import android.os.PowerManager;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.radiostream.Settings;
-import com.radiostream.networking.metadata.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackendGetter;
 import com.radiostream.networking.models.SongResult;
 import com.radiostream.util.SetTimeout;
 
@@ -43,7 +43,7 @@ public class Song {
 
     private Context mContext;
     private SetTimeout mSetTimeout;
-    private MetadataBackend mMetadataBackend;
+    private MetadataBackendGetter mMetadataBackendGetter;
     private Promise<Song, Exception, Void> mSongLoadingPromise = null;
     private MediaPlayer mMediaPlayer;
     private Settings mSettings;
@@ -53,19 +53,19 @@ public class Song {
     private Promise<Boolean, Exception, Void> markedAsPlayedPromise = null;
 
     public Song(SongResult songResult, MediaPlayer mediaPlayer,
-                Context context, Settings settings, SetTimeout setTimeout, MetadataBackend metadataBackend) {
+                Context context, Settings settings, SetTimeout setTimeout, MetadataBackendGetter metadataBackend) {
         this.mArtist = songResult.artist;
         this.mAlbum = songResult.album;
         this.mTitle = songResult.title;
         this.mId = songResult.id;
         this.mSetTimeout = setTimeout;
-        this.mMetadataBackend = metadataBackend;
+        this.mMetadataBackendGetter = metadataBackend;
         this.mRating = songResult.rating;
         this.mLastPlayed = songResult.lastplayed;
         this.mPlayCount = songResult.playcount;
         this.mContext = context;
-        mMediaPlayer = mediaPlayer;
-        mSettings = settings;
+        this.mMediaPlayer = mediaPlayer;
+        this.mSettings = settings;
 
         // In various mock modes we will provide the full MP3 path
         if(!songResult.path.startsWith("android.resource")) {
@@ -140,7 +140,7 @@ public class Song {
         final DeferredObject<Boolean, Exception, Void> deferredObject = new DeferredObject<>();
         Timber.i("function start");
 
-        mMetadataBackend.markAsPlayed(this.mId)
+        mMetadataBackendGetter.get().markAsPlayed(this.mId)
             .then(new DoneCallback<Void>() {
                 @Override
                 public void onDone(Void result) {

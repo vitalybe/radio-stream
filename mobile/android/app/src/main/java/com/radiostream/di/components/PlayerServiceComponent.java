@@ -1,13 +1,12 @@
 package com.radiostream.di.components;
 
 import com.radiostream.di.modules.ContextModule;
-import com.radiostream.di.modules.MetadataBackendModule;
 import com.radiostream.di.scopes.PlayerServiceScope;
 import com.radiostream.player.PlayerService;
 
 import dagger.Component;
 
-@Component(dependencies = {JsProxyComponent.class}, modules = {ContextModule.class, MetadataBackendModule.class})
+@Component(dependencies = {JsProxyComponent.class}, modules = {ContextModule.class})
 @PlayerServiceScope
 public interface PlayerServiceComponent {
   void inject(PlayerService service);

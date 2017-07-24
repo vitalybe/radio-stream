@@ -110,10 +110,10 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     }
 
     @ReactMethod
-    public void updateSettings(String host, String user, String password, Promise promise) {
+    public void updateSettings(String host, String user, String password, boolean isMockMode, Promise promise) {
         Timber.i("function start");
 
-        mSettings.update(host, user, password);
+        mSettings.update(host, user, password, isMockMode);
         promise.resolve(null);
     }
 

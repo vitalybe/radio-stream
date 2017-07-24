@@ -1,6 +1,6 @@
 package com.radiostream.player;
 
-import com.radiostream.networking.metadata.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackendGetter;
 import com.radiostream.util.SetTimeout;
 
 import javax.inject.Inject;
@@ -13,20 +13,20 @@ public class PlaylistPlayerFactory {
 
     private PlaylistFactory mPlaylistFactory;
     private SetTimeout mSetTimeout;
-    MetadataBackend mMetadataBackend;
+    MetadataBackendGetter mMetadataBackendGetter;
 
     @Inject
     public PlaylistPlayerFactory(PlaylistFactory playlistFactory,
-                                 SetTimeout setTimeout, MetadataBackend metadataBackend) {
+                                 SetTimeout setTimeout, MetadataBackendGetter metadataBackend) {
 
         mPlaylistFactory = playlistFactory;
         mSetTimeout = setTimeout;
-        mMetadataBackend = metadataBackend;
+        mMetadataBackendGetter = metadataBackend;
     }
 
     public PlaylistPlayer build(String playlistName, StatusProvider statusProvider) {
         Playlist playlist = mPlaylistFactory.buildPlaylist(playlistName);
 
-        return new PlaylistPlayer(playlist, mSetTimeout, mMetadataBackend, statusProvider);
+        return new PlaylistPlayer(playlist, mSetTimeout, mMetadataBackendGetter, statusProvider);
     }
 }

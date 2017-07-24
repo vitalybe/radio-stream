@@ -8,6 +8,7 @@ import { NativeModules, DeviceEventEmitter, AppState } from "react-native";
 import Playlist from "./playlist/playlist.android";
 import settings from "app/utils/settings/settings";
 import sleep from "app/utils/sleep";
+import constants from "app/utils/constants";
 
 class Player {
   PLAYLIST_PLAYER_STATUS_EVENT = "PLAYLIST_PLAYER_STATUS_EVENT";
@@ -33,10 +34,6 @@ class Player {
     AppState.addEventListener("change", this.onHandleAppStateChange);
   }
 
-  _updateSettings(host, user, password) {
-    return this.proxy.updateSettings(host, user, password);
-  }
-
   async _resolveWhenPlayerAvailable() {
     let logger = loggerCreator("resolveWhenPlayerAvailable", moduleLogger);
 
@@ -44,7 +41,7 @@ class Player {
     let isAvailable = await this.proxy.isPlayerAvailable();
     if (isAvailable) {
       logger.info(`available - updating settings`);
-      await this._updateSettings(settings.host, settings.user, settings.password);
+      await this.proxy.updateSettings(settings.host, settings.user, settings.password, constants.MOCK_MODE);
     } else {
       logger.info(`not available - retrying soon...`);
       await sleep(500);

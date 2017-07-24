@@ -2,7 +2,7 @@ package com.radiostream.player;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
-import com.radiostream.networking.metadata.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackendGetter;
 import com.radiostream.util.SetTimeout;
 
 import org.jdeferred.DoneCallback;
@@ -20,7 +20,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     private SetTimeout mSetTimeout;
     private Playlist mPlaylist;
     private Song mCurrentSong;
-    private MetadataBackend mMetadataBackend;
+    private MetadataBackendGetter mMetadataBackendGetter;
 
     private boolean mIsLoading = false;
     private Exception mLastLoadingError = null;
@@ -30,12 +30,12 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
     @Inject
     public PlaylistPlayer(Playlist playlist, SetTimeout setTimeout,
-                          MetadataBackend metadataBackend, StatusProvider statusProvider) {
+                          MetadataBackendGetter metadataBackendGetter, StatusProvider statusProvider) {
 
         mPlaylist = playlist;
         mStatusProvider = statusProvider;
         mSetTimeout = setTimeout;
-        mMetadataBackend = metadataBackend;
+        mMetadataBackendGetter = metadataBackendGetter;
     }
 
     private void setSongLoadingStatus(boolean isLoading, Exception error) {
@@ -283,7 +283,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         Timber.i("function start");
         final Song updatedSong = getCurrentSong();
         if (updatedSong.getId() == songId) {
-            return mMetadataBackend.updateSongRating(songId, newRating).then(new DoneCallback<Void>() {
+            return mMetadataBackendGetter.get().updateSongRating(songId, newRating).then(new DoneCallback<Void>() {
                 @Override
                 public void onDone(Void result) {
                     updatedSong.setRating(newRating);

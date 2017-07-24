@@ -1,12 +1,13 @@
 import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("backendMetadataApi");
 
-import Config from "react-native-config";
+import constants from "app/utils/constants";
+
 import { backendMetadataApiReal } from "./backend_metadata_api_real";
 import { backendMetadataApiMock } from "./backend_metadata_api_mock";
 
 let instance = backendMetadataApiReal;
-if (Config.MOCK_MODE === "true") {
+if (constants.MOCK_MODE) {
   instance = backendMetadataApiMock;
 }
 

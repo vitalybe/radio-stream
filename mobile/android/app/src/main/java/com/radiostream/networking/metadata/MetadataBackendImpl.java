@@ -28,7 +28,7 @@ import retrofit2.http.Path;
 import timber.log.Timber;
 
 @DebugLog
-public class MetadataBackendImpl implements MetadataBackend {
+class MetadataBackendImpl implements MetadataBackend {
 
     private Settings mSettings;
 

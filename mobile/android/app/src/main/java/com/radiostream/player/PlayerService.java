@@ -26,7 +26,6 @@ import com.radiostream.R;
 import com.radiostream.di.components.DaggerPlayerServiceComponent;
 import com.radiostream.di.components.PlayerServiceComponent;
 import com.radiostream.di.modules.ContextModule;
-import com.radiostream.di.modules.MetadataBackendModule;
 import com.radiostream.javascript.bridge.PlayerBridge;
 import com.radiostream.javascript.bridge.PlayerEventsEmitter;
 import com.radiostream.javascript.bridge.SongBridge;
@@ -191,7 +190,6 @@ public class PlayerService extends Service implements PlaylistControls {
         PlayerServiceComponent component = DaggerPlayerServiceComponent.builder()
             .jsProxyComponent(PlayerJsProxy.JsProxyComponent())
             .contextModule(new ContextModule(this))
-            .metadataBackendModule(new MetadataBackendModule())
             .build();
 
         component.inject(this);

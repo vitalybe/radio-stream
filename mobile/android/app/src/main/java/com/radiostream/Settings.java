@@ -16,17 +16,19 @@ public class Settings {
     private String mHost = null;
     private String mUser = null;
     private String mPassword = null;
+    private boolean mIsMockMode;
 
     @Inject
     public Settings() {
     }
 
-    public void update(String host, String user, String password) {
+    public void update(String host, String user, String password, boolean isMockMode) {
         Timber.i("updating settings. new host: %s", host);
 
         mHost = host;
         mUser = user;
         mPassword = password;
+        mIsMockMode = isMockMode;
     }
 
     public String getHost() {
@@ -43,5 +45,9 @@ public class Settings {
 
     public String getPassword() {
         return mPassword;
+    }
+
+    public boolean getMockMode() {
+        return mIsMockMode;
     }
 }
