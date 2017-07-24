@@ -3,6 +3,7 @@ package com.radiostream.player;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.radiostream.networking.metadata.MetadataBackendGetter;
+import com.radiostream.ui.PlayerNotification;
 import com.radiostream.util.SetTimeout;
 
 import org.jdeferred.DoneCallback;
@@ -21,6 +22,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     private Playlist mPlaylist;
     private Song mCurrentSong;
     private MetadataBackendGetter mMetadataBackendGetter;
+    private PlayerNotification mPlayerNotification;
 
     private boolean mIsLoading = false;
     private Exception mLastLoadingError = null;
@@ -30,12 +32,14 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
     @Inject
     public PlaylistPlayer(Playlist playlist, SetTimeout setTimeout,
-                          MetadataBackendGetter metadataBackendGetter, StatusProvider statusProvider) {
+                          MetadataBackendGetter metadataBackendGetter, StatusProvider statusProvider,
+                          PlayerNotification playerNotification) {
 
         mPlaylist = playlist;
         mStatusProvider = statusProvider;
         mSetTimeout = setTimeout;
         mMetadataBackendGetter = metadataBackendGetter;
+        mPlayerNotification = playerNotification;
     }
 
     private void setSongLoadingStatus(boolean isLoading, Exception error) {
@@ -136,6 +140,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         // NOTE: the last error to the function is sent since merely retrying
         // the function doesn't clear the erro
         setSongLoadingStatus(true, mLastLoadingError);
+        mPlayerNotification.showLoadingNotification();
         mStatusProvider.sendStatus();
 
         waitForCurrentSongMarkedAsPlayed().then(new DonePipe<Boolean, Song, Exception, Void>() {
@@ -159,6 +164,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             public Promise<Song, Exception, Void> pipeDone(Song song) {
                 try {
                     setSongLoadingStatus(false, null);
+                    mPlayerNotification.showSongNotification(song);
 
                     // We won't be playing any new music if playlistPlayer is closed
                     if (!mIsClosed) {

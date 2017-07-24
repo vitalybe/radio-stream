@@ -26,6 +26,7 @@ import com.radiostream.R;
 import com.radiostream.di.components.DaggerPlayerServiceComponent;
 import com.radiostream.di.components.PlayerServiceComponent;
 import com.radiostream.di.modules.ContextModule;
+import com.radiostream.di.modules.PlayerServiceModule;
 import com.radiostream.javascript.bridge.PlayerBridge;
 import com.radiostream.javascript.bridge.PlayerEventsEmitter;
 import com.radiostream.javascript.bridge.SongBridge;
@@ -46,16 +47,17 @@ import timber.log.Timber;
 @DebugLog
 public class PlayerService extends Service implements PlaylistControls {
 
+    public final String PARAM_EXIT  = "mParamExit";
+
     private final int mStopPausedServiceAfterMs = 10 * 60 * 1000;
     private final int mStopPausedServiceRetryAfterMs = 3 * 60 * 1000;
-    private final int mNotificationId = 1;
-    private final String mParamExit = "mParamExit";
+
     private final PlayerServiceBinder mBinder = new PlayerServiceBinder();
+    private boolean mIsBoundToActivity = false;
 
     private boolean mServiceAlive = true;
     private Date mPausedDate = null;
     private boolean mPausedDuePhoneState = false;
-    private boolean mIsBoundToActivity = false;
 
     MediaSession mMediaSession = null;
 
@@ -112,14 +114,6 @@ public class PlayerService extends Service implements PlaylistControls {
             Timber.i("onPlaylistPlayerEvent - function start");
 
             if (playerBridge.playlistPlayerBridge != null) {
-                if (playerBridge.playlistPlayerBridge.isLoading) {
-                    Timber.i("showing loading notification");
-                    showLoadingNotification();
-                } else if (playerBridge.playlistPlayerBridge.isPlaying) {
-                    Timber.i("showing song notification");
-                    showSongNotification(playerBridge.playlistPlayerBridge.songBridge);
-                }
-
                 changeBluetoothMetadata(playerBridge);
             }
         }
@@ -171,17 +165,6 @@ public class PlayerService extends Service implements PlaylistControls {
         }
     };
 
-    private void showSongNotification(SongBridge currentSong) {
-        Timber.i("function start - show song notification for: %s - %s", currentSong.title, currentSong.artist);
-        boolean showHeadsUpNotification = !mIsBoundToActivity;
-        startWithNotificaiton(currentSong.title, currentSong.artist, showHeadsUpNotification);
-    }
-
-    private void showLoadingNotification() {
-        Timber.i("function start - show loading notification");
-        startWithNotificaiton("Radio Stream", "Loading...", false);
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -190,6 +173,7 @@ public class PlayerService extends Service implements PlaylistControls {
         PlayerServiceComponent component = DaggerPlayerServiceComponent.builder()
             .jsProxyComponent(PlayerJsProxy.JsProxyComponent())
             .contextModule(new ContextModule(this))
+            .playerServiceModule(new PlayerServiceModule(this))
             .build();
 
         component.inject(this);
@@ -257,37 +241,10 @@ public class PlayerService extends Service implements PlaylistControls {
         }
     }
 
-    private void startWithNotificaiton(String title, String contentText, boolean isHeadsUp) {
-        Timber.i("function start");
-
-        // Open main UI activity
-        Intent activityIntent = new Intent(getApplication().getApplicationContext(), MainActivity.class);
-        PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // Stop intent
-        Intent stopIntent = new Intent(this, PlayerService.class);
-        stopIntent.putExtra(mParamExit, true);
-        PendingIntent stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplication().getApplicationContext());
-        mBuilder.setSmallIcon(R.drawable.image_note)
-            .setContentTitle(title)
-            .setContentText(contentText)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setContentIntent(activityPendingIntent);
-
-        if (isHeadsUp) {
-            mBuilder.setVibrate(new long[0]);
-        }
-
-        this.startService(new Intent(this, PlayerService.class));
-        startForeground(mNotificationId, mBuilder.build());
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            boolean toExit = intent.getBooleanExtra(mParamExit, false);
+            boolean toExit = intent.getBooleanExtra(PARAM_EXIT, false);
             if (toExit) {
                 stopForeground(true);
                 stopSelf();
@@ -363,6 +320,10 @@ public class PlayerService extends Service implements PlaylistControls {
     @Override
     public void playNext() {
         this.mPlayer.playNext();
+    }
+
+    public boolean getIsBoundToAcitivity() {
+        return mIsBoundToActivity;
     }
 
     public void changePlaylist(String playlistName) {
