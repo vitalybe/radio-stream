@@ -2,8 +2,6 @@
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
-import com.radiostream.javascript.bridge.PlaylistBridge;
-import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.networking.metadata.MetadataBackendGetter;
 import com.radiostream.ui.PlayerNotification;
 import com.radiostream.util.SetTimeout;
@@ -17,9 +15,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static com.radiostream.player.Utils.resolvedPromise;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;

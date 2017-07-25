@@ -14,7 +14,6 @@ public class PlayerEventsEmitter {
 
     private ReactContext mContext;
     private final String playerStatusEvent = "PLAYLIST_PLAYER_STATUS_EVENT";
-    private EventCallback mCallback;
 
     @Inject
     public PlayerEventsEmitter(ReactContext context) {
@@ -28,16 +27,6 @@ public class PlayerEventsEmitter {
         // sendToSubscribers(playerBridge);
     }
 
-    public void subscribe(EventCallback callback) {
-        mCallback = callback;
-    }
-
-    private void sendToSubscribers(PlayerBridge playerBridge) {
-        if(mCallback != null) {
-            mCallback.onEvent(playerBridge);
-        }
-    }
-
     private void sendToJavascript(String event, Object params) {
         Timber.i("function start - %s - %s", event, params.toString());
 
@@ -48,9 +37,5 @@ public class PlayerEventsEmitter {
         } else {
             Timber.e("event was not sent - No active catalyst");
         }
-    }
-
-    public interface EventCallback {
-        void onEvent(PlayerBridge playerBridge);
     }
 }

@@ -6,7 +6,6 @@ import android.support.v7.app.NotificationCompat;
 
 import com.radiostream.MainActivity;
 import com.radiostream.R;
-import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.player.PlayerService;
 import com.radiostream.player.Song;
 

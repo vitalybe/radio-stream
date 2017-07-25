@@ -1,6 +1,5 @@
 package com.radiostream.player;
 
-import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
@@ -8,28 +7,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.MediaMetadata;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 
 import com.facebook.react.bridge.WritableMap;
-import com.radiostream.MainActivity;
-import com.radiostream.R;
 import com.radiostream.di.components.DaggerPlayerServiceComponent;
 import com.radiostream.di.components.PlayerServiceComponent;
 import com.radiostream.di.modules.ContextModule;
 import com.radiostream.di.modules.PlayerServiceModule;
-import com.radiostream.javascript.bridge.PlayerBridge;
 import com.radiostream.javascript.bridge.PlayerEventsEmitter;
-import com.radiostream.javascript.bridge.SongBridge;
 import com.radiostream.javascript.proxy.PlayerJsProxy;
 import com.radiostream.util.SetTimeout;
 
@@ -108,34 +101,34 @@ public class PlayerService extends Service implements PlaylistControls {
         }
     };
 
-    private PlayerEventsEmitter.EventCallback onPlaylistPlayerEvent = new PlayerEventsEmitter.EventCallback() {
-        @Override
-        public void onEvent(PlayerBridge playerBridge) {
-            Timber.i("onPlaylistPlayerEvent - function start");
+//    private PlayerEventsEmitter.EventCallback onPlaylistPlayerEvent = new PlayerEventsEmitter.EventCallback() {
+//        @Override
+//        public void onEvent(PlayerBridge playerBridge) {
+//            Timber.i("onPlaylistPlayerEvent - function start");
+//
+//            if (playerBridge.playlistPlayerBridge != null) {
+//                changeBluetoothMetadata(playerBridge);
+//            }
+//        }
+//    };
 
-            if (playerBridge.playlistPlayerBridge != null) {
-                changeBluetoothMetadata(playerBridge);
-            }
-        }
-    };
-
-    private void changeBluetoothMetadata(PlayerBridge playerBridge) {
-        Timber.i("Function start");
-
-        if(playerBridge.playlistPlayerBridge != null && playerBridge.playlistPlayerBridge.songBridge != null) {
-            SongBridge song = playerBridge.playlistPlayerBridge.songBridge;
-            Timber.i("setting bluetooth information of song: %s - %s", song.title, song.artist);
-
-            MediaMetadata metadata = new MediaMetadata.Builder()
-                    .putString(MediaMetadata.METADATA_KEY_TITLE, song.title)
-                    .putString(MediaMetadata.METADATA_KEY_ARTIST, song.artist)
-                    .putString(MediaMetadata.METADATA_KEY_ALBUM, song.album)
-                    .build();
-
-            mMediaSession.setMetadata(metadata);
-        }
-
-    }
+//    private void changeBluetoothMetadata(PlayerBridge playerBridge) {
+//        Timber.i("Function start");
+//
+//        if(playerBridge.playlistPlayerBridge != null && playerBridge.playlistPlayerBridge.songBridge != null) {
+//            SongBridge song = playerBridge.playlistPlayerBridge.songBridge;
+//            Timber.i("setting bluetooth information of song: %s - %s", song.title, song.artist);
+//
+//            MediaMetadata metadata = new MediaMetadata.Builder()
+//                    .putString(MediaMetadata.METADATA_KEY_TITLE, song.title)
+//                    .putString(MediaMetadata.METADATA_KEY_ARTIST, song.artist)
+//                    .putString(MediaMetadata.METADATA_KEY_ALBUM, song.album)
+//                    .build();
+//
+//            mMediaSession.setMetadata(metadata);
+//        }
+//
+//    }
 
     private MediaSession.Callback mMediaSessionCallback = new MediaSession.Callback() {
 
@@ -194,7 +187,6 @@ public class PlayerService extends Service implements PlaylistControls {
         mMediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
         Timber.i("registering to player events");
-        mPlayerEventsEmitter.subscribe(onPlaylistPlayerEvent);
         scheduleStopSelfOnPause();
     }
 
