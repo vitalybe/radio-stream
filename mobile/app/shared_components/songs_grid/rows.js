@@ -18,7 +18,6 @@ const MIN_CELL_WIDTH = 100;
 const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
-    flex: 1,
     marginBottom: 5,
   },
   nameCell: {
@@ -36,7 +35,6 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    flex: 1,
     padding: 5,
     position: "relative",
   },

@@ -51,7 +51,7 @@ class BackendMetadataApiMock {
 
   async playlistSongs(playlistName) {
     await sleep(500);
-    return _.range(5).map(() => this._createMockSong());
+    return _.range(40).map(() => this._createMockSong());
   }
 
   async updateRating(songId, newRating) {
@@ -71,7 +71,7 @@ class BackendMetadataApiMock {
 
   async querySongs(query) {
     await sleep(500);
-    return _.range(5).map(() => this._createMockSong());
+    return _.range(40).map(() => this._createMockSong());
   }
 }
 

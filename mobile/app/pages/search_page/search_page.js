@@ -3,7 +3,7 @@ import loggerCreator from "../../utils/logger";
 var moduleLogger = loggerCreator("SearchPage");
 
 import React, { Component } from "react";
-import { ActivityIndicator, Image, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
 import RoundedTextInput from "app/shared_components/rounded_text_input";
 import BigText from "app/shared_components/text/big_text";
@@ -90,9 +90,9 @@ export default class SearchPage extends Component {
             <ButtonText>Search</ButtonText>
           </RectangleButton>
         </View>
-        <View style={styles.searchResult}>
+        <ScrollView horizontal={false} style={styles.searchResult}>
           {this.state.isSearching ? <ActivityIndicator size="large" /> : <SongsGrid songs={this.state.songs} />}
-        </View>
+        </ScrollView>
         <View style={styles.buttons}>
           <RectangleButton style={[styles.button, styles.playResultsButton]}>
             <ButtonText>Play results</ButtonText>
