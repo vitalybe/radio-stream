@@ -83,7 +83,7 @@ export default class SearchPage extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <BigText>Query</BigText>
+        <BigText style={{ flexShrink: 0 }}>Query</BigText>
         <View style={styles.queryContainer}>
           <RoundedTextInput style={styles.input} onKeyPress={this.onInputKeypress} />
           <RectangleButton style={[styles.button, styles.searchButton]} onPress={this.onSearch}>
