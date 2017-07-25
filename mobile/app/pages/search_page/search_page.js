@@ -13,6 +13,10 @@ import ButtonText from "app/shared_components/text/button_text";
 import { colors } from "app/styles/styles";
 import SongsGrid from "app/shared_components/songs_grid/songs_grid";
 import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
+import { playlistsStore } from "app/stores/playlists_store";
+import { navigator } from "app/stores/navigator";
+import constants from "app/utils/constants";
+import { player } from "app/stores/player/player";
 
 const styles = StyleSheet.create({
   container: {
@@ -59,12 +63,8 @@ export default class SearchPage extends Component {
     this.state = {
       isSearching: false,
       songs: [],
+      query: "",
     };
-  }
-
-  // TEMP
-  componentDidMount() {
-    this.onSearch();
   }
 
   onInputKeypress = async event => {
@@ -75,9 +75,26 @@ export default class SearchPage extends Component {
   };
 
   onSearch = async () => {
+    const logger = loggerCreator("onSearch", moduleLogger);
+
     this.setState({ isSearching: true });
-    let songs = await backendMetadataApi.querySongs();
+    logger.info(`searching for: ${this.state.query}`);
+    let songs = await backendMetadataApi.querySongs(this.state.query);
+    logger.info(`got results: ${songs.length}`);
     this.setState({ songs: songs, isSearching: false });
+  };
+
+  onPlayResults = async () => {
+    await backendMetadataApi.savePlaylist(constants.SEARCH_RESULT_PLAYLIST, this.state.query);
+    await playlistsStore.updatePlaylists();
+
+    await player.changePlaylist(constants.SEARCH_RESULT_PLAYLIST);
+    player.play();
+    navigator.navigateToPlayer(constants.SEARCH_RESULT_PLAYLIST);
+  };
+
+  onChangeText = text => {
+    this.setState({ query: text });
   };
 
   render() {
@@ -85,7 +102,12 @@ export default class SearchPage extends Component {
       <View style={styles.container}>
         <BigText style={{ flexShrink: 0 }}>Query</BigText>
         <View style={styles.queryContainer}>
-          <RoundedTextInput style={styles.input} onKeyPress={this.onInputKeypress} />
+          <RoundedTextInput
+            value={this.state.query}
+            onChangeText={this.onChangeText}
+            style={styles.input}
+            onKeyPress={this.onInputKeypress}
+          />
           <RectangleButton style={[styles.button, styles.searchButton]} onPress={this.onSearch}>
             <ButtonText>Search</ButtonText>
           </RectangleButton>
@@ -94,7 +116,7 @@ export default class SearchPage extends Component {
           {this.state.isSearching ? <ActivityIndicator size="large" /> : <SongsGrid songs={this.state.songs} />}
         </ScrollView>
         <View style={styles.buttons}>
-          <RectangleButton style={[styles.button, styles.playResultsButton]}>
+          <RectangleButton style={[styles.button, styles.playResultsButton]} onPress={this.onPlayResults}>
             <ButtonText>Play results</ButtonText>
           </RectangleButton>
           <RectangleButton style={styles.button}>

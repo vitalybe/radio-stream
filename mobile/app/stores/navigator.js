@@ -9,9 +9,7 @@ class Navigator {
   @observable activeRoute = null;
 
   constructor() {
-    // TEMP
-    // this.navigateToPlayer();
-    this.navigateToSearch();
+    this.navigateToPlayer();
   }
 
   _navigateTo(address, params) {
@@ -20,9 +18,9 @@ class Navigator {
     this.activeRoute = observable(Object.assign({ address: address }, params));
   }
 
-  navigateToPlayer(playlistName) {
+  navigateToPlayer() {
     loggerCreator("navigateToPlayer", moduleLogger);
-    this._navigateTo(constants.ROUTE_PLAYER_PAGE, { playlistName: playlistName });
+    this._navigateTo(constants.ROUTE_PLAYER_PAGE);
   }
 
   navigateToSettings() {

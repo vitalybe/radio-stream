@@ -73,6 +73,12 @@ class BackendMetadataApiMock {
     await sleep(500);
     return _.range(40).map(() => this._createMockSong());
   }
+
+  async savePlaylist(name, query) {
+    playlistResponse.push(name);
+    await sleep(500);
+    return null;
+  }
 }
 
 export const backendMetadataApiMock = new BackendMetadataApiMock();

@@ -43,7 +43,7 @@ export default class NavSidebar extends Component {
   onPlaylistPress = async playlistName => {
     await player.changePlaylist(playlistName);
     player.play();
-    navigator.navigateToPlayer(playlistName);
+    navigator.navigateToPlayer();
     masterStore.closeSidebars();
   };
 

@@ -1,5 +1,7 @@
 class Constants {
-  MOCK_MODE = true;
+  MOCK_MODE = false;
+
+  SEARCH_RESULT_PLAYLIST = "Search results";
 
   ROUTE_SETTINGS_PAGE = "SETTINGS_PAGE";
   ROUTE_PLAYER_PAGE = "PLAYER_PAGE";

@@ -56,7 +56,7 @@ export default class MasterPage extends Component {
       logger.info(`updated status. playing? ${player.isPlaying}`);
       if (player.isPlaying) {
         logger.info(`player currently playing - navigating to player`);
-        navigator.navigateToPlayer(player.currentPlaylist.name);
+        navigator.navigateToPlayer();
       }
       logger.info(`loading playlists`);
       playlistsStore.updatePlaylists().then(() => {
@@ -82,7 +82,7 @@ export default class MasterPage extends Component {
     if (activeRoute) {
       switch (activeRoute.address) {
         case constants.ROUTE_PLAYER_PAGE:
-          page = <PlayerPage playlistName={activeRoute.playlistName} />;
+          page = <PlayerPage />;
           break;
         case constants.ROUTE_SETTINGS_PAGE:
           page = <SettingsPage />;

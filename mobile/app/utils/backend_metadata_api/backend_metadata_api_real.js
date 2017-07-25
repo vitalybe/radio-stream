@@ -68,6 +68,19 @@ class BackendMetadataApi {
   markAsDeleted(songId) {
     return this._getAjax().delete(`/item/${songId}`);
   }
+
+  async querySongs(query) {
+    return this._getAjax()
+      .get(`/preview-playlist?query=${encodeURIComponent(query)}`)
+      .then(response => response.json().then(json => json))
+      .then(json => {
+        return json["playlist_preview_items"];
+      });
+  }
+
+  async savePlaylist(name, query) {
+    return this._getAjax().put(`/playlists`, { body: { name, query } });
+  }
 }
 
 export const backendMetadataApiReal = new BackendMetadataApi();

@@ -28,24 +28,19 @@ export default class RoundedTextInput extends Component {
     };
   }
 
-  onChangeText = text => {
-    this.setState({ value: text });
-  };
-
   render() {
     return (
       <TextInput
         {...this.props}
         style={[styles.input, this.props.style]}
-        value={this.state.value}
-        onChangeText={this.onChangeText}
+        value={this.props.value}
+        onChangeText={this.props.onChangeText}
       />
     );
   }
 }
 
 TextInput.propTypes = {
-  initialValue: PropTypes.string,
-
-  textInputProps: PropTypes.object,
+  value: PropTypes.string.isRequired,
+  onChangeText: PropTypes.func.isRequired,
 };
