@@ -67,7 +67,11 @@ export default class PlaylistSidebar extends Component {
          the render should've happened automatically, but it doesn't (I think it is React Fiber bug). The other
           alternative would be to listen to DimensionsEmitter in SongsGrid but that would only covert resizes that
           were triggered by Window resizing */}
-        <SongsGrid unusedWindowWidth={width} playlist={player.currentPlaylist} />
+        <SongsGrid
+          unusedWindowWidth={width}
+          songs={player.currentPlaylist.songs.toJS()}
+          highlightedSong={player.currentSong}
+        />
       </ScrollView>
     );
   }

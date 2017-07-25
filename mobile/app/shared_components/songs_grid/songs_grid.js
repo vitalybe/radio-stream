@@ -33,13 +33,13 @@ export default class SongsGrid extends Component {
     return (
       <View onLayout={this._onContainerLayout}>
         <HeaderRow visibleColumns={this.state.visibleColumns} />
-        {this.props.playlist.songs.map(song => {
+        {this.props.songs.map(song => {
           return (
             <SongRow
               key={song.id}
               visibleColumns={this.state.visibleColumns}
               song={song}
-              isHighlighted={this.props.playlist.currentSong === song}
+              isHighlighted={this.props.highlightedSong === song}
             />
           );
         })}
@@ -49,5 +49,6 @@ export default class SongsGrid extends Component {
 }
 
 SongsGrid.propTypes = {
-  playlist: React.PropTypes.object.isRequired,
+  songs: React.PropTypes.array.isRequired,
+  highlightedSong: React.PropTypes.object,
 };

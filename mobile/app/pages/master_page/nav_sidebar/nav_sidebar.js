@@ -52,6 +52,11 @@ export default class NavSidebar extends Component {
     navigator.navigateToPlayer();
   };
 
+  onSearchPress = () => {
+    masterStore.closeSidebars();
+    navigator.navigateToSearch();
+  };
+
   onSettingsPress = () => {
     masterStore.closeSidebars();
     navigator.navigateToSettings();
@@ -73,6 +78,7 @@ export default class NavSidebar extends Component {
       <View style={[styles.sidebar, { left: left }]}>
         <NavSidebarMenuTitle text="Radio Stream" />
         <NavSidebarMenuItem text="Player" leftImage={playIcon} onPress={this.onPlayerPress} />
+        <NavSidebarMenuItem text="Search" leftImage={playIcon} onPress={this.onSearchPress} />
         <NavSidebarMenuItem text="Settings" leftImage={playIcon} onPress={this.onSettingsPress} />
         <NavSidebarMenuItem text="Exit" leftImage={playIcon} onPress={this.onExitPress} />
         <NavSidebarMenuTitle text="Playlists" />

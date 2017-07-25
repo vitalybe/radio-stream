@@ -1,10 +1,14 @@
 import loggerCreator from "app/utils/logger";
-var moduleLogger = loggerCreator("backend_metadata_api");
+const moduleLogger = loggerCreator("backend_metadata_api");
 
+import chanceLib from "chance";
+import moment from "moment";
+import _ from "lodash";
 import mockMp3 from "app/data/mock.mp3";
 
 import sleep from "app/utils/sleep";
 
+const chance = chanceLib.Chance();
 const playlistResponse = ["Mock", "Heavy Mock", "Peacemock"];
 
 class BackendMetadataApiMock {
@@ -12,13 +16,22 @@ class BackendMetadataApiMock {
     this.lastId = 0;
   }
 
-  _createMockSong({ title, artist, album, rating }) {
+  _mockName() {
+    return _.startCase(chance.sentence({ words: chance.integer({ min: 1, max: 3 }) }));
+  }
+
+  _createMockSong() {
     return {
       id: this.lastId++,
-      title,
-      artist,
-      album,
-      rating: rating,
+      title: this._mockName(),
+      artist: this._mockName(),
+      album: this._mockName(),
+      rating: chance.integer({ min: 0, max: 5 }) * 20,
+      playcount: chance.integer({ min: 0, max: 50 }),
+      lastplayed: chance.integer({
+        min: moment().unix() - 60 * 60 * 24 * 30 * 12,
+        max: moment().unix(),
+      }),
       path: mockMp3,
     };
   }
@@ -38,11 +51,7 @@ class BackendMetadataApiMock {
 
   async playlistSongs(playlistName) {
     await sleep(500);
-    return [
-      this._createMockSong({ title: "title", album: "album", artist: "artist", rating: 80 }),
-      this._createMockSong({ title: "title", album: "album", artist: "artist", rating: 80 }),
-      this._createMockSong({ title: "title", album: "album", artist: "artist", rating: 80 }),
-    ];
+    return _.range(5).map(() => this._createMockSong());
   }
 
   async updateRating(songId, newRating) {
@@ -58,6 +67,11 @@ class BackendMetadataApiMock {
   async markAsDeleted(songId) {
     await sleep(500);
     return null;
+  }
+
+  async querySongs(query) {
+    await sleep(500);
+    return _.range(5).map(() => this._createMockSong());
   }
 }
 

@@ -9,7 +9,9 @@ class Navigator {
   @observable activeRoute = null;
 
   constructor() {
-    this.navigateToPlayer();
+    // TEMP
+    // this.navigateToPlayer();
+    this.navigateToSearch();
   }
 
   _navigateTo(address, params) {
@@ -26,6 +28,11 @@ class Navigator {
   navigateToSettings() {
     loggerCreator("navigateToSettings", moduleLogger);
     this._navigateTo(constants.ROUTE_SETTINGS_PAGE);
+  }
+
+  navigateToSearch() {
+    loggerCreator("navigateToSearch", moduleLogger);
+    this._navigateTo(constants.ROUTE_SEARCH_PAGE);
   }
 }
 

@@ -113,12 +113,12 @@ export class SongRow extends Component {
           </View>,
           <View key="lastPlayed" style={[styles.gridCell]}>
             <SmallText>
-              {moment.unix(this.props.song.lastplayed).fromNow()}
+              {this.props.song.lastplayed ? moment.unix(this.props.song.lastplayed).fromNow() : "Never"}
             </SmallText>
           </View>,
           <View key="playCount" style={[styles.gridCell]}>
             <SmallText>
-              {this.props.song.playcount}
+              {this.props.song.playcount || 0}
             </SmallText>
           </View>,
         ].slice(0, this.props.visibleColumns)}
