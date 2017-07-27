@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     borderRadius: 5,
+    height: 50,
   },
 });
 

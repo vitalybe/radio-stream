@@ -7,8 +7,9 @@ const styles = {
   button: {
     alignItems: "center",
     backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
-    paddingHorizontal: 40,
-    paddingVertical: 15,
+    paddingHorizontal: 20,
+    height: 50,
+    justifyContent: "center",
     borderColor: colors.CYAN_BRIGHT,
     borderStyle: "solid",
     borderWidth: 1,

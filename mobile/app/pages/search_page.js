@@ -1,9 +1,9 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "../utils/logger";
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator("SearchPage");
 
 import React, { Component } from "react";
-import { ActivityIndicator, Image, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, StyleSheet, View, Keyboard } from "react-native";
 import { observer } from "mobx-react";
 import RoundedTextInput from "app/shared_components/rounded_text_input";
 import BigText from "app/shared_components/text/big_text";
@@ -76,6 +76,7 @@ export default class SearchPage extends Component {
 
   onSearch = async () => {
     const logger = loggerCreator("onSearch", moduleLogger);
+    Keyboard.dismiss();
 
     this.setState({ isSearching: true });
     logger.info(`searching for: ${this.state.query}`);

@@ -2,7 +2,7 @@ Prerequirements
 ===============
 
 1. `yarn install`
-1. Install [pidcat](https://github.com/JakeWharton/pidcat), on OSX: `brew install pidcat`
+1. Install [pidcat](https://github.com/JakeWharton/pidcat), on OSX: `brew install lnav`
 
 OSX desktop
 ===========
@@ -33,6 +33,11 @@ Javascript code can be modified without rerunning the app - Simply shake the dev
 
 After modifying Java code, however, a full `yarn run android` is required.
 
+
+Mock mode
+---------
+
+To develop without an active backend (or while offline) you can enable a mock mode by changing the `MOCK_MODE` in **app/utils/constants.js** to `true`.
 
 Release
 --------

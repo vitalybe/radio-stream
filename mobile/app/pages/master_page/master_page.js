@@ -22,7 +22,8 @@ import PlaylistSidebar from "app/pages/master_page/playlist_sidebar/playlist_sid
 import { player } from "app/stores/player/player";
 import { playlistsStore } from "app/stores/playlists_store";
 import { masterStore } from "app/stores/master_store";
-import SearchPage from "app/pages/search_page/search_page";
+import SearchPage from "app/pages/search_page";
+import SavePlaylistPage from "app/pages/save_playlist_page";
 
 const styles = StyleSheet.create({
   container: {
@@ -89,6 +90,9 @@ export default class MasterPage extends Component {
           break;
         case constants.ROUTE_SEARCH_PAGE:
           page = <SearchPage />;
+          break;
+        case constants.ROUTE_SAVE_PLAYLIST_PAGE:
+          page = <SavePlaylistPage />;
           break;
         default:
           throw new Error("unexpected route");

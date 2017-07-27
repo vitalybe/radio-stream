@@ -10,6 +10,8 @@ class Navigator {
 
   constructor() {
     this.navigateToPlayer();
+    // TEMP
+    this.navigateToSavePlaylistPage("joanna newsom");
   }
 
   _navigateTo(address, params) {
@@ -31,6 +33,11 @@ class Navigator {
   navigateToSearch() {
     loggerCreator("navigateToSearch", moduleLogger);
     this._navigateTo(constants.ROUTE_SEARCH_PAGE);
+  }
+
+  navigateToSavePlaylistPage(query) {
+    loggerCreator("navigateToSavePlaylistPage", moduleLogger);
+    this._navigateTo(constants.ROUTE_SAVE_PLAYLIST_PAGE);
   }
 }
 
