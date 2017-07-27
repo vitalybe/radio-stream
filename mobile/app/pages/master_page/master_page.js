@@ -83,16 +83,16 @@ export default class MasterPage extends Component {
     if (activeRoute) {
       switch (activeRoute.address) {
         case constants.ROUTE_PLAYER_PAGE:
-          page = <PlayerPage />;
+          page = <PlayerPage {...activeRoute} />;
           break;
         case constants.ROUTE_SETTINGS_PAGE:
-          page = <SettingsPage />;
+          page = <SettingsPage {...activeRoute} />;
           break;
         case constants.ROUTE_SEARCH_PAGE:
-          page = <SearchPage />;
+          page = <SearchPage {...activeRoute} />;
           break;
         case constants.ROUTE_SAVE_PLAYLIST_PAGE:
-          page = <SavePlaylistPage />;
+          page = <SavePlaylistPage {...activeRoute} />;
           break;
         default:
           throw new Error("unexpected route");

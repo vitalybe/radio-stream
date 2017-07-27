@@ -11,7 +11,7 @@ import { player } from "app/stores/player/player";
 import Rating from "../../shared_components/rating";
 import AlbumArt from "./album_art";
 import PlayerControls from "./player_controls";
-import PlayerLoadingSpinner from "./player_loading_spinner";
+import LoadingSpinner from "../../shared_components/loading_spinner";
 import SongDetails from "app/pages/player_page/song_details";
 import NoPlaylistSelected from "app/pages/player_page/no_playlist_selected";
 
@@ -78,7 +78,7 @@ export default class PlayerPage extends Component {
           if (!player.currentPlaylist) {
             return <NoPlaylistSelected />;
           } else if (player.isLoading) {
-            return <PlayerLoadingSpinner song={song} />;
+            return <LoadingSpinner message="Loading playlist..." song={song} />;
           } else {
             return (
               <View style={{ flex: 1 }}>

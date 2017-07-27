@@ -10,14 +10,12 @@ class Navigator {
 
   constructor() {
     this.navigateToPlayer();
-    // TEMP
-    this.navigateToSavePlaylistPage("joanna newsom");
   }
 
   _navigateTo(address, params) {
     let logger = loggerCreator("_navigateTo", moduleLogger);
     logger.info(`${address}`);
-    this.activeRoute = observable(Object.assign({ address: address }, params));
+    this.activeRoute = Object.assign({ address: address }, params);
   }
 
   navigateToPlayer() {
@@ -30,14 +28,14 @@ class Navigator {
     this._navigateTo(constants.ROUTE_SETTINGS_PAGE);
   }
 
-  navigateToSearch() {
+  navigateToSearch(query) {
     loggerCreator("navigateToSearch", moduleLogger);
-    this._navigateTo(constants.ROUTE_SEARCH_PAGE);
+    this._navigateTo(constants.ROUTE_SEARCH_PAGE, { query });
   }
 
   navigateToSavePlaylistPage(query) {
     loggerCreator("navigateToSavePlaylistPage", moduleLogger);
-    this._navigateTo(constants.ROUTE_SAVE_PLAYLIST_PAGE);
+    this._navigateTo(constants.ROUTE_SAVE_PLAYLIST_PAGE, { query });
   }
 }
 

@@ -70,9 +70,9 @@ export default class SettingsPage extends Component {
     let password = this.settingsValues.password;
 
     try {
-      this.settingsValues.status = "Connecting with the given host/password...";
+      this.settingsValues.message = "Connecting with the given host/password...";
       await backendMetadataApi.testConnection(host, password);
-      this.settingsValues.status = "Connected";
+      this.settingsValues.message = "Connected";
 
       logger.info(`updating global settings`);
 
@@ -90,7 +90,7 @@ export default class SettingsPage extends Component {
 
       navigator.navigateToPlayer();
     } catch (error) {
-      this.settingsValues.status = `Failed: ${error}`;
+      this.settingsValues.message = `Failed: ${error}`;
     }
   }
 
@@ -116,8 +116,8 @@ export default class SettingsPage extends Component {
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>
         </Button>
-        <NormalText style={[styles.status]}>
-          {this.settingsValues.status}
+        <NormalText style={[styles.message]}>
+          {this.settingsValues.message}
         </NormalText>
       </View>
     );

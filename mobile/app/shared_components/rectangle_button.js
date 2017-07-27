@@ -7,7 +7,7 @@ const styles = {
   button: {
     alignItems: "center",
     backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     height: 50,
     justifyContent: "center",
     borderColor: colors.CYAN_BRIGHT,
@@ -15,17 +15,23 @@ const styles = {
     borderWidth: 1,
     borderRadius: 5,
   },
+  disabled: {
+    opacity: 0.2,
+  },
 };
 
 export default class RectangleButton extends Component {
   render() {
+    let { onPress, style, children, ...otherProps } = this.props;
+
     return (
       <TouchableHighlight
-        onPress={this.props.onPress}
-        style={[styles.button, this.props.style]}
+        onPress={onPress}
+        style={[styles.button, style, this.props.disabled ? styles.disabled : null]}
         underlayColor={colors.CONTAINER_BACKGROUND_ACTIVE}
-        activeOpacity={1}>
-        {this.props.children}
+        activeOpacity={1}
+        {...otherProps}>
+        {children}
       </TouchableHighlight>
     );
   }

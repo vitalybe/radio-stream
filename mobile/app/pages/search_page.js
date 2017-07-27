@@ -3,7 +3,7 @@ import loggerCreator from "../utils/logger";
 var moduleLogger = loggerCreator("SearchPage");
 
 import React, { Component } from "react";
-import { ActivityIndicator, Image, ScrollView, StyleSheet, View, Keyboard } from "react-native";
+import { ActivityIndicator, Image, ScrollView, StyleSheet, View, Platform } from "react-native";
 import { observer } from "mobx-react";
 import RoundedTextInput from "app/shared_components/rounded_text_input";
 import BigText from "app/shared_components/text/big_text";
@@ -17,6 +17,7 @@ import { playlistsStore } from "app/stores/playlists_store";
 import { navigator } from "app/stores/navigator";
 import constants from "app/utils/constants";
 import { player } from "app/stores/player/player";
+import Keyboard from "app/utils/keyboard/kebyoard";
 
 const styles = StyleSheet.create({
   container: {
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
   },
-  searchButton: {},
+  searchButton: { paddingHorizontal: 20 },
   searchResult: {
     flex: 1,
 
@@ -45,12 +46,15 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   buttons: {
-    justifyContent: "flex-end",
     marginTop: 10,
     flexDirection: "row",
   },
   button: {
-    paddingHorizontal: 10,
+    ...Platform.select({
+      android: {
+        flex: 1,
+      },
+    }),
   },
   playResultsButton: {
     marginRight: 10,
@@ -63,19 +67,25 @@ export default class SearchPage extends Component {
     this.state = {
       isSearching: false,
       songs: [],
-      query: "",
+      query: this.props.query || "",
     };
+  }
+
+  componentDidMount() {
+    if (this.state.query) {
+      this.search();
+    }
   }
 
   onInputKeypress = async event => {
     if (event.key === "Enter") {
       // noinspection JSIgnoredPromiseFromCall
-      this.onSearch();
+      this.search();
     }
   };
 
-  onSearch = async () => {
-    const logger = loggerCreator("onSearch", moduleLogger);
+  search = async () => {
+    const logger = loggerCreator("search", moduleLogger);
     Keyboard.dismiss();
 
     this.setState({ isSearching: true });
@@ -91,11 +101,15 @@ export default class SearchPage extends Component {
 
     await player.changePlaylist(constants.SEARCH_RESULT_PLAYLIST);
     player.play();
-    navigator.navigateToPlayer(constants.SEARCH_RESULT_PLAYLIST);
+    navigator.navigateToPlayer();
   };
 
   onChangeText = text => {
     this.setState({ query: text });
+  };
+
+  onSaveAsPlaylist = () => {
+    navigator.navigateToSavePlaylistPage(this.state.query);
   };
 
   render() {
@@ -109,7 +123,7 @@ export default class SearchPage extends Component {
             style={styles.input}
             onKeyPress={this.onInputKeypress}
           />
-          <RectangleButton style={[styles.button, styles.searchButton]} onPress={this.onSearch}>
+          <RectangleButton style={[styles.searchButton]} onPress={this.search}>
             <ButtonText>Search</ButtonText>
           </RectangleButton>
         </View>
@@ -117,10 +131,13 @@ export default class SearchPage extends Component {
           {this.state.isSearching ? <ActivityIndicator size="large" /> : <SongsGrid songs={this.state.songs} />}
         </ScrollView>
         <View style={styles.buttons}>
-          <RectangleButton style={[styles.button, styles.playResultsButton]} onPress={this.onPlayResults}>
+          <RectangleButton
+            style={[styles.button, styles.playResultsButton]}
+            disabled={this.state.songs.length < 1}
+            onPress={this.onPlayResults}>
             <ButtonText>Play results</ButtonText>
           </RectangleButton>
-          <RectangleButton style={styles.button}>
+          <RectangleButton style={styles.button} onPress={this.onSaveAsPlaylist} disabled={this.state.songs.length < 1}>
             <ButtonText>Save as playlist</ButtonText>
           </RectangleButton>
         </View>
@@ -129,4 +146,6 @@ export default class SearchPage extends Component {
   }
 }
 
-SearchPage.propTypes = {};
+SearchPage.propTypes = {
+  query: React.PropTypes.string,
+};

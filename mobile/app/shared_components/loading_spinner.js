@@ -1,6 +1,6 @@
 import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
-const moduleLogger = loggerCreator("PlayerLoadingSpinner");
+const moduleLogger = loggerCreator("LoadingSpinner");
 
 import React, { Component } from "react";
 import { Image, StyleSheet, View, ActivityIndicator } from "react-native";
@@ -29,11 +29,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class PlayerLoadingSpinner extends Component {
+export default class LoadingSpinner extends Component {
   render() {
     loggerCreator("render", moduleLogger);
-
-    const song = this.props.song;
 
     let loadingError = "";
     if (player.loadingError) {
@@ -46,7 +44,12 @@ export default class PlayerLoadingSpinner extends Component {
           <ActivityIndicator size="large" />
         </View>
         <View style={styles.progressStatus}>
-          {song ? <SongDetails song={song} style={styles.songDetails} /> : null}
+          {this.props.message
+            ? <NormalText>
+                {this.props.message}
+              </NormalText>
+            : null}
+          {this.props.song ? <SongDetails song={this.props.song} style={styles.songDetails} /> : null}
           <NormalText style={styles.progressStatusError}>
             {loadingError}
           </NormalText>
@@ -56,6 +59,7 @@ export default class PlayerLoadingSpinner extends Component {
   }
 }
 
-PlayerLoadingSpinner.propTypes = {
+LoadingSpinner.propTypes = {
+  message: React.PropTypes.string,
   song: React.PropTypes.object,
 };

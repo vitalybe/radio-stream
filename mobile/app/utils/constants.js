@@ -1,6 +1,5 @@
 class Constants {
-  // TEMP
-  MOCK_MODE = true;
+  MOCK_MODE = false;
 
   SEARCH_RESULT_PLAYLIST = "Search results";
 
