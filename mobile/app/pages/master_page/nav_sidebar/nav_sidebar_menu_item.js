@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   leftImageContainer: {},
 
   rightImage: { flex: 1 },
-  rightImageContainer: { marginLeft: "auto", marginRight: 10, height: 25, width: 25 },
+  rightImageContainer: { marginLeft: "auto", marginRight: 10, height: 45, width: 45, padding: 10 },
 });
 
 @observer
@@ -36,18 +36,21 @@ export default class NavSidebarMenuItem extends Component {
     return (
       <HoverableOpacity
         activeOpacity={1}
-        style={[styles.itemContainer, { backgroundColor: itemContainerBackground }]}
+        outerStyle={[styles.itemContainer, { backgroundColor: itemContainerBackground }]}
         hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}
         onPress={this.props.onPress}>
-        <View style={styles.leftImageContainer}>
-          <Image source={this.props.leftImage} style={styles.leftImage} />
-        </View>
+        <Image source={this.props.leftImage} style={styles.leftImage} />
         <NormalText style={styles.itemText}>
           {this.props.text}
         </NormalText>
-        <View style={styles.rightImageContainer}>
-          <Image source={this.props.rightImage} resizeMode="contain" style={styles.rightImage} />
-        </View>
+        {this.props.rightImage
+          ? <HoverableOpacity
+              outerStyle={styles.rightImageContainer}
+              activeOpacity={1}
+              hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}>
+              <Image source={this.props.rightImage} resizeMode="contain" style={styles.rightImage} />
+            </HoverableOpacity>
+          : null}
       </HoverableOpacity>
     );
   }
