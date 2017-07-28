@@ -8,12 +8,12 @@ export default class HoverableOpacity extends Component {
   }
 
   render() {
-    const { outerStyle, hoverStyle, ...otherProps } = this.props;
+    const { style, hoverStyle, ...otherProps } = this.props;
 
     return (
       <TouchableOpacity
         activeOpacity={1}
-        style={[{ cursor: "pointer" }, outerStyle, this.state.hover ? hoverStyle : {}]}
+        style={[{ cursor: "pointer" }, style, this.state.hover ? hoverStyle : {}]}
         onMouseEnter={() => this.setState({ hover: true })}
         onMouseLeave={() => this.setState({ hover: false })}
         {...otherProps}>
@@ -25,5 +25,5 @@ export default class HoverableOpacity extends Component {
 
 HoverableOpacity.propTypes = {
   hoverStyle: React.PropTypes.shape({}),
-  outerStyle: React.PropTypes.shape({}),
+  style: React.PropTypes.shape({}),
 };
