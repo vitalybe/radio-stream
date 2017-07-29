@@ -3,7 +3,7 @@ import loggerCreator from "../../utils/logger";
 var moduleLogger = loggerCreator("Topbar");
 
 import React, { Component } from "react";
-import { Platform, Image, StyleSheet, TouchableHighlight, View } from "react-native";
+import { Platform, Image, StyleSheet, TouchableHighlight, View, TouchableOpacity } from "react-native";
 import { observer } from "mobx-react";
 import NormalText from "../../shared_components/text/normal_text";
 
@@ -86,12 +86,12 @@ export default class Topbar extends Component {
     return (
       <View style={styles.topBar}>
         <View style={styles.topBarLeft}>
-          <TouchableHighlight onPress={this.onHamburgerPress} activeOpacity={0.5} style={styles.hamburgerContainer}>
+          <TouchableOpacity onPress={this.onHamburgerPress} activeOpacity={0.5} style={styles.hamburgerContainer}>
             <View style={styles.hamburgerContent}>
               <Image source={hamburgerImage} style={styles.hamburgerImage} />
               {dimensionsStore.isBigWidth ? <BigText style={styles.currentPageText}>Player</BigText> : null}
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
         </View>
         {player.currentSong
           ? <View style={styles.topBarRight}>
