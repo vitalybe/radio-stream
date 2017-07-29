@@ -35,7 +35,7 @@ export default class NavSidebarMenuItem extends Component {
 
     return (
       <HoverableOpacity
-        activeOpacity={1}
+        activeOpacity={0.5}
         style={[styles.itemContainer, { backgroundColor: itemContainerBackground }]}
         hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}
         onPress={this.props.onPress}>
@@ -46,7 +46,7 @@ export default class NavSidebarMenuItem extends Component {
         {this.props.rightImage
           ? <HoverableOpacity
               style={styles.rightImageContainer}
-              activeOpacity={1}
+              activeOpacity={0.5}
               hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}>
               <Image source={this.props.rightImage} resizeMode="contain" style={styles.rightImage} />
             </HoverableOpacity>
