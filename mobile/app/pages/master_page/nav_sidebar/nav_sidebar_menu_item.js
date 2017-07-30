@@ -13,8 +13,13 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
     height: 45,
-    alignItems: "center",
     paddingLeft: 10,
+  },
+  itemTextPart: {
+    alignItems: "center",
+    flexDirection: "row",
+    paddingRight: 10,
+    flex: 1,
   },
   itemText: { marginLeft: 5, color: colors.CYAN_BRIGHT },
 
@@ -36,7 +41,7 @@ export default class NavSidebarMenuItem extends Component {
     return (
       <View style={[styles.itemContainer, { backgroundColor: itemContainerBackground }]}>
         <HoverableOpacity
-          style={[styles.itemContainer]}
+          style={[styles.itemTextPart]}
           activeOpacity={0.5}
           hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}
           onPress={this.props.onPress}>
