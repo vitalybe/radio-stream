@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("NavSidebar");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, Platform } from "react-native";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";
@@ -80,7 +80,9 @@ export default class NavSidebar extends Component {
         <NavSidebarMenuItem text="Player" leftImage={playIcon} onPress={this.onPlayerPress} />
         <NavSidebarMenuItem text="Search" leftImage={playIcon} onPress={this.onSearchPress} />
         <NavSidebarMenuItem text="Settings" leftImage={playIcon} onPress={this.onSettingsPress} />
-        <NavSidebarMenuItem text="Exit" leftImage={playIcon} onPress={this.onExitPress} />
+        {Platform.OS !== "web"
+          ? <NavSidebarMenuItem text="Exit" leftImage={playIcon} onPress={this.onExitPress} />
+          : null}
         <NavSidebarMenuTitle text="Playlists" />
         {playlistsStore.playlistNames.map(playlistName =>
           <NavSidebarMenuItem
