@@ -54,6 +54,7 @@ export default class NavSidebarMenuItem extends Component {
           ? <HoverableOpacity
               style={styles.rightImageContainer}
               activeOpacity={0.5}
+              onPress={this.props.onRightImagePress}
               hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}>
               <Image source={this.props.rightImage} resizeMode="contain" style={styles.rightImage} />
             </HoverableOpacity>
@@ -70,4 +71,5 @@ NavSidebarMenuItem.propTypes = {
   isActive: React.PropTypes.bool,
 
   onPress: React.PropTypes.func,
+  onRightImagePress: React.PropTypes.func,
 };

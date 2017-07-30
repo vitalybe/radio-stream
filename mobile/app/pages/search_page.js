@@ -68,6 +68,7 @@ export default class SearchPage extends Component {
       isSearching: false,
       songs: [],
       query: this.props.query || "",
+      playlistName: this.props.playlistName || "",
     };
   }
 

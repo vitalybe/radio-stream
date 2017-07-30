@@ -28,9 +28,9 @@ class Navigator {
     this._navigateTo(constants.ROUTE_SETTINGS_PAGE);
   }
 
-  navigateToSearch(query) {
+  navigateToSearch(query, playlistName) {
     loggerCreator("navigateToSearch", moduleLogger);
-    this._navigateTo(constants.ROUTE_SEARCH_PAGE, { query });
+    this._navigateTo(constants.ROUTE_SEARCH_PAGE, { query, playlistName });
   }
 
   navigateToSavePlaylistPage(query) {

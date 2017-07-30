@@ -44,7 +44,7 @@ class BackendMetadataApi {
 
   playlists() {
     return this._getAjax().get(`/playlists`).then(response => response.json().then(json => json)).then(json => {
-      return json.playlists;
+      return json;
     });
   }
 

@@ -47,6 +47,10 @@ export default class NavSidebar extends Component {
     masterStore.closeSidebars();
   };
 
+  onPlaylistEditPress = playlist => {
+    navigator.navigateToSearch(playlist.query, playlist.name);
+  };
+
   onPlayerPress = () => {
     masterStore.closeSidebars();
     navigator.navigateToPlayer();
@@ -84,13 +88,14 @@ export default class NavSidebar extends Component {
           ? <NavSidebarMenuItem text="Exit" leftImage={playIcon} onPress={this.onExitPress} />
           : null}
         <NavSidebarMenuTitle text="Playlists" />
-        {playlistsStore.playlistNames.map(playlistName =>
+        {playlistsStore.playlists.map(playlist =>
           <NavSidebarMenuItem
-            key={playlistName}
-            text={playlistName}
+            key={playlist.name}
+            text={playlist.name}
             leftImage={playIcon}
             rightImage={pencilIcon}
-            onPress={() => this.onPlaylistPress(playlistName)}
+            onPress={() => this.onPlaylistPress(playlist.name)}
+            onRightImagePress={() => this.onPlaylistEditPress(playlist)}
           />
         )}
       </View>
