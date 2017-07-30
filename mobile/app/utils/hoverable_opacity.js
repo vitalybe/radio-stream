@@ -25,5 +25,5 @@ export default class HoverableOpacity extends Component {
 
 HoverableOpacity.propTypes = {
   hoverStyle: React.PropTypes.shape({}),
-  style: React.PropTypes.shape({}),
+  style: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.array]),
 };
