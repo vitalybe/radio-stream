@@ -27,12 +27,12 @@ const styles = StyleSheet.create({});
 @observer
 export default class SearchPage extends Component {
   prepareComponentState(props) {
-    this.state = {
+    this.setState({
       askForName: false,
       saving: false,
 
       query: props.initialQuery,
-    };
+    });
   }
 
   componentWillMount() {

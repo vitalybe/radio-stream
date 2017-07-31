@@ -60,15 +60,16 @@ const styles = StyleSheet.create({
 @observer
 export default class SearchPart extends Component {
   prepareComponentState(props) {
-    this.state = {
+    this.setState({
       isSearching: false,
       songs: [],
       query: props.initialQuery || "",
       playlistName: props.playlistName || "",
-    };
+    });
 
-    if (this.state.query) {
-      this.search();
+    if (props.initialQuery) {
+      // noinspection JSIgnoredPromiseFromCall
+      this.search(props.initialQuery);
     }
   }
 
@@ -89,17 +90,22 @@ export default class SearchPart extends Component {
   onInputKeypress = async event => {
     if (event.key === "Enter") {
       // noinspection JSIgnoredPromiseFromCall
-      this.search();
+      this.search(this.state.query);
     }
   };
 
-  search = async () => {
+  onSearchPress = async () => {
+    // noinspection JSIgnoredPromiseFromCall
+    this.search(this.state.query);
+  };
+
+  search = async query => {
     const logger = loggerCreator("search", moduleLogger);
     Keyboard.dismiss();
 
     this.setState({ isSearching: true });
-    logger.info(`searching for: ${this.state.query}`);
-    let songs = await backendMetadataApi.querySongs(this.state.query);
+    logger.info(`searching for: ${query}`);
+    let songs = await backendMetadataApi.querySongs(query);
     logger.info(`got results: ${songs.length}`);
     this.setState({ songs: songs, isSearching: false });
   };
@@ -128,7 +134,7 @@ export default class SearchPart extends Component {
             style={styles.input}
             onKeyPress={this.onInputKeypress}
           />
-          <RectangleButton style={[styles.searchButton]} onPress={this.search}>
+          <RectangleButton style={[styles.searchButton]} onPress={this.onSearchPress}>
             <ButtonText>Search</ButtonText>
           </RectangleButton>
         </View>
