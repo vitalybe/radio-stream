@@ -1,6 +1,6 @@
 import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator("SavePlaylistPage");
+var moduleLogger = loggerCreator("PlaylistNamePart");
 
 import React, { Component } from "react";
 import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
 });
 
 @observer
-export default class SavePlaylistPage extends Component {
+export default class PlaylistNamePart extends Component {
   componentWillMount() {
     this.state = {
       playlistName: "",
@@ -53,20 +53,7 @@ export default class SavePlaylistPage extends Component {
   };
 
   onSaveAndPlay = async () => {
-    const logger = loggerCreator("onSaveAndPlay", moduleLogger);
-
-    this.setState({ saving: true });
-    try {
-      await backendMetadataApi.savePlaylist(this.state.playlistName, this.props.query);
-      await playlistsStore.updatePlaylists();
-
-      await player.changePlaylist(this.state.playlistName);
-      player.play();
-      navigator.navigateToPlayer();
-    } catch (err) {
-      logger.error(`save failed: ${err}`);
-      this.setState({ saving: false });
-    }
+    this.props.onSaveAndPlay(this.state.playlistName, this.props.query);
   };
 
   onBack = () => {
@@ -93,12 +80,11 @@ export default class SavePlaylistPage extends Component {
           </View>
         </View>
       );
-    } else {
-      return <LoadingSpinner message="Saving playlist..." />;
     }
   }
 }
 
-SavePlaylistPage.propTypes = {
+PlaylistNamePart.propTypes = {
   query: React.PropTypes.string.isRequired,
+  onSaveAndPlay: React.PropTypes.func.isRequired,
 };

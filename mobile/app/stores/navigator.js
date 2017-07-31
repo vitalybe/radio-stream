@@ -29,13 +29,9 @@ class Navigator {
   }
 
   navigateToSearch(query, playlistName) {
-    loggerCreator("navigateToSearch", moduleLogger);
-    this._navigateTo(constants.ROUTE_SEARCH_PAGE, { query, playlistName });
-  }
-
-  navigateToSavePlaylistPage(query) {
-    loggerCreator("navigateToSavePlaylistPage", moduleLogger);
-    this._navigateTo(constants.ROUTE_SAVE_PLAYLIST_PAGE, { query });
+    const logger = loggerCreator("navigateToSearch", moduleLogger);
+    logger.info(`playlistName: ${playlistName} query: ${query}`);
+    this._navigateTo(constants.ROUTE_SEARCH_PAGE, { playlistName, initialQuery: query });
   }
 }
 

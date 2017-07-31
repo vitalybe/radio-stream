@@ -48,6 +48,7 @@ export default class NavSidebar extends Component {
   };
 
   onPlaylistEditPress = playlist => {
+    masterStore.closeSidebars();
     navigator.navigateToSearch(playlist.query, playlist.name);
   };
 

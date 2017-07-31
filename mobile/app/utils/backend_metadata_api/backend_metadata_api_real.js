@@ -79,6 +79,9 @@ class BackendMetadataApi {
   }
 
   async savePlaylist(name, query) {
+    const logger = loggerCreator("savePlaylist", moduleLogger);
+    logger.info(`saving. name: "${name}" query: ${query}`);
+
     return this._getAjax().put(`/playlists`, { body: { name, query } });
   }
 }

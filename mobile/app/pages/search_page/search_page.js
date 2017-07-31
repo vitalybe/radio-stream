@@ -18,135 +18,83 @@ import { navigator } from "app/stores/navigator";
 import constants from "app/utils/constants";
 import { player } from "app/stores/player/player";
 import Keyboard from "app/utils/keyboard/kebyoard";
+import LoadingSpinner from "app/shared_components/loading_spinner";
+import SearchPart from "app/pages/search_page/search_part";
+import PlaylistNamePart from "app/pages/search_page/playlist_name_part";
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    flex: 1,
-  },
-  queryContainer: {
-    flexDirection: "row",
-    marginTop: 10,
-  },
-  input: {
-    flex: 1,
-    marginRight: 10,
-  },
-  searchButton: { paddingHorizontal: 20 },
-  searchResult: {
-    flex: 1,
-
-    backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
-    borderColor: colors.CYAN_BRIGHT,
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRadius: 5,
-
-    marginTop: 10,
-    padding: 10,
-  },
-  buttons: {
-    marginTop: 10,
-    flexDirection: "row",
-  },
-  button: {
-    ...Platform.select({
-      android: {
-        flex: 1,
-      },
-    }),
-  },
-  playResultsButton: {
-    marginRight: 10,
-  },
-});
+const styles = StyleSheet.create({});
 
 @observer
 export default class SearchPage extends Component {
-  componentWillMount() {
+  prepareComponentState(props) {
     this.state = {
-      isSearching: false,
-      songs: [],
-      query: this.props.query || "",
-      playlistName: this.props.playlistName || "",
+      askForName: false,
+      saving: false,
+
+      query: props.initialQuery,
     };
   }
 
-  componentDidMount() {
-    if (this.state.query) {
-      this.search();
-    }
+  componentWillMount() {
+    const logger = loggerCreator("componentWillMount", moduleLogger);
+    logger.info(`props: ${JSON.stringify(this.props)}`);
+
+    this.prepareComponentState(this.props);
   }
 
-  onInputKeypress = async event => {
-    if (event.key === "Enter") {
-      // noinspection JSIgnoredPromiseFromCall
-      this.search();
+  componentWillReceiveProps(nextProps) {
+    const logger = loggerCreator("componentWillReceiveProps", moduleLogger);
+    logger.info(`props: ${JSON.stringify(this.props)}`);
+
+    this.prepareComponentState(nextProps);
+  }
+
+  saveAndPlay = async (playlistName, query) => {
+    const logger = loggerCreator("saveAndPlay", moduleLogger);
+
+    this.setState({ saving: true });
+    try {
+      await backendMetadataApi.savePlaylist(playlistName, query);
+      await playlistsStore.updatePlaylists();
+
+      await player.changePlaylist(playlistName);
+      player.play();
+      navigator.navigateToPlayer();
+    } catch (err) {
+      logger.error(`save failed: ${err}`);
+      this.setState({ saving: false });
     }
   };
 
-  search = async () => {
-    const logger = loggerCreator("search", moduleLogger);
-    Keyboard.dismiss();
+  saveIfHasName = async (playlistName, query) => {
+    const logger = loggerCreator("saveIfHasName", moduleLogger);
 
-    this.setState({ isSearching: true });
-    logger.info(`searching for: ${this.state.query}`);
-    let songs = await backendMetadataApi.querySongs(this.state.query);
-    logger.info(`got results: ${songs.length}`);
-    this.setState({ songs: songs, isSearching: false });
-  };
-
-  onPlayResults = async () => {
-    await backendMetadataApi.savePlaylist(constants.SEARCH_RESULT_PLAYLIST, this.state.query);
-    await playlistsStore.updatePlaylists();
-
-    await player.changePlaylist(constants.SEARCH_RESULT_PLAYLIST);
-    player.play();
-    navigator.navigateToPlayer();
-  };
-
-  onChangeText = text => {
-    this.setState({ query: text });
-  };
-
-  onSaveAsPlaylist = () => {
-    navigator.navigateToSavePlaylistPage(this.state.query);
+    if (!playlistName) {
+      logger.info(`no playlist name. showing ui to get name`);
+      this.setState({ askForName: true, query: query });
+    } else {
+      await this.saveAndPlay(playlistName, query);
+    }
   };
 
   render() {
-    return (
-      <View style={styles.container}>
-        <BigText style={{ flexShrink: 0 }}>Query</BigText>
-        <View style={styles.queryContainer}>
-          <RoundedTextInput
-            value={this.state.query}
-            onChangeText={this.onChangeText}
-            style={styles.input}
-            onKeyPress={this.onInputKeypress}
-          />
-          <RectangleButton style={[styles.searchButton]} onPress={this.search}>
-            <ButtonText>Search</ButtonText>
-          </RectangleButton>
-        </View>
-        <ScrollView horizontal={false} style={styles.searchResult}>
-          {this.state.isSearching ? <ActivityIndicator size="large" /> : <SongsGrid songs={this.state.songs} />}
-        </ScrollView>
-        <View style={styles.buttons}>
-          <RectangleButton
-            style={[styles.button, styles.playResultsButton]}
-            disabled={this.state.songs.length < 1}
-            onPress={this.onPlayResults}>
-            <ButtonText>Play results</ButtonText>
-          </RectangleButton>
-          <RectangleButton style={styles.button} onPress={this.onSaveAsPlaylist} disabled={this.state.songs.length < 1}>
-            <ButtonText>Save as playlist</ButtonText>
-          </RectangleButton>
-        </View>
-      </View>
-    );
+    if (this.state.saving) {
+      return <LoadingSpinner message="Saving playlist..." />;
+    } else if (this.state.askForName === false) {
+      return (
+        <SearchPart
+          initialQuery={this.props.initialQuery}
+          playlistName={this.props.playlistName}
+          onSaveAndPlay={this.saveIfHasName}
+        />
+      );
+    } else {
+      return <PlaylistNamePart query={this.state.query} onSaveAndPlay={this.saveIfHasName} />;
+    }
   }
 }
 
 SearchPage.propTypes = {
-  query: React.PropTypes.string,
+  initialQuery: React.PropTypes.string,
+  playlistName: React.PropTypes.string,
 };
