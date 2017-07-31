@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  playResultsButton: {
+  firstButton: {
     marginRight: 10,
   },
 });
@@ -64,7 +64,6 @@ export default class SearchPart extends Component {
       isSearching: false,
       songs: [],
       query: props.initialQuery || "",
-      playlistName: props.playlistName || "",
     });
 
     if (props.initialQuery) {
@@ -123,10 +122,16 @@ export default class SearchPart extends Component {
     await this.props.onSaveAndPlay(constants.SEARCH_RESULT_PLAYLIST, this.state.query);
   };
 
+  onDeletePlaylist = async () => {
+    await this.props.onDeletePlaylist(this.props.playlistName);
+  };
+
   render() {
     return (
       <View style={styles.container}>
-        <BigText style={{ flexShrink: 0 }}>Query</BigText>
+        <BigText style={{ flexShrink: 0 }}>
+          {this.props.playlistName ? `Playlist "${this.props.playlistName}" query` : "Query"}
+        </BigText>
         <View style={styles.queryContainer}>
           <RoundedTextInput
             value={this.state.query}
@@ -142,14 +147,20 @@ export default class SearchPart extends Component {
           {this.state.isSearching ? <ActivityIndicator size="large" /> : <SongsGrid songs={this.state.songs} />}
         </ScrollView>
         <View style={styles.buttons}>
-          <RectangleButton
-            style={[styles.button, styles.playResultsButton]}
-            disabled={this.state.songs.length < 1}
-            onPress={this.onPlayResults}>
-            <ButtonText>Play results</ButtonText>
-          </RectangleButton>
+          {this.props.playlistName
+            ? <RectangleButton style={[styles.button, styles.firstButton]} onPress={this.onDeletePlaylist}>
+                <ButtonText>Delete playlist</ButtonText>
+              </RectangleButton>
+            : <RectangleButton
+                style={[styles.button, styles.firstButton]}
+                disabled={this.state.songs.length < 1}
+                onPress={this.onPlayResults}>
+                <ButtonText>Play results</ButtonText>
+              </RectangleButton>}
           <RectangleButton style={styles.button} onPress={this.onSaveAsPlaylist} disabled={this.state.songs.length < 1}>
-            <ButtonText>Save as playlist</ButtonText>
+            <ButtonText>
+              {this.props.playlistName ? "Update playlist" : "Save as playlist"}
+            </ButtonText>
           </RectangleButton>
         </View>
       </View>
@@ -162,4 +173,5 @@ SearchPart.propTypes = {
   playlistName: React.PropTypes.string,
 
   onSaveAndPlay: React.PropTypes.func.isRequired,
+  onDeletePlaylist: React.PropTypes.func.isRequired,
 };

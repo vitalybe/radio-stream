@@ -108,7 +108,7 @@ class Player {
     }
   }
 
-  stopPlayer() {
+  stop() {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.stopPlayer());
   }
 

@@ -84,6 +84,10 @@ class BackendMetadataApi {
 
     return this._getAjax().put(`/playlists`, { body: { name, query } });
   }
+
+  async deletePlaylist(name) {
+    return this._getAjax().delete(`/playlists`, { body: { name } });
+  }
 }
 
 export const backendMetadataApiReal = new BackendMetadataApi();

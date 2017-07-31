@@ -70,7 +70,7 @@ export default class NavSidebar extends Component {
   onExitPress = () => {
     loggerCreator("onExitPress", moduleLogger);
 
-    player.stopPlayer();
+    player.stop();
     BackHandler.exitApp();
   };
 
