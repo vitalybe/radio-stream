@@ -1,6 +1,7 @@
 package com.radiostream.player;
 
-import com.radiostream.javascript.bridge.PlayerBridge;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableMap;
 import com.radiostream.javascript.bridge.PlayerEventsEmitter;
 
 import org.jdeferred.Promise;
@@ -79,14 +80,11 @@ public class Player implements PlaylistControls {
         }
     }
 
-    public PlayerBridge toBridgeObject() {
-        PlayerBridge bridge = new PlayerBridge();
+    public WritableMap toBridgeObject() {
+        WritableMap map = Arguments.createMap();
+        map.putMap("playlistPlayer", mCurrentPlaylistPlayer != null ? mCurrentPlaylistPlayer.toBridgeObject() : null);
 
-        if(mCurrentPlaylistPlayer != null) {
-            bridge.playlistPlayerBridge = mCurrentPlaylistPlayer.toBridgeObject();
-        }
-
-        return bridge;
+        return map;
     }
 
     public boolean getIsPlaying() {

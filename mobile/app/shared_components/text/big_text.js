@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { Text } from "react-native";
 
-import { fontSizes } from "../../styles/styles";
+import { fontSizes } from "app/styles/styles";
 import NormalText from "./normal_text";
 
 const styles = {
   text: {
     fontSize: fontSizes.LARGE,
+    fontWeight: "bold",
   },
 };
 

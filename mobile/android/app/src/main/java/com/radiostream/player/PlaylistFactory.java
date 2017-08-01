@@ -1,6 +1,6 @@
 package com.radiostream.player;
 
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackendGetter;
 
 import javax.inject.Inject;
 
@@ -10,17 +10,17 @@ import javax.inject.Inject;
 
 public class PlaylistFactory {
 
-    private MetadataBackend mMetadataBackend;
+    private MetadataBackendGetter mMetadataBackendGetter;
     private SongFactory mSongFactory;
 
     @Inject
-    public PlaylistFactory(MetadataBackend metadataBackend, SongFactory songFactory) {
+    public PlaylistFactory(MetadataBackendGetter metadataBackend, SongFactory songFactory) {
 
-        mMetadataBackend = metadataBackend;
+        mMetadataBackendGetter = metadataBackend;
         mSongFactory = songFactory;
     }
 
     public Playlist buildPlaylist(String playlistName) {
-        return new Playlist(playlistName, mMetadataBackend, mSongFactory);
+        return new Playlist(playlistName, mMetadataBackendGetter, mSongFactory);
     }
 }

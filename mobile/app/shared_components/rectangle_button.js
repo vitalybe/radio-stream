@@ -1,30 +1,37 @@
 import React, { Component } from "react";
 import { TouchableHighlight } from "react-native";
 
-import { colors } from "../styles/styles";
+import { colors } from "app/styles/styles";
 
 const styles = {
   button: {
     alignItems: "center",
-    backgroundColor: colors.CYAN_DARK_CLEARER,
-    paddingHorizontal: 40,
-    paddingVertical: 15,
+    backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
+    paddingHorizontal: 10,
+    height: 50,
+    justifyContent: "center",
     borderColor: colors.CYAN_BRIGHT,
     borderStyle: "solid",
     borderWidth: 1,
     borderRadius: 5,
   },
+  disabled: {
+    opacity: 0.2,
+  },
 };
 
 export default class RectangleButton extends Component {
   render() {
+    let { onPress, style, children, ...otherProps } = this.props;
+
     return (
       <TouchableHighlight
-        onPress={this.props.onPress}
-        style={[styles.button, this.props.style]}
-        underlayColor={colors.CYAN_DARK_CLEAR}
-        activeOpacity={1}>
-        {this.props.children}
+        onPress={onPress}
+        style={[styles.button, style, this.props.disabled ? styles.disabled : null]}
+        underlayColor={colors.CONTAINER_BACKGROUND_ACTIVE}
+        activeOpacity={1}
+        {...otherProps}>
+        {children}
       </TouchableHighlight>
     );
   }

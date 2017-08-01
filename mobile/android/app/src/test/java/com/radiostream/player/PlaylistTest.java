@@ -1,7 +1,7 @@
 package com.radiostream.player;
 
 import com.facebook.react.bridge.Arguments;
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackendGetter;
 import com.radiostream.networking.models.SongResult;
 
 import org.jdeferred.DoneCallback;
@@ -40,7 +40,7 @@ public class PlaylistTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock
-    MetadataBackend mockMetadataBackend;
+    MetadataBackendGetter mockMetadataBackendGetter;
     @Mock
     SongFactory mockSongFactory;
     @Mock
@@ -68,7 +68,7 @@ public class PlaylistTest {
         songResults = new ArrayList<>(Arrays.asList(mockLoadedSongs2_Song1, mockLoadedSongs2_Song2));
         Promise<List<SongResult>, Exception, Void> loadedSongs2Promise = resolvedPromise(songResults);
 
-        when(mockMetadataBackend.fetchPlaylist(anyString()))
+        when(mockMetadataBackendGetter.get().fetchPlaylist(anyString()))
             .thenReturn(loadedSongs1Promise).thenReturn(loadedSongs2Promise);
 
         when(mockSongFactory.build((SongResult)any())).thenAnswer(new Answer<Song>() {
@@ -86,7 +86,7 @@ public class PlaylistTest {
 
     @Test
     public void nextSong_movesToNextSong() throws Exception {
-        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
+        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackendGetter, mockSongFactory);
         playlist.peekCurrentSong().then(new DoneCallback<Song>() {
             @Override
             public void onDone(Song result) {
@@ -105,7 +105,7 @@ public class PlaylistTest {
 
     @Test
     public void peekCurrentSong_reloadsPlaylistIfFinished() throws Exception {
-        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
+        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackendGetter, mockSongFactory);
         playlist.peekCurrentSong().then(new DoneCallback<Song>() {
             @Override
             public void onDone(Song result) {
@@ -123,12 +123,12 @@ public class PlaylistTest {
                 assertEquals(result.getTitle(), mockLoadedSongs2_Song1.title);
             }
         });
-        verify(mockMetadataBackend, times(2)).fetchPlaylist(mPlaylistName);
+        verify(mockMetadataBackendGetter, times(2)).get().fetchPlaylist(mPlaylistName);
     }
 
     @Test
     public void peekNextSong_returnsNextSong() throws Exception {
-        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
+        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackendGetter, mockSongFactory);
         playlist.peekNextSong().then(new DoneCallback<Song>() {
             @Override
             public void onDone(Song result) {
@@ -143,12 +143,12 @@ public class PlaylistTest {
             }
         });
 
-        verify(mockMetadataBackend, times(1)).fetchPlaylist(mPlaylistName);
+        verify(mockMetadataBackendGetter, times(1)).get().fetchPlaylist(mPlaylistName);
     }
 
     @Test
     public void isCurrentSong_returnsTrueIfCurrent() throws Exception {
-        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
+        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackendGetter, mockSongFactory);
 
         final Song[] currentSong = {null};
         playlist.peekCurrentSong().then(new DoneCallback<Song>() {
@@ -163,7 +163,7 @@ public class PlaylistTest {
 
     @Test
     public void isCurrentSong_returnsFalseIfWrongSong() throws Exception {
-        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
+        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackendGetter, mockSongFactory);
 
         final Song[] nextSong = {null};
         playlist.peekNextSong().then(new DoneCallback<Song>() {
@@ -178,7 +178,7 @@ public class PlaylistTest {
 
     @Test
     public void isCurrentSong_returnsFalseIfCurrentSongOutOfBounds() throws Exception {
-        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackend, mockSongFactory);
+        Playlist playlist = new Playlist(mPlaylistName, mockMetadataBackendGetter, mockSongFactory);
 
         final Song[] currentSong = {null};
         playlist.peekCurrentSong().then(new DoneCallback<Song>() {

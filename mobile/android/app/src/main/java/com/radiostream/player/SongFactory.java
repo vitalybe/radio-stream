@@ -3,7 +3,7 @@ package com.radiostream.player;
 import android.content.Context;
 
 import com.radiostream.Settings;
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackendGetter;
 import com.radiostream.networking.models.SongResult;
 import com.radiostream.util.SetTimeout;
 
@@ -15,21 +15,21 @@ public class SongFactory {
     private Context mContext;
     private Settings mSettings;
     private SetTimeout mSetTimeout;
-    private MetadataBackend mMetadataBackend;
+    private MetadataBackendGetter mMetadataBackendGetter;
 
     @Inject
     public SongFactory(MediaPlayerFactory mediaPlayerFactory, Context context, Settings settings,
-                       SetTimeout setTimeout, MetadataBackend metadataBackend) {
+                       SetTimeout setTimeout, MetadataBackendGetter metadataBackend) {
 
         mMediaPlayerFactory = mediaPlayerFactory;
         mContext = context;
         mSettings = settings;
         mSetTimeout = setTimeout;
-        mMetadataBackend = metadataBackend;
+        mMetadataBackendGetter = metadataBackend;
     }
 
     public Song build(SongResult songResult) {
         return new Song(songResult, mMediaPlayerFactory.build(), mContext, mSettings,
-            mSetTimeout, mMetadataBackend);
+            mSetTimeout, mMetadataBackendGetter);
     }
 }

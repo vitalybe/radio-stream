@@ -1,8 +1,8 @@
-import loggerCreator from "../utils/logger";
+import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("ajax");
 
 import _ from "lodash";
-import NetworkError from "../utils/network_error";
+import NetworkError from "app/utils/network_error";
 
 export default class Ajax {
   // responseMiddleware: optional. function that accepts a response. Returns the response.
@@ -33,9 +33,9 @@ export default class Ajax {
     return Promise.resolve()
       .then(() => fetch(url, config))
       .then(function(response) {
-        if (response.status < 200 || response.status >= 300) {
-          logger.warn(`received network error status: ${response.status}`);
-          throw new NetworkError(`Received status ${response.status} from the server`);
+        if (response.message < 200 || response.message >= 300) {
+          logger.warn(`received network error status: ${response.message}`);
+          throw new NetworkError(`Received status ${response.message} from the server`);
         }
 
         return response;

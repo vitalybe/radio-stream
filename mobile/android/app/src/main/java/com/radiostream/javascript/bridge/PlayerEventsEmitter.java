@@ -1,6 +1,7 @@
 package com.radiostream.javascript.bridge;
 
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import javax.inject.Inject;
@@ -13,7 +14,6 @@ public class PlayerEventsEmitter {
 
     private ReactContext mContext;
     private final String playerStatusEvent = "PLAYLIST_PLAYER_STATUS_EVENT";
-    private EventCallback mCallback;
 
     @Inject
     public PlayerEventsEmitter(ReactContext context) {
@@ -21,19 +21,10 @@ public class PlayerEventsEmitter {
         mContext = context;
     }
 
-    public void sendPlayerStatus(PlayerBridge playerBridge) {
-        sendToJavascript(playerStatusEvent, playerBridge.asMap());
-        sendToSubscribers(playerBridge);
-    }
-
-    public void subscribe(EventCallback callback) {
-        mCallback = callback;
-    }
-
-    private void sendToSubscribers(PlayerBridge playerBridge) {
-        if(mCallback != null) {
-            mCallback.onEvent(playerBridge);
-        }
+    public void sendPlayerStatus(WritableMap status) {
+        sendToJavascript(playerStatusEvent, status);
+        // TODO: Fix notifications
+        // sendToSubscribers(playerBridge);
     }
 
     private void sendToJavascript(String event, Object params) {
@@ -46,9 +37,5 @@ public class PlayerEventsEmitter {
         } else {
             Timber.e("event was not sent - No active catalyst");
         }
-    }
-
-    public interface EventCallback {
-        void onEvent(PlayerBridge playerBridge);
     }
 }

@@ -1,4 +1,4 @@
-import loggerCreator from "../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 var moduleLogger = loggerCreator("backend_lastfm_api");
 
@@ -9,11 +9,13 @@ export async function getArtistImage(artist) {
 
   try {
     const response = await fetch(
-      `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${encodeURIComponent(artist)}&autocorrect=1&api_key=${API_KEY}&format=json`
+      `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${encodeURIComponent(
+        artist
+      )}&autocorrect=1&api_key=${API_KEY}&format=json`
     );
     const responseJson = await response.json();
     logger.info(`got response: ${responseJson}`);
-    return responseJson.artist.image[3]["#text"];
+    return responseJson.artist.image[4]["#text"];
   } catch (e) {
     logger.warn(`failed to fetch song art`);
   }

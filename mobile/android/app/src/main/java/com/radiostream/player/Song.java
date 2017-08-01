@@ -4,11 +4,13 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.PowerManager;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableMap;
 import com.radiostream.Settings;
-import com.radiostream.javascript.bridge.SongBridge;
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackendGetter;
 import com.radiostream.networking.models.SongResult;
 import com.radiostream.util.SetTimeout;
 
@@ -39,8 +41,9 @@ public class Song {
     private final int mPlayCount;
     private int mRating;
 
+    private Context mContext;
     private SetTimeout mSetTimeout;
-    private MetadataBackend mMetadataBackend;
+    private MetadataBackendGetter mMetadataBackendGetter;
     private Promise<Song, Exception, Void> mSongLoadingPromise = null;
     private MediaPlayer mMediaPlayer;
     private Settings mSettings;
@@ -50,30 +53,36 @@ public class Song {
     private Promise<Boolean, Exception, Void> markedAsPlayedPromise = null;
 
     public Song(SongResult songResult, MediaPlayer mediaPlayer,
-                Context context, Settings settings, SetTimeout setTimeout, MetadataBackend metadataBackend) {
+                Context context, Settings settings, SetTimeout setTimeout, MetadataBackendGetter metadataBackend) {
         this.mArtist = songResult.artist;
         this.mAlbum = songResult.album;
         this.mTitle = songResult.title;
         this.mId = songResult.id;
         this.mSetTimeout = setTimeout;
-        this.mMetadataBackend = metadataBackend;
+        this.mMetadataBackendGetter = metadataBackend;
         this.mRating = songResult.rating;
         this.mLastPlayed = songResult.lastplayed;
         this.mPlayCount = songResult.playcount;
+        this.mContext = context;
+        this.mMediaPlayer = mediaPlayer;
+        this.mSettings = settings;
 
-        String pathBuilder = "";
-        String[] pathParts = songResult.path.split("/");
-        for (String pathPart : pathParts) {
-            try {
-                pathBuilder += "/" + URLEncoder.encode(pathPart, "UTF-8").replace("+", "%20");
-            } catch (UnsupportedEncodingException e) {
-                Timber.e(e, "failed to encode path part: %s", pathPart);
+        // In various mock modes we will provide the full MP3 path
+        if(!songResult.path.startsWith("android.resource")) {
+            String pathBuilder = "";
+            String[] pathParts = songResult.path.split("/");
+            for (String pathPart : pathParts) {
+                try {
+                    pathBuilder += "/" + URLEncoder.encode(pathPart, "UTF-8").replace("+", "%20");
+                } catch (UnsupportedEncodingException e) {
+                    Timber.e(e, "failed to encode path part: %s", pathPart);
+                }
             }
-        }
 
-        this.mPath = pathBuilder.substring(1);
-        mMediaPlayer = mediaPlayer;
-        mSettings = settings;
+            this.mPath = mSettings.getAddress() + "/music/" + pathBuilder.substring(1);
+        } else {
+            this.mPath = songResult.path;
+        }
 
         // NOTE: Wake lock will only be relevant when a song is playing
         mMediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
@@ -95,7 +104,7 @@ public class Song {
             this.markedAsPlayedPromise = retryMarkAsPlayed().then(new DoneCallback<Boolean>() {
                 @Override
                 public void onDone(Boolean result) {
-                    if(mEventsListener != null) {
+                    if (mEventsListener != null) {
                         Timber.i("finished marking as played - notifying subscribers");
                         mEventsListener.onSongMarkedAsPlayed();
                     }
@@ -104,7 +113,7 @@ public class Song {
         } else {
             Timber.i("this is not the time to mark as played %dms, retrying again in %dms",
                 mMediaPlayer.getCurrentPosition(), markPlayedRetryMs);
-            
+
             this.mSetTimeout.run(markPlayedRetryMs).then(new DoneCallback<Void>() {
                 @Override
                 public void onDone(Void result) {
@@ -131,7 +140,7 @@ public class Song {
         final DeferredObject<Boolean, Exception, Void> deferredObject = new DeferredObject<>();
         Timber.i("function start");
 
-        mMetadataBackend.markAsPlayed(this.mId)
+        mMetadataBackendGetter.get().markAsPlayed(this.mId)
             .then(new DoneCallback<Void>() {
                 @Override
                 public void onDone(Void result) {
@@ -200,10 +209,9 @@ public class Song {
                 }
             });
 
-            String url = mSettings.getAddress() + "/music/" + this.mPath;
-            Timber.i("loading song from url: %s", url);
+            Timber.i("loading song from url: %s", this.mPath);
             try {
-                mMediaPlayer.setDataSource(url);
+                mMediaPlayer.setDataSource(this.mContext, Uri.parse(this.mPath));
                 mMediaPlayer.prepareAsync();
             } catch (IOException e) {
                 deferredObject.reject(new NetworkErrorException("Failed to set data source", e));
@@ -255,7 +263,7 @@ public class Song {
 
     public void close() {
         Timber.i("function start: %s", this.toString());
-        if(mMediaPlayer != null) {
+        if (mMediaPlayer != null) {
             pause();
 
             Timber.i("resetting and releasing the media player");
@@ -281,20 +289,18 @@ public class Song {
         return mTitle;
     }
 
-    public SongBridge toBridgeObject() {
-        SongBridge bridge = new SongBridge();
+    public WritableMap toBridgeObject() {
+        WritableMap map = Arguments.createMap();
+        map.putInt("id", mId);
+        map.putString("artist", mArtist);
+        map.putString("title", mTitle);
+        map.putString("album", mAlbum);
+        map.putInt("rating", mRating);
+        map.putDouble("lastplayed", mLastPlayed);
+        map.putInt("playcount", mPlayCount);
+        map.putBoolean("isMarkedAsPlayed", markedAsPlayedPromise != null && markedAsPlayedPromise.isResolved());
 
-        bridge.id = mId;
-        bridge.artist = mArtist;
-        bridge.album = mAlbum;
-        bridge.title = mTitle;
-        bridge.rating = mRating;
-        bridge.playcount = mPlayCount;
-        bridge.lastplayed = mLastPlayed;
-        bridge.rating = mRating;
-        bridge.isMarkedAsPlayed = markedAsPlayedPromise != null && markedAsPlayedPromise.isResolved();
-
-        return bridge;
+        return map;
     }
 
     @Override
@@ -316,7 +322,9 @@ public class Song {
 
     public interface EventsListener {
         void onSongFinish(Song song);
+
         void onSongMarkedAsPlayed();
+
         void onSongError(Exception error);
     }
 }

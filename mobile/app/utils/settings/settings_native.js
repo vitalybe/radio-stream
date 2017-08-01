@@ -1,4 +1,4 @@
-import loggerCreator from "../logger";
+import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("SettingsNativeDummy");
 
 // This is only used to serve as a placeholder for platforms that don't have unique settings

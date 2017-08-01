@@ -22,10 +22,12 @@ See [here](https://github.com/vitalybe/radio-stream-cli/)
 Development
 ===========
 
-To run in development mode add `-d` parameter to regular cli running, like so:
+Connect to a server running radio-stream backend and run in development mode by adding `-d` parameter to regular cli running, like so:
 
 `./cli/bin/server/start -d sh`
 
 Then once in the container shell, write:
 
 `/radio-stream/beets/beet radio -d`
+
+You can now see the error stack in case of errors and modify beets code in `radio-stream/server/beets/beetsplug/radio_stream/` (wihtout restarting the server)

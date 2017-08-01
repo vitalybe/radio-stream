@@ -1,18 +1,13 @@
-import React, {Component} from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import React, { Component } from "react";
+import { AppRegistry } from "react-native";
 
-import App from './app/app';
+import MasterPage from "./app/pages/master_page/master_page";
 
 class RadioStreamWeb extends Component {
   render() {
-    return <App/>;
+    return <MasterPage />;
   }
 }
 
-AppRegistry.registerComponent('ReactNativeWeb', () => RadioStreamWeb);
-AppRegistry.runApplication('ReactNativeWeb', {rootTag: document.getElementById('react-app')});
+AppRegistry.registerComponent("ReactNativeWeb", () => RadioStreamWeb);
+AppRegistry.runApplication("ReactNativeWeb", { rootTag: document.getElementById("react-app") });

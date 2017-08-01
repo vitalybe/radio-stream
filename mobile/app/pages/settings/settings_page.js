@@ -1,21 +1,23 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("settings_page");
 
 import React, { Component } from "react";
 import { StyleSheet, View, TextInput } from "react-native";
-import BackHandler from "../../utils/back_handler/back_handler";
+import BackHandler from "app/utils/back_handler/back_handler";
 import mobx from "mobx";
 import { observer } from "mobx-react";
 
-import Button from "../../shared_components/rectangle_button";
-import NormalText from "../../shared_components/text/normal_text";
-import ButtonText from "../../shared_components/text/button_text";
+import Button from "app/shared_components/rectangle_button";
+import NormalText from "app/shared_components/text/normal_text";
+import ButtonText from "app/shared_components/text/button_text";
 import SettingsPageNative from "./settings_page_native";
-import settings from "../../utils/settings/settings";
-import settingsNative from "../../utils/settings/settings_native";
-import backendMetadataApi from "../../utils/backend_metadata_api";
-import navigator from "../../stores/navigator/navigator";
+import settings from "app/utils/settings/settings";
+import settingsNative from "app/utils/settings/settings_native";
+import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
+import { navigator } from "app/stores/navigator.js";
 import SettingsTextInput from "./settings_text_input";
+import { playlistsStore } from "app/stores/playlists_store";
+import { masterStore } from "app/stores/master_store";
 
 const styles = StyleSheet.create({
   container: {
@@ -52,22 +54,6 @@ export default class SettingsPage extends Component {
     });
 
     this.settingsValuesNative = mobx.asMap();
-
-    BackHandler.addEventListener("hardwareBackPress", () => this.onPressHardwareBack());
-  }
-
-  onPressHardwareBack() {
-    let logger = loggerCreator("onPressHardwareBack", moduleLogger);
-
-    if (settings.host) {
-      logger.info(`cancelling setting changes`);
-      navigator.navigateToPlaylistCollection();
-    } else {
-      logger.info(`no host was configured - quitting`);
-      BackHandler.exitApp();
-    }
-
-    return true;
   }
 
   onTextChange(label, text) {
@@ -77,10 +63,6 @@ export default class SettingsPage extends Component {
     this.settingsValues[label] = text;
   }
 
-  onPlatformSettingsChanged = newPlatformSettings => {
-    this.platformSettings = newPlatformSettings;
-  };
-
   async onSavePress() {
     let logger = loggerCreator("onSavePress", moduleLogger);
 
@@ -88,20 +70,27 @@ export default class SettingsPage extends Component {
     let password = this.settingsValues.password;
 
     try {
-      this.settingsValues.status = "Connecting...";
+      this.settingsValues.message = "Connecting with the given host/password...";
       await backendMetadataApi.testConnection(host, password);
-      this.settingsValues.status = "Connected";
+      this.settingsValues.message = "Connected";
 
       logger.info(`updating global settings`);
 
       settings.host = host;
       settings.password = password;
+      logger.info(`saving settings`);
       await settings.save();
       await settingsNative.save(this.settingsValuesNative.toJS());
 
-      navigator.navigateToPlaylistCollection();
+      logger.info(`upadting playlists`);
+      await playlistsStore.updatePlaylists();
+
+      masterStore.closeSidebars();
+      masterStore.isNavigationSidebarOpen = true;
+
+      navigator.navigateToPlayer();
     } catch (error) {
-      this.settingsValues.status = `Failed: ${error}`;
+      this.settingsValues.message = `Failed: ${error}`;
     }
   }
 
@@ -127,7 +116,9 @@ export default class SettingsPage extends Component {
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>
         </Button>
-        <NormalText style={[styles.status]}>{this.settingsValues.status}</NormalText>
+        <NormalText style={[styles.message]}>
+          {this.settingsValues.message}
+        </NormalText>
       </View>
     );
   }

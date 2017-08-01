@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
 import com.radiostream.Settings;
-import com.radiostream.networking.MetadataBackend;
+import com.radiostream.networking.metadata.MetadataBackendGetter;
 import com.radiostream.networking.models.SongResult;
 import com.radiostream.util.SetTimeout;
 
@@ -59,7 +59,7 @@ public class SongTest {
     SetTimeout mockSetTimeout;
 
     @Mock
-    MetadataBackend mockMetadataBackend;
+    MetadataBackendGetter mockMetadataBackendGetter;
 
     final String settingsUrl = "http://wwww.fake-url.com";
 
@@ -76,7 +76,7 @@ public class SongTest {
                 return dummyPosition[0];
             }
         });
-        when(mockMetadataBackend.markAsPlayed(Matchers.anyInt())).thenReturn(resolvedPromise((Void)null));
+        when(mockMetadataBackendGetter.get().markAsPlayed(Matchers.anyInt())).thenReturn(resolvedPromise((Void)null));
 
         when(mockSettings.getAddress()).thenReturn(settingsUrl);
         when(mockSetTimeout.run(Matchers.anyInt())).thenReturn(resolvedPromise((Void)null));
@@ -105,7 +105,7 @@ public class SongTest {
         SongResult songResult = new SongResult();
         songResult.path = songPath;
 
-        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackend);
+        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackendGetter);
 
         Mockito.doAnswer(new Answer() {
             @Override
@@ -129,7 +129,7 @@ public class SongTest {
 
     @Test
     public void preload_throwsExceptionOnMediaPlayerError() throws Exception {
-        final Song song = new Song(createDummySongResult(), mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackend);
+        final Song song = new Song(createDummySongResult(), mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackendGetter);
 
         Mockito.doAnswer(new Answer() {
             @Override
@@ -164,7 +164,7 @@ public class SongTest {
         String songPath = "artist/song.mp3";
         SongResult songResult = new SongResult();
         songResult.path = songPath;
-        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackend);
+        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackendGetter);
         song.preload();
         song.preload();
         verify(mockMediaPlayer, times(1)).prepareAsync();
@@ -183,7 +183,7 @@ public class SongTest {
         String songPath = "artist/song.mp3";
         SongResult songResult = new SongResult();
         songResult.path = songPath;
-        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackend);
+        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackendGetter);
         song.preload();
         song.preload();
 
@@ -197,7 +197,7 @@ public class SongTest {
         SongResult songResult = new SongResult();
         songResult.path = songPath;
 
-        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackend);
+        final Song song = new Song(songResult, mockMediaPlayer, mockContext, mockSettings, mockSetTimeout, mockMetadataBackendGetter);
         song.preload();
 
         verify(mockMediaPlayer).setDataSource(settingsUrl + "/music/art%20ist/so%20ng.mp3");
@@ -206,10 +206,10 @@ public class SongTest {
     @Test
     public void retriesAndMarksAsPlayed_retriesAndMarks() throws Exception {
         final Song song = new Song(createDummySongResult(), mockMediaPlayer, mockContext, mockSettings,
-            mockSetTimeout, mockMetadataBackend);
+            mockSetTimeout, mockMetadataBackendGetter);
         song.play();
 
-        verify(mockMetadataBackend, times(1)).markAsPlayed(Matchers.anyInt());
+        verify(mockMetadataBackendGetter, times(1)).get().markAsPlayed(Matchers.anyInt());
    }
 
 }

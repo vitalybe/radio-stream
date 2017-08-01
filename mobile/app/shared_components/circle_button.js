@@ -7,7 +7,7 @@ const styles = {
   button: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.CYAN_DARK_CLEARER,
+    backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
     paddingHorizontal: 0,
     paddingVertical: 0,
     borderColor: colors.CYAN_BRIGHT,
@@ -27,7 +27,7 @@ export default class CircleButton extends Component {
       <TouchableHighlight
         onPress={this.props.onPress}
         style={[styles.button, { height: height, width: width, borderRadius: borderRadius }, this.props.style]}
-        underlayColor={colors.CYAN_DARK_CLEAR}
+        underlayColor={colors.CONTAINER_BACKGROUND_ACTIVE}
         activeOpacity={1}>
         <View>
           {this.props.children}

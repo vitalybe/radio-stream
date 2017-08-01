@@ -1,4 +1,4 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator("SettingsPageNative");
 
@@ -8,7 +8,7 @@ import keycode from "keycode";
 import _ from "lodash";
 import { observable } from "mobx";
 import { observer } from "mobx-react";
-import settingsNative from "../../utils/settings/settings_native";
+import settingsNative from "app/utils/settings/settings_native";
 
 import SettingsTextInput from "./settings_text_input";
 const styles = StyleSheet.create({});

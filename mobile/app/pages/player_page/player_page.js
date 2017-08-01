@@ -1,21 +1,19 @@
-import loggerCreator from "../../utils/logger";
+import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("player_page");
 
 import React, { Component } from "react";
 import { StyleSheet, View, Image } from "react-native";
-import BackHandler from "../../utils/back_handler/back_handler";
 import { observer } from "mobx-react";
 
-import Icon from "../../shared_components/icon";
-import { colors, fontSizes } from "../../styles/styles";
-import BigText from "../../shared_components/text/big_text";
+import { colors } from "app/styles/styles";
 import PlayerContextMenu from "./player_context_menu";
-import navigator from "../../stores/navigator/navigator";
-import player from "../../stores/player/player";
-import Rating from "./rating";
+import { player } from "app/stores/player/player";
+import Rating from "../../shared_components/rating";
 import AlbumArt from "./album_art";
 import PlayerControls from "./player_controls";
-import PlayerLoadingSpinner from "./player_loading_spinner";
+import LoadingSpinner from "../../shared_components/loading_spinner";
+import SongDetails from "app/pages/player_page/song_details";
+import NoPlaylistSelected from "app/pages/player_page/no_playlist_selected";
 
 const styles = StyleSheet.create({
   container: {
@@ -42,21 +40,15 @@ const styles = StyleSheet.create({
   // Sections
   albumArt: {
     marginBottom: 20,
+    flex: 1,
   },
   rating: {
     marginBottom: 20,
-    paddingHorizontal: 30,
+    paddingHorizontal: 10,
+    alignSelf: "center",
   },
   songDetails: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  // Names (artist, title, album)
-  nameText: {
-    marginBottom: 2,
-  },
-  artistText: {
-    color: colors.CYAN_BRIGHT,
+    marginBottom: 15,
   },
 });
 
@@ -64,9 +56,6 @@ const styles = StyleSheet.create({
 export default class PlayerPage extends Component {
   componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
-    logger.info(`playlist: ${this.props.playlistName}`);
-
-    BackHandler.addEventListener("hardwareBackPress", () => this.onPressHardwareBack());
   }
 
   componentDidMount() {
@@ -77,49 +66,40 @@ export default class PlayerPage extends Component {
     loggerCreator("componentWillUnmount", moduleLogger);
   }
 
-  onPressHardwareBack() {
-    loggerCreator("hardwareBackPress", moduleLogger);
-    player.pause();
-    navigator.navigateToPlaylistCollection();
-    return true;
-  }
-
   render() {
     let logger = loggerCreator("render", moduleLogger);
 
-    const song = player.song;
+    const song = player.currentSong;
     logger.info(`rendering song: ${song && song.toString()}`);
 
     return (
       <View style={styles.container}>
-        <View style={styles.playlistNameView}>
-          <Icon name="music" style={styles.playlistIcon} />
-          <BigText>{this.props.playlistName}</BigText>
-        </View>
-        {!player.isLoading
-          ? <View>
-              {/* Album art */}
-              <AlbumArt style={[styles.albumArt]} song={song} />
-              {/* Ratings */}
-              <View style={styles.rating}>
-                <Rating song={song} />
-                <PlayerContextMenu song={song} />
+        {(() => {
+          if (!player.currentPlaylist) {
+            return <NoPlaylistSelected />;
+          } else if (player.isLoading) {
+            return <LoadingSpinner message="Loading playlist..." song={song} />;
+          } else {
+            return (
+              <View style={{ flex: 1 }}>
+                {/* Album art */}
+                <AlbumArt style={[styles.albumArt]} song={song} />
+                {/* Ratings */}
+                <View style={styles.rating}>
+                  <Rating song={song} starSize={43} starMargin={5} canChangeRating={true} />
+                  <PlayerContextMenu song={song} />
+                </View>
+                {/* Names */}
+                <SongDetails song={song} style={styles.songDetails} />
+                {/* Controls */}
+                <PlayerControls />
               </View>
-              {/* Names */}
-              <View style={styles.songDetails}>
-                <BigText style={[styles.nameText]}>{`${song.title}`}</BigText>
-                <BigText style={[styles.nameText, styles.artistText]}>{`${song.artist}`}</BigText>
-                <BigText style={[styles.nameText]}>{`${song.album}`}</BigText>
-              </View>
-              {/* Controls */}
-              <PlayerControls />
-            </View>
-          : <PlayerLoadingSpinner song={song} />}
+            );
+          }
+        })()}
       </View>
     );
   }
 }
 
-PlayerPage.propTypes = {
-  playlistName: React.PropTypes.string.isRequired,
-};
+PlayerPage.propTypes = {};

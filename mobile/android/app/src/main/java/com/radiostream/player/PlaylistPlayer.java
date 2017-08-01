@@ -1,7 +1,9 @@
 package com.radiostream.player;
 
-import com.radiostream.javascript.bridge.PlaylistPlayerBridge;
-import com.radiostream.networking.MetadataBackend;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableMap;
+import com.radiostream.networking.metadata.MetadataBackendGetter;
+import com.radiostream.ui.PlayerNotification;
 import com.radiostream.util.SetTimeout;
 
 import org.jdeferred.DoneCallback;
@@ -19,7 +21,8 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
     private SetTimeout mSetTimeout;
     private Playlist mPlaylist;
     private Song mCurrentSong;
-    private MetadataBackend mMetadataBackend;
+    private MetadataBackendGetter mMetadataBackendGetter;
+    private PlayerNotification mPlayerNotification;
 
     private boolean mIsLoading = false;
     private Exception mLastLoadingError = null;
@@ -29,12 +32,14 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
 
     @Inject
     public PlaylistPlayer(Playlist playlist, SetTimeout setTimeout,
-                          MetadataBackend metadataBackend, StatusProvider statusProvider) {
+                          MetadataBackendGetter metadataBackendGetter, StatusProvider statusProvider,
+                          PlayerNotification playerNotification) {
 
         mPlaylist = playlist;
         mStatusProvider = statusProvider;
         mSetTimeout = setTimeout;
-        mMetadataBackend = metadataBackend;
+        mMetadataBackendGetter = metadataBackendGetter;
+        mPlayerNotification = playerNotification;
     }
 
     private void setSongLoadingStatus(boolean isLoading, Exception error) {
@@ -135,6 +140,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         // NOTE: the last error to the function is sent since merely retrying
         // the function doesn't clear the erro
         setSongLoadingStatus(true, mLastLoadingError);
+        mPlayerNotification.showLoadingNotification();
         mStatusProvider.sendStatus();
 
         waitForCurrentSongMarkedAsPlayed().then(new DonePipe<Boolean, Song, Exception, Void>() {
@@ -158,6 +164,7 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
             public Promise<Song, Exception, Void> pipeDone(Song song) {
                 try {
                     setSongLoadingStatus(false, null);
+                    mPlayerNotification.showSongNotification(song);
 
                     // We won't be playing any new music if playlistPlayer is closed
                     if (!mIsClosed) {
@@ -268,24 +275,21 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         play();
     }
 
-    public PlaylistPlayerBridge toBridgeObject() {
-        PlaylistPlayerBridge bridge = new PlaylistPlayerBridge();
-        bridge.isLoading = mIsLoading;
-        bridge.loadingError = mLastLoadingError;
-        bridge.isPlaying = getIsPlaying();
-        bridge.playlistBridge = mPlaylist.toBridgeObject();
-        if (mCurrentSong != null) {
-            bridge.songBridge = mCurrentSong.toBridgeObject();
-        }
+    public WritableMap toBridgeObject() {
+        WritableMap map = Arguments.createMap();
+        map.putBoolean("isLoading", mIsLoading);
+        map.putBoolean("isPlaying", getIsPlaying());
+        map.putMap("playlist", mPlaylist != null ? mPlaylist.toBridgeObject() : null);
+        map.putString("loadingError", mLastLoadingError != null ? mLastLoadingError.getMessage() : "");
 
-        return bridge;
+        return map;
     }
 
     public Promise<Void, Exception, Void> updateSongRating(int songId, final int newRating) {
         Timber.i("function start");
         final Song updatedSong = getCurrentSong();
         if (updatedSong.getId() == songId) {
-            return mMetadataBackend.updateSongRating(songId, newRating).then(new DoneCallback<Void>() {
+            return mMetadataBackendGetter.get().updateSongRating(songId, newRating).then(new DoneCallback<Void>() {
                 @Override
                 public void onDone(Void result) {
                     updatedSong.setRating(newRating);

@@ -1,10 +1,11 @@
 package com.radiostream.player;
 
-import com.radiostream.javascript.bridge.PlaylistBridge;
-import com.radiostream.networking.MetadataBackend;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
+import com.radiostream.networking.metadata.MetadataBackendGetter;
 import com.radiostream.networking.models.SongResult;
 
-import org.jdeferred.DoneFilter;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
@@ -16,15 +17,15 @@ import timber.log.Timber;
 
 public class Playlist {
     private String mPlaylistName;
-    private MetadataBackend mMetadataBackend;
+    private MetadataBackendGetter mMetadataBackendGetter;
     private SongFactory mSongFactory;
 
-    private List<Song> mSongs = new ArrayList<Song>();
+    private List<Song> mSongs = new ArrayList<>();
     private int mIndex = 0;
 
-    public Playlist(String playlistName, MetadataBackend metadataBackend, SongFactory songFactory) {
+    public Playlist(String playlistName, MetadataBackendGetter metadataBackendGetter, SongFactory songFactory) {
         mPlaylistName = playlistName;
-        mMetadataBackend = metadataBackend;
+        mMetadataBackendGetter = metadataBackendGetter;
         mSongFactory = songFactory;
     }
 
@@ -33,7 +34,7 @@ public class Playlist {
         if (index >= mSongs.size()) {
             Timber.i("reloading songs");
 
-            return mMetadataBackend.fetchPlaylist(mPlaylistName).then(new DonePipe<List<SongResult>, Void, Exception, Void>() {
+            return mMetadataBackendGetter.get().fetchPlaylist(mPlaylistName).then(new DonePipe<List<SongResult>, Void, Exception, Void>() {
                 @Override
                 public Promise<Void, Exception, Void> pipeDone(List<SongResult> result) {
                     if (result.size() == 0) {
@@ -101,10 +102,18 @@ public class Playlist {
         });
     }
 
-    public PlaylistBridge toBridgeObject() {
-        final PlaylistBridge playlistBridge = new PlaylistBridge();
-        playlistBridge.name = mPlaylistName;
-        return playlistBridge;
+    public WritableMap toBridgeObject() {
+        WritableMap map = Arguments.createMap();
+        map.putString("name", this.mPlaylistName);
+        map.putInt("currentIndex", this.mIndex);
+
+        WritableArray songsArray = Arguments.createArray();
+        for (Song song : this.mSongs) {
+            songsArray.pushMap(song.toBridgeObject());
+        }
+        map.putArray("songs", songsArray);
+
+        return map;
     }
 
     public void close() {

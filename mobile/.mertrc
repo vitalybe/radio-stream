@@ -1,0 +1,8 @@
+launch_strategy: tab
+layout:
+  -
+    - ~/Library/Android/sdk/tools/emulator @Galaxy_S6_API_24
+    - `realpath ./node_modules/react-native/packager/launchPackager.command`
+    - yarn run android
+  -
+    - pwd
