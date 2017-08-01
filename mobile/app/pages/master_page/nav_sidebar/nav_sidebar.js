@@ -3,7 +3,8 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("NavSidebar");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, Text, View, Platform } from "react-native";
+import { StyleSheet, View, Platform, Animated } from "react-native";
+import { autorun } from "mobx";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";
@@ -38,7 +39,28 @@ const styles = StyleSheet.create({
 
 @observer
 export default class NavSidebar extends Component {
-  async componentWillMount() {}
+  componentWillMount() {
+    this.state = {
+      leftAnimation: new Animated.Value(masterStore.isNavigationSidebarOpen ? OPEN_LEFT : CLOSED_LEFT),
+    };
+
+    this.autorunDisposer = autorun(() => {
+      const logger = loggerCreator("autorun", moduleLogger);
+      logger.info(`new value of isNavigationSidebarOpen: ${masterStore.isNavigationSidebarOpen}`);
+      this.onSidebarToggled(masterStore.isNavigationSidebarOpen);
+    });
+  }
+
+  componentWillUnmount() {
+    this.autorunDisposer();
+  }
+
+  onSidebarToggled(isOpen) {
+    Animated.timing(this.state.leftAnimation, {
+      toValue: isOpen ? OPEN_LEFT : CLOSED_LEFT,
+      duration: 200,
+    }).start();
+  }
 
   onPlaylistPress = async playlistName => {
     await player.changePlaylist(playlistName);
@@ -77,10 +99,8 @@ export default class NavSidebar extends Component {
   render() {
     loggerCreator(this.render.name, moduleLogger);
 
-    const left = masterStore.isNavigationSidebarOpen ? OPEN_LEFT : CLOSED_LEFT;
-
     return (
-      <View style={[styles.sidebar, { left: left }]}>
+      <Animated.View style={[styles.sidebar, { left: this.state.leftAnimation }]}>
         <NavSidebarMenuTitle text="Radio Stream" />
         <NavSidebarMenuItem text="Player" leftImage={playIcon} onPress={this.onPlayerPress} />
         <NavSidebarMenuItem text="Search" leftImage={playIcon} onPress={this.onSearchPress} />
@@ -99,7 +119,7 @@ export default class NavSidebar extends Component {
             onRightImagePress={() => this.onPlaylistEditPress(playlist)}
           />
         )}
-      </View>
+      </Animated.View>
     );
   }
 }
