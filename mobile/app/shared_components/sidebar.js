@@ -33,7 +33,7 @@ export default class Sidebar extends Component {
   componentWillMount() {
     this.openPosition = -2 - SCRUB_WIDTH;
     this.closePosition = this.openPosition - this.props.width;
-    this.state = { positionAnimation: new Animated.Value(this.props.isOpen ? this.openPosition : this.closePosition) };
+    this.state = { positionAnimation: new Animated.Value(this.targetAnimatedPosition(this.props.isOpen)) };
 
     this.panResponder = PanResponder.create({
       onMoveShouldSetPanResponder: this.onMoveShouldSetPanResponder,
@@ -48,6 +48,14 @@ export default class Sidebar extends Component {
     this.slideSidebar(nextProps.isOpen);
   }
 
+  adjustMovementBySide(value) {
+    return this.props.fromLeft ? value : -value;
+  }
+
+  targetAnimatedPosition(isOpen) {
+    return isOpen ? this.openPosition : this.closePosition;
+  }
+
   onMoveShouldSetPanResponder = (evt, gestureState) => {
     return gestureState.numberActiveTouches > 0 && Math.abs(gestureState.dx) > 1;
   };
@@ -59,7 +67,8 @@ export default class Sidebar extends Component {
   };
 
   onPanResponderMove = (evt, gestureState) => {
-    this.state.positionAnimation.setValue(gestureState.dx);
+    const movedX = this.props.fromLeft ? gestureState.dx : -gestureState.dx;
+    this.state.positionAnimation.setValue(this.adjustMovementBySide(gestureState.dx));
   };
 
   onPanResponderRelease = (evt, gestureState) => {
@@ -67,7 +76,7 @@ export default class Sidebar extends Component {
 
     this.state.positionAnimation.flattenOffset();
 
-    let toOpen = gestureState.vx > 0;
+    let toOpen = this.adjustMovementBySide(gestureState.vx) > 0;
     if (this.props.isOpen !== toOpen) {
       this.props.onChangeOpen(toOpen);
     } else {
@@ -77,7 +86,7 @@ export default class Sidebar extends Component {
 
   slideSidebar(isOpen) {
     Animated.timing(this.state.positionAnimation, {
-      toValue: isOpen ? this.openPosition : this.closePosition,
+      toValue: this.targetAnimatedPosition(isOpen),
       duration: 200,
     }).start();
   }

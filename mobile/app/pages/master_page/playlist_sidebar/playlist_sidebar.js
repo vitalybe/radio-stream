@@ -14,21 +14,14 @@ import BigText from "app/shared_components/text/big_text";
 import SongsGrid from "app/shared_components/songs_grid/songs_grid";
 import { dimensionsStore } from "app/stores/dimensions_store";
 import { player } from "app/stores/player/player";
+import Sidebar from "app/shared_components/sidebar";
 
 const BIG_WIDTH = 900;
 const SMALL_WIDTH = 336;
 const OPEN_RIGHT = -2;
 
 const styles = StyleSheet.create({
-  sidebar: {
-    position: "absolute",
-    backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
-    top: 54,
-    bottom: -1,
-    borderColor: colors.CYAN_BRIGHT,
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderTopLeftRadius: 5,
+  container: {
     padding: 15,
   },
   playlistImage: {
@@ -48,31 +41,39 @@ const styles = StyleSheet.create({
 
 @observer
 export default class PlaylistSidebar extends Component {
+  onChangeOpen = isOpen => {
+    masterStore.isPlaylistSidebarOpen = isOpen;
+  };
+
   render() {
     loggerCreator(this.render.name, moduleLogger);
 
     const width = dimensionsStore.width > BIG_WIDTH ? BIG_WIDTH : SMALL_WIDTH;
-    const closedRight = OPEN_RIGHT - width;
-    const right = masterStore.isPlaylistSidebarOpen ? OPEN_RIGHT : closedRight;
 
     return (
-      <ScrollView horizontal={false} style={[styles.sidebar, { width: width, right: right }]}>
-        <View style={styles.header}>
-          <Image source={playlistImage} style={styles.playlistImage} />
-          <BigText style={styles.playlistName}>
-            {player.currentPlaylist.name}
-          </BigText>
-        </View>
-        {/* HACK - unusedWindowWidth is given only to force re-render of SongsGrid which doesn't happen on resize. In theory
+      <Sidebar
+        width={width}
+        fromLeft={false}
+        isOpen={masterStore.isPlaylistSidebarOpen}
+        onChangeOpen={this.onChangeOpen}>
+        <ScrollView horizontal={false} style={[styles.container]}>
+          <View style={styles.header}>
+            <Image source={playlistImage} style={styles.playlistImage} />
+            <BigText style={styles.playlistName}>
+              {player.currentPlaylist.name}
+            </BigText>
+          </View>
+          {/* HACK - unusedWindowWidth is given only to force re-render of SongsGrid which doesn't happen on resize. In theory
          the render should've happened automatically, but it doesn't (I think it is React Fiber bug). The other
           alternative would be to listen to DimensionsEmitter in SongsGrid but that would only covert resizes that
           were triggered by Window resizing */}
-        <SongsGrid
-          unusedWindowWidth={width}
-          songs={player.currentPlaylist.songs.toJS()}
-          highlightedSong={player.currentSong}
-        />
-      </ScrollView>
+          <SongsGrid
+            unusedWindowWidth={width}
+            songs={player.currentPlaylist.songs.toJS()}
+            highlightedSong={player.currentSong}
+          />
+        </ScrollView>
+      </Sidebar>
     );
   }
 }
