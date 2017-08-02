@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("MasterPage");
 
 import React, { Component } from "react";
-import { Image, StyleSheet } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
 
 import { MenuContext } from "app/shared_components/context_menu/context_menu";
@@ -23,7 +23,6 @@ import { player } from "app/stores/player/player";
 import { playlistsStore } from "app/stores/playlists_store";
 import { masterStore } from "app/stores/master_store";
 import SearchPage from "app/pages/search_page/search_page";
-import SavePlaylistPage from "app/pages/search_page/playlist_name_part";
 
 const styles = StyleSheet.create({
   container: {
@@ -37,6 +36,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   menuContext: { flex: 1, alignSelf: "stretch" },
+  sidebarCurtain: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: "transparent",
+  },
 });
 
 @observer
@@ -73,6 +80,10 @@ export default class MasterPage extends Component {
     this.setState({ ready: true });
   }
 
+  onSidebarCurtainPress = () => {
+    masterStore.closeSidebars();
+  };
+
   render() {
     let logger = loggerCreator(this.render.name, moduleLogger);
     logger.info(`activate route: ${navigator.activeRoute}`);
@@ -103,6 +114,9 @@ export default class MasterPage extends Component {
             <Topbar />
             {page}
           </MenuContext>
+          {masterStore.isPlaylistSidebarOpen || masterStore.isNavigationSidebarOpen
+            ? <View style={styles.sidebarCurtain} onStartShouldSetResponder={this.onSidebarCurtainPress} />
+            : null}
           <NavSidebar />
           {player.currentPlaylist ? <PlaylistSidebar /> : null}
         </Image>
