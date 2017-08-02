@@ -3,12 +3,10 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("NavSidebar");
 
 import React, { Component } from "react";
-import { StyleSheet, View, Platform, Animated, PanResponder } from "react-native";
-import { autorun } from "mobx";
+import { StyleSheet, View, Platform } from "react-native";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";
-import { colors } from "app/styles/styles";
 import NavSidebarMenuItem from "./nav_sidebar_menu_item";
 import NavSidebarMenuTitle from "./nav_sidebar_menu_title";
 import BackHandler from "app/utils/back_handler/back_handler";
@@ -18,68 +16,14 @@ import playIcon from "app/images/play.png";
 import pencilIcon from "app/images/pencil-icon.png";
 import { playlistsStore } from "app/stores/playlists_store";
 import { navigator } from "app/stores/navigator.js";
+import Sidebar from "app/shared_components/sidebar";
 
 const WIDTH = 336;
-const OPEN_LEFT = -2;
-const CLOSED_LEFT = OPEN_LEFT - WIDTH;
-
-const styles = StyleSheet.create({
-  sidebar: {
-    position: "absolute",
-    backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
-    top: 54,
-    bottom: -1,
-    width: WIDTH,
-    borderColor: colors.CYAN_BRIGHT,
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderTopRightRadius: 5,
-  },
-});
+const styles = StyleSheet.create({});
 
 @observer
 export default class NavSidebar extends Component {
-  componentWillMount() {
-    this.state = {
-      leftAnimation: new Animated.Value(masterStore.isNavigationSidebarOpen ? OPEN_LEFT : CLOSED_LEFT),
-    };
-
-    this.autorunDisposer = autorun(() => {
-      const logger = loggerCreator("autorun", moduleLogger);
-      logger.info(`new value of isNavigationSidebarOpen: ${masterStore.isNavigationSidebarOpen}`);
-      this.toggleSidebar(masterStore.isNavigationSidebarOpen);
-    });
-
-    this.panResponder = PanResponder.create({
-      onMoveShouldSetPanResponder: (evt, gestureState) => {
-        loggerCreator("onMoveShouldSetPanResponder", moduleLogger);
-        return gestureState.numberActiveTouches > 0 && Math.abs(gestureState.dx) > 10;
-      },
-      onPanResponderGrant: () => {
-        loggerCreator("onPanResponderGrant", moduleLogger);
-        this.state.leftAnimation.setOffset(this.state.leftAnimation._value);
-        this.state.leftAnimation.setValue(0);
-      },
-      onPanResponderMove: Animated.event([null, { dx: this.state.leftAnimation }]),
-      onPanResponderRelease: (evt, gestureState) => {
-        loggerCreator("onPanResponderRelease", moduleLogger);
-
-        this.state.leftAnimation.flattenOffset();
-        masterStore.isNavigationSidebarOpen = gestureState.vx > 0;
-      },
-    });
-  }
-
-  componentWillUnmount() {
-    this.autorunDisposer();
-  }
-
-  toggleSidebar(isOpen) {
-    Animated.timing(this.state.leftAnimation, {
-      toValue: isOpen ? OPEN_LEFT : CLOSED_LEFT,
-      duration: 200,
-    }).start();
-  }
+  componentWillMount() {}
 
   onPlaylistPress = async playlistName => {
     await player.changePlaylist(playlistName);
@@ -115,22 +59,19 @@ export default class NavSidebar extends Component {
     BackHandler.exitApp();
   };
 
+  onChangeOpen = isOpen => {
+    masterStore.isNavigationSidebarOpen = isOpen;
+  };
+
   render() {
     loggerCreator(this.render.name, moduleLogger);
 
     return (
-      <Animated.View
-        style={[
-          styles.sidebar,
-          {
-            left: this.state.leftAnimation.interpolate({
-              inputRange: [CLOSED_LEFT, OPEN_LEFT],
-              outputRange: [CLOSED_LEFT, OPEN_LEFT],
-              extrapolate: "clamp",
-            }),
-          },
-        ]}
-        {...this.panResponder.panHandlers}>
+      <Sidebar
+        width={WIDTH}
+        fromLeft={true}
+        isOpen={masterStore.isNavigationSidebarOpen}
+        onChangeOpen={this.onChangeOpen}>
         <NavSidebarMenuTitle text="Radio Stream" />
         <NavSidebarMenuItem text="Player" leftImage={playIcon} onPress={this.onPlayerPress} />
         <NavSidebarMenuItem text="Search" leftImage={playIcon} onPress={this.onSearchPress} />
@@ -149,7 +90,7 @@ export default class NavSidebar extends Component {
             onRightImagePress={() => this.onPlaylistEditPress(playlist)}
           />
         )}
-      </Animated.View>
+      </Sidebar>
     );
   }
 }
