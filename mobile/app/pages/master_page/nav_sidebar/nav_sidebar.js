@@ -29,26 +29,21 @@ export default class NavSidebar extends Component {
     await player.changePlaylist(playlistName);
     player.play();
     navigator.navigateToPlayer();
-    masterStore.closeSidebars();
   };
 
   onPlaylistEditPress = playlist => {
-    masterStore.closeSidebars();
     navigator.navigateToSearch(playlist.query, playlist.name);
   };
 
   onPlayerPress = () => {
-    masterStore.closeSidebars();
     navigator.navigateToPlayer();
   };
 
   onSearchPress = () => {
-    masterStore.closeSidebars();
     navigator.navigateToSearch();
   };
 
   onSettingsPress = () => {
-    masterStore.closeSidebars();
     navigator.navigateToSettings();
   };
 

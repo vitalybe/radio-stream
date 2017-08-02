@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import NormalText from "app/shared_components/text/normal_text";
 import { colors } from "app/styles/styles";
 import HoverableOpacity from "app/utils/hoverable_opacity";
+import { masterStore } from "app/stores/master_store";
 
 const styles = StyleSheet.create({
   itemContainer: {
@@ -35,6 +36,16 @@ const styles = StyleSheet.create({
 
 @observer
 export default class NavSidebarMenuItem extends Component {
+  onPress = () => {
+    masterStore.closeSidebars();
+    this.props.onPress();
+  };
+
+  onRightImagePress = () => {
+    masterStore.closeSidebars();
+    this.props.onRightImagePress();
+  };
+
   render() {
     let itemContainerBackground = "transparent";
     if (this.props.isActive) {
@@ -47,7 +58,7 @@ export default class NavSidebarMenuItem extends Component {
           style={[styles.leftTouchable]}
           activeOpacity={0.5}
           hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}
-          onPress={this.props.onPress}>
+          onPress={this.onPress}>
           <View style={[styles.leftContent]}>
             <Image source={this.props.leftImage} style={styles.leftImage} />
             <NormalText style={styles.itemText}>
@@ -59,7 +70,7 @@ export default class NavSidebarMenuItem extends Component {
           ? <HoverableOpacity
               style={styles.rightImageContainer}
               activeOpacity={0.5}
-              onPress={this.props.onRightImagePress}
+              onPress={() => this.onRightImagePress}
               hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}>
               <Image source={this.props.rightImage} resizeMode="contain" style={styles.rightImage} />
             </HoverableOpacity>
