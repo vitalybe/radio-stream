@@ -45,11 +45,7 @@ export default class Sidebar extends Component {
 
   componentWillReceiveProps(nextProps) {
     loggerCreator("componentWillReceiveProps", moduleLogger);
-
-    Animated.timing(this.state.positionAnimation, {
-      toValue: nextProps.isOpen ? this.openPosition : this.closePosition,
-      duration: 200,
-    }).start();
+    this.slideSidebar(nextProps.isOpen);
   }
 
   onMoveShouldSetPanResponder = (evt, gestureState) => {
@@ -70,8 +66,21 @@ export default class Sidebar extends Component {
     loggerCreator("onPanResponderRelease", moduleLogger);
 
     this.state.positionAnimation.flattenOffset();
-    this.props.onChangeOpen(gestureState.vx > 0);
+
+    let toOpen = gestureState.vx > 0;
+    if (this.props.isOpen !== toOpen) {
+      this.props.onChangeOpen(toOpen);
+    } else {
+      this.slideSidebar(toOpen);
+    }
   };
+
+  slideSidebar(isOpen) {
+    Animated.timing(this.state.positionAnimation, {
+      toValue: isOpen ? this.openPosition : this.closePosition,
+      duration: 200,
+    }).start();
+  }
 
   render() {
     const targetSide = this.props.fromLeft ? "left" : "right";
