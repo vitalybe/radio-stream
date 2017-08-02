@@ -7,22 +7,31 @@ import { Image, StyleSheet, Text, View, Animated, PanResponder } from "react-nat
 import { observer } from "mobx-react";
 import { colors } from "app/styles/styles";
 
+const SCRUB_WIDTH = 30;
+
 const styles = StyleSheet.create({
-  sidebar: {
+  container: {
     position: "absolute",
-    backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
     top: 54,
     bottom: -1,
+    flexDirection: "row",
+  },
+  scrub: {
+    width: SCRUB_WIDTH,
+    backgroundColor: "transparent",
+  },
+  sidebar: {
+    borderWidth: 1,
     borderColor: colors.CYAN_BRIGHT,
     borderStyle: "solid",
-    borderWidth: 1,
+    backgroundColor: colors.CONTAINER_BACKGROUND_NORMAL,
   },
 });
 
 @observer
 export default class Sidebar extends Component {
   componentWillMount() {
-    this.openPosition = -2;
+    this.openPosition = -2 - SCRUB_WIDTH;
     this.closePosition = this.openPosition - this.props.width;
     this.state = { positionAnimation: new Animated.Value(this.props.isOpen ? this.openPosition : this.closePosition) };
 
@@ -44,7 +53,7 @@ export default class Sidebar extends Component {
   }
 
   onMoveShouldSetPanResponder = (evt, gestureState) => {
-    return gestureState.numberActiveTouches > 0 && Math.abs(gestureState.dx) > 10;
+    return gestureState.numberActiveTouches > 0 && Math.abs(gestureState.dx) > 1;
   };
 
   onPanResponderGrant = () => {
@@ -71,10 +80,8 @@ export default class Sidebar extends Component {
     return (
       <Animated.View
         style={[
-          styles.sidebar,
+          styles.container,
           {
-            width: this.props.width,
-            [targetRoundedCorner]: 5,
             [targetSide]: this.state.positionAnimation.interpolate({
               inputRange: [this.closePosition, this.openPosition],
               outputRange: [this.closePosition, this.openPosition],
@@ -83,7 +90,18 @@ export default class Sidebar extends Component {
           },
         ]}
         {...this.panResponder.panHandlers}>
-        {this.props.children}
+        <View style={styles.scrub} />
+        <View
+          style={[
+            styles.sidebar,
+            {
+              width: this.props.width,
+              [targetRoundedCorner]: 5,
+            },
+          ]}>
+          {this.props.children}
+        </View>
+        <View style={styles.scrub} />
       </Animated.View>
     );
   }
