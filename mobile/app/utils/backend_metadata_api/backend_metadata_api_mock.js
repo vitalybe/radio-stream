@@ -20,6 +20,13 @@ class BackendMetadataApiMock {
     return _.startCase(chance.sentence({ words: chance.integer({ min: 1, max: 3 }) }));
   }
 
+  _createMockPLaylist() {
+    return {
+      name: this._mockName(),
+      query: this._mockName(),
+    };
+  }
+
   _createMockSong() {
     return {
       id: this.lastId++,
@@ -46,7 +53,7 @@ class BackendMetadataApiMock {
 
   async playlists() {
     await sleep(500);
-    return playlistResponse;
+    return _.range(5).map(() => this._createMockPLaylist());
   }
 
   async playlistSongs(playlistName) {
