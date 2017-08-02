@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import { colors } from "app/styles/styles";
 
 const SCRUB_WIDTH = 30;
+const MIN_SPEED_TO_TOGGLE_SIDEBAR = 0.1;
 
 const styles = StyleSheet.create({
   container: {
@@ -67,16 +68,21 @@ export default class Sidebar extends Component {
   };
 
   onPanResponderMove = (evt, gestureState) => {
-    const movedX = this.props.fromLeft ? gestureState.dx : -gestureState.dx;
     this.state.positionAnimation.setValue(this.adjustMovementBySide(gestureState.dx));
   };
 
   onPanResponderRelease = (evt, gestureState) => {
-    loggerCreator("onPanResponderRelease", moduleLogger);
+    let logger = loggerCreator("onPanResponderRelease", moduleLogger);
 
     this.state.positionAnimation.flattenOffset();
 
-    let toOpen = this.adjustMovementBySide(gestureState.vx) > 0;
+    let toOpen = null;
+    if (Math.abs(gestureState.vx) > MIN_SPEED_TO_TOGGLE_SIDEBAR) {
+      toOpen = this.adjustMovementBySide(gestureState.vx) > MIN_SPEED_TO_TOGGLE_SIDEBAR;
+    } else {
+      toOpen = !this.props.isOpen;
+    }
+
     if (this.props.isOpen !== toOpen) {
       this.props.onChangeOpen(toOpen);
     } else {
