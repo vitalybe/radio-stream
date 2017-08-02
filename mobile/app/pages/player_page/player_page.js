@@ -78,7 +78,7 @@ export default class PlayerPage extends Component {
           if (!player.currentPlaylist) {
             return <NoPlaylistSelected />;
           } else if (player.isLoading) {
-            return <LoadingSpinner message="Loading playlist..." song={song} />;
+            return <LoadingSpinner message={`Loading playlist: ${player.currentPlaylist.name}`} song={song} />;
           } else {
             return (
               <View style={{ flex: 1 }}>

@@ -7,7 +7,7 @@ import { Image, StyleSheet, Text, View, Animated, PanResponder } from "react-nat
 import { observer } from "mobx-react";
 import { colors } from "app/styles/styles";
 
-const SCRUB_WIDTH = 30;
+const SCRUB_WIDTH = 60;
 const MIN_SPEED_TO_TOGGLE_SIDEBAR = 0.1;
 
 const styles = StyleSheet.create({
@@ -58,7 +58,7 @@ export default class Sidebar extends Component {
   }
 
   onMoveShouldSetPanResponder = (evt, gestureState) => {
-    return gestureState.numberActiveTouches > 0 && Math.abs(gestureState.dx) > 1;
+    return gestureState.numberActiveTouches > 0 && Math.abs(gestureState.dx) > 10;
   };
 
   onPanResponderGrant = () => {
@@ -73,9 +73,9 @@ export default class Sidebar extends Component {
 
   onPanResponderRelease = (evt, gestureState) => {
     let logger = loggerCreator("onPanResponderRelease", moduleLogger);
-
     this.state.positionAnimation.flattenOffset();
 
+    logger.info(`velocity x: ${gestureState.vx}`);
     let toOpen = null;
     if (Math.abs(gestureState.vx) > MIN_SPEED_TO_TOGGLE_SIDEBAR) {
       toOpen = this.adjustMovementBySide(gestureState.vx) > MIN_SPEED_TO_TOGGLE_SIDEBAR;

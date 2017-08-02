@@ -117,8 +117,8 @@ export default class MasterPage extends Component {
           {masterStore.isPlaylistSidebarOpen || masterStore.isNavigationSidebarOpen
             ? <View style={styles.sidebarCurtain} onStartShouldSetResponder={this.onSidebarCurtainPress} />
             : null}
-          <NavSidebar />
-          {player.currentPlaylist ? <PlaylistSidebar /> : null}
+          {!masterStore.isPlaylistSidebarOpen ? <NavSidebar /> : null}
+          {player.currentPlaylist && !masterStore.isNavigationSidebarOpen ? <PlaylistSidebar /> : null}
         </Image>
       );
     } else {
