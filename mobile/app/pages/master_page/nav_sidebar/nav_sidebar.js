@@ -66,7 +66,8 @@ export default class NavSidebar extends Component {
         width={WIDTH}
         fromLeft={true}
         isOpen={masterStore.isNavigationSidebarOpen}
-        onChangeOpen={this.onChangeOpen}>
+        onChangeOpen={this.onChangeOpen}
+        enableScrubs={!masterStore.isPlaylistSidebarOpen}>
         <NavSidebarMenuTitle text="Radio Stream" />
         <NavSidebarMenuItem text="Player" leftImage={playIcon} onPress={this.onPlayerPress} />
         <NavSidebarMenuItem text="Search" leftImage={playIcon} onPress={this.onSearchPress} />

@@ -55,7 +55,8 @@ export default class PlaylistSidebar extends Component {
         width={width}
         fromLeft={false}
         isOpen={masterStore.isPlaylistSidebarOpen}
-        onChangeOpen={this.onChangeOpen}>
+        onChangeOpen={this.onChangeOpen}
+        enableScrubs={!masterStore.isNavigationSidebarOpen}>
         <ScrollView horizontal={false} style={[styles.container]}>
           <View style={styles.header}>
             <Image source={playlistImage} style={styles.playlistImage} />

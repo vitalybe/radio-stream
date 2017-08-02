@@ -108,17 +108,20 @@ export default class MasterPage extends Component {
     }
 
     if (this.state.ready) {
+      const isAnySidebarOpen = masterStore.isPlaylistSidebarOpen || masterStore.isNavigationSidebarOpen;
+      const sidebarCurtains = (
+        <View style={styles.sidebarCurtain} onStartShouldSetResponder={this.onSidebarCurtainPress} />
+      );
+
       return (
         <Image source={backgroundImage} style={styles.container}>
           <MenuContext customStyles={{ menuContextWrapper: styles.menuContext }}>
             <Topbar />
             {page}
           </MenuContext>
-          {masterStore.isPlaylistSidebarOpen || masterStore.isNavigationSidebarOpen
-            ? <View style={styles.sidebarCurtain} onStartShouldSetResponder={this.onSidebarCurtainPress} />
-            : null}
-          {!masterStore.isPlaylistSidebarOpen ? <NavSidebar /> : null}
-          {player.currentPlaylist && !masterStore.isNavigationSidebarOpen ? <PlaylistSidebar /> : null}
+          {isAnySidebarOpen ? sidebarCurtains : null}
+          <NavSidebar />
+          {player.currentPlaylist ? <PlaylistSidebar /> : null}
         </Image>
       );
     } else {

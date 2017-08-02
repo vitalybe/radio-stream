@@ -83,23 +83,29 @@ export default class Sidebar extends Component {
       toOpen = !this.props.isOpen;
     }
 
-    if (this.props.isOpen !== toOpen) {
-      this.props.onChangeOpen(toOpen);
-    } else {
-      this.slideSidebar(toOpen);
-    }
+    this.slideSidebar(toOpen);
   };
 
   slideSidebar(isOpen) {
+    const logger = loggerCreator("slideSidebar", moduleLogger);
+
     Animated.timing(this.state.positionAnimation, {
       toValue: this.targetAnimatedPosition(isOpen),
       duration: 200,
-    }).start();
+    }).start(status => {
+      logger.info(`animation finished (${status.finished})?`);
+      if (status.finished) {
+        logger.info(`modifying master store property to: ${isOpen}`);
+        this.props.onChangeOpen(isOpen);
+      }
+    });
   }
 
   render() {
     const targetSide = this.props.fromLeft ? "left" : "right";
     const targetRoundedCorner = this.props.fromLeft ? "borderTopRightRadius" : "borderTopLeftRadius";
+
+    const scrubs = this.props.enableScrubs ? <View style={[styles.scrub]} /> : null;
 
     return (
       <Animated.View
@@ -114,7 +120,7 @@ export default class Sidebar extends Component {
           },
         ]}
         {...this.panResponder.panHandlers}>
-        <View style={styles.scrub} />
+        {scrubs}
         <View
           style={[
             styles.sidebar,
@@ -125,7 +131,7 @@ export default class Sidebar extends Component {
           ]}>
           {this.props.children}
         </View>
-        <View style={styles.scrub} />
+        {scrubs}
       </Animated.View>
     );
   }
@@ -137,4 +143,6 @@ Sidebar.propTypes = {
 
   isOpen: React.PropTypes.bool.isRequired,
   onChangeOpen: React.PropTypes.func.isRequired,
+
+  enableScrubs: React.PropTypes.bool,
 };
