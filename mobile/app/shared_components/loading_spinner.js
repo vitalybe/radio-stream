@@ -8,6 +8,7 @@ import { Image, StyleSheet, View, ActivityIndicator } from "react-native";
 import NormalText from "app/shared_components/text/normal_text";
 import { player } from "app/stores/player/player";
 import SongDetails from "app/pages/player_page/song_details";
+import BigText from "app/shared_components/text/big_text";
 
 const styles = StyleSheet.create({
   container: {
@@ -27,6 +28,9 @@ const styles = StyleSheet.create({
   progressStatusError: {
     color: "red",
   },
+  songDetails: {
+    marginTop: 20,
+  },
 });
 
 export default class LoadingSpinner extends Component {
@@ -45,9 +49,9 @@ export default class LoadingSpinner extends Component {
         </View>
         <View style={styles.progressStatus}>
           {this.props.message
-            ? <NormalText>
+            ? <BigText>
                 {this.props.message}
-              </NormalText>
+              </BigText>
             : null}
           {this.props.song ? <SongDetails song={this.props.song} style={styles.songDetails} /> : null}
           <NormalText style={styles.progressStatusError}>
