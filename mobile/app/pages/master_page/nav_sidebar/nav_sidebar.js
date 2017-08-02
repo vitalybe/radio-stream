@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("NavSidebar");
 
 import React, { Component } from "react";
-import { StyleSheet, View, Platform, Animated } from "react-native";
+import { StyleSheet, View, Platform, Animated, PanResponder } from "react-native";
 import { autorun } from "mobx";
 import { observer } from "mobx-react";
 
@@ -47,7 +47,26 @@ export default class NavSidebar extends Component {
     this.autorunDisposer = autorun(() => {
       const logger = loggerCreator("autorun", moduleLogger);
       logger.info(`new value of isNavigationSidebarOpen: ${masterStore.isNavigationSidebarOpen}`);
-      this.onSidebarToggled(masterStore.isNavigationSidebarOpen);
+      this.toggleSidebar(masterStore.isNavigationSidebarOpen);
+    });
+
+    this.panResponder = PanResponder.create({
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        loggerCreator("onMoveShouldSetPanResponder", moduleLogger);
+        return gestureState.numberActiveTouches > 0 && Math.abs(gestureState.dx) > 10;
+      },
+      onPanResponderGrant: () => {
+        loggerCreator("onPanResponderGrant", moduleLogger);
+        this.state.leftAnimation.setOffset(this.state.leftAnimation._value);
+        this.state.leftAnimation.setValue(0);
+      },
+      onPanResponderMove: Animated.event([null, { dx: this.state.leftAnimation }]),
+      onPanResponderRelease: (evt, gestureState) => {
+        loggerCreator("onPanResponderRelease", moduleLogger);
+
+        this.state.leftAnimation.flattenOffset();
+        masterStore.isNavigationSidebarOpen = gestureState.vx > 0;
+      },
     });
   }
 
@@ -55,7 +74,7 @@ export default class NavSidebar extends Component {
     this.autorunDisposer();
   }
 
-  onSidebarToggled(isOpen) {
+  toggleSidebar(isOpen) {
     Animated.timing(this.state.leftAnimation, {
       toValue: isOpen ? OPEN_LEFT : CLOSED_LEFT,
       duration: 200,
@@ -100,7 +119,18 @@ export default class NavSidebar extends Component {
     loggerCreator(this.render.name, moduleLogger);
 
     return (
-      <Animated.View style={[styles.sidebar, { left: this.state.leftAnimation }]}>
+      <Animated.View
+        style={[
+          styles.sidebar,
+          {
+            left: this.state.leftAnimation.interpolate({
+              inputRange: [CLOSED_LEFT, OPEN_LEFT],
+              outputRange: [CLOSED_LEFT, OPEN_LEFT],
+              extrapolate: "clamp",
+            }),
+          },
+        ]}
+        {...this.panResponder.panHandlers}>
         <NavSidebarMenuTitle text="Radio Stream" />
         <NavSidebarMenuItem text="Player" leftImage={playIcon} onPress={this.onPlayerPress} />
         <NavSidebarMenuItem text="Search" leftImage={playIcon} onPress={this.onSearchPress} />
