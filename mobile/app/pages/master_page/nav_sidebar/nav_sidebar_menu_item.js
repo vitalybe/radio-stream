@@ -15,7 +15,10 @@ const styles = StyleSheet.create({
     height: 45,
     paddingLeft: 10,
   },
-  itemTextPart: {
+  leftTouchable: {
+    flex: 1,
+  },
+  leftContent: {
     alignItems: "center",
     flexDirection: "row",
     paddingRight: 10,
@@ -41,14 +44,16 @@ export default class NavSidebarMenuItem extends Component {
     return (
       <View style={[styles.itemContainer, { backgroundColor: itemContainerBackground }]}>
         <HoverableOpacity
-          style={[styles.itemTextPart]}
+          style={[styles.leftTouchable]}
           activeOpacity={0.5}
           hoverStyle={{ backgroundColor: colors.CONTAINER_BACKGROUND_HOVER }}
           onPress={this.props.onPress}>
-          <Image source={this.props.leftImage} style={styles.leftImage} />
-          <NormalText style={styles.itemText}>
-            {this.props.text}
-          </NormalText>
+          <View style={[styles.leftContent]}>
+            <Image source={this.props.leftImage} style={styles.leftImage} />
+            <NormalText style={styles.itemText}>
+              {this.props.text}
+            </NormalText>
+          </View>
         </HoverableOpacity>
         {this.props.rightImage
           ? <HoverableOpacity
