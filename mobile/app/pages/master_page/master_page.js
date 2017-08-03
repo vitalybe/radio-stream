@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 
 import { MenuContext } from "app/shared_components/context_menu/context_menu";
 import NavSidebar from "./nav_sidebar/nav_sidebar";
-import constants from "app/utils/constants";
+import { routes } from "app/utils/routes";
 import { navigator } from "app/stores/navigator.js";
 import settings from "app/utils/settings/settings";
 import settingsNative from "app/utils/settings/settings_native";
@@ -93,13 +93,13 @@ export default class MasterPage extends Component {
 
     if (activeRoute) {
       switch (activeRoute.address) {
-        case constants.ROUTE_PLAYER_PAGE:
+        case routes.PLAYER_PAGE:
           page = <PlayerPage {...activeRoute} />;
           break;
-        case constants.ROUTE_SETTINGS_PAGE:
+        case routes.SETTINGS_PAGE:
           page = <SettingsPage {...activeRoute} />;
           break;
-        case constants.ROUTE_SEARCH_PAGE:
+        case routes.SEARCH_PAGE:
           page = <SearchPage {...activeRoute} />;
           break;
         default:

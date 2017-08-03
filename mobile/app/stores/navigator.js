@@ -3,7 +3,7 @@ const moduleLogger = loggerCreator("navigator");
 
 import { observable } from "mobx";
 
-import constants from "app/utils/constants";
+import { routes } from "app/utils/routes";
 
 class Navigator {
   @observable activeRoute = null;
@@ -20,18 +20,18 @@ class Navigator {
 
   navigateToPlayer() {
     loggerCreator("navigateToPlayer", moduleLogger);
-    this._navigateTo(constants.ROUTE_PLAYER_PAGE);
+    this._navigateTo(routes.PLAYER_PAGE);
   }
 
   navigateToSettings() {
     loggerCreator("navigateToSettings", moduleLogger);
-    this._navigateTo(constants.ROUTE_SETTINGS_PAGE);
+    this._navigateTo(routes.SETTINGS_PAGE);
   }
 
   navigateToSearch(query, playlistName) {
     const logger = loggerCreator("navigateToSearch", moduleLogger);
     logger.info(`playlistName: ${playlistName} query: ${query}`);
-    this._navigateTo(constants.ROUTE_SEARCH_PAGE, { playlistName, initialQuery: query });
+    this._navigateTo(routes.SEARCH_PAGE, { playlistName, initialQuery: query });
   }
 }
 
