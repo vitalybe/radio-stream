@@ -15,6 +15,8 @@ import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metad
 import constants from "app/utils/constants";
 import Keyboard from "app/utils/keyboard/keyboard";
 
+const MAX_RESULTS = Platform.OS === "web" ? 20 : 10;
+
 const styles = StyleSheet.create({
   container: {
     padding: 10,
@@ -105,8 +107,8 @@ export default class SearchPart extends Component {
     this.setState({ isSearching: true });
     logger.info(`searching for: ${query}`);
     let songs = await backendMetadataApi.querySongs(query);
-    logger.info(`got results: ${songs.length}`);
-    this.setState({ songs: songs, isSearching: false });
+    logger.info(`got results: ${songs.length}. limiting amount for performance to: ${MAX_RESULTS}`);
+    this.setState({ songs: songs.slice(0, MAX_RESULTS), isSearching: false });
   };
 
   onChangeText = text => {
@@ -135,6 +137,7 @@ export default class SearchPart extends Component {
         <View style={styles.queryContainer}>
           <RoundedTextInput
             value={this.state.query}
+            autoFocus={true}
             onChangeText={this.onChangeText}
             style={styles.input}
             onKeyPress={this.onInputKeypress}

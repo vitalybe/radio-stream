@@ -32,6 +32,7 @@ export default class RoundedTextInput extends Component {
   render() {
     return (
       <TextInput
+        ref="input"
         {...this.props}
         style={[styles.input, this.props.style]}
         value={this.props.value}
