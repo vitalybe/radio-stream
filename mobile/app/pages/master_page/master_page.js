@@ -12,6 +12,7 @@ import { routes } from "app/utils/routes";
 import { navigator } from "app/stores/navigator.js";
 import settings from "app/utils/settings/settings";
 import settingsNative from "app/utils/settings/settings_native";
+import BackHandler from "app/utils/back_handler/back_handler";
 
 import PlayerPage from "app/pages/player_page/player_page";
 import SettingsPage from "app/pages/settings/settings_page";
@@ -76,8 +77,15 @@ export default class MasterPage extends Component {
       masterStore.closeSidebars();
     }
 
+    BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+
     logger.info(`initialization finished`);
     this.setState({ ready: true });
+  }
+
+  onBackPress() {
+    masterStore.isNavigationSidebarOpen = true;
+    return true;
   }
 
   onSidebarCurtainPress = () => {

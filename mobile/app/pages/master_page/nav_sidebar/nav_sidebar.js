@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("NavSidebar");
 
 import React, { Component } from "react";
-import { StyleSheet, View, Platform } from "react-native";
+import { StyleSheet, View, Platform, Alert } from "react-native";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";
@@ -23,7 +23,20 @@ const styles = StyleSheet.create({});
 
 @observer
 export default class NavSidebar extends Component {
-  componentWillMount() {}
+  componentWillMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+  }
+
+  onBackPress = () => {
+    if (masterStore.isNavigationSidebarOpen) {
+      Alert.alert("Radio Stream", "Do you want to exit?", [
+        { text: "Cancel" },
+        { text: "Exit", onPress: this.onExitPress },
+      ]);
+    } else {
+      return false;
+    }
+  };
 
   onPlaylistPress = async playlistName => {
     await player.changePlaylist(playlistName);
