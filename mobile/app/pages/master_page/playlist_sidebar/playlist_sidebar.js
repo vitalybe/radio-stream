@@ -21,21 +21,23 @@ const SMALL_WIDTH = 336;
 const OPEN_RIGHT = -2;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 15,
-  },
+  container: {},
   playlistImage: {
     height: 33,
     width: 33,
     resizeMode: "contain",
-    marginBottom: 15,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
+    margin: 15,
+    marginBottom: 0,
   },
   playlistName: {
     marginLeft: 10,
+  },
+  songGrid: {
+    margin: 10,
   },
 });
 
@@ -69,6 +71,7 @@ export default class PlaylistSidebar extends Component {
           alternative would be to listen to DimensionsEmitter in SongsGrid but that would only covert resizes that
           were triggered by Window resizing */}
           <SongsGrid
+            style={styles.songGrid}
             unusedWindowWidth={width}
             songs={player.currentPlaylist.songs.toJS()}
             highlightedSong={player.currentSong}

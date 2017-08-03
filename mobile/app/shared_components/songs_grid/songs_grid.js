@@ -31,7 +31,7 @@ export default class SongsGrid extends Component {
     loggerCreator("render", moduleLogger);
 
     return (
-      <View onLayout={this._onContainerLayout}>
+      <View onLayout={this._onContainerLayout} style={[this.props.style]}>
         <HeaderRow visibleColumns={this.state.visibleColumns} />
         {this.props.songs.map(song => {
           return (

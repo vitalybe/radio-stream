@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
 
     marginTop: 10,
-    padding: 10,
   },
   buttons: {
     marginTop: 10,
@@ -56,6 +55,9 @@ const styles = StyleSheet.create({
   },
   firstButton: {
     marginRight: 10,
+  },
+  songGrid: {
+    margin: 10,
   },
 });
 
@@ -147,7 +149,9 @@ export default class SearchPart extends Component {
           </RectangleButton>
         </View>
         <ScrollView horizontal={false} style={styles.searchResult}>
-          {this.state.isSearching ? <ActivityIndicator size="large" /> : <SongsGrid songs={this.state.songs} />}
+          {this.state.isSearching
+            ? <ActivityIndicator size="large" />
+            : <SongsGrid style={styles.songGrid} songs={this.state.songs} />}
         </ScrollView>
         <View style={styles.buttons}>
           {this.props.playlistName
