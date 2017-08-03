@@ -7,7 +7,7 @@ import { Image, StyleSheet, Text, View, Animated, PanResponder } from "react-nat
 import { observer } from "mobx-react";
 import { colors } from "app/styles/styles";
 
-const SCRUB_WIDTH = 60;
+const SCRUB_WIDTH = 30;
 const MIN_SPEED_TO_TOGGLE_SIDEBAR = 0.1;
 
 const styles = StyleSheet.create({
