@@ -41,12 +41,28 @@ export default class Sidebar extends Component {
       onPanResponderGrant: this.onPanResponderGrant,
       onPanResponderMove: this.onPanResponderMove,
       onPanResponderRelease: this.onPanResponderRelease,
+      onPanResponderTerminate: this.onPanResponderTerminate,
     });
   }
 
   componentWillReceiveProps(nextProps) {
     loggerCreator("componentWillReceiveProps", moduleLogger);
     this.slideSidebar(nextProps.isOpen);
+  }
+
+  releaseSidebarFromGesture(gestureState) {
+    let logger = loggerCreator("releaseSidebarFromGesture", moduleLogger);
+    this.state.positionAnimation.flattenOffset();
+
+    logger.info(`velocity x: ${gestureState.vx}`);
+    let toOpen = null;
+    if (Math.abs(gestureState.vx) > MIN_SPEED_TO_TOGGLE_SIDEBAR) {
+      toOpen = this.adjustMovementBySide(gestureState.vx) > MIN_SPEED_TO_TOGGLE_SIDEBAR;
+    } else {
+      toOpen = !this.props.isOpen;
+    }
+
+    this.slideSidebar(toOpen);
   }
 
   adjustMovementBySide(value) {
@@ -71,19 +87,14 @@ export default class Sidebar extends Component {
     this.state.positionAnimation.setValue(this.adjustMovementBySide(gestureState.dx));
   };
 
+  onPanResponderTerminate = (evt, gestureState) => {
+    loggerCreator("onPanResponderTerminate", moduleLogger);
+    this.releaseSidebarFromGesture(gestureState);
+  };
+
   onPanResponderRelease = (evt, gestureState) => {
-    let logger = loggerCreator("onPanResponderRelease", moduleLogger);
-    this.state.positionAnimation.flattenOffset();
-
-    logger.info(`velocity x: ${gestureState.vx}`);
-    let toOpen = null;
-    if (Math.abs(gestureState.vx) > MIN_SPEED_TO_TOGGLE_SIDEBAR) {
-      toOpen = this.adjustMovementBySide(gestureState.vx) > MIN_SPEED_TO_TOGGLE_SIDEBAR;
-    } else {
-      toOpen = !this.props.isOpen;
-    }
-
-    this.slideSidebar(toOpen);
+    loggerCreator("onPanResponderRelease", moduleLogger);
+    this.releaseSidebarFromGesture(gestureState);
   };
 
   slideSidebar(isOpen) {
