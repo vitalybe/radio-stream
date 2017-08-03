@@ -13,7 +13,7 @@ import { colors } from "app/styles/styles";
 import SongsGrid from "app/shared_components/songs_grid/songs_grid";
 import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
 import constants from "app/utils/constants";
-import Keyboard from "app/utils/keyboard/kebyoard";
+import Keyboard from "app/utils/keyboard/keyboard";
 
 const styles = StyleSheet.create({
   container: {
