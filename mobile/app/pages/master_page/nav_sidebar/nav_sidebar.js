@@ -12,11 +12,15 @@ import NavSidebarMenuTitle from "./nav_sidebar_menu_title";
 import BackHandler from "app/utils/back_handler/back_handler";
 import { player } from "app/stores/player/player";
 
-import playIcon from "app/images/play.png";
-import pencilIcon from "app/images/pencil-icon.png";
 import { playlistsStore } from "app/stores/playlists_store";
 import { navigator } from "app/stores/navigator.js";
 import Sidebar from "app/shared_components/sidebar";
+
+import playIcon from "app/images/play.png";
+import pencilIcon from "app/images/pencil-icon.png";
+import musicIcon from "app/images/music.png";
+import cogIcon from "app/images/cog.png";
+import lookingGlassIcon from "app/images/looking-glass.png";
 
 const WIDTH = 336;
 const styles = StyleSheet.create({});
@@ -83,8 +87,8 @@ export default class NavSidebar extends Component {
         enableScrubs={!masterStore.isPlaylistSidebarOpen}>
         <NavSidebarMenuTitle text="Radio Stream" />
         <NavSidebarMenuItem text="Player" leftImage={playIcon} onPress={this.onPlayerPress} />
-        <NavSidebarMenuItem text="Search" leftImage={playIcon} onPress={this.onSearchPress} />
-        <NavSidebarMenuItem text="Settings" leftImage={playIcon} onPress={this.onSettingsPress} />
+        <NavSidebarMenuItem text="Search" leftImage={lookingGlassIcon} onPress={this.onSearchPress} />
+        <NavSidebarMenuItem text="Settings" leftImage={cogIcon} onPress={this.onSettingsPress} />
         {Platform.OS !== "web"
           ? <NavSidebarMenuItem text="Exit" leftImage={playIcon} onPress={this.onExitPress} />
           : null}
@@ -93,7 +97,7 @@ export default class NavSidebar extends Component {
           <NavSidebarMenuItem
             key={playlist.name}
             text={playlist.name}
-            leftImage={playIcon}
+            leftImage={musicIcon}
             rightImage={pencilIcon}
             onPress={() => this.onPlaylistPress(playlist.name)}
             onRightImagePress={() => this.onPlaylistEditPress(playlist)}
