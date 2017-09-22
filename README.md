@@ -26,7 +26,7 @@ Architecture
 Overview
 ---------
 
-![alt text](images/architecture.png "architecture overview") 
+![alt text](docs/architecture.png "architecture overview")
 
 Server
 ------
@@ -45,8 +45,10 @@ This is the server-side application that the user interacts with to control the 
 Client applications
 -------------------
 
+Both clients are written with react-native and share a large portion of code.
+
 * Android application - Developed using react-native.
-* Desktop application - Developed with electron. 
+* Desktop application - Developed using react-native-web, running on electron.
 
 
 Development

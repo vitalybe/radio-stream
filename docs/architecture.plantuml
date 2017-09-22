@@ -1,0 +1,37 @@
+@startuml
+
+package "Android application" as android {
+    component [React-native-based \n application]
+}
+
+package "Desktop application" as desktop {
+    component [Electron-based \n application]
+}
+
+node "Server" {
+    [Launcher] as cli
+    interface "HTTP" as exposedHttp
+
+    frame "Docker container" as docker {
+        [nginx]
+        interface "HTTP" as unexposedHttp
+        [beets]
+        interface "File storage" as storage
+        [Music files] as music
+    }
+}
+
+cli .. docker: Launch,\n add music,\n manage
+
+desktop--exposedHttp
+android--exposedHttp
+
+exposedHttp--nginx
+nginx--unexposedHttp: : Song/Playlist metadata
+unexposedHttp--beets
+
+nginx--storage: Stream songs
+storage--music
+
+
+@enduml
