@@ -19,7 +19,7 @@ import hamburgerImage from "app/images/hamburger.png";
 import playlistImage from "app/images/playlist-icon.png";
 import playImage from "app/images/play.png";
 import pauseImage from "app/images/pause.png";
-import {routes} from "app/utils/routes";
+import { routes } from "app/utils/routes";
 
 const styles = StyleSheet.create({
   topBar: {
@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
     flexShrink: 1,
   },
-  songInfoTitle: {},
-  songInfoArtist: { fontWeight: "bold" },
+  songInfoTitle: { color: colors.CYAN_BRIGHT},
+  songInfoArtist: { fontWeight: "bold", color: colors.CYAN_BRIGHT },
 });
 
 @observer
@@ -82,6 +82,10 @@ export default class Topbar extends Component {
 
   onPlayPausePress = () => {
     player.playPauseToggle();
+  };
+
+  onSongInfoPress = () => {
+    navigator.navigateToPlayer();
   };
 
   render() {
@@ -107,17 +111,20 @@ export default class Topbar extends Component {
                   style={styles.playImage}
                 />
               </TouchableHighlight>
-            {navigator.activeRoute.address !== routes.PLAYER_PAGE ?
-              <View style={styles.songInfo}>
-                <SmallText style={styles.songInfoTitle}>
-                  {player.currentSong.title}
-                </SmallText>
-                <SmallText style={styles.songInfoArtist}>
-                  {player.currentSong.artist}
-                </SmallText>
-              </View> :
-              <NormalText style={styles.songInfo}>{player.currentPlaylist.name} playlist</NormalText>
-            }
+              {navigator.activeRoute.address !== routes.PLAYER_PAGE
+                ? <TouchableHighlight style={styles.songInfo} onPress={this.onSongInfoPress}>
+                    <View>
+                      <SmallText style={styles.songInfoTitle}>
+                        {player.currentSong.title}
+                      </SmallText>
+                      <SmallText style={styles.songInfoArtist}>
+                        {player.currentSong.artist}
+                      </SmallText>
+                    </View>
+                  </TouchableHighlight>
+                : <NormalText style={styles.songInfo}>
+                    {player.currentPlaylist.name} playlist
+                  </NormalText>}
             </View>
           : null}
       </View>
