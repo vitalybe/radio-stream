@@ -13,11 +13,13 @@ import { colors } from "app/styles/styles";
 import SmallText from "app/shared_components/text/small_text";
 import { dimensionsStore } from "app/stores/dimensions_store";
 import { player } from "app/stores/player/player";
+import { navigator } from "app/stores/navigator.js";
 
 import hamburgerImage from "app/images/hamburger.png";
 import playlistImage from "app/images/playlist-icon.png";
 import playImage from "app/images/play.png";
 import pauseImage from "app/images/pause.png";
+import {routes} from "app/utils/routes";
 
 const styles = StyleSheet.create({
   topBar: {
@@ -105,6 +107,7 @@ export default class Topbar extends Component {
                   style={styles.playImage}
                 />
               </TouchableHighlight>
+            {navigator.activeRoute.address !== routes.PLAYER_PAGE ?
               <View style={styles.songInfo}>
                 <SmallText style={styles.songInfoTitle}>
                   {player.currentSong.title}
@@ -112,7 +115,9 @@ export default class Topbar extends Component {
                 <SmallText style={styles.songInfoArtist}>
                   {player.currentSong.artist}
                 </SmallText>
-              </View>
+              </View> :
+              <NormalText style={styles.songInfo}>{player.currentPlaylist.name} playlist</NormalText>
+            }
             </View>
           : null}
       </View>
