@@ -1,11 +1,17 @@
 @startuml
 
+package "Shared react-native code" {
+
 package "Android application" as android {
-    component [React-native-based \n application]
+    [React-native based application]
+    [Platform-specific parts in Java/Android\n (e.g background music player)]
 }
 
 package "Desktop application" as desktop {
-    component [Electron-based \n application]
+    [React-native-web based application, \nrunning on electron]
+    [Platform-specific parts using Electron functionality\n (e.g keyboard media keys)]
+}
+
 }
 
 node "Server" {
