@@ -5,9 +5,9 @@ import { computed, observable } from "mobx";
 
 import Song from "../song/song.web";
 import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
+import constants from "app/utils/constants";
 
 export default class Playlist {
-  static RELOAD_PLAYLIST_AFTER_MINUTES = 60;
 
   @observable name = null;
   @observable songs = [];
@@ -49,9 +49,9 @@ export default class Playlist {
       let secondsSinceReload = new Date() - this._lastReloadDate;
       logger.info(`seconds since reload ${secondsSinceReload}`);
       let minutesSinceReload = secondsSinceReload / 1000 / 60;
-      logger.info(`is minutes since reload ${minutesSinceReload} more than ${Playlist.RELOAD_PLAYLIST_AFTER_MINUTES}?`);
+      logger.info(`is minutes since reload ${minutesSinceReload} more than ${constants.RELOAD_PLAYLIST_AFTER_MINUTES}?`);
 
-      result = minutesSinceReload >= Playlist.RELOAD_PLAYLIST_AFTER_MINUTES;
+      result = minutesSinceReload >= constants.RELOAD_PLAYLIST_AFTER_MINUTES;
     }
 
     logger.info(`returning: ${result}`);
@@ -61,11 +61,17 @@ export default class Playlist {
   _addSongsIfCurrentIsLast() {
     let logger = loggerCreator(this._addSongsIfCurrentIsLast.name, moduleLogger);
 
+
+    if(this._areSongsOutOfDate()) {
+      logger.info(`remaining of the list is out of date, removing all the songs after song index: ${this._currentIndex}`);
+      this.songs = this.songs.slice(0, this._currentIndex+1)
+    }
+
     logger.info(`songs length: ${this.songs.length}. Current index: ${this._currentIndex}`);
     var isEnoughSongsInList = this.songs.length > 0 && this._currentIndex + 1 < this.songs.length;
     logger.info(`enough songs in list? ${isEnoughSongsInList}`);
 
-    if (isEnoughSongsInList && this._areSongsOutOfDate() === false) {
+    if (isEnoughSongsInList) {
       // playlist songs already loaded
       logger.info(`not reloading songs`);
       return Promise.resolve();
