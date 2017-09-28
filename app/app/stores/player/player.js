@@ -108,16 +108,10 @@ class Player {
     }
   }
 
-  async playNext() {
-    let logger = loggerCreator(this.playNext.name, moduleLogger);
-
-    // time since last player - toggle-pause.
-    // if too long, stop and clear playlist
+  async _finishCurrentlyPlayingSong() {
+    const logger = loggerCreator("_handleCurrentlyPlayingSong", moduleLogger);
 
     let previousSong = this.currentSong;
-
-    assert(this.currentPlaylist, "invalid state");
-
     if (previousSong) {
       logger.info(`previous song: ${previousSong.toString()}`);
 
@@ -132,6 +126,14 @@ class Player {
         logger.info(`previous song - no need to mark as played`);
       }
     }
+  }
+
+  async playNext() {
+    let logger = loggerCreator(this.playNext.name, moduleLogger);
+
+    assert(this.currentPlaylist, "invalid state");
+
+    await this._finishCurrentlyPlayingSong();
 
     await retries.promiseRetry(async lastError => {
       this.loadingError = lastError && lastError.toString();
@@ -149,6 +151,18 @@ class Player {
     });
 
     await this._preloadNextSong();
+  }
+
+  async playIndex(index) {
+    const logger = loggerCreator("playIndex", moduleLogger);
+    assert(this.currentPlaylist, "invalid state");
+
+    await this._finishCurrentlyPlayingSong();
+
+    logger.info(`playing song index: ${index}`);
+    let song = this.currentPlaylist.skipToSongByIndex(index);
+    song.setSoundPosition(0);
+    await song.playSound();
   }
 
   @action

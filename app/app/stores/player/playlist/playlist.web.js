@@ -8,7 +8,6 @@ import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metad
 import constants from "app/utils/constants";
 
 export default class Playlist {
-
   @observable name = null;
   @observable songs = [];
   @observable _currentIndex = -1;
@@ -49,7 +48,9 @@ export default class Playlist {
       let secondsSinceReload = new Date() - this._lastReloadDate;
       logger.info(`seconds since reload ${secondsSinceReload}`);
       let minutesSinceReload = secondsSinceReload / 1000 / 60;
-      logger.info(`is minutes since reload ${minutesSinceReload} more than ${constants.RELOAD_PLAYLIST_AFTER_MINUTES}?`);
+      logger.info(
+        `is minutes since reload ${minutesSinceReload} more than ${constants.RELOAD_PLAYLIST_AFTER_MINUTES}?`
+      );
 
       result = minutesSinceReload >= constants.RELOAD_PLAYLIST_AFTER_MINUTES;
     }
@@ -61,10 +62,11 @@ export default class Playlist {
   _addSongsIfCurrentIsLast() {
     let logger = loggerCreator(this._addSongsIfCurrentIsLast.name, moduleLogger);
 
-
-    if(this._areSongsOutOfDate()) {
-      logger.info(`remaining of the list is out of date, removing all the songs after song index: ${this._currentIndex}`);
-      this.songs = this.songs.slice(0, this._currentIndex+1)
+    if (this._areSongsOutOfDate()) {
+      logger.info(
+        `remaining of the list is out of date, removing all the songs after song index: ${this._currentIndex}`
+      );
+      this.songs = this.songs.slice(0, this._currentIndex + 1);
     }
 
     logger.info(`songs length: ${this.songs.length}. Current index: ${this._currentIndex}`);
@@ -121,5 +123,18 @@ export default class Playlist {
     logger.info(`returning song: ${song}`);
 
     return song;
+  }
+
+  skipToSongByIndex(index) {
+    const logger = loggerCreator("skipToSongByIndex", moduleLogger);
+
+    logger.info(`changing song to index: ${index} out of total ${this.songs.length} songs`);
+
+    if (index >= this.songs.length) {
+      throw new Error(`requested index is out of bounds: ${index} >= ${this.songs.length}`);
+    }
+
+    this._currentIndex = index;
+    return this.songs[this._currentIndex];
   }
 }

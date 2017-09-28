@@ -96,34 +96,36 @@ export class SongRow extends Component {
 
   render() {
     return (
-      <TouchableOpacity style={styles.row} activeOpacity={0.7} onPress={this.onRowPress}>
-        {this.props.isHighlighted ? <View style={styles.selectedRow} /> : null}
-        {[
-          <View key="name" style={[styles.gridCell, styles.nameCell]}>
-            <Image source={playImage} style={styles.playImage} />
-            <View style={styles.nameContainer}>
+      <TouchableOpacity activeOpacity={0.7} onPress={this.onRowPress}>
+        <View style={styles.row}>
+          {this.props.isHighlighted ? <View style={styles.selectedRow} /> : null}
+          {[
+            <View key="name" style={[styles.gridCell, styles.nameCell]}>
+              <Image source={playImage} style={styles.playImage} />
+              <View style={styles.nameContainer}>
+                <SmallText>
+                  {this.props.song.title}
+                </SmallText>
+                <SmallText style={styles.artistText}>
+                  {this.props.song.artist}
+                </SmallText>
+              </View>
+            </View>,
+            <View key="rating" style={[styles.gridCell]}>
+              <Rating song={this.props.song} starSize={18} starMargin={2} canChangeRating={false} />
+            </View>,
+            <View key="lastPlayed" style={[styles.gridCell]}>
               <SmallText>
-                {this.props.song.title}
+                {this.props.song.lastplayed ? moment.unix(this.props.song.lastplayed).fromNow() : "Never"}
               </SmallText>
-              <SmallText style={styles.artistText}>
-                {this.props.song.artist}
+            </View>,
+            <View key="playCount" style={[styles.gridCell]}>
+              <SmallText>
+                {this.props.song.playcount || 0}
               </SmallText>
-            </View>
-          </View>,
-          <View key="rating" style={[styles.gridCell]}>
-            <Rating song={this.props.song} starSize={18} starMargin={2} canChangeRating={false} />
-          </View>,
-          <View key="lastPlayed" style={[styles.gridCell]}>
-            <SmallText>
-              {this.props.song.lastplayed ? moment.unix(this.props.song.lastplayed).fromNow() : "Never"}
-            </SmallText>
-          </View>,
-          <View key="playCount" style={[styles.gridCell]}>
-            <SmallText>
-              {this.props.song.playcount || 0}
-            </SmallText>
-          </View>,
-        ].slice(0, this.props.visibleColumns)}
+            </View>,
+          ].slice(0, this.props.visibleColumns)}
+        </View>
       </TouchableOpacity>
     );
   }

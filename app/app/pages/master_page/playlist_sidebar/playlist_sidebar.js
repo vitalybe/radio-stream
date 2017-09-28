@@ -18,7 +18,6 @@ import Sidebar from "app/shared_components/sidebar";
 
 const BIG_WIDTH = 900;
 const SMALL_WIDTH = 336;
-const OPEN_RIGHT = -2;
 
 const styles = StyleSheet.create({
   container: {},
@@ -48,7 +47,7 @@ export default class PlaylistSidebar extends Component {
   };
 
   onSongRowPress = (index, song) => {
-    alert(index)
+    player.playIndex(index)
   }
 
   render() {

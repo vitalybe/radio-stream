@@ -122,6 +122,16 @@ export default class Song {
     });
   }
 
+  setSoundPosition(position) {
+    const logger = loggerCreator("setSoundPosition", moduleLogger);
+
+    logger.info(`position: ${position}`);
+    return this.load().then(() => {
+      logger.info(`loaded`);
+      this.loadedSound.setPosition(position);
+    });
+  }
+
   pauseSound() {
     return this.load().then(() => {
       this.loadedSound.pause();
