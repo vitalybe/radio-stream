@@ -175,6 +175,15 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
     }
 
     @ReactMethod
+    public void playIndex(int index) {
+        try {
+            mPlayerService.skipToSongByIndex(index);
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+    }
+
+    @ReactMethod
     public void getPlayerStatus(final Promise promise) {
         try {
             Timber.i("function start");

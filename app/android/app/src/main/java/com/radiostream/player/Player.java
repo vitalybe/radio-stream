@@ -72,6 +72,17 @@ public class Player implements PlaylistControls {
         mCurrentPlaylistPlayer.playNext();
     }
 
+    @Override
+    public void skipToSongByIndex(int index) {
+        Timber.i("function start");
+
+        if(mCurrentPlaylistPlayer == null) {
+            throw new IllegalStateException("playlist must be set");
+        }
+
+        mCurrentPlaylistPlayer.skipToSongByIndex(index);
+    }
+
     public void close() {
         Timber.i("function start");
 

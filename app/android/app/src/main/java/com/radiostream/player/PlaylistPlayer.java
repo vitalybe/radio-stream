@@ -130,6 +130,14 @@ public class PlaylistPlayer implements Song.EventsListener, PlaylistControls {
         this.play();
     }
 
+    @Override
+    public void skipToSongByIndex(int index) {
+        Timber.i("function start");
+
+        this.mPlaylist.skipToIndex(index);
+        this.play();
+    }
+
     private Promise<Song, Exception, Void> retryPreloadAndPlaySong() {
         Timber.i("function start");
 

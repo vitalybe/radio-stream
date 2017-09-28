@@ -11,4 +11,6 @@ public interface PlaylistControls {
     void pause();
 
     void playNext();
+
+    void skipToSongByIndex(int index);
 }

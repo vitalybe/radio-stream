@@ -108,6 +108,10 @@ class Player {
     }
   }
 
+  playIndex(index) {
+    return this._resolveWhenPlayerAvailable().then(() => this.proxy.playIndex(index));
+  }
+
   stop() {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.stopPlayer());
   }

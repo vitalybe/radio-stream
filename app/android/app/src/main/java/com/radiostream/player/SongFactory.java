@@ -32,4 +32,9 @@ public class SongFactory {
         return new Song(songResult, mMediaPlayerFactory.build(), mContext, mSettings,
             mSetTimeout, mMetadataBackendGetter);
     }
+
+    public Song build(Song otherSong) {
+        return new Song(otherSong, mMediaPlayerFactory.build(), mContext, mSettings,
+            mSetTimeout, mMetadataBackendGetter);
+    }
 }

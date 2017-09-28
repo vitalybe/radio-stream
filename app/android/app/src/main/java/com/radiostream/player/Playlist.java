@@ -122,4 +122,14 @@ public class Playlist {
             song.close();
         }
     }
+
+    public void skipToIndex(int index) {
+        if(index < 0 || index >= mSongs.size()) {
+            throw new IndexOutOfBoundsException("requested index " + index + " is out of bounds");
+        }
+
+        // this is done since reusing the song is impossible - we destroy the MediaPlayer object everytime the song changes
+        mSongs.set(index, mSongFactory.build(mSongs.get(index)));
+        mIndex = index;
+    }
 }

@@ -58,14 +58,9 @@ public class Song {
         this.mAlbum = songResult.album;
         this.mTitle = songResult.title;
         this.mId = songResult.id;
-        this.mSetTimeout = setTimeout;
-        this.mMetadataBackendGetter = metadataBackend;
         this.mRating = songResult.rating;
         this.mLastPlayed = songResult.lastplayed;
         this.mPlayCount = songResult.playcount;
-        this.mContext = context;
-        this.mMediaPlayer = mediaPlayer;
-        this.mSettings = settings;
 
         // In various mock modes we will provide the full MP3 path
         if(!songResult.path.startsWith("android.resource")) {
@@ -79,10 +74,33 @@ public class Song {
                 }
             }
 
-            this.mPath = mSettings.getAddress() + "/music/" + pathBuilder.substring(1);
+            this.mPath = settings.getAddress() + "/music/" + pathBuilder.substring(1);
         } else {
             this.mPath = songResult.path;
         }
+
+        initializeSong(mediaPlayer, context, settings, setTimeout, metadataBackend);
+    }
+
+    public Song(Song otherSong, MediaPlayer mediaPlayer, Context context, Settings settings, SetTimeout setTimeout, MetadataBackendGetter metadataBackend) {
+        this.mArtist = otherSong.mArtist;
+        this.mAlbum = otherSong.mAlbum;
+        this.mTitle = otherSong.mTitle;
+        this.mId = otherSong.mId;
+        this.mRating = otherSong.mRating;
+        this.mLastPlayed = otherSong.mLastPlayed;
+        this.mPlayCount = otherSong.mPlayCount;
+        this.mPath = otherSong.mPath;
+
+        initializeSong(mediaPlayer, context, settings, setTimeout, metadataBackend);
+    }
+
+    private void initializeSong(MediaPlayer mediaPlayer, Context context, Settings settings, SetTimeout setTimeout, MetadataBackendGetter metadataBackend) {
+        this.mSetTimeout = setTimeout;
+        this.mMetadataBackendGetter = metadataBackend;
+        this.mContext = context;
+        this.mMediaPlayer = mediaPlayer;
+        this.mSettings = settings;
 
         // NOTE: Wake lock will only be relevant when a song is playing
         mMediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);

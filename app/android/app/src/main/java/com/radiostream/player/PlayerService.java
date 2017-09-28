@@ -40,33 +40,28 @@ import timber.log.Timber;
 @DebugLog
 public class PlayerService extends Service implements PlaylistControls {
 
-    public final String PARAM_EXIT  = "mParamExit";
+    public final String PARAM_EXIT = "mParamExit";
 
     private final int mStopPausedServiceAfterMs = 10 * 60 * 1000;
     private final int mStopPausedServiceRetryAfterMs = 3 * 60 * 1000;
 
     private final PlayerServiceBinder mBinder = new PlayerServiceBinder();
-    private boolean mIsBoundToActivity = false;
-
-    private boolean mServiceAlive = true;
-    private Date mPausedDate = null;
-    private boolean mPausedDuePhoneState = false;
-
     MediaSession mMediaSession = null;
-
     @Inject
     Player mPlayer;
     @Inject
     PlayerEventsEmitter mPlayerEventsEmitter;
     @Inject
     SetTimeout mSetTimeout;
-
-
+    private boolean mIsBoundToActivity = false;
+    private boolean mServiceAlive = true;
+    private Date mPausedDate = null;
+    private boolean mPausedDuePhoneState = false;
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Timber.i("function start");
-            if(intent.getAction().equals(BluetoothDevice.ACTION_ACL_DISCONNECTED)) {
+            if (intent.getAction().equals(BluetoothDevice.ACTION_ACL_DISCONNECTED)) {
                 Timber.i("bluetooth disconnected");
                 BluetoothDevice btDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (btDevice.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.AUDIO_VIDEO) {
@@ -83,14 +78,14 @@ public class PlayerService extends Service implements PlaylistControls {
             Timber.i("function start");
             if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
                 Timber.i("telephone busy state: %d", state);
-                if(mPlayer.getIsPlaying()) {
+                if (mPlayer.getIsPlaying()) {
                     Timber.i("pausing due to telephone state");
                     PlayerService.this.pause();
                     mPausedDuePhoneState = true;
                 }
-            } else if(state == TelephonyManager.CALL_STATE_IDLE) {
+            } else if (state == TelephonyManager.CALL_STATE_IDLE) {
                 Timber.i("telehpone idle state");
-                if(mPausedDuePhoneState) {
+                if (mPausedDuePhoneState) {
                     Timber.i("resuming pause music");
                     PlayerService.this.play();
                     mPausedDuePhoneState = false;
@@ -178,7 +173,7 @@ public class PlayerService extends Service implements PlaylistControls {
 
         Timber.i("registering to telephony events");
         TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        if(mgr != null) {
+        if (mgr != null) {
             mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
 
@@ -193,7 +188,7 @@ public class PlayerService extends Service implements PlaylistControls {
     private void playPause() {
         Timber.i("function start");
 
-        if(this.mPlayer.getIsPlaying()) {
+        if (this.mPlayer.getIsPlaying()) {
             PlayerService.this.pause();
         } else {
             PlayerService.this.play();
@@ -255,7 +250,7 @@ public class PlayerService extends Service implements PlaylistControls {
         unregisterReceiver(mReceiver);
 
         TelephonyManager mgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        if(mgr != null) {
+        if (mgr != null) {
             mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
         }
 
@@ -312,6 +307,11 @@ public class PlayerService extends Service implements PlaylistControls {
     @Override
     public void playNext() {
         this.mPlayer.playNext();
+    }
+
+    @Override
+    public void skipToSongByIndex(int index) {
+        this.mPlayer.skipToSongByIndex(index);
     }
 
     public boolean getIsBoundToAcitivity() {
