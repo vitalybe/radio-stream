@@ -3,7 +3,7 @@ import loggerCreator from "../../utils/logger";
 var moduleLogger = loggerCreator("SongsGrid");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, Text, View, Platform } from "react-native";
+import { Image, StyleSheet, Text, View, Platform, TouchableOpacity } from "react-native";
 import { observer } from "mobx-react";
 import moment from "moment";
 import NormalText from "app/shared_components/text/normal_text";
@@ -90,9 +90,13 @@ HeaderRow.propTypes = {
 
 @observer
 export class SongRow extends Component {
+  onRowPress = () => {
+    this.props.onPress(this.props.index, this.props.song);
+  };
+
   render() {
     return (
-      <View style={styles.row}>
+      <TouchableOpacity style={styles.row} activeOpacity={0.7} onPress={this.onRowPress}>
         {this.props.isHighlighted ? <View style={styles.selectedRow} /> : null}
         {[
           <View key="name" style={[styles.gridCell, styles.nameCell]}>
@@ -120,13 +124,16 @@ export class SongRow extends Component {
             </SmallText>
           </View>,
         ].slice(0, this.props.visibleColumns)}
-      </View>
+      </TouchableOpacity>
     );
   }
 }
 
 SongRow.propTypes = {
   visibleColumns: React.PropTypes.number.isRequired,
+  index: React.PropTypes.number.isRequired,
   song: React.PropTypes.object.isRequired,
   isHighlighted: React.PropTypes.bool.isRequired,
+
+  onPress: React.PropTypes.func,
 };

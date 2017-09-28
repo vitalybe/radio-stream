@@ -33,13 +33,15 @@ export default class SongsGrid extends Component {
     return (
       <View onLayout={this._onContainerLayout} style={[this.props.style]}>
         <HeaderRow visibleColumns={this.state.visibleColumns} />
-        {this.props.songs.map(song => {
+        {this.props.songs.map((song, index) => {
           return (
             <SongRow
               key={song.id}
               visibleColumns={this.state.visibleColumns}
               song={song}
               isHighlighted={this.props.highlightedSong === song}
+              index={index}
+              onPress={this.props.onRowPress}
             />
           );
         })}
@@ -51,4 +53,6 @@ export default class SongsGrid extends Component {
 SongsGrid.propTypes = {
   songs: React.PropTypes.array.isRequired,
   highlightedSong: React.PropTypes.object,
+
+  onRowPress: React.PropTypes.func,
 };

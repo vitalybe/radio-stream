@@ -47,6 +47,10 @@ export default class PlaylistSidebar extends Component {
     masterStore.isPlaylistSidebarOpen = isOpen;
   };
 
+  onSongRowPress = (index, song) => {
+    alert(index)
+  }
+
   render() {
     loggerCreator(this.render.name, moduleLogger);
 
@@ -75,6 +79,7 @@ export default class PlaylistSidebar extends Component {
             unusedWindowWidth={width}
             songs={player.currentPlaylist.songs.toJS()}
             highlightedSong={player.currentSong}
+            onRowPress={this.onSongRowPress}
           />
         </ScrollView>
       </Sidebar>
