@@ -47,8 +47,9 @@ export default class PlaylistSidebar extends Component {
   };
 
   onSongRowPress = (index, song) => {
-    player.playIndex(index)
-  }
+    masterStore.isPlaylistSidebarOpen = false;
+    player.playIndex(index);
+  };
 
   render() {
     loggerCreator(this.render.name, moduleLogger);

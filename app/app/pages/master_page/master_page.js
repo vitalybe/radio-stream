@@ -84,7 +84,12 @@ export default class MasterPage extends Component {
   }
 
   onBackPress() {
-    masterStore.isNavigationSidebarOpen = true;
+    if (masterStore.isPlaylistSidebarOpen) {
+      masterStore.isPlaylistSidebarOpen = false;
+    } else {
+      masterStore.isNavigationSidebarOpen = true;
+    }
+
     return true;
   }
 
