@@ -212,4 +212,15 @@ public class PlayerJsProxy extends ReactContextBaseJavaModule implements Lifecyc
             Timber.e(e);
         }
     }
+
+    @ReactMethod
+    public void test() {
+        try {
+            Timber.i("test");
+            mPlayerService.test();
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+    }
+
 }

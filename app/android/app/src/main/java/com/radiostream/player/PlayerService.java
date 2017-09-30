@@ -53,6 +53,9 @@ public class PlayerService extends Service implements PlaylistControls {
     PlayerEventsEmitter mPlayerEventsEmitter;
     @Inject
     SetTimeout mSetTimeout;
+
+    Player2 mPlayer2 = new Player2();
+
     private boolean mIsBoundToActivity = false;
     private boolean mServiceAlive = true;
     private Date mPausedDate = null;
@@ -312,6 +315,10 @@ public class PlayerService extends Service implements PlaylistControls {
     @Override
     public void skipToSongByIndex(int index) {
         this.mPlayer.skipToSongByIndex(index);
+    }
+
+    public void test() {
+        mPlayer2.test();
     }
 
     public boolean getIsBoundToAcitivity() {
