@@ -54,7 +54,8 @@ public class PlayerService extends Service implements PlaylistControls {
     @Inject
     SetTimeout mSetTimeout;
 
-    Player2 mPlayer2 = new Player2();
+    @Inject
+    Player2 mPlayer2;
 
     private boolean mIsBoundToActivity = false;
     private boolean mServiceAlive = true;
