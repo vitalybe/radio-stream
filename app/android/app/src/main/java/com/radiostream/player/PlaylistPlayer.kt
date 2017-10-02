@@ -14,20 +14,7 @@ class PlaylistPlayer @Inject
 constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter: MetadataBackendGetter, private val mStatusProvider: StatusProvider,
             private val mPlayerNotification: PlayerNotification) : Song.EventsListener, PlaylistControls {
 
-    var currentSong: Song? = null
-        private set(value) {
-            if (value !== currentSong) {
-                if (currentSong != null) {
-                    currentSong!!.pause()
-                    currentSong!!.close()
-                }
-
-                Timber.i("changing current song to: %s", value.toString())
-                field = value
-                mStatusProvider.sendStatus()
-            }
-        }
-
+    private var currentSong: Song? = null
     private var mIsLoading = false
     private var mLastLoadingError: Exception? = null
 
@@ -101,6 +88,11 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
 
         try {
             setSongLoadingStatus(true, mLastLoadingError)
+            if (currentSong != null) {
+                currentSong!!.pause()
+                currentSong!!.close()
+            }
+
             mPlayerNotification.showLoadingNotification()
             mStatusProvider.sendStatus()
 
@@ -113,7 +105,9 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
 
             // We won't be playing any new music if playlistPlayer is closed
             if (!mIsClosed) {
+                Timber.i("changing current song to: %s", peekedSong.toString())
                 currentSong = peekedSong
+                mStatusProvider.sendStatus()
                 play()
             } else {
                 Timber.i("playlist player was already closed - not playing loaded song")
@@ -184,7 +178,7 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
         }
 
         Timber.i("trying to play next song")
-        play()
+        playNext()
     }
 
     fun toBridgeObject(): WritableMap {

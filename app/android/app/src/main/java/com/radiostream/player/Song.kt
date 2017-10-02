@@ -169,13 +169,17 @@ class Song {
         Timber.i("function start")
 
         if (mSongLoadingJob == null || mSongLoadingJob!!.isCompletedExceptionally) {
-            Timber.i("creating a new promise")
+            Timber.i("creating a new deferred")
             mSongLoadingJob = async(CommonPool) { mediaPlayerPrepare(mPath) }
-            mSongLoadingJob!!.await()
 
         } else {
-            Timber.i("preload for this song already started. returning existing promise")
+            Timber.i("preload for this song already started. awaiting the deferred to complete")
         }
+
+        Timber.i("waiting for preload to complete...")
+        mSongLoadingJob!!.await()
+        Timber.i("preload complete")
+
     }
 
     suspend fun mediaPlayerPrepare(path: String): Unit = suspendCoroutine { cont ->
@@ -209,7 +213,10 @@ class Song {
         if (!mMarkAsPlayedScheduled) {
             Timber.i("this is the first play - schedule song to be marked as played")
             mMarkAsPlayedScheduled = true
-            scheduleMarkAsPlayed()
+
+            async(CommonPool) {
+                scheduleMarkAsPlayed()
+            }
         }
 
         mMediaPlayer!!.setOnErrorListener { _, what, extra ->
