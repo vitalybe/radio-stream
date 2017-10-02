@@ -1,5 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 // Dagger 2
 apply plugin: 'com.neenbedankt.android-apt'
 
@@ -67,6 +68,7 @@ import com.android.build.OutputFile
  *   extraPackagerArgs: []
  * ]
  */
+
 
 apply from: "../../node_modules/react-native/react.gradle"
 
@@ -184,10 +186,6 @@ dependencies {
 task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
-}
-
-kapt {
-    generateStubs = true
 }
 
 // hugo

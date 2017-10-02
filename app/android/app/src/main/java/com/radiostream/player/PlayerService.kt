@@ -14,24 +14,20 @@ import android.os.IBinder
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.view.KeyEvent
-
 import com.facebook.react.bridge.WritableMap
 import com.radiostream.di.components.DaggerPlayerServiceComponent
-import com.radiostream.di.components.PlayerServiceComponent
 import com.radiostream.di.modules.ContextModule
 import com.radiostream.di.modules.PlayerServiceModule
 import com.radiostream.javascript.bridge.PlayerEventsEmitter
 import com.radiostream.javascript.proxy.PlayerJsProxy
-
-import org.jdeferred.DoneCallback
-
-import java.util.Date
-
-import javax.inject.Inject
-
 import hugo.weaving.DebugLog
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
+import java.util.*
+import javax.inject.Inject
 
 
 @DebugLog

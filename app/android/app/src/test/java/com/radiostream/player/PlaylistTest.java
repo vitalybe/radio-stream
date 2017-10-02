@@ -4,8 +4,6 @@ import com.facebook.react.bridge.Arguments;
 import com.radiostream.networking.metadata.MetadataBackendGetter;
 import com.radiostream.networking.models.SongResult;
 
-import org.jdeferred.DoneCallback;
-import org.jdeferred.Promise;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

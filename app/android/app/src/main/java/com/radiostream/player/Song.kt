@@ -144,7 +144,7 @@ class Song {
         }
     }
 
-    private fun retryMarkAsPlayed() = async(CommonPool) {
+    private fun retryMarkAsPlayed(): Deferred<Unit> = async(CommonPool) {
         Timber.i("function start")
 
         try {
@@ -156,6 +156,8 @@ class Song {
             Timber.i("sleep done - trying to mark again")
             retryMarkAsPlayed()
         }
+
+        return@async Unit
     }
 
     fun subscribeToEvents(eventsListener: EventsListener) {

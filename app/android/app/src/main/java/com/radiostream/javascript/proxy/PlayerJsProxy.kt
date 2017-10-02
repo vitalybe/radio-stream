@@ -17,9 +17,6 @@ import com.radiostream.di.components.JsProxyComponent
 import com.radiostream.di.modules.ReactContextModule
 import com.radiostream.player.PlayerService
 
-import org.jdeferred.DoneCallback
-import org.jdeferred.FailCallback
-
 import java.util.HashMap
 
 import javax.inject.Inject
@@ -27,6 +24,8 @@ import javax.inject.Inject
 import timber.log.Timber
 
 import android.content.Context.BIND_AUTO_CREATE
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
 
 class PlayerJsProxy(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext), LifecycleEventListener {
 
@@ -88,22 +87,23 @@ class PlayerJsProxy(reactContext: ReactApplicationContext) : ReactContextBaseJav
     }
 
     @ReactMethod
-    fun updateSettings(host: String, user: String, password: String, isMockMode: Boolean, promise: Promise) {
+    fun updateSettings(host: String?, user: String?, password: String?, isMockMode: Boolean, promise: Promise) {
         Timber.i("function start")
 
-        mSettings!!.update(host, user, password, isMockMode)
+        mSettings!!.update(host ?: "", user ?: "", password ?: "", isMockMode)
         promise.resolve(null)
     }
 
     @ReactMethod
-    suspend fun updateSongRating(songId: Int, newRating: Int, promise: Promise) {
-        try {
-            mPlayerService!!.updateSongRating(songId, newRating)
-        } catch (e: Exception) {
-            Timber.e(e)
-            promise.reject("updateSongRating failed", e)
+    fun updateSongRating(songId: Int, newRating: Int, promise: Promise) {
+        async(CommonPool) {
+            try {
+                mPlayerService!!.updateSongRating(songId, newRating)
+            } catch (e: Exception) {
+                Timber.e(e)
+                promise.reject("updateSongRating failed", e)
+            }
         }
-
     }
 
     @ReactMethod
@@ -117,13 +117,14 @@ class PlayerJsProxy(reactContext: ReactApplicationContext) : ReactContextBaseJav
     }
 
     @ReactMethod
-    suspend fun play() {
-        try {
-            mPlayerService!!.play()
-        } catch (e: Exception) {
-            Timber.e(e)
+    fun play() {
+        async(CommonPool) {
+            try {
+                mPlayerService!!.play()
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
         }
-
     }
 
     @ReactMethod
@@ -137,23 +138,25 @@ class PlayerJsProxy(reactContext: ReactApplicationContext) : ReactContextBaseJav
     }
 
     @ReactMethod
-    suspend fun playNext() {
-        try {
-            mPlayerService!!.playNext()
-        } catch (e: Exception) {
-            Timber.e(e)
+    fun playNext() {
+        async(CommonPool) {
+            try {
+                mPlayerService!!.playNext()
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
         }
-
     }
 
     @ReactMethod
-    suspend fun playIndex(index: Int) {
-        try {
-            mPlayerService!!.skipToSongByIndex(index)
-        } catch (e: Exception) {
-            Timber.e(e)
+    fun playIndex(index: Int) {
+        async(CommonPool) {
+            try {
+                mPlayerService!!.skipToSongByIndex(index)
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
         }
-
     }
 
     @ReactMethod
