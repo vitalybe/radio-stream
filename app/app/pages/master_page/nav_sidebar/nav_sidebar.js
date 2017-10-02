@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("NavSidebar");
 
 import React, { Component } from "react";
-import { StyleSheet, View, Platform, Alert } from "react-native";
+import {StyleSheet, View, Platform, Alert, TouchableOpacity} from "react-native";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";
@@ -21,6 +21,8 @@ import pencilIcon from "app/images/pencil-icon.png";
 import musicIcon from "app/images/music.png";
 import cogIcon from "app/images/cog.png";
 import lookingGlassIcon from "app/images/looking-glass.png";
+import NormalText from "app/shared_components/text/normal_text";
+import BigText from "app/shared_components/text/big_text";
 
 const WIDTH = 336;
 const styles = StyleSheet.create({});

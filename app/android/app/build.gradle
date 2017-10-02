@@ -1,4 +1,6 @@
 apply plugin: "com.android.application"
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 // Dagger 2
 apply plugin: 'com.neenbedankt.android-apt'
 
@@ -66,6 +68,7 @@ import com.android.build.OutputFile
  *   extraPackagerArgs: []
  * ]
  */
+
 
 apply from: "../../node_modules/react-native/react.gradle"
 
@@ -138,6 +141,12 @@ android {
     }
 }
 
+kotlin {
+    experimental {
+        coroutines 'enable'
+    }
+}
+
 dependencies {
     compile project(':react-native-orientation')
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -160,12 +169,16 @@ dependencies {
     // dagger 2
     // apt command comes from the android-apt plugint
     apt 'com.google.dagger:dagger-compiler:2.7'
+    kapt 'com.google.dagger:dagger-compiler:2.7'
     compile 'com.google.dagger:dagger:2.7'
     provided 'javax.annotation:jsr250-api:1.0'
     // jdeferred (promises)
     compile 'org.jdeferred:jdeferred-android-aar:1.2.4'
     // testfairy
     compile project(path: ':react-native-testfairy')
+    // kotlin
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.18"
 }
 
 // Run this once to be able to run the application with BUCK
@@ -174,6 +187,7 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
 // hugo
 buildscript {
     repositories {
@@ -190,3 +204,6 @@ apply plugin: 'com.jakewharton.hugo'
 
 // pretty icons
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+repositories {
+    mavenCentral()
+}
