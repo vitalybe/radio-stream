@@ -88,9 +88,6 @@ export default class NavSidebar extends Component {
         onChangeOpen={this.onChangeOpen}
         enableScrubs={!masterStore.isPlaylistSidebarOpen}>
         <NavSidebarMenuTitle text="Radio Stream" />
-        <TouchableOpacity style={{padding: 30}} onPress={() => player.test()}>
-          <BigText>Test me</BigText>
-        </TouchableOpacity>
         <NavSidebarMenuItem text="Player" leftImage={playIcon} onPress={this.onPlayerPress} />
         <NavSidebarMenuItem text="Search" leftImage={lookingGlassIcon} onPress={this.onSearchPress} />
         <NavSidebarMenuItem text="Settings" leftImage={cogIcon} onPress={this.onSettingsPress} />

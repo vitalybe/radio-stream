@@ -116,10 +116,6 @@ class Player {
     return this._resolveWhenPlayerAvailable().then(() => this.proxy.stopPlayer());
   }
 
-  test() {
-    return this._resolveWhenPlayerAvailable().then(() => this.proxy.test());
-  }
-
 
   onHandleAppStateChange = async currentAppState => {
     let logger = loggerCreator("onHandleAppStateChange", moduleLogger);
