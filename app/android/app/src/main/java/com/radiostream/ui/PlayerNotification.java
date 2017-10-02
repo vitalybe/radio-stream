@@ -25,7 +25,7 @@ public class PlayerNotification {
 
     public void showSongNotification(Song currentSong) {
         Timber.i("function start - show song notification for: %s - %s", currentSong.getTitle(), currentSong.getArtist());
-        boolean showHeadsUpNotification = !mPlayerService.getIsBoundToAcitivity();
+        boolean showHeadsUpNotification = !mPlayerService.isBoundToAcitivity();
         startWithNotificaiton(currentSong.getTitle(), currentSong.getArtist(), showHeadsUpNotification);
     }
 
@@ -43,7 +43,7 @@ public class PlayerNotification {
 
         // Stop intent
         Intent stopIntent = new Intent(mPlayerService, PlayerService.class);
-        stopIntent.putExtra(mPlayerService.PARAM_EXIT, true);
+        stopIntent.putExtra(mPlayerService.getPARAM_EXIT(), true);
         PendingIntent stopPendingIntent = PendingIntent.getService(mPlayerService, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mPlayerService.getApplicationContext());

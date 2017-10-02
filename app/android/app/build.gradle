@@ -167,6 +167,7 @@ dependencies {
     // dagger 2
     // apt command comes from the android-apt plugint
     apt 'com.google.dagger:dagger-compiler:2.7'
+    kapt 'com.google.dagger:dagger-compiler:2.7'
     compile 'com.google.dagger:dagger:2.7'
     provided 'javax.annotation:jsr250-api:1.0'
     // jdeferred (promises)
@@ -184,6 +185,11 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+kapt {
+    generateStubs = true
+}
+
 // hugo
 buildscript {
     repositories {
