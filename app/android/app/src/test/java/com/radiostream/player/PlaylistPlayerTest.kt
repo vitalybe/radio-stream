@@ -1,6 +1,7 @@
 package com.radiostream.player
 
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.whenever
 import com.radiostream.networking.metadata.MetadataBackendGetter
 import com.radiostream.ui.PlayerNotification
@@ -18,12 +19,6 @@ class PlaylistPlayerTest {
     @Throws(Exception::class)
     fun setUp() {
         Utils.initTestLogging()
-
-//        `when`(mockPlaylist!!.isCurrentSong(mockFirstSong!!)).thenReturn(true)
-
-//        val dummyPlaylistBridge = Arguments.createMap()
-//        dummyFirstSongBridge.putString("name", "x")
-//        `when`(mockPlaylist!!.toBridgeObject()).thenReturn(dummyPlaylistBridge)
     }
 
     suspend fun returnMockSongData(song: Song) {
@@ -35,20 +30,18 @@ class PlaylistPlayerTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun play_playSongIfSongAvailable() = runBlocking {
 
+        val mockPlayerNotifcation = mock<PlayerNotification>()
         val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
         val mockStatusProvider = mock<StatusProvider>()
 
         val mockFirstSong = mock<Song>()
         returnMockSongData(mockFirstSong)
-        val mockSecondSong = mock<Song>()
-        returnMockSongData(mockSecondSong)
 
         val mockPlaylist = mock<Playlist>()
-        val mockPlaylistFactory = mock<PlaylistFactory>()
-        val mockPlayerNotifcation = mock<PlayerNotification>()
+        whenever(mockPlaylist.peekCurrentSong()).thenReturn(mockFirstSong)
+        whenever(mockPlaylist.isCurrentSong(mockFirstSong)).thenReturn(true)
 
         val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation, ArgumentsWrapperTest())
         playlistPlayer.play()
@@ -60,62 +53,76 @@ class PlaylistPlayerTest {
         verify<Song>(mockFirstSong, Mockito.times(1)).preload()
     }
 
-//    @Test
-//    @Throws(Exception::class)
-//    fun playNext_playingSecondSong() {
-//        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation)
-//        playlistPlayer.playNext()
-//
-//        verify<Playlist>(mockPlaylist, times(1)).nextSong()
-//        verify<Song>(mockFirstSong, times(1)).play()
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun playNext_playFirstSong() {
-//        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation)
-//        playlistPlayer.playNext()
-//
-//        verify<Song>(mockFirstSong, times(1)).play()
-//    }
-//
-//    @Test(expected = IllegalStateException::class)
-//    @Throws(Exception::class)
-//    fun pause_throwsExceptionIfNoSong() {
-//        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation)
-//        playlistPlayer.pause()
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun close_closesPlaylist() {
-//        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation)
-//        playlistPlayer.close()
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun close_closesSongIfExists() {
-//        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation)
-//        playlistPlayer.play()
-//        playlistPlayer.close()
-//
-//        verify<Song>(mockFirstSong, times(1)).close()
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun playNext_retriesOnFailure() {
-//        `when`<Any>(mockFirstSong!!.preload())
-//                .thenReturn(Utils.rejectedPromise<Song>(Exception()))
-//                .thenReturn(Utils.resolvedPromise<Song>(mockFirstSong))
-//
-//        `when`(mockSetTimeout.run(anyInt())).thenReturn(resolvedPromise<Void>(null as Void?))
-//
-//        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockSetTimeout, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation)
-//        playlistPlayer.play()
-//
-//        // song will be loaded if preloading the first one failed
-//        verify<Song>(mockFirstSong, times(1)).play()
-//    }
+    @Test
+    fun playNext_playingNextSong() = runBlocking {
+        val mockPlayerNotifcation = mock<PlayerNotification>()
+        val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
+        val mockStatusProvider = mock<StatusProvider>()
+
+        val mockFirstSong = mock<Song>()
+        returnMockSongData(mockFirstSong)
+
+        val mockPlaylist = mock<Playlist>()
+        whenever(mockPlaylist.peekCurrentSong()).thenReturn(mockFirstSong)
+        whenever(mockPlaylist.isCurrentSong(mockFirstSong)).thenReturn(true)
+
+        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation, ArgumentsWrapperTest())
+        playlistPlayer.playNext()
+
+        verify<Playlist>(mockPlaylist, times(1)).nextSong()
+        verify<Song>(mockFirstSong, times(1)).play()
+    }
+
+
+    @Test(expected = IllegalStateException::class)
+    fun pause_throwsExceptionIfNoSong() = runBlocking {
+        val mockPlayerNotifcation = mock<PlayerNotification>()
+        val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
+        val mockStatusProvider = mock<StatusProvider>()
+        val mockPlaylist = mock<Playlist>()
+
+        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation, ArgumentsWrapperTest())
+        playlistPlayer.pause()
+    }
+
+    @Test
+    fun close_closesPlaylistAndSongIfExists() = runBlocking {
+        val mockPlayerNotifcation = mock<PlayerNotification>()
+        val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
+        val mockStatusProvider = mock<StatusProvider>()
+
+        val mockFirstSong = mock<Song>()
+        returnMockSongData(mockFirstSong)
+
+        val mockPlaylist = mock<Playlist>()
+        whenever(mockPlaylist.peekCurrentSong()).thenReturn(mockFirstSong)
+        whenever(mockPlaylist.isCurrentSong(mockFirstSong)).thenReturn(true)
+
+        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation, ArgumentsWrapperTest())
+        playlistPlayer.play()
+        playlistPlayer.close()
+
+        verify<Song>(mockFirstSong, times(1)).close()
+    }
+
+    @Test
+    fun playNext_retriesOnFailure() = runBlocking {
+        val mockPlayerNotifcation = mock<PlayerNotification>()
+        val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
+        val mockStatusProvider = mock<StatusProvider>()
+
+        val mockFirstSong = mock<Song>()
+        returnMockSongData(mockFirstSong)
+        whenever(mockFirstSong.preload()).thenThrow(RuntimeException()).thenReturn(Unit)
+
+        val mockPlaylist = mock<Playlist>()
+        whenever(mockPlaylist.peekCurrentSong()).thenReturn(mockFirstSong)
+        whenever(mockPlaylist.isCurrentSong(mockFirstSong)).thenReturn(true)
+
+        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation, ArgumentsWrapperTest())
+        playlistPlayer.play()
+
+        // song will be loaded if preloading the first one failed
+        verify<Song>(mockFirstSong, times(1)).play()
+    }
 }

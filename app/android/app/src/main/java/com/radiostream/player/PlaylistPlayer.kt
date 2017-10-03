@@ -100,6 +100,7 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
 
             waitForCurrentSongMarkedAsPlayed()
             val peekedSong = mPlaylist!!.peekCurrentSong()
+            Timber.i("peeked song: ${peekedSong}")
             Timber.i("preloading song: %s", peekedSong.toString())
             peekedSong.preload()
             setSongLoadingStatus(false, null)
