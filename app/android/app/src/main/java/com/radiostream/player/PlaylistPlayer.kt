@@ -2,6 +2,8 @@ package com.radiostream.player
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
+import com.radiostream.javascript.bridge.ArgumentsInterface
+import com.radiostream.javascript.bridge.ArgumentsWrapper
 import com.radiostream.networking.metadata.MetadataBackendGetter
 import com.radiostream.ui.PlayerNotification
 import kotlinx.coroutines.experimental.*
@@ -12,7 +14,7 @@ import timber.log.Timber
 
 class PlaylistPlayer @Inject
 constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter: MetadataBackendGetter, private val mStatusProvider: StatusProvider,
-            private val mPlayerNotification: PlayerNotification) : Song.EventsListener, PlaylistControls {
+            private val mPlayerNotification: PlayerNotification, private val mArguments: ArgumentsInterface) : Song.EventsListener, PlaylistControls {
 
     private var currentSong: Song? = null
     private var mIsLoading = false
@@ -182,7 +184,7 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
     }
 
     fun toBridgeObject(): WritableMap {
-        val map = Arguments.createMap()
+        val map = mArguments.createMap()
         map.putBoolean("isLoading", mIsLoading)
         map.putBoolean("isPlaying", isPlaying)
         map.putMap("playlist", if (mPlaylist != null) mPlaylist!!.toBridgeObject() else null)
