@@ -215,16 +215,24 @@ class Song {
             mMarkAsPlayedScheduled = true
 
             async(CommonPool) {
-                scheduleMarkAsPlayed()
+                try {
+                    scheduleMarkAsPlayed()
+                } catch (e: Exception) {
+                    Timber.e(e, "Marking as played failed: ${e}")
+                }
             }
         }
 
         mMediaPlayer!!.setOnErrorListener { _, what, extra ->
 
             async(CommonPool) {
-                Timber.e("song error - %d, %d", what, extra)
-                val errorMessage = String.format(Locale.ENGLISH, "Exception during playblack: %d/%d", what, extra)
-                mEventsListener!!.onSongError(Exception(errorMessage))
+                try {
+                    Timber.e("song error - %d, %d", what, extra)
+                    val errorMessage = String.format(Locale.ENGLISH, "Exception during playblack: %d/%d", what, extra)
+                    mEventsListener!!.onSongError(Exception(errorMessage))
+                } catch (e: Exception) {
+                    Timber.e(e, "Error: ${e}")
+                }
             }
 
             true
@@ -232,7 +240,11 @@ class Song {
 
         mMediaPlayer!!.setOnCompletionListener {
             async(CommonPool) {
-                mEventsListener!!.onSongFinish(this@Song)
+                try {
+                    mEventsListener!!.onSongFinish(this@Song)
+                } catch (e: Exception) {
+                    Timber.e(e, "Error: ${e}")
+                }
             }
         }
 

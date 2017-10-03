@@ -70,24 +70,28 @@ class PlayerService : Service(), PlaylistControls {
     private val phoneStateListener = object : PhoneStateListener() {
         override fun onCallStateChanged(state: Int, incomingNumber: String) {
             async(CommonPool) {
-                Timber.i("function start")
-                if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                    Timber.i("telephone busy state: %d", state)
-                    if (mPlayer!!.isPlaying) {
-                        Timber.i("pausing due to telephone state")
-                        this@PlayerService.pause()
-                        mPausedDuePhoneState = true
+                try {
+                    Timber.i("function start")
+                    if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                        Timber.i("telephone busy state: %d", state)
+                        if (mPlayer!!.isPlaying) {
+                            Timber.i("pausing due to telephone state")
+                            this@PlayerService.pause()
+                            mPausedDuePhoneState = true
+                        }
+                    } else if (state == TelephonyManager.CALL_STATE_IDLE) {
+                        Timber.i("telehpone idle state")
+                        if (mPausedDuePhoneState) {
+                            Timber.i("resuming pause music")
+                            this@PlayerService.play()
+                            mPausedDuePhoneState = false
+                        }
                     }
-                } else if (state == TelephonyManager.CALL_STATE_IDLE) {
-                    Timber.i("telehpone idle state")
-                    if (mPausedDuePhoneState) {
-                        Timber.i("resuming pause music")
-                        this@PlayerService.play()
-                        mPausedDuePhoneState = false
-                    }
-                }
 
-                super.onCallStateChanged(state, incomingNumber)
+                    super.onCallStateChanged(state, incomingNumber)
+                } catch (e: Exception) {
+                    Timber.e(e, "onCallStateChanged error: ${e}")
+                }
             }
         }
     }
@@ -131,17 +135,35 @@ class PlayerService : Service(), PlaylistControls {
                 when (ke.keyCode) {
                     KeyEvent.KEYCODE_MEDIA_PLAY -> {
                         Timber.i("play media button")
-                        async(CommonPool) { this@PlayerService.play() }
+                        async(CommonPool) {
+                            try {
+                                this@PlayerService.play()
+                            } catch (e: Exception) {
+                                Timber.e(e, "Error: ${e}")
+                            }
+                        }
                         return true
                     }
                     KeyEvent.KEYCODE_MEDIA_PAUSE -> {
                         Timber.i("pause media button")
-                        async(CommonPool) { this@PlayerService.pause() }
+                        async(CommonPool) {
+                            try {
+                                this@PlayerService.pause()
+                            } catch (e: Exception) {
+                                Timber.e(e, "Error: ${e}")
+                            }
+                        }
                         return true
                     }
                     KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> {
                         Timber.i("play/pause media button")
-                        async(CommonPool) { this@PlayerService.playPause() }
+                        async(CommonPool) {
+                            try {
+                                this@PlayerService.playPause()
+                            } catch (e: Exception) {
+                                Timber.e(e, "Error: ${e}")
+                            }
+                        }
                         return true
                     }
                 }
