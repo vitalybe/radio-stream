@@ -2,7 +2,9 @@ package com.radiostream.player
 
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import com.radiostream.networking.metadata.MetadataBackend
 import com.radiostream.networking.metadata.MetadataBackendGetter
 import com.radiostream.networking.models.SongResult
 import kotlinx.coroutines.experimental.runBlocking
@@ -10,10 +12,10 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.verify
 
 
 class PlaylistTest {
+
 
     private val mPlaylistName = "X"
 
@@ -51,6 +53,7 @@ class PlaylistTest {
 
         val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
         val listOfSongs = listOf(mockLoadedSongs1_Song1, mockLoadedSongs1_Song2)
+        whenever(mockMetadataBackendGetter.get()).thenReturn(mock<MetadataBackend>())
         whenever(mockMetadataBackendGetter.get().fetchPlaylist(playlistName = ArgumentMatchers.anyString())).thenReturn(listOfSongs)
 
         val playlist = Playlist(mPlaylistName, mockMetadataBackendGetter, mockSongFactory)
@@ -75,7 +78,9 @@ class PlaylistTest {
         val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
         val listOfSongs1 = listOf(mockLoadedSongs1_Song1, mockLoadedSongs1_Song2)
         val listOfSongs2 = listOf(mockLoadedSongs2_Song1, mockLoadedSongs2_Song2)
-        whenever(mockMetadataBackendGetter.get().fetchPlaylist(playlistName = ArgumentMatchers.anyString()))
+        val mockMetadataBackend = mock<MetadataBackend>()
+        whenever(mockMetadataBackendGetter.get()).thenReturn(mockMetadataBackend)
+        whenever(mockMetadataBackend.fetchPlaylist(playlistName = ArgumentMatchers.anyString()))
                 .thenReturn(listOfSongs1).thenReturn(listOfSongs2)
 
         val playlist = Playlist(mPlaylistName, mockMetadataBackendGetter, mockSongFactory)
@@ -85,7 +90,9 @@ class PlaylistTest {
         playlist.nextSong()
 
         assertEquals(playlist.peekCurrentSong().title, mockLoadedSongs2_Song1.title)
-        verify<MetadataBackendGetter>(mockMetadataBackendGetter, times(2)).get().fetchPlaylist(mPlaylistName)
+        verify<MetadataBackend>(mockMetadataBackend, times(2)).fetchPlaylist(mPlaylistName)
+
+        Unit
     }
 
     @Test
@@ -98,6 +105,7 @@ class PlaylistTest {
 
         val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
         val listOfSongs = listOf(mockLoadedSongs1_Song1, mockLoadedSongs1_Song2)
+        whenever(mockMetadataBackendGetter.get()).thenReturn(mock<MetadataBackend>())
         whenever(mockMetadataBackendGetter.get().fetchPlaylist(playlistName = ArgumentMatchers.anyString())).thenReturn(listOfSongs)
 
         val playlist = Playlist(mPlaylistName, mockMetadataBackendGetter, mockSongFactory)

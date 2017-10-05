@@ -30,4 +30,4 @@ Then once in the container shell, write:
 
 `/radio-stream/beets/beet radio -d`
 
-You can now see the error stack in case of errors and modify beets code in `radio-stream/server/beets/beetsplug/radio_stream/` (wihtout restarting the server)
+You can now see the error stack in case of errors and modify beets code in `/radio-stream/beets/beetsplug/radio_stream/` (wihtout restarting the server)
