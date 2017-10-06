@@ -6,27 +6,28 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.PowerManager
-
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.radiostream.Settings
 import com.radiostream.networking.metadata.MetadataBackendGetter
 import com.radiostream.networking.models.SongResult
-import kotlinx.coroutines.experimental.*
-
+import com.radiostream.wrapper.UriInterface
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
+import timber.log.Timber
 import java.io.IOException
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
-import java.util.Locale
-
-import timber.log.Timber
+import java.util.*
 import kotlin.coroutines.experimental.suspendCoroutine
 
 class Song {
 
     val id: Int
     val artist: String
-    private val mAlbum: String
+    val album: String
     val title: String
     private val mPath: String
     private val mLastPlayed: Double
@@ -36,9 +37,10 @@ class Song {
     private var mContext: Context? = null
     private var mMetadataBackendGetter: MetadataBackendGetter? = null
     private var mSongLoadingJob: Deferred<Unit>? = null
-    private var mMediaPlayer: MediaPlayer? = null
+    private var mMediaPlayer: MediaPlayerInterface? = null
     private var mSettings: Settings? = null
     private var mEventsListener: EventsListener? = null
+    private lateinit var mUriWrapper: UriInterface
 
     private var mMarkAsPlayedScheduled = false
     private var markedAsPlayedDeferred: Deferred<Unit>? = null
@@ -51,10 +53,10 @@ class Song {
             false
         }
 
-    constructor(songResult: SongResult, mediaPlayer: MediaPlayer,
-                context: Context, settings: Settings, metadataBackend: MetadataBackendGetter) {
+    constructor(songResult: SongResult, mediaPlayer: MediaPlayerInterface,
+                context: Context, settings: Settings, metadataBackend: MetadataBackendGetter, uriWrapper: UriInterface) {
         this.artist = songResult.artist
-        this.mAlbum = songResult.album
+        this.album = songResult.album
         this.title = songResult.title
         this.id = songResult.id
         this.mRating = songResult.rating
@@ -79,12 +81,12 @@ class Song {
             this.mPath = songResult.path
         }
 
-        initializeSong(mediaPlayer, context, settings, metadataBackend)
+        initializeSong(mediaPlayer, context, settings, metadataBackend, uriWrapper)
     }
 
-    constructor(otherSong: Song, mediaPlayer: MediaPlayer, context: Context, settings: Settings, metadataBackend: MetadataBackendGetter) {
+    constructor(otherSong: Song, mediaPlayer: MediaPlayerInterface, context: Context, settings: Settings, metadataBackend: MetadataBackendGetter, uriWrapper: UriInterface) {
         this.artist = otherSong.artist
-        this.mAlbum = otherSong.mAlbum
+        this.album = otherSong.album
         this.title = otherSong.title
         this.id = otherSong.id
         this.mRating = otherSong.mRating
@@ -92,14 +94,15 @@ class Song {
         this.mPlayCount = otherSong.mPlayCount
         this.mPath = otherSong.mPath
 
-        initializeSong(mediaPlayer, context, settings, metadataBackend)
+        initializeSong(mediaPlayer, context, settings, metadataBackend, uriWrapper)
     }
 
-    private fun initializeSong(mediaPlayer: MediaPlayer, context: Context, settings: Settings, metadataBackend: MetadataBackendGetter) {
+    private fun initializeSong(mediaPlayer: MediaPlayerInterface, context: Context, settings: Settings, metadataBackend: MetadataBackendGetter, uriWrapper: UriInterface) {
         this.mMetadataBackendGetter = metadataBackend
         this.mContext = context
         this.mMediaPlayer = mediaPlayer
         this.mSettings = settings
+        this.mUriWrapper = uriWrapper
 
         // NOTE: Wake lock will only be relevant when a song is playing
         mMediaPlayer!!.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK)
@@ -183,11 +186,12 @@ class Song {
     }
 
     suspend fun mediaPlayerPrepare(path: String): Unit = suspendCoroutine { cont ->
-        mMediaPlayer!!.setOnPreparedListener {
+        mMediaPlayer!!.setOnPreparedListener(MediaPlayer.OnPreparedListener {
             Timber.i("setOnPreparedListener callback for song: %s", this@Song.toString())
             cont.resume(Unit)
-        }
-        mMediaPlayer!!.setOnErrorListener { _, what, extra ->
+        })
+
+        mMediaPlayer!!.setOnErrorListener(MediaPlayer.OnErrorListener { _, what, extra ->
             Timber.w("setOnErrorListener callback for song: %s", this@Song.toString())
 
             val errorMessage = String.format(Locale.ENGLISH,
@@ -195,11 +199,11 @@ class Song {
             cont.resumeWithException(NetworkErrorException(errorMessage))
 
             true
-        }
+        })
 
         Timber.i("loading song from url: %s", this.mPath)
         try {
-            mMediaPlayer!!.setDataSource(this.mContext!!, Uri.parse(path))
+            mMediaPlayer!!.setDataSource(this.mContext!!, mUriWrapper.parse(path))
             mMediaPlayer!!.prepareAsync()
         } catch (e: IOException) {
             cont.resumeWithException(NetworkErrorException("Failed to set data source", e))
@@ -223,7 +227,7 @@ class Song {
             }
         }
 
-        mMediaPlayer!!.setOnErrorListener { _, what, extra ->
+        mMediaPlayer!!.setOnErrorListener(MediaPlayer.OnErrorListener { _, what, extra ->
 
             async(CommonPool) {
                 try {
@@ -236,9 +240,9 @@ class Song {
             }
 
             true
-        }
+        })
 
-        mMediaPlayer!!.setOnCompletionListener {
+        mMediaPlayer!!.setOnCompletionListener (MediaPlayer.OnCompletionListener {
             async(CommonPool) {
                 try {
                     mEventsListener!!.onSongFinish(this@Song)
@@ -246,7 +250,7 @@ class Song {
                     Timber.e(e, "Error: ${e}")
                 }
             }
-        }
+        })
 
         Timber.i("starting song...")
         mMediaPlayer!!.start()
@@ -277,7 +281,7 @@ class Song {
         map.putInt("id", id)
         map.putString("artist", artist)
         map.putString("title", title)
-        map.putString("album", mAlbum)
+        map.putString("album", album)
         map.putInt("rating", mRating)
         map.putDouble("lastplayed", mLastPlayed)
         map.putInt("playcount", mPlayCount)
@@ -306,3 +310,4 @@ class Song {
         val markPlayedRetryMs = 15000L
     }
 }
+

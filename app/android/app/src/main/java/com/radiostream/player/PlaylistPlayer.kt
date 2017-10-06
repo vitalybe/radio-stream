@@ -1,9 +1,7 @@
 package com.radiostream.player
 
-import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
-import com.radiostream.javascript.bridge.ArgumentsInterface
-import com.radiostream.javascript.bridge.ArgumentsWrapper
+import com.radiostream.wrapper.ArgumentsInterface
 import com.radiostream.networking.metadata.MetadataBackendGetter
 import com.radiostream.ui.PlayerNotification
 import kotlinx.coroutines.experimental.*

@@ -1,4 +1,4 @@
-package com.radiostream.javascript.bridge
+package com.radiostream.wrapper
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableArray

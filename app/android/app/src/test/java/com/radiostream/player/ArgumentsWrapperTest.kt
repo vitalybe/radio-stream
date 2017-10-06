@@ -4,7 +4,7 @@ import com.facebook.react.bridge.JavaOnlyArray
 import com.facebook.react.bridge.JavaOnlyMap
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
-import com.radiostream.javascript.bridge.ArgumentsInterface
+import com.radiostream.wrapper.ArgumentsInterface
 
 class ArgumentsWrapperTest : ArgumentsInterface {
     override fun createMap(): WritableMap {

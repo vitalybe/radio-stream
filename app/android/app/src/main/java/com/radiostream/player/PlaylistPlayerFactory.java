@@ -1,6 +1,6 @@
 package com.radiostream.player;
 
-import com.radiostream.javascript.bridge.ArgumentsWrapper;
+import com.radiostream.wrapper.ArgumentsWrapper;
 import com.radiostream.networking.metadata.MetadataBackendGetter;
 import com.radiostream.ui.PlayerNotification;
 
