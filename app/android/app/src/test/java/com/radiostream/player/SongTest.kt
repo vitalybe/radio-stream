@@ -16,7 +16,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.mockito.Mockito
-import com.radiostream.player.Utils.resolvedPromise
 import com.radiostream.wrapper.UriInterface
 
 

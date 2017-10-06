@@ -3,8 +3,6 @@ package com.radiostream.networking.metadata
 import com.radiostream.networking.models.PlaylistListResult
 import com.radiostream.networking.models.SongResult
 
-import org.jdeferred.Promise
-
 import java.io.IOException
 
 /**

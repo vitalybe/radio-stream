@@ -173,8 +173,6 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.7'
     compile 'com.google.dagger:dagger:2.7'
     provided 'javax.annotation:jsr250-api:1.0'
-    // jdeferred (promises)
-    compile 'org.jdeferred:jdeferred-android-aar:1.2.4'
     // testfairy
     compile project(path: ':react-native-testfairy')
     // kotlin

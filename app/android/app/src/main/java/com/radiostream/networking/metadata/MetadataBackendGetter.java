@@ -1,16 +1,8 @@
 package com.radiostream.networking.metadata;
 
 import com.radiostream.Settings;
-import com.radiostream.networking.models.SongResult;
-
-import org.jdeferred.Promise;
-
-import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import hugo.weaving.DebugLog;
 
 public class MetadataBackendGetter {
 
