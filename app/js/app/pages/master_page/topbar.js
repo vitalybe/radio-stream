@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     flexShrink: 1,
   },
-  songInfoTitle: { color: colors.CYAN_BRIGHT},
+  songInfoTitle: { color: colors.CYAN_BRIGHT },
   songInfoArtist: { fontWeight: "bold", color: colors.CYAN_BRIGHT },
 });
 

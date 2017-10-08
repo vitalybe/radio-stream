@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("NavSidebar");
 
 import React, { Component } from "react";
-import {StyleSheet, View, Platform, Alert, TouchableOpacity} from "react-native";
+import { StyleSheet, View, Platform, Alert, TouchableOpacity } from "react-native";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";

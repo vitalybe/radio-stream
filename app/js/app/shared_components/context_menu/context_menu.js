@@ -4,10 +4,16 @@ import { View, StyleSheet, TouchableHighlight, Text } from "react-native";
 import DropdownMenu from "react-dd-menu";
 require("./context_menu.css");
 
-let MenuContext = props => <View style={props.customStyles.menuContextWrapper}>{props.children}</View>;
+let MenuContext = props =>
+  <View style={props.customStyles.menuContextWrapper}>
+    {props.children}
+  </View>;
 
-let MenuTrigger = props => <View style={props.style}>{props.children}</View>;
-let MenuOptions = props => (
+let MenuTrigger = props =>
+  <View style={props.style}>
+    {props.children}
+  </View>;
+let MenuOptions = props =>
   <View style={props.customStyles.optionsWrapper}>
     {React.Children.map(props.children, child =>
       React.cloneElement(child, {
@@ -15,13 +21,13 @@ let MenuOptions = props => (
         optionText: props.customStyles.optionText,
       })
     )}
-  </View>
-);
-let MenuOption = props => (
+  </View>;
+let MenuOption = props =>
   <TouchableHighlight onPress={props.onSelect} {...props.optionTouchable}>
-    <Text style={[{ whiteSpace: "pre" }, props.optionText]}>{props.text}</Text>
-  </TouchableHighlight>
-);
+    <Text style={[{ whiteSpace: "pre" }, props.optionText]}>
+      {props.text}
+    </Text>
+  </TouchableHighlight>;
 
 class Menu extends Component {
   componentWillMount() {
@@ -40,7 +46,9 @@ class Menu extends Component {
           isOpen={this.state.contextMenuOpen}
           close={() => this.setState({ contextMenuOpen: false })}
           toggle={
-            <View onClick={() => this.setState({ contextMenuOpen: !this.state.contextMenuOpen })}>{toggle}</View>
+            <View onClick={() => this.setState({ contextMenuOpen: !this.state.contextMenuOpen })}>
+              {toggle}
+            </View>
           }>
           {menuOptions}
         </DropdownMenu>
