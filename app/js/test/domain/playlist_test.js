@@ -8,6 +8,7 @@ var expect = require("chai").expect;
 var jsdom = require("mocha-jsdom");
 
 import { generateMockSong } from "../_shared/mock_data";
+import Constants from "app/utils/constants";
 
 const TITLE_1 = "T1";
 const ARTIST_1 = "A1";
@@ -17,7 +18,7 @@ const TITLE_2 = "T2";
 const ARTIST_2 = "A2";
 const ALBUM_2 = "M2";
 
-describe("Playlist", () => {
+describe.only("Playlist", () => {
   jsdom();
   let self = {};
 
@@ -65,25 +66,16 @@ describe("Playlist", () => {
     expect(song.title).to.be.equal(TITLE_1);
   });
 
-  it("peek song returns the current song", () => {
+  it("peek song returns the current song", async () => {
     let playlist = new (self.sutPlaylist())();
 
-    return playlist
-      .peekNextSong()
-      .then(song => {
-        expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(1);
+    let song = await playlist.peekNextSong();
+    expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(1);
+    expect(song.title).to.be.equal(TITLE_1);
 
-        return expect(song.title).to.be.equal(TITLE_1);
-      })
-      .then(() => {
-        return playlist.peekNextSong();
-      })
-      .then(song => {
-        return expect(song.title).to.be.equal(TITLE_1);
-      })
-      .then(() => {
-        expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(1);
-      });
+    song = await playlist.peekNextSong();
+    expect(song.title).to.be.equal(TITLE_1);
+    expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(1);
   });
 
   it("reload playlist if it did not reload for a while", async () => {
@@ -97,8 +89,7 @@ describe("Playlist", () => {
       })
     );
 
-    let PlaylistClass = self.sutPlaylist();
-    let playlist = new PlaylistClass();
+    let playlist = new (self.sutPlaylist())();
 
     var clock = sinon.useFakeTimers();
     return (
@@ -115,7 +106,7 @@ describe("Playlist", () => {
           expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(1);
         })
         .then(() => {
-          clock.tick(PlaylistClass.RELOAD_PLAYLIST_AFTER_MINUTES * 60 * 1000);
+          clock.tick(Constants.RELOAD_PLAYLIST_AFTER_MINUTES * 60 * 1000);
           return playlist.nextSong();
         })
         .then(song => {
