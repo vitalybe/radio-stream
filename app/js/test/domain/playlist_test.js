@@ -18,7 +18,7 @@ const TITLE_2 = "T2";
 const ARTIST_2 = "A2";
 const ALBUM_2 = "M2";
 
-describe.only("Playlist", () => {
+describe("Playlist", () => {
   jsdom();
   let self = {};
 
