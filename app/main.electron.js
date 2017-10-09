@@ -3,7 +3,7 @@ const path = require("path");
 const url = require("url");
 const process = require("process");
 
-const ElectronIpcNativeSide = require("./app/utils/electron_ipc/electron_ipc_native_side");
+const ElectronIpcNativeSide = require("./js/app/utils/electron_ipc/electron_ipc_native_side");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

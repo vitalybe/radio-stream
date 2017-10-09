@@ -3,7 +3,7 @@ const moduleLogger = loggerCreator("playlist.web");
 
 import { computed, observable } from "mobx";
 
-import Song from "../song/song.web";
+import Song from "app/stores/player/song/song.web";
 import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
 import constants from "app/utils/constants";
 
@@ -100,7 +100,7 @@ export default class Playlist {
     this._onFinishCallback = callback;
   }
 
-  nextSong() {
+  async nextSong() {
     let logger = loggerCreator(this.nextSong.name, moduleLogger);
 
     return this.peekNextSong().then(song => {
