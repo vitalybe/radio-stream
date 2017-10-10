@@ -8,8 +8,8 @@ import retries from "app/utils/retries";
 
 import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
 import * as backendLastFm from "app/utils/backend_lastfm_api";
-import * as wrappedSoundManager from "../wrapped_sound/wrapped_sound_manager";
-import SongActions from "../song_actions";
+import * as wrappedSoundManager from "app/stores/player/wrapped_sound/wrapped_sound_manager";
+import SongActions from "app/stores/player/song_actions";
 
 export default class Song {
   constructor(songData, onPlayProgressCallback, onFinishCallback) {

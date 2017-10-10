@@ -39,13 +39,14 @@ describe("Song", () => {
 
     // SUT
     self.sutNewSong = (...args) => {
-      let module = proxyquire("../../app/domain/song.js", {
-        "../utils/wrapped_sound_manager": self.stubWrappedSoundManager,
-        "../utils/backend_lastfm_api": self.stubBackendLastFm,
-        "../utils/backend_metadata_api": sinon.stub(),
+      let module = proxyquire("../../app/stores/player/song/song.web.js", {
+        "app/stores/player/wrapped_sound/wrapped_sound_manager": self.stubWrappedSoundManager,
+        "app/utils/backend_lastfm_api": self.stubBackendLastFm,
+        "app/utils/backend_metadata_api/backend_metadata_api": sinon.stub(),
+        "app/stores/player/song_actions": sinon.stub(),
       });
 
-      return new module.Song(...args);
+      return new module.default(...args);
     };
   });
 
@@ -93,44 +94,45 @@ describe("Song", () => {
       });
     });
 
-    it("subscribe finish", () => {
-      let song = self.sutNewSong(generateMockSong(ARTIST, ALBUM, TITLE));
+    it("subscribe finish", async () => {
       let finishCallbackStub = sinon.stub();
-      song.subscribeFinish(finishCallbackStub);
-      return song.playSound().then(() => {
-        var stubPlay = self.stubWrappedSound.play;
-        expect(stubPlay.callCount).to.equal(1);
+      let progressCallbackStub = sinon.stub();
+      let song = self.sutNewSong(generateMockSong(ARTIST, ALBUM, TITLE), progressCallbackStub, finishCallbackStub);
 
-        var optionsArg = stubPlay.getCall(0).args[0];
-        expect(optionsArg.onfinish).to.equal(finishCallbackStub);
-      });
+      await song.playSound();
+
+      let stubLoadSound = self.stubWrappedSoundManager.loadSound;
+      expect(stubLoadSound.callCount).to.equal(1);
+
+      let optionsArg = stubLoadSound.getCall(0).args[1];
+      expect(optionsArg.onfinish).to.equal(finishCallbackStub);
     });
 
-    it("subscribe progress", () => {
-      let song = self.sutNewSong(generateMockSong(ARTIST, ALBUM, TITLE));
+    it("subscribe progress", async () => {
+      let finishCallbackStub = sinon.stub();
       let progressCallbackStub = sinon.stub();
-      song.subscribePlayProgress(progressCallbackStub);
-      return song.playSound().then(() => {
-        var stubPlay = self.stubWrappedSound.play;
-        expect(stubPlay.callCount).to.equal(1);
+      let song = self.sutNewSong(generateMockSong(ARTIST, ALBUM, TITLE), progressCallbackStub, finishCallbackStub);
 
-        var optionsArg = stubPlay.getCall(0).args[0];
+      await song.playSound();
+      let stubLoadSound = self.stubWrappedSoundManager.loadSound;
+      expect(stubLoadSound.callCount).to.equal(1);
 
-        expect(progressCallbackStub.callCount).to.equal(0);
+      let optionsArg = stubLoadSound.getCall(0).args[1];
 
-        self.stubWrappedSound.position = 5000;
-        optionsArg.whileplaying.call(self.stubWrappedSound);
-        expect(progressCallbackStub.callCount).to.equal(1);
+      expect(progressCallbackStub.callCount).to.equal(0);
 
-        // callback shouldn't be called if position still on same second
-        self.stubWrappedSound.position = 5100;
-        optionsArg.whileplaying.call(self.stubWrappedSound);
-        expect(progressCallbackStub.callCount).to.equal(1);
+      self.stubWrappedSound.position = 5000;
+      optionsArg.whileplaying.call(self.stubWrappedSound);
+      expect(progressCallbackStub.callCount).to.equal(1);
 
-        self.stubWrappedSound.position = 6000;
-        optionsArg.whileplaying.call(self.stubWrappedSound);
-        expect(progressCallbackStub.callCount).to.equal(2);
-      });
+      // callback shouldn't be called if position still on same second
+      self.stubWrappedSound.position = 5100;
+      optionsArg.whileplaying.call(self.stubWrappedSound);
+      expect(progressCallbackStub.callCount).to.equal(1);
+
+      self.stubWrappedSound.position = 6000;
+      optionsArg.whileplaying.call(self.stubWrappedSound);
+      expect(progressCallbackStub.callCount).to.equal(2);
     });
   });
 });
