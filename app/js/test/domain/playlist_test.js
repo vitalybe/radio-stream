@@ -91,37 +91,21 @@ describe("Playlist", () => {
 
     let playlist = new (self.sutPlaylist())();
 
-    var clock = sinon.useFakeTimers();
-    return (
-      playlist
-        .nextSong()
-        .then(song => {
-          expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(1);
-          return playlist.nextSong();
-        })
-        .then(() => {
-          return playlist.nextSong();
-        })
-        .then(song => {
-          expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(1);
-        })
-        .then(() => {
-          clock.tick(Constants.RELOAD_PLAYLIST_AFTER_MINUTES * 60 * 1000);
-          return playlist.nextSong();
-        })
-        .then(song => {
-          expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(2);
-        })
-        // finally
-        .catch(err => {
-          return err;
-        })
-        .then(err => {
-          logger.info(`restoring clock`);
-          clock.restore();
+    try {
+      var clock = sinon.useFakeTimers();
+      await playlist.nextSong();
+      expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(1);
+      await playlist.nextSong();
 
-          if (err) throw err;
-        })
-    );
+      await playlist.nextSong();
+      expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(1);
+      clock.tick(Constants.RELOAD_PLAYLIST_AFTER_MINUTES * 60 * 1000);
+
+      await playlist.nextSong();
+      expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(2);
+      logger.info(`restoring clock`);
+    } finally {
+      clock.restore();
+    }
   });
 });
