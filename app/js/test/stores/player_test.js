@@ -27,19 +27,23 @@ describe("Player", () => {
       subscribeFinish: sinon.stub(),
     });
 
-    self.stubPlaylist = Object.create({
-      nextSong: sinon.stub().returns(
+    self.mockPlaylistCreator = function() {
+      this.nextSong = sinon.stub().returns(
         new Promise(resolve => {
           resolve(self.stubSong);
         })
-      ),
-      peekNextSong: sinon.stub().returns(
+      );
+
+      this.peekNextSong = sinon.stub().returns(
         new Promise(resolve => {
           resolve(self.stubSong);
         })
-      ),
-      name: "StubPlaylist",
-    });
+      );
+
+      this.subscribePlayProgress = sinon.stub();
+      this.subscribeFinish = sinon.stub();
+      this.name = "StubPlaylist";
+    };
 
     self.stubRetries = Object.create({
       promiseRetry: f => {
@@ -60,24 +64,28 @@ describe("Player", () => {
     });
 
     // SUT
-    let module = proxyquire("../../app/stores/player", {
-      "../utils/retries": self.stubRetries,
+    let module = proxyquire("app/stores/player/player", {
+      "app/utils/retries": self.stubRetries,
+      "app/stores/player/playlist/playlist.web": self.mockPlaylistCreator,
+      "app/stores/player/wrapped_sound/wrapped_sound_manager": {
+        setup: sinon.stub(),
+      },
     });
 
-    self.player = module.default;
+    self.player = module.player;
     await self.player.changePlaylist(self.stubPlaylist);
   });
 
   it("next plays the next song", async () => {
-    await self.player.next();
+    await self.player.playNext();
     expect(self.stubSong.playSound.callCount).to.equal(1);
-    expect(self.stubPlaylist.peekNextSong.callCount).to.equal(1);
+    expect(self.player.currentPlaylist.peekNextSong.callCount).to.equal(1);
   });
 
   it("next succeeds even if peeking fails", () => {
-    self.stubPlaylist.peekNextSong = sinon.stub().returns(Promise.reject(new Error()));
+    self.player.currentPlaylist.peekNextSong = sinon.stub().returns(Promise.reject(new Error()));
 
-    return self.player.next().then(() => {
+    return self.player.playNext().then(() => {
       expect(self.stubSong.playSound.callCount).to.equal(1);
     });
   });
@@ -100,7 +108,7 @@ describe("Player", () => {
       }
     });
 
-    return self.player.next().then(() => {
+    return self.player.playNext().then(() => {
       expect(self.stubSong.playSound.callCount).to.equal(2);
     });
   });

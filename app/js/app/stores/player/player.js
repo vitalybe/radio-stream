@@ -5,8 +5,8 @@ var moduleLogger = loggerCreator("player_real");
 import { observable, action, computed } from "mobx";
 import retries from "app/utils/retries";
 import assert from "app/utils/assert";
-import Playlist from "./playlist/playlist.web";
-import * as wrappedSoundManager from "./wrapped_sound/wrapped_sound_manager";
+import Playlist from "app/stores/player/playlist/playlist.web";
+import * as wrappedSoundManager from "app/stores/player/wrapped_sound/wrapped_sound_manager";
 
 class Player {
   MARK_PLAYED_AFTER_SECONDS = 20;
@@ -24,7 +24,7 @@ class Player {
   constructor() {
     let logger = loggerCreator("constructor", moduleLogger);
 
-    logger.info(`initializing soundmanager2`);
+    logger.info(`initializing soundmanager2: ${wrappedSoundManager.setup}`);
     wrappedSoundManager.setup();
   }
 
@@ -47,7 +47,7 @@ class Player {
 
     this.currentPlaylist = new Playlist(playlistName);
 
-    logger.info(`subscribing to playlist events`);
+    logger.info(`subscribing to playlist events: ${this.currentPlaylist.subscribePlayProgress}`);
     this.currentPlaylist.subscribePlayProgress(this._onPlayProgress.bind(this));
     this.currentPlaylist.subscribeFinish(this.playNext.bind(this));
   }
