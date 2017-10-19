@@ -1,7 +1,7 @@
 import { AppRegistry } from "react-native";
 import React, { Component } from "react";
 
-import MasterPage from "./app/pages/master_page/master_page";
+import MasterPage from "./js/app/pages/master_page/master_page";
 import TestFairy from "react-native-testfairy";
 
 class RadioStreamAndroid extends Component {
