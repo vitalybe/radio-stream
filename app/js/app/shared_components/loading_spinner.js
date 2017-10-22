@@ -4,6 +4,7 @@ const moduleLogger = loggerCreator("LoadingSpinner");
 
 import React, { Component } from "react";
 import { Image, StyleSheet, View, ActivityIndicator } from "react-native";
+import { observer } from "mobx-react";
 
 import NormalText from "app/shared_components/text/normal_text";
 import { player } from "app/stores/player/player";
@@ -26,6 +27,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   progressStatusError: {
+    marginTop: 10,
     color: "red",
   },
   songDetails: {
@@ -33,13 +35,14 @@ const styles = StyleSheet.create({
   },
 });
 
+@observer
 export default class LoadingSpinner extends Component {
   render() {
     loggerCreator("render", moduleLogger);
 
     let loadingError = "";
     if (player.loadingError) {
-      loadingError = `Error occurred, retrying: ${player.loadingError}`;
+      loadingError = `${player.loadingError}`;
     }
 
     return (

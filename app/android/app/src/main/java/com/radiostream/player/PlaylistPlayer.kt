@@ -16,7 +16,7 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
 
     private var currentSong: Song? = null
     private var mIsLoading = false
-    private var mLastLoadingError: Exception? = null
+    private var mLastLoadingErrorMessage: String = ""
 
     private var mIsClosed = false
 
@@ -27,12 +27,12 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
             currentSong!!.isPlaying
         }
 
-    private fun setSongLoadingStatus(isLoading: Boolean, error: Exception?) {
-        Timber.i("change loading to: %b and error to: %s", isLoading, error?.toString() ?: "NULL")
-        if (isLoading != mIsLoading || mLastLoadingError !== error) {
+    private fun setSongLoadingStatus(isLoading: Boolean, errorMessage: String = "") {
+        Timber.i("change loading to: %b and error to: %s", isLoading, errorMessage)
+        if (isLoading != mIsLoading || mLastLoadingErrorMessage !== errorMessage) {
             Timber.i("value changed")
             mIsLoading = isLoading
-            mLastLoadingError = error
+            mLastLoadingErrorMessage = errorMessage
             mStatusProvider.sendStatus()
         } else {
             Timber.i("value didn't change")
@@ -87,7 +87,7 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
         Timber.i("function start")
 
         try {
-            setSongLoadingStatus(true, mLastLoadingError)
+            setSongLoadingStatus(true, mLastLoadingErrorMessage)
             if (currentSong != null) {
                 currentSong!!.pause()
                 currentSong!!.close()
@@ -98,10 +98,10 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
 
             waitForCurrentSongMarkedAsPlayed()
             val peekedSong = mPlaylist!!.peekCurrentSong()
-            Timber.i("peeked song: ${peekedSong}")
+            Timber.i("peeked song: $peekedSong")
             Timber.i("preloading song: %s", peekedSong.toString())
             peekedSong.preload()
-            setSongLoadingStatus(false, null)
+            setSongLoadingStatus(false)
             mPlayerNotification.showSongNotification(peekedSong)
 
             // We won't be playing any new music if playlistPlayer is closed
@@ -116,8 +116,8 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
 
             Timber.i("song preloaded successfully")
         } catch (e: Exception) {
-            Timber.e(e, "exception occured during next song loading")
-            setSongLoadingStatus(true, e)
+            Timber.e(e, "exception occurred during next song loading")
+            setSongLoadingStatus(true, "Failed. Retrying...")
 
             Timber.i("no song was loaded - waiting and retrying")
             delay(5000)
@@ -172,7 +172,7 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
     }
 
     override suspend fun onSongError(error: Exception) {
-        Timber.e(error, "error occured in song '%s'", currentSong)
+        Timber.e(error, "error occurred in song '%s'", currentSong)
         if (currentSong != null) {
             Timber.i("pausing existing song")
             currentSong!!.pause()
@@ -187,7 +187,7 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
         map.putBoolean("isLoading", mIsLoading)
         map.putBoolean("isPlaying", isPlaying)
         map.putMap("playlist", if (mPlaylist != null) mPlaylist!!.toBridgeObject() else null)
-        map.putString("loadingError", if (mLastLoadingError != null) mLastLoadingError!!.message else "")
+        map.putString("loadingError", mLastLoadingErrorMessage)
 
         return map
     }

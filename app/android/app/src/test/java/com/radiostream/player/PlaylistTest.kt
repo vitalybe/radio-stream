@@ -4,6 +4,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.any
 import com.radiostream.networking.metadata.MetadataBackend
 import com.radiostream.networking.metadata.MetadataBackendGetter
 import com.radiostream.networking.models.SongResult
@@ -32,7 +33,7 @@ class PlaylistTest {
     }
 
     private fun buildSongFromSongResult(mockSongFactory: SongFactory) {
-        whenever(mockSongFactory.build(ArgumentMatchers.any<SongResult>())).thenAnswer { invocation ->
+        whenever(mockSongFactory.build(any<SongResult>())).thenAnswer { invocation ->
             val songResult = invocation.arguments[0] as SongResult
 
             val mockSong = mock<Song>()
