@@ -91,6 +91,8 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
             if (currentSong != null) {
                 currentSong!!.pause()
                 currentSong!!.close()
+
+                currentSong = null
             }
 
             mPlayerNotification.showLoadingNotification()
