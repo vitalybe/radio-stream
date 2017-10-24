@@ -66,9 +66,7 @@ export default class PlaylistSidebar extends Component {
         <ScrollView horizontal={false} style={[styles.container]}>
           <View style={styles.header}>
             <Image source={playlistImage} style={styles.playlistImage} />
-            <BigText style={styles.playlistName}>
-              {player.currentPlaylist.name}
-            </BigText>
+            <BigText style={styles.playlistName}>{player.currentPlaylist.name}</BigText>
           </View>
           {/* HACK - unusedWindowWidth is given only to force re-render of SongsGrid which doesn't happen on resize. In theory
          the render should've happened automatically, but it doesn't (I think it is React Fiber bug). The other
@@ -79,6 +77,7 @@ export default class PlaylistSidebar extends Component {
             unusedWindowWidth={width}
             songs={player.currentPlaylist.songs.toJS()}
             highlightedSong={player.currentSong}
+            visibleRows={7}
             onRowPress={this.onSongRowPress}
           />
         </ScrollView>
