@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("PlaylistSidebar");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
+import { Image, StyleSheet, Text, View, ScrollView, Platform } from "react-native";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";
@@ -85,7 +85,7 @@ export default class PlaylistSidebar extends Component {
             unusedWindowWidth={width}
             songs={player.currentPlaylist.songs.toJS()}
             highlightedSong={player.currentSong}
-            visibleRows={7}
+            visibleRows={Platform.OS === "web" ? 13 : 7}
             onRowPress={this.onSongRowPress}
           />
         </ScrollView>
