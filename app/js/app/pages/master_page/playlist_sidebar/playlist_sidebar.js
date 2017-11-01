@@ -46,9 +46,17 @@ export default class PlaylistSidebar extends Component {
     masterStore.isPlaylistSidebarOpen = isOpen;
   };
 
-  onSongRowPress = (index, song) => {
+  onSongRowPress = pressedSong => {
+    const logger = loggerCreator("onSongRowPress", moduleLogger);
+    logger.info(`pressed song: ${pressedSong.toString()}`);
     masterStore.isPlaylistSidebarOpen = false;
-    player.playIndex(index);
+    let foundIndex = player.currentPlaylist.songs.findIndex(song => pressedSong.id === song.id);
+    logger.info(`song index in playlist: ${foundIndex}`);
+    if (foundIndex > -1) {
+      player.playIndex(foundIndex);
+    } else {
+      logger.error("pressed song not found in playlist");
+    }
   };
 
   render() {

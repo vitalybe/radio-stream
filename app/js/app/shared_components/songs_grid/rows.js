@@ -91,7 +91,7 @@ HeaderRow.propTypes = {
 @observer
 export class SongRow extends Component {
   onRowPress = () => {
-    this.props.onPress(this.props.index, this.props.song);
+    this.props.onPress(this.props.song);
   };
 
   render() {
@@ -103,12 +103,8 @@ export class SongRow extends Component {
             <View key="name" style={[styles.gridCell, styles.nameCell]}>
               <Image source={playImage} style={styles.playImage} />
               <View style={styles.nameContainer}>
-                <SmallText>
-                  {this.props.song.title}
-                </SmallText>
-                <SmallText style={styles.artistText}>
-                  {this.props.song.artist}
-                </SmallText>
+                <SmallText>{this.props.song.title}</SmallText>
+                <SmallText style={styles.artistText}>{this.props.song.artist}</SmallText>
               </View>
             </View>,
             <View key="rating" style={[styles.gridCell]}>
@@ -120,9 +116,7 @@ export class SongRow extends Component {
               </SmallText>
             </View>,
             <View key="playCount" style={[styles.gridCell]}>
-              <SmallText>
-                {this.props.song.playcount || 0}
-              </SmallText>
+              <SmallText>{this.props.song.playcount || 0}</SmallText>
             </View>,
           ].slice(0, this.props.visibleColumns)}
         </View>
