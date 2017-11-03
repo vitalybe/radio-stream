@@ -76,13 +76,8 @@ export default class PlaylistSidebar extends Component {
             <Image source={playlistImage} style={styles.playlistImage} />
             <BigText style={styles.playlistName}>{player.currentPlaylist.name}</BigText>
           </View>
-          {/* HACK - unusedWindowWidth is given only to force re-render of SongsGrid which doesn't happen on resize. In theory
-         the render should've happened automatically, but it doesn't (I think it is React Fiber bug). The other
-          alternative would be to listen to DimensionsEmitter in SongsGrid but that would only covert resizes that
-          were triggered by Window resizing */}
           <SongsGrid
             style={styles.songGrid}
-            unusedWindowWidth={width}
             songs={player.currentPlaylist.songs.toJS()}
             highlightedSong={player.currentSong}
             visibleRows={Platform.OS === "web" ? 13 : 7}
