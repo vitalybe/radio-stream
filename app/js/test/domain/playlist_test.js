@@ -18,6 +18,10 @@ const TITLE_2 = "T2";
 const ARTIST_2 = "A2";
 const ALBUM_2 = "M2";
 
+const TITLE_3 = "T3";
+const ARTIST_3 = "A3";
+const ALBUM_3 = "M3";
+
 describe("Playlist", () => {
   jsdom();
   let self = {};
@@ -25,12 +29,22 @@ describe("Playlist", () => {
   beforeEach(() => {
     // Mocks
     self.backendMetadataApiStub = {
-      playlistSongs: sinon.stub().returns(
-        new Promise(resolve => {
-          let songs = [generateMockSong(ARTIST_1, ALBUM_1, TITLE_1), generateMockSong(ARTIST_2, ALBUM_2, TITLE_2)];
-          resolve(songs);
-        })
-      ),
+      playlistSongs: sinon
+        .stub()
+        .onCall(0)
+        .returns(
+          new Promise(resolve => {
+            let songs = [generateMockSong(ARTIST_1, ALBUM_1, TITLE_1), generateMockSong(ARTIST_2, ALBUM_2, TITLE_2)];
+            resolve(songs);
+          })
+        )
+        .onCall(1)
+        .returns(
+          new Promise(resolve => {
+            let songs = [generateMockSong(ARTIST_3, ALBUM_3, TITLE_3)];
+            resolve(songs);
+          })
+        ),
     };
 
     self.mockSong = function(songData) {
@@ -52,6 +66,8 @@ describe("Playlist", () => {
   });
 
   it("next songs returns and reloads correctly", async () => {
+    let logger = loggerCreator("test", moduleLogger);
+
     let playlist = new (self.sutPlaylist())();
 
     let song = await playlist.nextSong();
@@ -63,7 +79,7 @@ describe("Playlist", () => {
 
     song = await playlist.nextSong();
     expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(2);
-    expect(song.title).to.be.equal(TITLE_1);
+    expect(song.title).to.be.equal(TITLE_3);
   });
 
   it("peek song returns the current song", async () => {
@@ -81,7 +97,7 @@ describe("Playlist", () => {
   it("reload playlist if it did not reload for a while", async () => {
     let logger = loggerCreator("test", moduleLogger);
 
-    self.backendMetadataApiStub.playlistSongs.returns(
+    self.backendMetadataApiStub.playlistSongs = sinon.stub().returns(
       new Promise(resolve => {
         var mockSong = generateMockSong(ARTIST_1, ALBUM_1, TITLE_1);
         let songs = [mockSong, mockSong, mockSong, mockSong, mockSong];
@@ -94,6 +110,7 @@ describe("Playlist", () => {
     try {
       var clock = sinon.useFakeTimers();
       await playlist.nextSong();
+      logger.info(`got songs amount: ${playlist.songs.length}`);
       expect(self.backendMetadataApiStub.playlistSongs.callCount).to.be.equal(1);
       await playlist.nextSong();
 

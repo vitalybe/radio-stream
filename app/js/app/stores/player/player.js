@@ -7,6 +7,7 @@ import retries from "app/utils/retries";
 import assert from "app/utils/assert";
 import Playlist from "app/stores/player/playlist/playlist.web";
 import * as wrappedSoundManager from "app/stores/player/wrapped_sound/wrapped_sound_manager";
+import preventConcurrentAsync from "app/utils/preventConcurrentAsync";
 
 class Player {
   MARK_PLAYED_AFTER_SECONDS = 20;
@@ -68,18 +69,25 @@ class Player {
   }
 
   @action
-  play() {
+  async play() {
     let logger = loggerCreator("play", moduleLogger);
 
     assert(this.currentPlaylist, "unexpected: playlist isn't set");
 
+    this.isPlaying = true;
     if (this.currentSong) {
       this.currentSong.playSound();
     } else {
       this.playNext();
     }
 
-    this.isPlaying = true;
+    try {
+      logger.info(`preloading next song`);
+      await this._preloadNextSong();
+      logger.info(`preloaded next song`);
+    } catch (e) {
+      logger.warn(`failed to preload next song: ${e}`);
+    }
   }
 
   @action
@@ -95,8 +103,8 @@ class Player {
     }
   }
 
-  async _preloadNextSong() {
-    let logger = loggerCreator(this._preloadNextSong.name, moduleLogger);
+  _preloadNextSong = preventConcurrentAsync(async () => {
+    let logger = loggerCreator("_preloadNextSong", moduleLogger);
 
     try {
       logger.info(`peeking next song`);
@@ -106,7 +114,7 @@ class Player {
     } catch (err) {
       logger.warn(`failed to peek the next song: ${err.stack}`);
     }
-  }
+  });
 
   async _finishCurrentlyPlayingSong() {
     const logger = loggerCreator("_handleCurrentlyPlayingSong", moduleLogger);
@@ -151,6 +159,7 @@ class Player {
     });
 
     await this._preloadNextSong();
+    logger.info(`preloaded next song`);
   }
 
   async playIndex(index) {

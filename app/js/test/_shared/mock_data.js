@@ -33,7 +33,7 @@ export function generateMockSong(artist, album, title) {
     albumdisambig: "",
     samplerate: 44100,
     albumartist_sort: "Newsom, Joanna",
-    id: 2821,
+    id: artist + title + album,
     size: 9179202,
     mb_artistid: "cb69e1f1-bc76-4df5-93c9-cf97dd8a3b5c",
     bitdepth: 0,

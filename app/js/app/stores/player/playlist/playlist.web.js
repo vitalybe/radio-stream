@@ -59,7 +59,7 @@ export default class Playlist {
     return result;
   }
 
-  _addSongsIfCurrentIsLast() {
+  async _addSongsIfCurrentIsLast() {
     let logger = loggerCreator(this._addSongsIfCurrentIsLast.name, moduleLogger);
 
     if (this._areSongsOutOfDate()) {
@@ -79,16 +79,21 @@ export default class Playlist {
       return Promise.resolve();
     } else {
       logger.info(`reloading songs`);
-      return backendMetadataApi.playlistSongs(this.name).then(songsData => {
-        logger.info(`added songs: ${songsData.length}`);
-        this.songs = [
-          ...this.songs,
-          ...songsData.map(songData => new Song(songData, this._onPlayProgressCallback, this._onFinishCallback)),
-        ];
-        logger.info(`loaded songs: ${songsData.length}`);
 
-        this._lastReloadDate = new Date();
-      });
+      let songsData = await backendMetadataApi.playlistSongs(this.name);
+      logger.info(`fetched songs: ${songsData.length}`);
+      // the backend might return songs that are already in the playlist, e.g, if we skipped them before marking them
+      // as played. in this case we must filter them out to prevent duplicates in the playlist
+      songsData = songsData.filter(songData => !this.songs.find(song => song.id === songData.id));
+      logger.info(`remaining songs after filtering out existing ones in playlist: ${songsData.length}`);
+
+      this.songs = [
+        ...this.songs,
+        ...songsData.map(songData => new Song(songData, this._onPlayProgressCallback, this._onFinishCallback)),
+      ];
+      logger.info(`loaded songs: ${songsData.length}`);
+
+      this._lastReloadDate = new Date();
     }
   }
 
