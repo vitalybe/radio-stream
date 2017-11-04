@@ -47,7 +47,14 @@ export default class Sidebar extends Component {
 
   componentWillReceiveProps(nextProps) {
     loggerCreator("componentWillReceiveProps", moduleLogger);
-    this.slideSidebar(nextProps.isOpen);
+    // width may change on a resize event, thus affecting the closePosition
+    this.closePosition = this.openPosition - nextProps.width;
+
+    if (nextProps.isOpen !== this.props.isOpen) {
+      this.slideSidebar(nextProps.isOpen);
+    } else {
+      this.state.positionAnimation.setValue(this.targetAnimatedPosition(nextProps.isOpen));
+    }
   }
 
   releaseSidebarFromGesture(gestureState) {
