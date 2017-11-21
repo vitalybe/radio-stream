@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.MediaMetadata
 import android.media.session.MediaSession
 import android.media.session.PlaybackState
 import android.os.Binder
@@ -297,8 +298,19 @@ class PlayerService : Service(), PlaylistControls {
         Timber.i("updating media session")
         mMediaSession!!.isActive = true
         val actions = PlaybackState.ACTION_PLAY_PAUSE or PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE
-        val state = PlaybackState.Builder().setActions(actions).build()
+        val state = PlaybackState.Builder().setActions(actions).setState(PlaybackState.STATE_PLAYING, 3000, 1f).build()
         mMediaSession!!.setPlaybackState(state)
+
+        val metadata = MediaMetadata.Builder()
+                .putString(MediaMetadata.METADATA_KEY_TITLE, "Vitaly")
+                .putString(MediaMetadata.METADATA_KEY_ARTIST, "Artist")
+                .putString(MediaMetadata.METADATA_KEY_ALBUM, "Album")
+                .putLong(MediaMetadata.METADATA_KEY_DURATION, 60000)
+                .build();
+
+        mMediaSession!!.setMetadata(metadata);
+        Timber.i("setting media metadata")
+
 
         mPausedDate = null
         Timber.i("player unpaused")
