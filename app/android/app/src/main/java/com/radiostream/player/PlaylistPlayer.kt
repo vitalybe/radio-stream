@@ -12,10 +12,18 @@ import timber.log.Timber
 
 class PlaylistPlayer @Inject
 constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter: MetadataBackendGetter, private val mStatusProvider: StatusProvider,
-            private val mPlayerNotification: PlayerNotification, private val mArguments: ArgumentsInterface) : Song.EventsListener, PlaylistControls {
+            private val mArguments: ArgumentsInterface) : Song.EventsListener, PlaylistControls {
 
-    private var currentSong: Song? = null
-    private var mIsLoading = false
+    var currentSong: Song? = null
+        private set(value) {
+            field = value
+        }
+
+    var isLoading = false
+        private set(value) {
+            field = value
+        }
+
     private var mLastLoadingErrorMessage: String = ""
 
     private var mIsClosed = false
@@ -29,9 +37,9 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
 
     private fun setSongLoadingStatus(isLoading: Boolean, errorMessage: String = "") {
         Timber.i("change loading to: %b and error to: %s", isLoading, errorMessage)
-        if (isLoading != mIsLoading || mLastLoadingErrorMessage !== errorMessage) {
+        if (isLoading != this.isLoading || mLastLoadingErrorMessage !== errorMessage) {
             Timber.i("value changed")
-            mIsLoading = isLoading
+            this.isLoading = isLoading
             mLastLoadingErrorMessage = errorMessage
             mStatusProvider.sendStatus()
         } else {
@@ -41,7 +49,7 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
 
     override suspend fun play() {
         Timber.i("function start")
-        if (mIsLoading) {
+        if (isLoading) {
             Timber.i("invalid request. song already loading")
             throw IllegalStateException("invalid request. song already loading")
         }
@@ -62,7 +70,7 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
     override fun pause() {
         Timber.i("function start")
 
-        if (mIsLoading || currentSong == null) {
+        if (isLoading || currentSong == null) {
             throw IllegalStateException("no song was loaded yet")
         }
 
@@ -95,7 +103,6 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
                 currentSong = null
             }
 
-            mPlayerNotification.showLoadingNotification()
             mStatusProvider.sendStatus()
 
             waitForCurrentSongMarkedAsPlayed()
@@ -106,7 +113,6 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
             mStatusProvider.sendStatus()
             peekedSong.preload()
             setSongLoadingStatus(false)
-            mPlayerNotification.showSongNotification(peekedSong)
 
             // We won't be playing any new music if playlistPlayer is closed
             if (!mIsClosed) {
@@ -188,7 +194,7 @@ constructor(private var mPlaylist: Playlist?, private val mMetadataBackendGetter
 
     fun toBridgeObject(): WritableMap {
         val map = mArguments.createMap()
-        map.putBoolean("isLoading", mIsLoading)
+        map.putBoolean("isLoading", isLoading)
         map.putBoolean("isPlaying", isPlaying)
         map.putMap("playlist", if (mPlaylist != null) mPlaylist!!.toBridgeObject() else null)
         map.putString("loadingError", mLastLoadingErrorMessage)

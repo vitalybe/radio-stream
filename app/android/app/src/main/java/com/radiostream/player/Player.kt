@@ -33,8 +33,14 @@ constructor(private val mPlaylistPlayerFactory: PlaylistPlayerFactory, private v
             mCurrentPlaylistPlayer!!.close()
         }
 
-        mCurrentPlaylistPlayer = mPlaylistPlayerFactory.build(playlistName) { mPlayerEventsEmitter.sendPlayerStatus(toBridgeObject()) }
+        mCurrentPlaylistPlayer = mPlaylistPlayerFactory.build(playlistName) { mPlayerEventsEmitter.sendPlayerStatus(this) }
     }
+
+    var currentSong: Song? = null
+        get() = mCurrentPlaylistPlayer?.currentSong
+
+    var isLoading: Boolean = true
+        get() = if (mCurrentPlaylistPlayer == null) true else mCurrentPlaylistPlayer!!.isLoading
 
     override suspend fun play() {
         Timber.i("function start")

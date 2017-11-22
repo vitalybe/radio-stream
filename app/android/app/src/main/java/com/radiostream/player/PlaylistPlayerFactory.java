@@ -19,17 +19,16 @@ public class PlaylistPlayerFactory {
 
     @Inject
     public PlaylistPlayerFactory(PlaylistFactory playlistFactory,
-                                 MetadataBackendGetter metadataBackend, PlayerNotification playerNotification, ArgumentsWrapper argumentsWrapper) {
+                                 MetadataBackendGetter metadataBackend, ArgumentsWrapper argumentsWrapper) {
 
         mPlaylistFactory = playlistFactory;
         mMetadataBackendGetter = metadataBackend;
-        mPlayerNotification = playerNotification;
         mArgumentsWrapper = argumentsWrapper;
     }
 
     public PlaylistPlayer build(String playlistName, StatusProvider statusProvider) {
         Playlist playlist = mPlaylistFactory.buildPlaylist(playlistName);
 
-        return new PlaylistPlayer(playlist, mMetadataBackendGetter, statusProvider, mPlayerNotification, mArgumentsWrapper);
+        return new PlaylistPlayer(playlist, mMetadataBackendGetter, statusProvider, mArgumentsWrapper);
     }
 }

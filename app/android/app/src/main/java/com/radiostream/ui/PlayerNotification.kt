@@ -6,6 +6,8 @@ import android.support.v7.app.NotificationCompat
 
 import com.radiostream.MainActivity
 import com.radiostream.R
+import com.radiostream.javascript.bridge.PlayerEventsEmitter
+import com.radiostream.player.Player
 import com.radiostream.player.PlayerService
 import com.radiostream.player.Song
 
@@ -14,16 +16,39 @@ import javax.inject.Inject
 import timber.log.Timber
 
 class PlayerNotification @Inject
-constructor(private val mPlayerService: PlayerService) {
-    private val mNotificationId = 1
+constructor(playerEventsEmitter: PlayerEventsEmitter, private val mPlayerService: PlayerService) {
 
-    fun showSongNotification(currentSong: Song) {
+    private val mNotificationId = 1
+    private var previousLoading = false;
+    private var previousSong: Song? = null
+
+    init {
+        Timber.i("function start")
+        playerEventsEmitter.subscribePlayerChanges { player -> onPlayerChanged(player) }
+    }
+
+    private fun onPlayerChanged(player: Player) {
+        Timber.i("function start")
+        if (player.isLoading && !previousLoading) {
+            Timber.i("player is loading")
+            previousLoading = player.isLoading
+            showLoadingNotification()
+        } else if (player.currentSong != null && player.currentSong != previousSong) {
+            Timber.i("song changed")
+            previousSong = player.currentSong
+            showSongNotification(player.currentSong!!)
+        } else {
+            Timber.i("nothing to show")
+        }
+    }
+
+    private fun showSongNotification(currentSong: Song) {
         Timber.i("function start - show song notification for: %s - %s", currentSong.title, currentSong.artist)
         val showHeadsUpNotification = !mPlayerService.isBoundToAcitivity
         startWithNotificaiton(currentSong.title, currentSong.artist, showHeadsUpNotification)
     }
 
-    fun showLoadingNotification() {
+    private fun showLoadingNotification() {
         Timber.i("function start - show loading notification")
         startWithNotificaiton("Radio Stream", "Loading...", false)
     }

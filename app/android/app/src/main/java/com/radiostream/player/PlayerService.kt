@@ -21,6 +21,8 @@ import com.radiostream.di.modules.ContextModule
 import com.radiostream.di.modules.PlayerServiceModule
 import com.radiostream.javascript.bridge.PlayerEventsEmitter
 import com.radiostream.javascript.proxy.PlayerJsProxy
+import com.radiostream.ui.BluetoothUI
+import com.radiostream.ui.PlayerNotification
 import hugo.weaving.DebugLog
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
@@ -40,13 +42,15 @@ class PlayerService : Service(), PlaylistControls {
     private val mStopPausedServiceRetryAfterMs: Long = 3 * 60 * 1000
 
     private val mBinder = PlayerServiceBinder()
-    internal var mMediaSession: MediaSession? = null
 
     @Inject
     lateinit var mPlayer: Player
 
     @Inject
-    lateinit var mPlayerEventsEmitter: PlayerEventsEmitter
+    lateinit var mBluetoothUI: BluetoothUI
+
+    @Inject
+    lateinit var mPlayerNotification: PlayerNotification
 
     var isBoundToAcitivity = false
         private set
@@ -126,54 +130,6 @@ class PlayerService : Service(), PlaylistControls {
     //
     //    }
 
-    private val mMediaSessionCallback = object : MediaSession.Callback() {
-
-        override fun onMediaButtonEvent(mediaButtonIntent: Intent): Boolean {
-            Timber.i("function start")
-
-            val ke = mediaButtonIntent.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)
-            if (ke != null && ke.action == KeyEvent.ACTION_DOWN) {
-                when (ke.keyCode) {
-                    KeyEvent.KEYCODE_MEDIA_PLAY -> {
-                        Timber.i("play media button")
-                        async(CommonPool) {
-                            try {
-                                this@PlayerService.play()
-                            } catch (e: Exception) {
-                                Timber.e(e, "Error: ${e}")
-                            }
-                        }
-                        return true
-                    }
-                    KeyEvent.KEYCODE_MEDIA_PAUSE -> {
-                        Timber.i("pause media button")
-                        async(CommonPool) {
-                            try {
-                                this@PlayerService.pause()
-                            } catch (e: Exception) {
-                                Timber.e(e, "Error: ${e}")
-                            }
-                        }
-                        return true
-                    }
-                    KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> {
-                        Timber.i("play/pause media button")
-                        async(CommonPool) {
-                            try {
-                                this@PlayerService.playPause()
-                            } catch (e: Exception) {
-                                Timber.e(e, "Error: ${e}")
-                            }
-                        }
-                        return true
-                    }
-                }
-            }
-
-            return false
-        }
-    }
-
     val playerBridgeObject: WritableMap
         get() = mPlayer!!.toBridgeObject()
 
@@ -196,11 +152,9 @@ class PlayerService : Service(), PlaylistControls {
 
         Timber.i("registering to telephony events")
         val mgr = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        mgr?.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
+        mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
 
-        mMediaSession = MediaSession(this, "PlayerService")
-        mMediaSession!!.setCallback(mMediaSessionCallback)
-        mMediaSession!!.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS or MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS)
+        mBluetoothUI.create();
 
         Timber.i("scheduling to stop on pause")
         launch(CommonPool) {
@@ -208,7 +162,7 @@ class PlayerService : Service(), PlaylistControls {
         }
     }
 
-    private suspend fun playPause() {
+    suspend fun playPause() {
         Timber.i("function start")
 
         if (this.mPlayer!!.isPlaying) {
@@ -262,13 +216,13 @@ class PlayerService : Service(), PlaylistControls {
     override fun onDestroy() {
         Timber.i("function start")
 
-        mPlayer!!.close()
+        mPlayer.close()
         unregisterReceiver(mReceiver)
 
         val mgr = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        mgr?.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE)
+        mgr.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE)
 
-        mMediaSession!!.release()
+        mBluetoothUI.destroy();
 
         mServiceAlive = false
         super.onDestroy()
@@ -294,23 +248,6 @@ class PlayerService : Service(), PlaylistControls {
 
     override suspend fun play() {
         Timber.i("function start")
-
-        Timber.i("updating media session")
-        mMediaSession!!.isActive = true
-        val actions = PlaybackState.ACTION_PLAY_PAUSE or PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE
-        val state = PlaybackState.Builder().setActions(actions).setState(PlaybackState.STATE_PLAYING, 3000, 1f).build()
-        mMediaSession!!.setPlaybackState(state)
-
-        val metadata = MediaMetadata.Builder()
-                .putString(MediaMetadata.METADATA_KEY_TITLE, "Vitaly")
-                .putString(MediaMetadata.METADATA_KEY_ARTIST, "Artist")
-                .putString(MediaMetadata.METADATA_KEY_ALBUM, "Album")
-                .putLong(MediaMetadata.METADATA_KEY_DURATION, 60000)
-                .build();
-
-        mMediaSession!!.setMetadata(metadata);
-        Timber.i("setting media metadata")
-
 
         mPausedDate = null
         Timber.i("player unpaused")

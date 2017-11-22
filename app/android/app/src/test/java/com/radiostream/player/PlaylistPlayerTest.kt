@@ -32,7 +32,6 @@ class PlaylistPlayerTest {
     @Test
     fun play_playSongIfSongAvailable() = runBlocking {
 
-        val mockPlayerNotifcation = mock<PlayerNotification>()
         val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
         val mockStatusProvider = mock<StatusProvider>()
 
@@ -43,7 +42,7 @@ class PlaylistPlayerTest {
         whenever(mockPlaylist.peekCurrentSong()).thenReturn(mockFirstSong)
         whenever(mockPlaylist.isCurrentSong(mockFirstSong)).thenReturn(true)
 
-        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation, ArgumentsWrapperTest())
+        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, ArgumentsWrapperTest())
         playlistPlayer.play()
 
         verify<Playlist>(mockPlaylist, atLeastOnce()).peekCurrentSong()
@@ -55,7 +54,6 @@ class PlaylistPlayerTest {
 
     @Test
     fun playNext_playingNextSong() = runBlocking {
-        val mockPlayerNotifcation = mock<PlayerNotification>()
         val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
         val mockStatusProvider = mock<StatusProvider>()
 
@@ -66,7 +64,7 @@ class PlaylistPlayerTest {
         whenever(mockPlaylist.peekCurrentSong()).thenReturn(mockFirstSong)
         whenever(mockPlaylist.isCurrentSong(mockFirstSong)).thenReturn(true)
 
-        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation, ArgumentsWrapperTest())
+        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, ArgumentsWrapperTest())
         playlistPlayer.playNext()
 
         verify<Playlist>(mockPlaylist, times(1)).nextSong()
@@ -76,18 +74,16 @@ class PlaylistPlayerTest {
 
     @Test(expected = IllegalStateException::class)
     fun pause_throwsExceptionIfNoSong() = runBlocking {
-        val mockPlayerNotifcation = mock<PlayerNotification>()
         val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
         val mockStatusProvider = mock<StatusProvider>()
         val mockPlaylist = mock<Playlist>()
 
-        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation, ArgumentsWrapperTest())
+        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, ArgumentsWrapperTest())
         playlistPlayer.pause()
     }
 
     @Test
     fun close_closesPlaylistAndSongIfExists() = runBlocking {
-        val mockPlayerNotifcation = mock<PlayerNotification>()
         val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
         val mockStatusProvider = mock<StatusProvider>()
 
@@ -98,7 +94,7 @@ class PlaylistPlayerTest {
         whenever(mockPlaylist.peekCurrentSong()).thenReturn(mockFirstSong)
         whenever(mockPlaylist.isCurrentSong(mockFirstSong)).thenReturn(true)
 
-        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation, ArgumentsWrapperTest())
+        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, ArgumentsWrapperTest())
         playlistPlayer.play()
         playlistPlayer.close()
 
@@ -107,7 +103,6 @@ class PlaylistPlayerTest {
 
     @Test
     fun playNext_retriesOnFailure() = runBlocking {
-        val mockPlayerNotifcation = mock<PlayerNotification>()
         val mockMetadataBackendGetter = mock<MetadataBackendGetter>()
         val mockStatusProvider = mock<StatusProvider>()
 
@@ -119,7 +114,7 @@ class PlaylistPlayerTest {
         whenever(mockPlaylist.peekCurrentSong()).thenReturn(mockFirstSong)
         whenever(mockPlaylist.isCurrentSong(mockFirstSong)).thenReturn(true)
 
-        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, mockPlayerNotifcation, ArgumentsWrapperTest())
+        val playlistPlayer = PlaylistPlayer(mockPlaylist, mockMetadataBackendGetter, mockStatusProvider, ArgumentsWrapperTest())
         playlistPlayer.play()
 
         // song will be loaded if preloading the first one failed
