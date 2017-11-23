@@ -4,7 +4,9 @@ var moduleLogger = loggerCreator("player_page");
 import React, { Component } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { observer } from "mobx-react";
+
 import { masterStore } from "app/stores/master_store";
+import { navigator } from "../../stores/navigator";
 
 import { colors } from "app/styles/styles";
 import PlayerContextMenu from "./player_context_menu";
@@ -61,7 +63,6 @@ export default class PlayerPage extends Component {
     // await player.changePlaylist("mock");
     // masterStore.closeSidebars();
     // player.play();
-    // navigator.navigateToPlayer();
   }
 
   componentDidMount() {
