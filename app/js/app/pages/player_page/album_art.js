@@ -20,15 +20,17 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     borderColor: colors.CYAN_DARK,
     borderWidth: 2,
+    flex: 1,
 
     position: "relative",
-    alignSelf: "center",
   },
   albumArt: {
     resizeMode: "cover",
-
-    width: artSize,
-    height: artSize,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
   },
   flippedAlbumArt: {
     padding: 10,
@@ -98,26 +100,11 @@ export default class AlbumArt extends Component {
     }
 
     return (
-      <View style={this.props.style} onLayout={this._onContainerLayout} ref={this._onContainerRef}>
-        <FlipCard style={styles.container} flipHorizontal={true} flipVertical={false}>
-          <View>
-            <Image
-              style={[styles.albumArt, { width: this.state.artSize, height: this.state.artSize }]}
-              source={albumArt}
-            />
-          </View>
-          <View style={[styles.flippedAlbumArt, { width: this.state.artSize, height: this.state.artSize }]}>
-            <NormalText style={styles.additionalSongInfo}>
-              Last played: {moment.unix(song.lastplayed).fromNow()}
-            </NormalText>
-            <NormalText style={styles.additionalSongInfo}>
-              Play count: {song.playcount}
-            </NormalText>
-            <NormalText style={styles.additionalSongInfo}>
-              Marked as played: {song.isMarkedAsPlayed ? "✔" : "x"}
-            </NormalText>
-          </View>
-        </FlipCard>
+      <View
+        style={[styles.container, this.props.style, { width: this.state.artSize }]}
+        onLayout={this._onContainerLayout}
+        ref={this._onContainerRef}>
+        <Image style={[styles.albumArt]} source={albumArt} />
       </View>
     );
   }
