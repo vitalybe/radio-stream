@@ -17,6 +17,7 @@ import PlayerControls from "./player_controls";
 import LoadingSpinner from "../../shared_components/loading_spinner";
 import SongDetails from "app/pages/player_page/song_details";
 import NoPlaylistSelected from "app/pages/player_page/no_playlist_selected";
+import MySwiper from "./swiper";
 
 const styles = StyleSheet.create({
   container: {
@@ -81,29 +82,7 @@ export default class PlayerPage extends Component {
 
     return (
       <View style={styles.container}>
-        {(() => {
-          if (!player.currentPlaylist) {
-            return <NoPlaylistSelected />;
-          } else if (player.isLoading) {
-            return <LoadingSpinner message={`Loading playlist: ${player.currentPlaylist.name}`} song={song} />;
-          } else {
-            return (
-              <View style={{ flex: 1 }}>
-                {/* Album art */}
-                <AlbumArt style={[styles.albumArt]} song={song} />
-                {/* Ratings */}
-                <View style={styles.rating}>
-                  <Rating song={song} starSize={43} starMargin={5} canChangeRating={true} />
-                  <PlayerContextMenu song={song} />
-                </View>
-                {/* Names */}
-                <SongDetails song={song} style={styles.songDetails} />
-                {/* Controls */}
-                <PlayerControls />
-              </View>
-            );
-          }
-        })()}
+        <MySwiper />
       </View>
     );
   }
