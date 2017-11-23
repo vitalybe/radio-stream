@@ -75,6 +75,4 @@ module.exports = {
   nodePaths: nodePaths,
   publicUrl: getPublicUrl(resolveApp("package.json")),
   servedPath: getServedPath(resolveApp("package.json")),
-
-  reactNativeSwiper: resolveApp("node_modules/react-native-swiper"),
 };
