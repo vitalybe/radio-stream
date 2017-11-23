@@ -81,7 +81,6 @@
     "react-dom": "^15.5.4",
     "react-fontawesome": "^1.6.1",
     "react-native": "0.44.0",
-    "react-native-flip-card": "^3.4.0",
     "react-native-orientation": "git+https://github.com/yamill/react-native-orientation.git",
     "react-native-popup-menu": "^0.7.5",
     "react-native-testfairy": "^2.0.8",

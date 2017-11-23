@@ -5653,10 +5653,6 @@ react-fontawesome@^1.6.1:
   dependencies:
     prop-types "^15.5.6"
 
-react-native-flip-card@^3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/react-native-flip-card/-/react-native-flip-card-3.4.0.tgz#e07d88900f71acad1364ef138d40b1e6dbd48fc7"
-
 "react-native-orientation@git+https://github.com/yamill/react-native-orientation.git":
   version "1.17.0"
   resolved "git+https://github.com/yamill/react-native-orientation.git#ef221b5720ced0d9ed0c9de14082a5eabba4db7a"
