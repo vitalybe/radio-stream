@@ -17,6 +17,7 @@ import PlayerControls from "./player_controls";
 import LoadingSpinner from "../../shared_components/loading_spinner";
 import SongDetails from "app/pages/player_page/song_details";
 import NoPlaylistSelected from "app/pages/player_page/no_playlist_selected";
+import ContentSwiper from "../../utils/content_swiper/content_swiper.web";
 
 const styles = StyleSheet.create({
   container: {
@@ -43,7 +44,6 @@ const styles = StyleSheet.create({
   // Sections
   albumArt: {
     marginBottom: 20,
-    flex: 1,
   },
   rating: {
     marginBottom: 20,
@@ -89,8 +89,20 @@ export default class PlayerPage extends Component {
           } else {
             return (
               <View style={{ flex: 1 }}>
-                {/* Album art */}
-                <AlbumArt style={[styles.albumArt]} song={song} />
+                <ContentSwiper>
+                  {/* Album art */}
+                  {/* NOTE: The inner components must be surrounded by a <View> to work - Otherwise they wouldn't get
+                  the width from ContentSwiper */}
+                  <View>
+                    <AlbumArt style={[styles.albumArt]} song={song} />
+                  </View>
+                  <View>
+                    <AlbumArt style={[styles.albumArt]} song={song} />
+                  </View>
+                  <View>
+                    <AlbumArt style={[styles.albumArt]} song={song} />
+                  </View>
+                </ContentSwiper>
                 {/* Ratings */}
                 <View style={styles.rating}>
                   <Rating song={song} starSize={43} starMargin={5} canChangeRating={true} />

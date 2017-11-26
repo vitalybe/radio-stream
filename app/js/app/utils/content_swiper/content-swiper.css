@@ -1,0 +1,11 @@
+.content-swiper-container {
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    overflow: hidden;
+    /* Fix of Webkit flickering */
+    z-index: 1;
+    flex: 1;
+    width: 80vw;
+    max-width: 650px;
+}
