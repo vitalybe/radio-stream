@@ -8,4 +8,17 @@
     flex: 1;
     width: 80vw;
     max-width: 650px;
+    padding-top: 15px;
+}
+
+.swiper-pagination {
+    top: 0;
+}
+
+.swiper-pagination-bullet {
+    border: 1px solid #71cfe2;
+}
+
+.swiper-pagination-bullet.swiper-pagination-bullet-active {
+    background-color: #71cfe2;
 }

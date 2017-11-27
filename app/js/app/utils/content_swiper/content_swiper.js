@@ -12,7 +12,15 @@ var styles = StyleSheet.create({
 export default class ContentSwiper extends Component {
   render() {
     return (
-      <Swiper style={styles.wrapper} containerClass="content-swiper-container" showsButtons={true}>
+      <Swiper
+        style={styles.wrapper}
+        pagination={{
+          el: ".swiper-pagination",
+          type: "bullets",
+          clickable: true,
+        }}
+        containerClass="content-swiper-container"
+        showsButtons={true}>
         {this.props.children}
       </Swiper>
     );
