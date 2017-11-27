@@ -3,12 +3,10 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("AlbumArt");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, View, Dimensions } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
 
-import NormalText from "app/shared_components/text/normal_text";
-import moment from "moment";
-import { colors, fontSizes } from "app/styles/styles";
+import { colors } from "app/styles/styles";
 
 const styles = StyleSheet.create({
   container: {
@@ -43,7 +41,6 @@ export default class AlbumArt extends Component {
 
     return (
       <View style={[styles.container, this.props.style]}>
-        {" "}
         <Image style={[styles.albumArt]} source={albumArt} />
       </View>
     );
