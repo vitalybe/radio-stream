@@ -2,7 +2,7 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("player_page");
 
 import React, { Component } from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { Platform, StyleSheet, View, Image } from "react-native";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";
@@ -29,6 +29,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "stretch",
   },
+  loadedPlaylistContainer: {
+    flex: 1,
+  },
   // Playlist name
   playlistNameView: {
     flexDirection: "row",
@@ -43,9 +46,16 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   // Sections
-  contentSwiper: {
+  contentSwiperContainer: {
     flex: 1,
     marginBottom: 20,
+  },
+  contentSwiperSlideContainer: {
+    ...Platform.select({
+      android: {
+        flex: 1,
+      },
+    }),
   },
   rating: {
     marginBottom: 20,
@@ -62,9 +72,9 @@ export default class PlayerPage extends Component {
   async componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
     // Mock: Starts playing automatically
-    // await player.changePlaylist("mock");
-    // masterStore.closeSidebars();
-    // player.play();
+    await player.changePlaylist("mock");
+    masterStore.closeSidebars();
+    player.play();
   }
 
   componentDidMount() {
@@ -90,16 +100,16 @@ export default class PlayerPage extends Component {
             return <LoadingSpinner message={`Loading playlist: ${player.currentPlaylist.name}`} song={song} />;
           } else {
             return (
-              <View style={{ flex: 1 }}>
-                <View style={[styles.contentSwiper]}>
+              <View style={styles.loadedPlaylistContainer}>
+                <View style={[styles.contentSwiperContainer]}>
                   <ContentSwiper>
-                    {/* Album art */}
                     {/* NOTE: The inner components must be surrounded by a <View> to work - Otherwise they wouldn't get
-                  the width from ContentSwiper */}
-                    <View>
+                  the width from ContentSwiper (web). You CAN'T encapsulate the wrapping view inside a component - it
+                   must be directly inside ContentSwiper */}
+                    <View style={styles.contentSwiperSlideContainer}>
                       <AlbumArtContent song={song} />
                     </View>
-                    <View>
+                    <View style={styles.contentSwiperSlideContainer}>
                       <MetadataContent song={song} />
                     </View>
                   </ContentSwiper>
