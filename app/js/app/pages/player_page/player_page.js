@@ -12,12 +12,13 @@ import { colors } from "app/styles/styles";
 import PlayerContextMenu from "./player_context_menu";
 import { player } from "app/stores/player/player";
 import Rating from "../../shared_components/rating";
-import AlbumArt from "./album_art";
 import PlayerControls from "./player_controls";
 import LoadingSpinner from "../../shared_components/loading_spinner";
 import SongDetails from "app/pages/player_page/song_details";
 import NoPlaylistSelected from "app/pages/player_page/no_playlist_selected";
-import ContentSwiper from "../../utils/content_swiper/content_swiper.web";
+import ContentSwiper from "../../utils/content_swiper/content_swiper";
+import AlbumArtContent from "./content/album_art_content";
+import MetadataContent from "./content/metadata_content";
 
 const styles = StyleSheet.create({
   container: {
@@ -42,7 +43,8 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   // Sections
-  albumArt: {
+  contentSwiper: {
+    flex: 1,
     marginBottom: 20,
   },
   rating: {
@@ -89,20 +91,19 @@ export default class PlayerPage extends Component {
           } else {
             return (
               <View style={{ flex: 1 }}>
-                <ContentSwiper>
-                  {/* Album art */}
-                  {/* NOTE: The inner components must be surrounded by a <View> to work - Otherwise they wouldn't get
+                <View style={[styles.contentSwiper]}>
+                  <ContentSwiper>
+                    {/* Album art */}
+                    {/* NOTE: The inner components must be surrounded by a <View> to work - Otherwise they wouldn't get
                   the width from ContentSwiper */}
-                  <View>
-                    <AlbumArt style={[styles.albumArt]} song={song} />
-                  </View>
-                  <View>
-                    <AlbumArt style={[styles.albumArt]} song={song} />
-                  </View>
-                  <View>
-                    <AlbumArt style={[styles.albumArt]} song={song} />
-                  </View>
-                </ContentSwiper>
+                    <View>
+                      <AlbumArtContent song={song} />
+                    </View>
+                    <View>
+                      <MetadataContent song={song} />
+                    </View>
+                  </ContentSwiper>
+                </View>
                 {/* Ratings */}
                 <View style={styles.rating}>
                   <Rating song={song} starSize={43} starMargin={5} canChangeRating={true} />

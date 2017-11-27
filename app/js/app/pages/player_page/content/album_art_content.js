@@ -1,20 +1,15 @@
 import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator("AlbumArt");
+var moduleLogger = loggerCreator("AlbumArtContent");
 
 import React, { Component } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
 
-import { colors } from "app/styles/styles";
+import contentStyle from "./content_style";
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "black",
-    borderColor: colors.CYAN_DARK,
-    borderWidth: 2,
-    flex: 1,
-
     position: "relative",
   },
   albumArt: {
@@ -26,7 +21,7 @@ const styles = StyleSheet.create({
 });
 
 @observer
-export default class AlbumArt extends Component {
+export default class AlbumArtContent extends Component {
   render() {
     let logger = loggerCreator("render", moduleLogger);
     logger.info(`start`);
@@ -40,13 +35,13 @@ export default class AlbumArt extends Component {
     }
 
     return (
-      <View style={[styles.container, this.props.style]}>
+      <View style={[contentStyle.container, styles.container, this.props.style]}>
         <Image style={[styles.albumArt]} source={albumArt} />
       </View>
     );
   }
 }
 
-AlbumArt.propTypes = {
+AlbumArtContent.propTypes = {
   song: React.PropTypes.object.isRequired,
 };
