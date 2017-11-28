@@ -20,6 +20,21 @@ class BackendMetadataApiMock {
     return _.startCase(chance.sentence({ words: chance.integer({ min: 1, max: 3 }) }));
   }
 
+  _mockSongArtistTitle() {
+    const songs = [
+      { artist: "Crystal Castles", title: "Crimewave" },
+      { artist: "David Bowie", title: "Ashes To Ashes" },
+      { artist: "Dorothy's Magic Bag", title: "Skaldjursakuten" },
+      { artist: "Dream Theater", title: "About To Crash" },
+      { artist: "Fatboy Slim", title: "Love Island" },
+      { artist: "Garbage", title: "Fix me Now" },
+      { artist: "I Am Kloot", title: "Lately" },
+      { artist: "Infected Mushroom", title: "Sa'eed" },
+    ];
+
+    return songs[chance.integer({ min: 0, max: songs.length - 1 })];
+  }
+
   _createMockPLaylist() {
     return {
       name: this._mockName(),
@@ -28,10 +43,12 @@ class BackendMetadataApiMock {
   }
 
   _createMockSong() {
+    let metadata = this._mockSongArtistTitle();
+
     return {
       id: this.lastId++,
-      title: this._mockName(),
-      artist: this._mockName(),
+      title: metadata.title,
+      artist: metadata.artist,
       album: this._mockName(),
       rating: chance.integer({ min: 0, max: 5 }) * 20,
       playcount: chance.integer({ min: 0, max: 50 }),

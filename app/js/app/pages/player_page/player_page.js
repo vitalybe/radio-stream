@@ -19,6 +19,7 @@ import NoPlaylistSelected from "app/pages/player_page/no_playlist_selected";
 import ContentSwiper from "../../utils/content_swiper/content_swiper";
 import AlbumArtContent from "./content/album_art_content";
 import MetadataContent from "./content/metadata_content";
+import LyricsContent from "app/pages/player_page/content/lyrics_content";
 
 const styles = StyleSheet.create({
   container: {
@@ -111,6 +112,9 @@ export default class PlayerPage extends Component {
                     </View>
                     <View style={styles.contentSwiperSlideContainer}>
                       <MetadataContent song={song} />
+                    </View>
+                    <View style={styles.contentSwiperSlideContainer}>
+                      <LyricsContent song={song} />
                     </View>
                   </ContentSwiper>
                 </View>
