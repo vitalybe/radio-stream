@@ -1,9 +1,22 @@
-import scrapeIt from "scrape-it";
+import loggerCreator from "app/utils/logger";
+//noinspection JSUnresolvedVariable
+const moduleLogger = loggerCreator("WebSearch");
+
+const scrapeIt = require("scrape-it");
 
 class WebSearch {
   async firstHref(query) {
+    const logger = loggerCreator("firstHref", moduleLogger);
+
     const encodedQuery = encodeURI(query);
-    result = await scrapeIt("https://duckduckgo.com/html/?q=" + encodedQuery + "&ia=web", {
+    let url = "https://duckduckgo.com/html/?q=" + encodedQuery + "&ia=web";
+    logger.info(`fetching ${url}...`);
+    const response = await fetch(url);
+    logger.info(`fetched. extracting text...`);
+    const text = await response.text();
+    // NOTE: scrapeIt could in theory perform the HTTP request, but it just hangs (on android), so I am using fetch
+    // directly
+    const result = await scrapeIt.scrapeHTML(text, {
       href: { selector: ".result__url", eq: 0 },
     });
     return "https://" + result.href;
