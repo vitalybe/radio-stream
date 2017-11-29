@@ -9,8 +9,8 @@ import scrapeIt from "scrape-it";
 
 import BigText from "app/shared_components/text/big_text";
 import contentStyle from "./content_style";
-import { webSearch } from "app/utils/web_search";
 import SmallText from "app/shared_components/text/small_text";
+import { lyrics } from "app/utils/lyrics/lyrics";
 
 const styles = StyleSheet.create({
   containerView: {
@@ -38,30 +38,18 @@ export default class LyricsContent extends Component {
   async findLyrics(song) {
     const logger = loggerCreator("findLyrics", moduleLogger);
 
-    this.state = { lyrics: "Loading..." };
-    let lyrics = "No lyrics were found";
+    this.setState({ lyrics: "Loading..." });
+    let displayedLyrics = "No lyrics were found";
 
-    const query = `site:genius.com ${song.artist} ${song.title}`;
-    logger.info(`querying: ${query}`);
     try {
-      const href = await webSearch.firstHref(query);
-      logger.info(`got href: ${href}`);
-
-      if (href) {
-        logger.info(`fetching ${href}...`);
-        const response = await fetch(href);
-        logger.info(`fetched. extracting text...`);
-        const text = await response.text();
-        const result = await scrapeIt.scrapeHTML(text, { lyrics: { selector: ".lyrics" } });
-        if (result.lyrics) {
-          logger.info(`got lyrics`);
-          lyrics = result.lyrics;
-        } else {
-          logger.info(`no lyrics`);
-        }
+      let result = await lyrics.find(song);
+      if (result) {
+        logger.info(`got lyrics`);
+        displayedLyrics = result;
+      } else {
+        logger.info(`no lyrics`);
       }
-
-      this.setState({ lyrics: lyrics });
+      this.setState({ lyrics: displayedLyrics });
     } catch (e) {
       logger.error(`failed to get lyrics: ${e}`);
       this.setState({ lyrics: "Failed to load lyrics" });

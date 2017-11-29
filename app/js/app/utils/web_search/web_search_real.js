@@ -2,7 +2,7 @@ import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
 const moduleLogger = loggerCreator("WebSearch");
 
-const scrapeIt = require("scrape-it");
+import scrapeIt from "scrape-it";
 
 class WebSearch {
   async firstHref(query) {
@@ -23,4 +23,4 @@ class WebSearch {
   }
 }
 
-export const webSearch = new WebSearch();
+export const webSearchReal = new WebSearch();
