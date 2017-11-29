@@ -11,8 +11,9 @@
     padding-top: 15px;
 }
 
-.swiper-pagination {
+.content-swiper-container .swiper-pagination {
     top: 0;
+    bottom: initial;
 }
 
 .swiper-pagination-bullet {
