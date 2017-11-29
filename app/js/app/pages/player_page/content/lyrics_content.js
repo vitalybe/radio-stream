@@ -7,13 +7,15 @@ import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
 import { observer } from "mobx-react";
 import scrapeIt from "scrape-it";
 
-import NormalText from "app/shared_components/text/normal_text";
 import BigText from "app/shared_components/text/big_text";
 import contentStyle from "./content_style";
 import { webSearch } from "app/utils/web_search";
+import SmallText from "app/shared_components/text/small_text";
 
 const styles = StyleSheet.create({
-  container: {},
+  containerView: {
+    padding: 10,
+  },
   header: {
     marginBottom: 15,
   },
@@ -68,13 +70,10 @@ export default class LyricsContent extends Component {
 
   render() {
     return (
-      <ScrollView horizontal={false} style={[contentStyle.container, styles.container, this.props.style]}>
-        <View
-          style={{
-            padding: 20,
-          }}>
+      <ScrollView horizontal={false} style={[contentStyle.container, this.props.style]}>
+        <View style={styles.containerView}>
           <BigText style={styles.header}>Lyrics</BigText>
-          <NormalText numberOfLines={null}>{this.state.lyrics}</NormalText>
+          <SmallText numberOfLines={null}>{this.state.lyrics}</SmallText>
         </View>
       </ScrollView>
     );
