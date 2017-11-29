@@ -5,24 +5,15 @@ const moduleLogger = loggerCreator("LyricsContent");
 import React, { Component } from "react";
 import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
 import { observer } from "mobx-react";
+import scrapeIt from "scrape-it";
 
 import NormalText from "app/shared_components/text/normal_text";
 import BigText from "app/shared_components/text/big_text";
 import contentStyle from "./content_style";
-global.process = require("process");
-global.Buffer = require("buffer").Buffer;
-global.process.env.NODE_ENV = __DEV__ ? "development" : "production";
-global.location = {
-  protocol: "file:",
-};
-var zlib = require("zlib");
-const scrapeIt = require("scrape-it");
-const webSearch = require("app/utils/web_search").webSearch;
+import { webSearch } from "app/utils/web_search";
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-  },
+  container: {},
   header: {
     marginBottom: 15,
   },
@@ -78,8 +69,13 @@ export default class LyricsContent extends Component {
   render() {
     return (
       <ScrollView horizontal={false} style={[contentStyle.container, styles.container, this.props.style]}>
-        <BigText style={styles.header}>Lyrics</BigText>
-        <NormalText numberOfLines={null}>{this.state.lyrics}</NormalText>
+        <View
+          style={{
+            padding: 20,
+          }}>
+          <BigText style={styles.header}>Lyrics</BigText>
+          <NormalText numberOfLines={null}>{this.state.lyrics}</NormalText>
+        </View>
       </ScrollView>
     );
   }
