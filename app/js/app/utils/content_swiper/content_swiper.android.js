@@ -12,14 +12,28 @@ var styles = StyleSheet.create({
 });
 
 export default class ContentSwiper extends Component {
+  componentWillMount() {
+    this.state = {
+      activeSlideIndex: 0,
+    };
+  }
+
+  onSlideChange = index => {
+    this.setState({ activeSlideIndex: index });
+  };
+
   render() {
     return (
       <Swiper
         style={styles.wrapper}
         dotStyle={styles.dotStyle}
         activeDotStyle={StyleSheet.flatten([styles.dotStyle, styles.dotStyleActive])}
-        paginationStyle={styles.paginationStyle}>
-        {this.props.children}
+        paginationStyle={styles.paginationStyle}
+        loop={false}
+        onIndexChanged={this.onSlideChange}>
+        {this.props.children.map((child, i) =>
+          React.cloneElement(child, { key: i, slideNumber: i, activeSlideIndex: this.state.activeSlideIndex })
+        )}
       </Swiper>
     );
   }

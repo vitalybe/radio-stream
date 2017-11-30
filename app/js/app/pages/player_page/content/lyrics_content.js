@@ -34,10 +34,15 @@ export default class LyricsContent extends Component {
   }
 
   async componentWillMount() {
-    loggerCreator("componentWillMount", moduleLogger);
+    const logger = loggerCreator("componentWillMount", moduleLogger);
+    logger.info(`this.props.activeSlideIndex: ${this.props.slideNumber}`);
     this.state = { lyrics: "Loading..." };
 
     await this.ifNeededFindLyrics();
+  }
+
+  componentWillUnmount() {
+    loggerCreator("componentWillUnmount", moduleLogger);
   }
 
   async ifNeededFindLyrics(song, activeSlideIndex) {
@@ -46,13 +51,15 @@ export default class LyricsContent extends Component {
     logger.info(`is current song without lyrics? ${this.isSongWithoutLyrics(song)}`);
 
     if (this.isSongWithoutLyrics(song) && this.isMySlideActive(activeSlideIndex)) {
-      await this.findLyrics();
+      await this.findLyrics(song);
       this.songWithFoundLyrics = song;
     }
   }
 
   async componentWillReceiveProps(nextProps) {
-    loggerCreator("componentWillReceiveProps", moduleLogger);
+    const logger = loggerCreator("componentWillReceiveProps", moduleLogger);
+    logger.info(`nextProps.activeSlideIndex: ${nextProps.activeSlideIndex}`);
+    logger.info(`this.props.activeSlideIndex: ${this.props.activeSlideIndex}`);
     if (nextProps.song !== this.props.song || nextProps.activeSlideIndex !== this.props.activeSlideIndex) {
       await this.ifNeededFindLyrics(nextProps.song, nextProps.activeSlideIndex);
     }

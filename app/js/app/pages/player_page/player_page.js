@@ -72,9 +72,9 @@ export default class PlayerPage extends Component {
   async componentWillMount() {
     loggerCreator("componentWillMount", moduleLogger);
     // Mock: Starts playing automatically
-    await player.changePlaylist("mock");
-    masterStore.closeSidebars();
-    player.play();
+    // await player.changePlaylist("mock");
+    // masterStore.closeSidebars();
+    // player.play();
   }
 
   componentDidMount() {

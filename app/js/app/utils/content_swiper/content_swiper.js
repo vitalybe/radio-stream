@@ -41,7 +41,9 @@ export default class ContentSwiper extends Component {
         }}>
         {this.props.children.map((child, i) => {
           return (
-            <View>{React.cloneElement(child, { slideNumber: i, activeSlideIndex: this.state.activeSlideIndex })}</View>
+            <View key={i}>
+              {React.cloneElement(child, { slideNumber: i, activeSlideIndex: this.state.activeSlideIndex })}
+            </View>
           );
         })}
       </Swiper>
