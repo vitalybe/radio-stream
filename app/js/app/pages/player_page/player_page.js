@@ -1,12 +1,11 @@
 import loggerCreator from "app/utils/logger";
-var moduleLogger = loggerCreator("player_page");
+const moduleLogger = loggerCreator("player_page");
 
 import React, { Component } from "react";
-import { Platform, StyleSheet, View, Image } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";
-import { navigator } from "../../stores/navigator";
 
 import { colors } from "app/styles/styles";
 import PlayerContextMenu from "./player_context_menu";
@@ -71,7 +70,7 @@ const styles = StyleSheet.create({
 @observer
 export default class PlayerPage extends Component {
   async componentWillMount() {
-    let logger = loggerCreator("componentWillMount", moduleLogger);
+    loggerCreator("componentWillMount", moduleLogger);
     // Mock: Starts playing automatically
     await player.changePlaylist("mock");
     masterStore.closeSidebars();
@@ -108,13 +107,13 @@ export default class PlayerPage extends Component {
                   the width from ContentSwiper (web). You CAN'T encapsulate the wrapping view inside a component - it
                    must be directly inside ContentSwiper */}
                     <View style={styles.contentSwiperSlideContainer}>
-                      <AlbumArtContent song={song} />
+                      <AlbumArtContent song={song} slideNumber={0} />
                     </View>
                     <View style={styles.contentSwiperSlideContainer}>
-                      <MetadataContent song={song} />
+                      <MetadataContent song={song} slideNumber={1} />
                     </View>
                     <View style={styles.contentSwiperSlideContainer}>
-                      <LyricsContent song={song} />
+                      <LyricsContent song={song} slideNumber={2} />
                     </View>
                   </ContentSwiper>
                 </View>

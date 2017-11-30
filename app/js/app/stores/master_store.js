@@ -7,6 +7,7 @@ import { observable } from "mobx";
 class MasterStore {
   @observable isNavigationSidebarOpen = true;
   @observable isPlaylistSidebarOpen = false;
+  @observable activeSlideIndex = 0;
 
   closeSidebars() {
     this.isNavigationSidebarOpen = false;

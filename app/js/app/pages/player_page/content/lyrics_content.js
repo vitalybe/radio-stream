@@ -3,14 +3,15 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("LyricsContent");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { observer } from "mobx-react";
-import scrapeIt from "scrape-it";
+import { autorun } from "mobx";
 
 import BigText from "app/shared_components/text/big_text";
 import contentStyle from "./content_style";
 import SmallText from "app/shared_components/text/small_text";
 import { lyrics } from "app/utils/lyrics/lyrics";
+import { masterStore } from "app/stores/master_store";
 
 const styles = StyleSheet.create({
   containerView: {
@@ -23,22 +24,55 @@ const styles = StyleSheet.create({
 
 @observer
 export default class LyricsContent extends Component {
+  songChangedAfterFindingLyrics = true;
+
+  isMySlideActive() {
+    return masterStore.activeSlideIndex === this.props.slideNumber;
+  }
+
+  disposeOnActiveSlideChanges = autorun(async () => {
+    const logger = loggerCreator("autorun", moduleLogger);
+
+    logger.info(`slide changed: ${masterStore.activeSlideIndex}`);
+    if (this.isMySlideActive()) {
+      await this.ifNeededFindLyrics();
+    }
+  });
+
   async componentWillMount() {
     loggerCreator("componentWillMount", moduleLogger);
-    await this.findLyrics(this.props.song);
+    this.state = { lyrics: "Loading..." };
+
+    await this.ifNeededFindLyrics();
+  }
+
+  componentWillUnmount() {
+    this.disposeOnActiveSlideChanges();
+  }
+
+  async ifNeededFindLyrics() {
+    const logger = loggerCreator("ifNeededFindLyrics", moduleLogger);
+    logger.info(`is this slide active? ${masterStore.activeSlideIndex}`);
+    logger.info(`did song change since fetching lyrics? ${this.isMySlideActive()}`);
+
+    if (this.songChangedAfterFindingLyrics && this.isMySlideActive()) {
+      await this.findLyrics();
+      this.songChangedAfterFindingLyrics = false;
+    }
   }
 
   async componentWillReceiveProps(nextProps) {
-    loggerCreator("componentWillReceiveProps", moduleLogger);
+    const logger = loggerCreator("componentWillReceiveProps", moduleLogger);
     if (nextProps.song !== this.props.song) {
-      await this.findLyrics(nextProps.song);
+      logger.info(`song changed`);
+      this.songChangedAfterFindingLyrics = true;
+      await this.ifNeededFindLyrics();
     }
   }
 
   async findLyrics(song) {
     const logger = loggerCreator("findLyrics", moduleLogger);
 
-    this.setState({ lyrics: "Loading..." });
     let displayedLyrics = "No lyrics were found";
 
     try {
@@ -69,5 +103,6 @@ export default class LyricsContent extends Component {
 }
 
 LyricsContent.propTypes = {
+  slideNumber: React.PropTypes.number.isRequired,
   song: React.PropTypes.object.isRequired,
 };
