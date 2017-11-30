@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import Swiper from "react-id-swiper";
 import "react-id-swiper/src/styles/css/swiper.css";
@@ -29,7 +29,9 @@ export default class ContentSwiper extends Component {
         containerClass="content-swiper-container"
         showsButtons={true}
         on={{ slideChange: this.onSlideChange }}>
-        {this.props.children}
+        {this.props.children.map((child, i) => {
+          return <View>{React.cloneElement(child, { slideNumber: i })}</View>;
+        })}
       </Swiper>
     );
   }

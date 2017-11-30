@@ -52,8 +52,8 @@ export default class LyricsContent extends Component {
 
   async ifNeededFindLyrics() {
     const logger = loggerCreator("ifNeededFindLyrics", moduleLogger);
-    logger.info(`is this slide active? ${masterStore.activeSlideIndex}`);
-    logger.info(`did song change since fetching lyrics? ${this.isMySlideActive()}`);
+    logger.info(`is this slide active? ${this.isMySlideActive()}`);
+    logger.info(`did song change since fetching lyrics? ${this.songChangedAfterFindingLyrics}`);
 
     if (this.songChangedAfterFindingLyrics && this.isMySlideActive()) {
       await this.findLyrics();
@@ -93,6 +93,9 @@ export default class LyricsContent extends Component {
   render() {
     return (
       <ScrollView horizontal={false} style={[contentStyle.container, this.props.style]}>
+        {/* NOTE: The inner components must be surrounded by a <View> to work - Otherwise they wouldn't get
+                  the width from ContentSwiper (web). You CAN'T encapsulate the wrapping view inside a component - it
+                   must be directly inside ContentSwiper */}
         <View style={styles.containerView}>
           <BigText style={styles.header}>Lyrics</BigText>
           <SmallText numberOfLines={null}>{this.state.lyrics}</SmallText>
@@ -103,6 +106,6 @@ export default class LyricsContent extends Component {
 }
 
 LyricsContent.propTypes = {
-  slideNumber: React.PropTypes.number.isRequired,
+  slideNumber: React.PropTypes.number,
   song: React.PropTypes.object.isRequired,
 };

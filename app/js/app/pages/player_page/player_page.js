@@ -103,18 +103,9 @@ export default class PlayerPage extends Component {
               <View style={styles.loadedPlaylistContainer}>
                 <View style={[styles.contentSwiperContainer]}>
                   <ContentSwiper>
-                    {/* NOTE: The inner components must be surrounded by a <View> to work - Otherwise they wouldn't get
-                  the width from ContentSwiper (web). You CAN'T encapsulate the wrapping view inside a component - it
-                   must be directly inside ContentSwiper */}
-                    <View style={styles.contentSwiperSlideContainer}>
-                      <AlbumArtContent song={song} slideNumber={0} />
-                    </View>
-                    <View style={styles.contentSwiperSlideContainer}>
-                      <MetadataContent song={song} slideNumber={1} />
-                    </View>
-                    <View style={styles.contentSwiperSlideContainer}>
-                      <LyricsContent song={song} slideNumber={2} />
-                    </View>
+                    <AlbumArtContent song={song} />
+                    <MetadataContent song={song} />
+                    <LyricsContent song={song} />
                   </ContentSwiper>
                 </View>
                 {/* Ratings */}
