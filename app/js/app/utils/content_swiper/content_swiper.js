@@ -4,7 +4,6 @@ import { StyleSheet, View } from "react-native";
 import Swiper from "react-id-swiper";
 import "react-id-swiper/src/styles/css/swiper.css";
 import "app/utils/content_swiper/content-swiper.css";
-import { masterStore } from "app/stores/master_store";
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1, width: 300, height: 300 },
@@ -12,12 +11,19 @@ const styles = StyleSheet.create({
 
 // noinspection JSUnusedGlobalSymbols
 export default class ContentSwiper extends Component {
-  // NOTE: Must be non-arrow-function since "this" is the Swiper object
-  onSlideChange() {
-    masterStore.activeSlideIndex = this.activeIndex;
+  componentWillMount() {
+    this.state = {
+      activeSlideIndex: 0,
+    };
   }
 
+  onSlideChange = swiper => {
+    this.setState({ activeSlideIndex: swiper.activeIndex });
+  };
+
   render() {
+    let that = this;
+
     return (
       <Swiper
         style={styles.wrapper}
@@ -28,9 +34,15 @@ export default class ContentSwiper extends Component {
         }}
         containerClass="content-swiper-container"
         showsButtons={true}
-        on={{ slideChange: this.onSlideChange }}>
+        on={{
+          slideChange: function() {
+            that.onSlideChange(this);
+          },
+        }}>
         {this.props.children.map((child, i) => {
-          return <View>{React.cloneElement(child, { slideNumber: i })}</View>;
+          return (
+            <View>{React.cloneElement(child, { slideNumber: i, activeSlideIndex: this.state.activeSlideIndex })}</View>
+          );
         })}
       </Swiper>
     );

@@ -11,7 +11,6 @@ import BigText from "app/shared_components/text/big_text";
 import contentStyle from "./content_style";
 import SmallText from "app/shared_components/text/small_text";
 import { lyrics } from "app/utils/lyrics/lyrics";
-import { masterStore } from "app/stores/master_store";
 
 const styles = StyleSheet.create({
   containerView: {
@@ -24,20 +23,15 @@ const styles = StyleSheet.create({
 
 @observer
 export default class LyricsContent extends Component {
-  songChangedAfterFindingLyrics = true;
+  songWithFoundLyrics = null;
 
-  isMySlideActive() {
-    return masterStore.activeSlideIndex === this.props.slideNumber;
+  isSongWithoutLyrics(song) {
+    return song !== this.songWithFoundLyrics;
   }
 
-  disposeOnActiveSlideChanges = autorun(async () => {
-    const logger = loggerCreator("autorun", moduleLogger);
-
-    logger.info(`slide changed: ${masterStore.activeSlideIndex}`);
-    if (this.isMySlideActive()) {
-      await this.ifNeededFindLyrics();
-    }
-  });
+  isMySlideActive(mySlideIndex) {
+    return mySlideIndex === this.props.slideNumber;
+  }
 
   async componentWillMount() {
     loggerCreator("componentWillMount", moduleLogger);
@@ -46,27 +40,21 @@ export default class LyricsContent extends Component {
     await this.ifNeededFindLyrics();
   }
 
-  componentWillUnmount() {
-    this.disposeOnActiveSlideChanges();
-  }
-
-  async ifNeededFindLyrics() {
+  async ifNeededFindLyrics(song, activeSlideIndex) {
     const logger = loggerCreator("ifNeededFindLyrics", moduleLogger);
-    logger.info(`is this slide active? ${this.isMySlideActive()}`);
-    logger.info(`did song change since fetching lyrics? ${this.songChangedAfterFindingLyrics}`);
+    logger.info(`is this slide active? ${this.isMySlideActive(activeSlideIndex)}`);
+    logger.info(`is current song without lyrics? ${this.isSongWithoutLyrics(song)}`);
 
-    if (this.songChangedAfterFindingLyrics && this.isMySlideActive()) {
+    if (this.isSongWithoutLyrics(song) && this.isMySlideActive(activeSlideIndex)) {
       await this.findLyrics();
-      this.songChangedAfterFindingLyrics = false;
+      this.songWithFoundLyrics = song;
     }
   }
 
   async componentWillReceiveProps(nextProps) {
-    const logger = loggerCreator("componentWillReceiveProps", moduleLogger);
-    if (nextProps.song !== this.props.song) {
-      logger.info(`song changed`);
-      this.songChangedAfterFindingLyrics = true;
-      await this.ifNeededFindLyrics();
+    loggerCreator("componentWillReceiveProps", moduleLogger);
+    if (nextProps.song !== this.props.song || nextProps.activeSlideIndex !== this.props.activeSlideIndex) {
+      await this.ifNeededFindLyrics(nextProps.song, nextProps.activeSlideIndex);
     }
   }
 
