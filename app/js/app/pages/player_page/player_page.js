@@ -1,22 +1,24 @@
 import loggerCreator from "app/utils/logger";
-var moduleLogger = loggerCreator("player_page");
+const moduleLogger = loggerCreator("player_page");
 
 import React, { Component } from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";
-import { navigator } from "../../stores/navigator";
 
 import { colors } from "app/styles/styles";
 import PlayerContextMenu from "./player_context_menu";
 import { player } from "app/stores/player/player";
 import Rating from "../../shared_components/rating";
-import AlbumArt from "./album_art";
 import PlayerControls from "./player_controls";
 import LoadingSpinner from "../../shared_components/loading_spinner";
 import SongDetails from "app/pages/player_page/song_details";
 import NoPlaylistSelected from "app/pages/player_page/no_playlist_selected";
+import ContentSwiper from "../../utils/content_swiper/content_swiper";
+import AlbumArtContent from "./content/album_art_content";
+import MetadataContent from "./content/metadata_content";
+import LyricsContent from "app/pages/player_page/content/lyrics_content";
 
 const styles = StyleSheet.create({
   container: {
@@ -26,6 +28,9 @@ const styles = StyleSheet.create({
     height: null,
     alignItems: "center",
     alignSelf: "stretch",
+  },
+  loadedPlaylistContainer: {
+    flex: 1,
   },
   // Playlist name
   playlistNameView: {
@@ -41,9 +46,16 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   // Sections
-  albumArt: {
-    marginBottom: 20,
+  contentSwiperContainer: {
     flex: 1,
+    marginBottom: 20,
+  },
+  contentSwiperSlideContainer: {
+    ...Platform.select({
+      android: {
+        flex: 1,
+      },
+    }),
   },
   rating: {
     marginBottom: 20,
@@ -58,7 +70,7 @@ const styles = StyleSheet.create({
 @observer
 export default class PlayerPage extends Component {
   async componentWillMount() {
-    let logger = loggerCreator("componentWillMount", moduleLogger);
+    loggerCreator("componentWillMount", moduleLogger);
     // Mock: Starts playing automatically
     // await player.changePlaylist("mock");
     // masterStore.closeSidebars();
@@ -88,9 +100,14 @@ export default class PlayerPage extends Component {
             return <LoadingSpinner message={`Loading playlist: ${player.currentPlaylist.name}`} song={song} />;
           } else {
             return (
-              <View style={{ flex: 1 }}>
-                {/* Album art */}
-                <AlbumArt style={[styles.albumArt]} song={song} />
+              <View style={styles.loadedPlaylistContainer}>
+                <View style={[styles.contentSwiperContainer]}>
+                  <ContentSwiper>
+                    <AlbumArtContent song={song} />
+                    <MetadataContent song={song} />
+                    <LyricsContent song={song} />
+                  </ContentSwiper>
+                </View>
                 {/* Ratings */}
                 <View style={styles.rating}>
                   <Rating song={song} starSize={43} starMargin={5} canChangeRating={true} />
