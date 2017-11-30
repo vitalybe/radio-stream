@@ -71,6 +71,7 @@
     "mocha": "^4.0.1",
     "mocha-jsdom": "^1.1.0",
     "moment": "^2.18.1",
+    "node-libs-browser": "^2.1.0",
     "object-assign": "4.1.1",
     "postcss-loader": "1.2.2",
     "promise": "7.1.1",

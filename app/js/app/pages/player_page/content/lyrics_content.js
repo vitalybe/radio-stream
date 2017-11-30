@@ -1,19 +1,19 @@
 import loggerCreator from "app/utils/logger";
 //noinspection JSUnresolvedVariable
-var moduleLogger = loggerCreator("LyricsContent");
+const moduleLogger = loggerCreator("LyricsContent");
 
 import React, { Component } from "react";
-import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { observer } from "mobx-react";
-import scrapeIt from "scrape-it";
+import { autorun } from "mobx";
 
-import NormalText from "app/shared_components/text/normal_text";
 import BigText from "app/shared_components/text/big_text";
 import contentStyle from "./content_style";
-import { webSearch } from "app/utils/web_search";
+import SmallText from "app/shared_components/text/small_text";
+import { lyrics } from "app/utils/lyrics/lyrics";
 
 const styles = StyleSheet.create({
-  container: {
+  containerView: {
     padding: 10,
   },
   header: {
@@ -23,56 +23,84 @@ const styles = StyleSheet.create({
 
 @observer
 export default class LyricsContent extends Component {
+  songWithFoundLyrics = null;
+
+  isSongWithoutLyrics(song) {
+    return song !== this.songWithFoundLyrics;
+  }
+
+  isMySlideActive(mySlideIndex) {
+    return mySlideIndex === this.props.slideNumber;
+  }
+
   async componentWillMount() {
-    loggerCreator("componentWillMount", moduleLogger);
-    await this.findLyrics(this.props.song);
+    const logger = loggerCreator("componentWillMount", moduleLogger);
+    logger.info(`this.props.activeSlideIndex: ${this.props.slideNumber}`);
+    this.state = { lyrics: "Loading..." };
+
+    await this.ifNeededFindLyrics();
+  }
+
+  componentWillUnmount() {
+    loggerCreator("componentWillUnmount", moduleLogger);
+  }
+
+  async ifNeededFindLyrics(song, activeSlideIndex) {
+    const logger = loggerCreator("ifNeededFindLyrics", moduleLogger);
+    logger.info(`is this slide active? ${this.isMySlideActive(activeSlideIndex)}`);
+    logger.info(`is current song without lyrics? ${this.isSongWithoutLyrics(song)}`);
+
+    if (this.isSongWithoutLyrics(song) && this.isMySlideActive(activeSlideIndex)) {
+      await this.findLyrics(song);
+      this.songWithFoundLyrics = song;
+    }
   }
 
   async componentWillReceiveProps(nextProps) {
-    loggerCreator("componentWillReceiveProps", moduleLogger);
-    if (nextProps.song !== this.props.song) {
-      await this.findLyrics(nextProps.song);
+    const logger = loggerCreator("componentWillReceiveProps", moduleLogger);
+    logger.info(`nextProps.activeSlideIndex: ${nextProps.activeSlideIndex}`);
+    logger.info(`this.props.activeSlideIndex: ${this.props.activeSlideIndex}`);
+    if (nextProps.song !== this.props.song || nextProps.activeSlideIndex !== this.props.activeSlideIndex) {
+      await this.ifNeededFindLyrics(nextProps.song, nextProps.activeSlideIndex);
     }
   }
 
   async findLyrics(song) {
     const logger = loggerCreator("findLyrics", moduleLogger);
 
-    this.state = { lyrics: "Loading..." };
-    let lyrics = "No lyrics were found";
+    let displayedLyrics = "No lyrics were found";
 
-    const query = `site:genius.com ${song.artist} ${song.title}`;
-    logger.info(`querying: ${query}`);
     try {
-      const href = await webSearch.firstHref(query);
-      logger.info(`got href: ${href}`);
-
-      if (href) {
-        const result = await scrapeIt(href, { lyrics: { selector: ".lyrics" } });
-        if (result.lyrics) {
-          logger.info(`got lyrics`);
-          lyrics = result.lyrics;
-        } else {
-          logger.info(`no lyrics`);
-        }
+      let result = await lyrics.find(song);
+      if (result) {
+        logger.info(`got lyrics`);
+        displayedLyrics = result;
+      } else {
+        logger.info(`no lyrics`);
       }
-
-      this.setState({ lyrics: lyrics });
+      this.setState({ lyrics: displayedLyrics });
     } catch (e) {
+      logger.error(`failed to get lyrics: ${e}`);
       this.setState({ lyrics: "Failed to load lyrics" });
     }
   }
 
   render() {
     return (
-      <ScrollView horizontal={false} style={[contentStyle.container, styles.container, this.props.style]}>
-        <BigText style={styles.header}>Lyrics</BigText>
-        <NormalText numberOfLines={null}>{this.state.lyrics}</NormalText>
+      <ScrollView horizontal={false} style={[contentStyle.container, this.props.style]}>
+        {/* NOTE: The inner components must be surrounded by a <View> to work - Otherwise they wouldn't get
+                  the width from ContentSwiper (web). You CAN'T encapsulate the wrapping view inside a component - it
+                   must be directly inside ContentSwiper */}
+        <View style={styles.containerView}>
+          <BigText style={styles.header}>Lyrics</BigText>
+          <SmallText numberOfLines={null}>{this.state.lyrics}</SmallText>
+        </View>
       </ScrollView>
     );
   }
 }
 
 LyricsContent.propTypes = {
+  slideNumber: React.PropTypes.number,
   song: React.PropTypes.object.isRequired,
 };

@@ -1,12 +1,11 @@
 import loggerCreator from "app/utils/logger";
-var moduleLogger = loggerCreator("player_page");
+const moduleLogger = loggerCreator("player_page");
 
 import React, { Component } from "react";
-import { Platform, StyleSheet, View, Image } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";
-import { navigator } from "../../stores/navigator";
 
 import { colors } from "app/styles/styles";
 import PlayerContextMenu from "./player_context_menu";
@@ -71,11 +70,11 @@ const styles = StyleSheet.create({
 @observer
 export default class PlayerPage extends Component {
   async componentWillMount() {
-    let logger = loggerCreator("componentWillMount", moduleLogger);
+    loggerCreator("componentWillMount", moduleLogger);
     // Mock: Starts playing automatically
-    await player.changePlaylist("mock");
-    masterStore.closeSidebars();
-    player.play();
+    // await player.changePlaylist("mock");
+    // masterStore.closeSidebars();
+    // player.play();
   }
 
   componentDidMount() {
@@ -104,18 +103,9 @@ export default class PlayerPage extends Component {
               <View style={styles.loadedPlaylistContainer}>
                 <View style={[styles.contentSwiperContainer]}>
                   <ContentSwiper>
-                    {/* NOTE: The inner components must be surrounded by a <View> to work - Otherwise they wouldn't get
-                  the width from ContentSwiper (web). You CAN'T encapsulate the wrapping view inside a component - it
-                   must be directly inside ContentSwiper */}
-                    <View style={styles.contentSwiperSlideContainer}>
-                      <AlbumArtContent song={song} />
-                    </View>
-                    <View style={styles.contentSwiperSlideContainer}>
-                      <MetadataContent song={song} />
-                    </View>
-                    <View style={styles.contentSwiperSlideContainer}>
-                      <LyricsContent song={song} />
-                    </View>
+                    <AlbumArtContent song={song} />
+                    <MetadataContent song={song} />
+                    <LyricsContent song={song} />
                   </ContentSwiper>
                 </View>
                 {/* Ratings */}

@@ -13,9 +13,13 @@ const styles = {
 export default class SmallText extends Component {
   render() {
     return (
-      <Text style={[styles.text, this.props.style]} numberOfLines={1}>
+      <Text style={[styles.text, this.props.style]} numberOfLines={this.props.numberOfLines}>
         {this.props.children}
       </Text>
     );
   }
 }
+
+SmallText.defaultProps = {
+  numberOfLines: 1,
+};
