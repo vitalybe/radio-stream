@@ -1,6 +1,5 @@
 package com.radiostream.javascript.proxy
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
@@ -12,9 +11,6 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.radiostream.Settings
-import com.radiostream.di.components.DaggerJsProxyComponent
-import com.radiostream.di.components.JsProxyComponent
-import com.radiostream.di.modules.ReactContextModule
 import com.radiostream.player.PlayerService
 
 import java.util.HashMap
@@ -24,6 +20,8 @@ import javax.inject.Inject
 import timber.log.Timber
 
 import android.content.Context.BIND_AUTO_CREATE
+import com.radiostream.MainApplication
+import com.radiostream.wrapper.ReactContextContainer
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 
@@ -31,6 +29,9 @@ class PlayerJsProxy(reactContext: ReactApplicationContext) : ReactContextBaseJav
 
     @Inject
     lateinit var mSettings: Settings
+
+    @Inject
+    lateinit var mReactContextContainer: ReactContextContainer
 
     private var mPlayerService: PlayerService? = null
     private val mServiceConnection = object : ServiceConnection {
@@ -50,9 +51,9 @@ class PlayerJsProxy(reactContext: ReactApplicationContext) : ReactContextBaseJav
         Timber.i("creating new instance of PlayerJsProxy (%h) with reactContext: %h", this, reactContext)
 
         reactContext.addLifecycleEventListener(this)
+        MainApplication.getApplicationComponent().inject(this)
 
-        mJsProxyComponent = DaggerJsProxyComponent.builder().reactContextModule(ReactContextModule(reactContext)).build()
-        mJsProxyComponent!!.inject(this)
+        mReactContextContainer.reactContext = reactContext
     }
 
     override fun getName(): String {
@@ -191,19 +192,4 @@ class PlayerJsProxy(reactContext: ReactApplicationContext) : ReactContextBaseJav
         }
 
     }
-
-
-    companion object {
-
-        private var mJsProxyComponent: JsProxyComponent? = null
-
-        fun JsProxyComponent(): JsProxyComponent {
-            if (mJsProxyComponent == null) {
-                throw RuntimeException("Remote service was not initialized")
-            }
-
-            return mJsProxyComponent!!
-        }
-    }
-
 }

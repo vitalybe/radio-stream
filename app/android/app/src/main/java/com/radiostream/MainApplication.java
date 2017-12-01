@@ -9,6 +9,8 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
+import com.radiostream.di.components.ApplicationComponent;
+import com.radiostream.di.components.DaggerApplicationComponent;
 import com.radiostream.javascript.proxy.JsProxyPackage;
 import com.radiostream.util.VerboseDebugTree;
 import com.facebook.soloader.SoLoader;
@@ -20,6 +22,16 @@ import java.util.List;
 import timber.log.Timber;
 
 public class MainApplication extends Application implements ReactApplication {
+
+  private static ApplicationComponent mApplicationComponent = null;
+
+  public static ApplicationComponent getApplicationComponent() {
+    if (mApplicationComponent == null) {
+      throw new RuntimeException("Remote service was not initialized");
+    }
+
+    return mApplicationComponent;
+  }
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
@@ -47,7 +59,9 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-
 	Timber.plant(new VerboseDebugTree());
+
+    mApplicationComponent = DaggerApplicationComponent.builder().build();
   }
+
 }

@@ -7,7 +7,7 @@ import com.radiostream.player.PlayerService;
 
 import dagger.Component;
 
-@Component(dependencies = {JsProxyComponent.class}, modules = {ContextModule.class, PlayerServiceModule.class})
+@Component(dependencies = {ApplicationComponent.class}, modules = {ContextModule.class, PlayerServiceModule.class})
 @PlayerServiceScope
 public interface PlayerServiceComponent {
   void inject(PlayerService service);

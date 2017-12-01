@@ -16,6 +16,8 @@ import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.view.KeyEvent
 import com.facebook.react.bridge.WritableMap
+import com.radiostream.MainApplication
+import com.radiostream.di.components.ApplicationComponent
 import com.radiostream.di.components.DaggerPlayerServiceComponent
 import com.radiostream.di.modules.ContextModule
 import com.radiostream.di.modules.PlayerServiceModule
@@ -138,7 +140,7 @@ class PlayerService : Service(), PlaylistControls {
         Timber.i("function start")
 
         val component = DaggerPlayerServiceComponent.builder()
-                .jsProxyComponent(PlayerJsProxy.JsProxyComponent())
+                .applicationComponent(MainApplication.getApplicationComponent())
                 .contextModule(ContextModule(this))
                 .playerServiceModule(PlayerServiceModule(this))
                 .build()
