@@ -3,5 +3,3 @@ layout:
   -
     - `realpath ./node_modules/react-native/packager/launchPackager.command`
     - yarn run android
-  -
-    - ~/Library/Android/sdk/tools/emulator @Galaxy_S6_API_24 &>/dev/null & pwd

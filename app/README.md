@@ -24,7 +24,11 @@ This will do the following:
 
 If you want to see the log, without everything else, run: `./logcat.sh`
 
-For **iTerm 3** you can use **mert** and run: **mert start** to open everything in a single iTerm tab.
+If you're using **iTerm 3**, install **mert**. Then you can use `yarn run android-iterm3`, that would:
+* Start the emulator in the current tab
+* Open a new tab with 2 panes:
+    * One pane will be the android-packager
+    * In the other, it would compile the application and and run the log viewer
 
 Modifying code
 --------------

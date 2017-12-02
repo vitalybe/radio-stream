@@ -9,6 +9,7 @@
     "web": "node webpack/scripts/start.js",
     "web-build": "node webpack/scripts/build.js",
     "android": "adb logcat -c && react-native run-android && ./logcat.sh",
+    "android-iterm3": "~/Library/Android/sdk/tools/emulator @Galaxy_S6_API_24 &>/dev/null & mert start",
     "android-reload": "adb shell am force-stop com.radiostream && adb shell monkey -p com.radiostream -c android.intent.category.LAUNCHER 1 && sleep 2 && adb shell input text \"RR\" && ./logcat.sh",
     "desktop": "concurrently 'while true; do node webpack/scripts/start.js --electron; done;' 'wait-on tcp:localhost:3000 && while true; do ELECTRON_START_URL=http://localhost:3000 node_modules/.bin/electron .; done;'",
     "desktop-build": "node webpack/scripts/build.js --electron && electron-packager --overwrite --out=build/electron --icon=js/app/images/app.icns .",
