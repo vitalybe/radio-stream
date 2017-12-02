@@ -2,8 +2,7 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("settings_page");
 
 import React, { Component } from "react";
-import { StyleSheet, View, TextInput } from "react-native";
-import BackHandler from "app/utils/back_handler/back_handler";
+import { StyleSheet, View, Switch } from "react-native";
 import mobx from "mobx";
 import { observer } from "mobx-react";
 
@@ -18,6 +17,7 @@ import { navigator } from "app/stores/navigator.js";
 import SettingsTextInput from "./settings_text_input";
 import { playlistsStore } from "app/stores/playlists_store";
 import { masterStore } from "app/stores/master_store";
+import SettingsSwitch from "app/pages/settings/settings_switch";
 
 const styles = StyleSheet.create({
   container: {
@@ -49,6 +49,8 @@ export default class SettingsPage extends Component {
     this.settingsValues = mobx.observable({
       host: settings.host,
       password: settings.password,
+
+      isMock: false,
 
       status: null,
     });
@@ -95,7 +97,7 @@ export default class SettingsPage extends Component {
   }
 
   render() {
-    let logger = loggerCreator(this.render.name, moduleLogger);
+    loggerCreator(this.render.name, moduleLogger);
 
     return (
       <View style={styles.container}>
@@ -116,9 +118,13 @@ export default class SettingsPage extends Component {
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>
         </Button>
-        <NormalText style={[styles.message]}>
-          {this.settingsValues.message}
-        </NormalText>
+        <NormalText style={[styles.message]}>{this.settingsValues.message}</NormalText>
+        <Switch />
+        <SettingsSwitch
+          label={"Hello"}
+          value={this.settingsValues.isMock}
+          onValueChange={value => (this.settingsValues.isMock = value)}
+        />
       </View>
     );
   }
