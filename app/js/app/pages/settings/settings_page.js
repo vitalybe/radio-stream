@@ -119,7 +119,6 @@ export default class SettingsPage extends Component {
           <ButtonText>Save</ButtonText>
         </Button>
         <NormalText style={[styles.message]}>{this.settingsValues.message}</NormalText>
-        <Switch />
         <SettingsSwitch
           label={"Hello"}
           value={this.settingsValues.isMock}

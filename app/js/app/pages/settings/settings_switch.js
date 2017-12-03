@@ -3,8 +3,9 @@ import loggerCreator from "app/utils/logger";
 var moduleLogger = loggerCreator("SettingsSwitch");
 
 import React, { Component, PropTypes } from "react";
-import { Image, StyleSheet, Switch, Text, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
+import Switch from "react-native-material-switch";
 
 import { colors } from "app/styles/styles";
 import NormalText from "app/shared_components/text/normal_text";
@@ -24,8 +25,8 @@ export default class SettingsSwitch extends Component {
           thumbTintColor={colors.CYAN_BRIGHT}
           tintColor={colors.CYAN_DARKEST}
           onTintColor={colors.CYAN_DARK}
-          value={this.props.value}
-          onValueChange={this.props.onValueChange}
+          active={this.props.value}
+          onChangeState={this.props.onValueChange}
         />
         <NormalText>{this.props.label}</NormalText>
       </View>
