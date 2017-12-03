@@ -96,8 +96,9 @@ android {
             keyAlias RADIO_STREAM_RELEASE_KEY_ALIAS
             keyPassword RADIO_STREAM_RELEASE_KEY_PASSWORD        }
     }
-    compileSdkVersion 23
-    buildToolsVersion "25.0.2"
+
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId "com.radiostream"
         minSdkVersion 22
