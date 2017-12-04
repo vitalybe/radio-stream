@@ -18,6 +18,7 @@ import SettingsTextInput from "./settings_text_input";
 import { playlistsStore } from "app/stores/playlists_store";
 import { masterStore } from "app/stores/master_store";
 import SettingsSwitch from "app/pages/settings/settings_switch";
+import SettingsSwitchGroup from "app/pages/settings/settings_switch_group";
 
 const styles = StyleSheet.create({
   container: {
@@ -128,7 +129,7 @@ export default class SettingsPage extends Component {
           value={this.settingsValues.isMock}
           onValueChange={value => (this.settingsValues.isMock = value)}
         />
-        <View style={styles.mockSwitchGroup}>
+        <SettingsSwitchGroup style={styles.mockSwitchGroup} isDisabled={!this.settingsValues.isMock}>
           <SettingsSwitch
             label={"Play on startup"}
             value={this.settingsValues.isMockStartPlaying}
@@ -136,11 +137,10 @@ export default class SettingsPage extends Component {
           />
           <SettingsSwitch
             label={"Settings on startup"}
-            isDisabled={true}
             value={this.settingsValues.isMockStartSettings}
             onValueChange={value => (this.settingsValues.isMockStartSettings = value)}
           />
-        </View>
+        </SettingsSwitchGroup>
 
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>

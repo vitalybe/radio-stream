@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
 });
 
 const enabledColors = {
-  background: colors.CYAN_BRIGHT,
+  background: colors.CYAN_DARK,
   inactiveButton: colors.SEMI_WHITE,
   activeButton: colors.CYAN_BRIGHT,
   text: colors.SEMI_WHITE,
@@ -46,7 +46,7 @@ export default class SettingsSwitch extends Component {
           activeButtonColor={switchColors.activeButton}
           inactiveBackgroundColor={switchColors.background}
           activeBackgroundColor={switchColors.background}
-          active={this.props.value}
+          active={this.props.isDisabled ? false : this.props.value}
           onChangeState={this.props.onValueChange}
           enableSlideDragging={false}
           enableSlide={!this.props.isDisabled}
