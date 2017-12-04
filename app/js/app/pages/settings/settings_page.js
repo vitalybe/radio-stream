@@ -35,7 +35,13 @@ const styles = StyleSheet.create({
   },
 
   saveButton: {
-    marginTop: 10,
+    marginTop: 20,
+  },
+  mockSwitch: {
+    marginTop: 20,
+  },
+  mockSwitchGroup: {
+    marginLeft: 20,
   },
 });
 
@@ -51,6 +57,8 @@ export default class SettingsPage extends Component {
       password: settings.password,
 
       isMock: false,
+      isMockStartPlaying: false,
+      isMockStartSettings: false,
 
       status: null,
     });
@@ -115,15 +123,29 @@ export default class SettingsPage extends Component {
 
         <SettingsPageNative settingsValuesNative={this.settingsValuesNative} />
 
+        <SettingsSwitch
+          label={"Mock mode"}
+          value={this.settingsValues.isMock}
+          onValueChange={value => (this.settingsValues.isMock = value)}
+        />
+        <View style={styles.mockSwitchGroup}>
+          <SettingsSwitch
+            label={"Play on startup"}
+            value={this.settingsValues.isMockStartPlaying}
+            onValueChange={value => (this.settingsValues.isMockStartPlaying = value)}
+          />
+          <SettingsSwitch
+            label={"Settings on startup"}
+            isDisabled={true}
+            value={this.settingsValues.isMockStartSettings}
+            onValueChange={value => (this.settingsValues.isMockStartSettings = value)}
+          />
+        </View>
+
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>
         </Button>
         <NormalText style={[styles.message]}>{this.settingsValues.message}</NormalText>
-        <SettingsSwitch
-          label={"Hello"}
-          value={this.settingsValues.isMock}
-          onValueChange={value => (this.settingsValues.isMock = value)}
-        />
       </View>
     );
   }

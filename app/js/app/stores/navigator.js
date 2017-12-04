@@ -9,7 +9,7 @@ class Navigator {
   @observable activeRoute = null;
 
   constructor() {
-    this.navigateToPlayer();
+    this.navigateToSettings();
   }
 
   _navigateTo(address, params) {
