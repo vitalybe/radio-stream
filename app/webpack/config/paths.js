@@ -75,5 +75,5 @@ module.exports = {
   nodePaths: nodePaths,
   publicUrl: getPublicUrl(resolveApp("package.json")),
   servedPath: getServedPath(resolveApp("package.json")),
-  reactNativeSwitch: resolveApp("node_modules/react-native-material-switch"),
+  reactNativeSwitch: resolveApp("node_modules_dev/react-native-material-switch"),
 };
