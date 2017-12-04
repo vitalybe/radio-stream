@@ -27,6 +27,7 @@ export default class SettingsSwitch extends Component {
           onTintColor={colors.CYAN_DARK}
           active={this.props.value}
           onChangeState={this.props.onValueChange}
+          enableSlideDragging={false}
         />
         <NormalText>{this.props.label}</NormalText>
       </View>

@@ -85,6 +85,7 @@
     "react-fontawesome": "^1.6.1",
     "react-id-swiper": "^1.5.5",
     "react-native": "0.44.0",
+    "react-native-material-switch": "https://github.com/vitalybe/react-native-material-switch.git#fix-work-in-web",
     "react-native-orientation": "git+https://github.com/yamill/react-native-orientation.git",
     "react-native-popup-menu": "^0.7.5",
     "react-native-swiper": "^1.5.13",
