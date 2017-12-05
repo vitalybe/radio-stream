@@ -10,8 +10,8 @@ class BackendMetadataApi {
   _getAjax(customHost, customPassword) {
     let logger = loggerCreator("_getAjax", moduleLogger);
 
-    let host = settings.host;
-    let password = settings.password;
+    let host = settings.values.host;
+    let password = settings.values.password;
 
     if (customHost && customPassword) {
       logger.info(`using custom host/password`);
@@ -26,7 +26,7 @@ class BackendMetadataApi {
     }
 
     const address = `http://${host}/radio-stream/api`;
-    const credentials = btoa(unescape(encodeURIComponent(settings.user + ":" + password)));
+    const credentials = btoa(unescape(encodeURIComponent(settings.values.user + ":" + password)));
     return new Ajax(address, {
       headers: {
         Authorization: "Basic " + credentials,
@@ -43,9 +43,12 @@ class BackendMetadataApi {
   }
 
   playlists() {
-    return this._getAjax().get(`/playlists`).then(response => response.json().then(json => json)).then(json => {
-      return json;
-    });
+    return this._getAjax()
+      .get(`/playlists`)
+      .then(response => response.json().then(json => json))
+      .then(json => {
+        return json;
+      });
   }
 
   playlistSongs(playlistName) {

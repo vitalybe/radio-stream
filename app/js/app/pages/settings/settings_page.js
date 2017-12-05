@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 export default class SettingsPage extends Component {
   @observable saveMessage = "";
 
-  settingsValues = mobx.asMap({
+  settingsValues = observable({
     host: null,
     password: null,
 
@@ -65,9 +65,9 @@ export default class SettingsPage extends Component {
     const logger = loggerCreator("componentWillMount", moduleLogger);
 
     Object.keys(settings.values).forEach(key => {
-      if (this.settingsValues.has(key)) {
+      if (key in this.settingsValues) {
         logger.info(`settings: ${key} = ${settings.values[key]}`);
-        this.settingsValues.set(key, settings.values[key]);
+        this.settingsValues[key] = settings.values[key];
       }
     });
   }
@@ -76,7 +76,7 @@ export default class SettingsPage extends Component {
     let logger = loggerCreator("onTextChange", moduleLogger);
     logger.info(`changing ${label}`);
 
-    this.settingsValues.set(label, text);
+    this.settingsValues[label] = text;
   }
 
   async onSavePress() {
@@ -90,14 +90,9 @@ export default class SettingsPage extends Component {
       await backendMetadataApi.testConnection(host, password);
       this.saveMessage = "Connected";
 
-      logger.info(`updating global settings`);
-
-      let mob = mobx;
-      debugger;
-
       logger.info(`saving settings`);
-      await settings.save(this.settingsValues.toJS());
-      await settingsNative.save(this.settingsValuesNative.toJS());
+      await settings.save(mobx.toJS(this.settingsValues));
+      await settingsNative.save(mobx.toJS(this.settingsValuesNative));
 
       logger.info(`upadting playlists`);
       await playlistsStore.updatePlaylists();
@@ -132,19 +127,19 @@ export default class SettingsPage extends Component {
 
         <SettingsSwitch
           label={"Mock mode"}
-          value={this.settingsValues.get("isMock") || false}
-          onValueChange={value => this.settingsValues.set("isMock", value)}
+          value={this.settingsValues.isMock || false}
+          onValueChange={value => (this.settingsValues.isMock = value)}
         />
         <SettingsSwitchGroup style={styles.mockSwitchGroup} isDisabled={!this.settingsValues.isMock}>
           <SettingsSwitch
             label={"Play on startup"}
-            value={this.settingsValues.get("isMockStartPlaying") || false}
-            onValueChange={value => this.settingsValues.set("isMockStartPlaying", value)}
+            value={this.settingsValues.isMockStartPlaying || false}
+            onValueChange={value => (this.settingsValues.isMockStartPlaying = value)}
           />
           <SettingsSwitch
             label={"Settings on startup"}
-            value={this.settingsValues.get("isMockStartSettings") || false}
-            onValueChange={value => this.settingsValues.set("isMockStartSettings", value)}
+            value={this.settingsValues.isMockStartSettings || false}
+            onValueChange={value => (this.settingsValues.isMockStartSettings = value)}
           />
         </SettingsSwitchGroup>
 
