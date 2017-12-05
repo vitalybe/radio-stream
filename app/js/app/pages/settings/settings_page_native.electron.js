@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("SettingsPageNative");
 
 import React, { Component, PropTypes } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, TextInput } from "react-native";
 import keycode from "keycode";
 import _ from "lodash";
 import { observable } from "mobx";
@@ -16,6 +16,8 @@ const styles = StyleSheet.create({});
 @observer
 export default class SettingsPageNative extends Component {
   componentWillMount() {
+    const logger = loggerCreator("componentWillMount", moduleLogger);
+
     this._modifierKeys = [
       keycode("left command"),
       keycode("right command"),
@@ -24,6 +26,7 @@ export default class SettingsPageNative extends Component {
       keycode("alt"),
     ];
 
+    logger.info(`playPauseKey: ${settingsNative.playPauseKey}`);
     this.props.settingsValuesNative.set("playPauseKey", settingsNative.playPauseKey);
   }
 
@@ -55,7 +58,9 @@ export default class SettingsPageNative extends Component {
       if (meta) keyParts.push("Cmd");
 
       if (name.match(/[\w]/)) {
-        name = _.startCase(name).split(" ").join("");
+        name = _.startCase(name)
+          .split(" ")
+          .join("");
       }
       keyParts.push(name);
 

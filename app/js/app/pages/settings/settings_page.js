@@ -3,7 +3,7 @@ const moduleLogger = loggerCreator("settings_page");
 
 import React, { Component } from "react";
 import { StyleSheet, View, Switch } from "react-native";
-import mobx from "mobx";
+import mobx, { observable } from "mobx";
 import { observer } from "mobx-react";
 
 import Button from "app/shared_components/rectangle_button";
@@ -48,24 +48,19 @@ const styles = StyleSheet.create({
 
 @observer
 export default class SettingsPage extends Component {
-  constructor(props) {
-    super(props);
+  @observable saveMessage = "";
 
-    let logger = loggerCreator("constructor", moduleLogger);
+  @observable
+  settingsValues = mobx.observable({
+    host: settings.host,
+    password: settings.password,
 
-    this.settingsValues = mobx.observable({
-      host: settings.host,
-      password: settings.password,
+    isMock: false,
+    isMockStartPlaying: false,
+    isMockStartSettings: false,
+  });
 
-      isMock: false,
-      isMockStartPlaying: false,
-      isMockStartSettings: false,
-
-      status: null,
-    });
-
-    this.settingsValuesNative = mobx.asMap();
-  }
+  settingsValuesNative = mobx.asMap();
 
   onTextChange(label, text) {
     let logger = loggerCreator("onTextChange", moduleLogger);
@@ -90,7 +85,7 @@ export default class SettingsPage extends Component {
       settings.host = host;
       settings.password = password;
       logger.info(`saving settings`);
-      await settings.save();
+      await settings.save(this.settingsValues);
       await settingsNative.save(this.settingsValuesNative.toJS());
 
       logger.info(`upadting playlists`);
