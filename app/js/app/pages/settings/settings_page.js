@@ -50,23 +50,33 @@ const styles = StyleSheet.create({
 export default class SettingsPage extends Component {
   @observable saveMessage = "";
 
-  @observable
-  settingsValues = mobx.observable({
-    host: settings.host,
-    password: settings.password,
+  settingsValues = mobx.asMap({
+    host: null,
+    password: null,
 
-    isMock: false,
-    isMockStartPlaying: false,
-    isMockStartSettings: false,
+    isMock: null,
+    isMockStartPlaying: null,
+    isMockStartSettings: null,
   });
 
   settingsValuesNative = mobx.asMap();
+
+  componentWillMount() {
+    const logger = loggerCreator("componentWillMount", moduleLogger);
+
+    Object.keys(settings.values).forEach(key => {
+      if (this.settingsValues.has(key)) {
+        logger.info(`settings: ${key} = ${settings.values[key]}`);
+        this.settingsValues.set(key, settings.values[key]);
+      }
+    });
+  }
 
   onTextChange(label, text) {
     let logger = loggerCreator("onTextChange", moduleLogger);
     logger.info(`changing ${label}`);
 
-    this.settingsValues[label] = text;
+    this.settingsValues.set(label, text);
   }
 
   async onSavePress() {
@@ -76,16 +86,17 @@ export default class SettingsPage extends Component {
     let password = this.settingsValues.password;
 
     try {
-      this.settingsValues.message = "Connecting with the given host/password...";
+      this.saveMessage = "Connecting with the given host/password...";
       await backendMetadataApi.testConnection(host, password);
-      this.settingsValues.message = "Connected";
+      this.saveMessage = "Connected";
 
       logger.info(`updating global settings`);
 
-      settings.host = host;
-      settings.password = password;
+      let mob = mobx;
+      debugger;
+
       logger.info(`saving settings`);
-      await settings.save(this.settingsValues);
+      await settings.save(this.settingsValues.toJS());
       await settingsNative.save(this.settingsValuesNative.toJS());
 
       logger.info(`upadting playlists`);
@@ -96,7 +107,7 @@ export default class SettingsPage extends Component {
 
       navigator.navigateToPlayer();
     } catch (error) {
-      this.settingsValues.message = `Failed: ${error}`;
+      this.saveMessage = `Failed: ${error}`;
     }
   }
 
@@ -121,26 +132,26 @@ export default class SettingsPage extends Component {
 
         <SettingsSwitch
           label={"Mock mode"}
-          value={this.settingsValues.isMock}
-          onValueChange={value => (this.settingsValues.isMock = value)}
+          value={this.settingsValues.get("isMock") || false}
+          onValueChange={value => this.settingsValues.set("isMock", value)}
         />
         <SettingsSwitchGroup style={styles.mockSwitchGroup} isDisabled={!this.settingsValues.isMock}>
           <SettingsSwitch
             label={"Play on startup"}
-            value={this.settingsValues.isMockStartPlaying}
-            onValueChange={value => (this.settingsValues.isMockStartPlaying = value)}
+            value={this.settingsValues.get("isMockStartPlaying") || false}
+            onValueChange={value => this.settingsValues.set("isMockStartPlaying", value)}
           />
           <SettingsSwitch
             label={"Settings on startup"}
-            value={this.settingsValues.isMockStartSettings}
-            onValueChange={value => (this.settingsValues.isMockStartSettings = value)}
+            value={this.settingsValues.get("isMockStartSettings") || false}
+            onValueChange={value => this.settingsValues.set("isMockStartSettings", value)}
           />
         </SettingsSwitchGroup>
 
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>
         </Button>
-        <NormalText style={[styles.message]}>{this.settingsValues.message}</NormalText>
+        <NormalText style={[styles.message]}>{this.saveMessage}</NormalText>
       </View>
     );
   }
