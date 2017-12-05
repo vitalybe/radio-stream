@@ -77,8 +77,15 @@ export default class SettingsPageNative extends Component {
   render() {
     return (
       <View>
+        <TextInput
+          onChange={() => console.log("Change!")}
+          onKeyDown={() => console.log("KeyDown!")}
+          onKeyUp={() => {
+            debugger;
+          }}
+        />
         <SettingsTextInput
-          textInputProps={{ onKeyDown: event => this.onPlayPauseKeyDown(event) }}
+          textInputProps={{ onKeyUp: event => this.onPlayPauseKeyDown(event) }}
           label="Play/Pause shortcut"
           value={this.props.settingsValuesNative.get("playPauseKey")}
         />
