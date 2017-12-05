@@ -39,7 +39,9 @@ class Player {
 
     logger.info(`is player available?`);
     let isAvailable = await this.proxy.isPlayerAvailable();
-    if (isAvailable) {
+    let areSettingsLoaded = settings.isLoaded;
+    logger.info(`are settings loaded: ${areSettingsLoaded}`);
+    if (areSettingsLoaded && isAvailable) {
       logger.info(`available - updating settings`);
       await this.proxy.updateSettings(
         settings.values.host,

@@ -6,6 +6,8 @@ import { AsyncStorage } from "react-native";
 let DEFAULT_USER = "radio";
 
 class Settings {
+  isLoaded = false;
+
   values = {
     host: null,
     user: null,
@@ -31,6 +33,9 @@ class Settings {
     this.convertValueToBool("isMock");
     this.convertValueToBool("isMockStartPlaying");
     this.convertValueToBool("isMockStartSettings");
+    logger.info(`loaded settings: ${JSON.stringify(this.values)}`);
+
+    this.isLoaded = true;
   }
 
   async save(changedValues) {
@@ -42,7 +47,7 @@ class Settings {
       }
 
       logger.info(`saving setting ${key} = ${this.values[key]}`);
-      await AsyncStorage.setItem(key, this.values[key]);
+      await AsyncStorage.setItem(key, this.values[key].toString());
     }
   }
 }

@@ -103,6 +103,7 @@ export default class SettingsPage extends Component {
       navigator.navigateToPlayer();
     } catch (error) {
       this.saveMessage = `Failed: ${error}`;
+      logger.warn(`failed to save: ${error}`);
     }
   }
 
