@@ -59,7 +59,7 @@ export default class SettingsPage extends Component {
     isMockStartSettings: null,
   });
 
-  settingsValuesNative = mobx.asMap();
+  settingsValuesNative = observable({});
 
   componentWillMount() {
     const logger = loggerCreator("componentWillMount", moduleLogger);

@@ -6,7 +6,7 @@ import React, { Component, PropTypes } from "react";
 import { Image, StyleSheet, Text, View, TextInput } from "react-native";
 import keycode from "keycode";
 import _ from "lodash";
-import { observable } from "mobx";
+import { observable, extendObservable } from "mobx";
 import { observer } from "mobx-react";
 import settingsNative from "app/utils/settings/settings_native";
 
@@ -27,14 +27,16 @@ export default class SettingsPageNative extends Component {
     ];
 
     logger.info(`playPauseKey: ${settingsNative.playPauseKey}`);
-    this.props.settingsValuesNative.set("playPauseKey", settingsNative.playPauseKey);
+    extendObservable(this.props.settingsValuesNative, {
+      playPauseKey: settingsNative.playPauseKey,
+    });
   }
 
   onPlayPauseKeyDown(event) {
     let logger = loggerCreator("onPlayPauseKeyDown", moduleLogger);
     let keyboardEvent = this.keyboardEventToString(event);
     logger.info(`keyboardEvent: ${keyboardEvent}`);
-    this.props.settingsValuesNative.set("playPauseKey", keyboardEvent);
+    this.props.settingsValuesNative.playPauseKey = keyboardEvent;
   }
 
   keyboardEventToString(keyboardEvent) {
@@ -80,7 +82,7 @@ export default class SettingsPageNative extends Component {
         <SettingsTextInput
           textInputProps={{ onKeyDownCapture: event => this.onPlayPauseKeyDown(event) }}
           label="Play/Pause shortcut"
-          value={this.props.settingsValuesNative.get("playPauseKey")}
+          value={this.props.settingsValuesNative.playPauseKey}
         />
       </View>
     );
