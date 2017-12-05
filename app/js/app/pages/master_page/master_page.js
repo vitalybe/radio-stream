@@ -51,36 +51,50 @@ const styles = StyleSheet.create({
 export default class MasterPage extends Component {
   async componentWillMount() {
     let logger = loggerCreator("componentWillMount", moduleLogger);
+    try {
+      this.state = {
+        ready: false,
+      };
 
-    this.state = {
-      ready: false,
-    };
+      logger.info(`loading settings`);
+      await settings.load();
+      await settingsNative.load();
 
-    logger.info(`loading settings`);
-    await settings.load();
-    await settingsNative.load();
-
-    logger.info(`is host configured?`);
-    if (settings.host) {
-      logger.info(`updated status. playing? ${player.isPlaying}`);
-      if (player.isPlaying) {
-        logger.info(`player currently playing - navigating to player`);
+      logger.info(`is host configured?`);
+      if (settings.values.host) {
+        logger.info(`navigating to player`);
         navigator.navigateToPlayer();
+
+        logger.info(`updated status. playing? ${player.isPlaying}`);
+        if (player.isPlaying) {
+          logger.info(`player currently playing - closing sidebars`);
+          masterStore.closeSidebars();
+        }
+
+        logger.info(`loading playlists`);
+        playlistsStore.updatePlaylists().then(() => {
+          logger.info(`finishing loading playlists`);
+        });
+      } else {
+        logger.info(`host not found in settings - showing settings page`);
+        navigator.navigateToSettings();
+        masterStore.closeSidebars();
       }
-      logger.info(`loading playlists`);
-      playlistsStore.updatePlaylists().then(() => {
-        logger.info(`finishing loading playlists`);
-      });
-    } else {
-      logger.info(`host not found in settings - showing settings page`);
-      navigator.navigateToSettings();
-      masterStore.closeSidebars();
+
+      // MOCK
+      if (settings.values.isMock && settings.values.isMockStartSettings) {
+        logger.info(`MOCK MODE - Navigating to settings`);
+        navigator.navigateToSettings();
+        masterStore.closeSidebars();
+      }
+
+      BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+
+      logger.info(`initialization finished`);
+      this.setState({ ready: true });
+    } catch (e) {
+      logger.error(`failed: ${e}`);
     }
-
-    BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
-
-    logger.info(`initialization finished`);
-    this.setState({ ready: true });
   }
 
   onBackPress() {

@@ -2,9 +2,8 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("settings_page");
 
 import React, { Component } from "react";
-import { StyleSheet, View, TextInput } from "react-native";
-import BackHandler from "app/utils/back_handler/back_handler";
-import mobx from "mobx";
+import { StyleSheet, View, Switch } from "react-native";
+import mobx, { observable } from "mobx";
 import { observer } from "mobx-react";
 
 import Button from "app/shared_components/rectangle_button";
@@ -13,11 +12,13 @@ import ButtonText from "app/shared_components/text/button_text";
 import SettingsPageNative from "./settings_page_native";
 import settings from "app/utils/settings/settings";
 import settingsNative from "app/utils/settings/settings_native";
-import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
+import { backendMetadataApiGetter } from "app/utils/backend_metadata_api/backend_metadata_api_getter";
 import { navigator } from "app/stores/navigator.js";
 import SettingsTextInput from "./settings_text_input";
 import { playlistsStore } from "app/stores/playlists_store";
 import { masterStore } from "app/stores/master_store";
+import SettingsSwitch from "app/pages/settings/settings_switch";
+import SettingsSwitchGroup from "app/pages/settings/settings_switch_group";
 
 const styles = StyleSheet.create({
   container: {
@@ -35,25 +36,40 @@ const styles = StyleSheet.create({
   },
 
   saveButton: {
-    marginTop: 10,
+    marginTop: 20,
+  },
+  mockSwitch: {
+    marginTop: 20,
+  },
+  mockSwitchGroup: {
+    marginLeft: 20,
   },
 });
 
 @observer
 export default class SettingsPage extends Component {
-  constructor(props) {
-    super(props);
+  @observable saveMessage = "";
 
-    let logger = loggerCreator("constructor", moduleLogger);
+  settingsValues = observable({
+    host: null,
+    password: null,
 
-    this.settingsValues = mobx.observable({
-      host: settings.host,
-      password: settings.password,
+    isMock: null,
+    isMockStartPlaying: null,
+    isMockStartSettings: null,
+  });
 
-      status: null,
+  settingsValuesNative = observable({});
+
+  componentWillMount() {
+    const logger = loggerCreator("componentWillMount", moduleLogger);
+
+    Object.keys(settings.values).forEach(key => {
+      if (key in this.settingsValues) {
+        logger.info(`settings: ${key} = ${settings.values[key]}`);
+        this.settingsValues[key] = settings.values[key];
+      }
     });
-
-    this.settingsValuesNative = mobx.asMap();
   }
 
   onTextChange(label, text) {
@@ -70,17 +86,13 @@ export default class SettingsPage extends Component {
     let password = this.settingsValues.password;
 
     try {
-      this.settingsValues.message = "Connecting with the given host/password...";
-      await backendMetadataApi.testConnection(host, password);
-      this.settingsValues.message = "Connected";
+      this.saveMessage = "Connecting with the given host/password...";
+      await backendMetadataApiGetter.get().testConnection(host, password);
+      this.saveMessage = "Connected";
 
-      logger.info(`updating global settings`);
-
-      settings.host = host;
-      settings.password = password;
       logger.info(`saving settings`);
-      await settings.save();
-      await settingsNative.save(this.settingsValuesNative.toJS());
+      await settings.save(mobx.toJS(this.settingsValues));
+      await settingsNative.save(mobx.toJS(this.settingsValuesNative));
 
       logger.info(`upadting playlists`);
       await playlistsStore.updatePlaylists();
@@ -90,12 +102,13 @@ export default class SettingsPage extends Component {
 
       navigator.navigateToPlayer();
     } catch (error) {
-      this.settingsValues.message = `Failed: ${error}`;
+      this.saveMessage = `Failed: ${error}`;
+      logger.warn(`failed to save: ${error}`);
     }
   }
 
   render() {
-    let logger = loggerCreator(this.render.name, moduleLogger);
+    loggerCreator(this.render.name, moduleLogger);
 
     return (
       <View style={styles.container}>
@@ -113,12 +126,28 @@ export default class SettingsPage extends Component {
 
         <SettingsPageNative settingsValuesNative={this.settingsValuesNative} />
 
+        <SettingsSwitch
+          label={"Mock mode"}
+          value={this.settingsValues.isMock || false}
+          onValueChange={value => (this.settingsValues.isMock = value)}
+        />
+        <SettingsSwitchGroup style={styles.mockSwitchGroup} isDisabled={!this.settingsValues.isMock}>
+          <SettingsSwitch
+            label={"Play on startup"}
+            value={this.settingsValues.isMockStartPlaying || false}
+            onValueChange={value => (this.settingsValues.isMockStartPlaying = value)}
+          />
+          <SettingsSwitch
+            label={"Settings on startup"}
+            value={this.settingsValues.isMockStartSettings || false}
+            onValueChange={value => (this.settingsValues.isMockStartSettings = value)}
+          />
+        </SettingsSwitchGroup>
+
         <Button style={[styles.saveButton]} onPress={() => this.onSavePress()}>
           <ButtonText>Save</ButtonText>
         </Button>
-        <NormalText style={[styles.message]}>
-          {this.settingsValues.message}
-        </NormalText>
+        <NormalText style={[styles.message]}>{this.saveMessage}</NormalText>
       </View>
     );
   }

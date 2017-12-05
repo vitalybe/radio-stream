@@ -39,9 +39,16 @@ class Player {
 
     logger.info(`is player available?`);
     let isAvailable = await this.proxy.isPlayerAvailable();
-    if (isAvailable) {
+    let areSettingsLoaded = settings.isLoaded;
+    logger.info(`are settings loaded: ${areSettingsLoaded}`);
+    if (areSettingsLoaded && isAvailable) {
       logger.info(`available - updating settings`);
-      await this.proxy.updateSettings(settings.host, settings.user, settings.password, constants.MOCK_MODE);
+      await this.proxy.updateSettings(
+        settings.values.host,
+        settings.values.user,
+        settings.values.password,
+        settings.values.isMock
+      );
     } else {
       logger.info(`not available - retrying soon...`);
       await sleep(500);

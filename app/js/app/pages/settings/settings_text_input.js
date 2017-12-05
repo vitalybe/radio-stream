@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
 
     padding: 10,
-    marginBottom: 25,
+    marginBottom: 10,
   },
 });
 
@@ -33,9 +33,7 @@ export default class SettingsTextInput extends Component {
   render() {
     return (
       <View>
-        <NormalText style={[styles.label]}>
-          {this.props.label}
-        </NormalText>
+        <NormalText style={[styles.label]}>{this.props.label}</NormalText>
         <TextInput
           style={[styles.input]}
           value={this.props.value}

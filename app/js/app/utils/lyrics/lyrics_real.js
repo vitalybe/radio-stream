@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("Lyrics");
 
 import scrapeIt from "scrape-it";
-import { webSearch } from "app/utils/web_search/web_search";
+import { webSearchGetter } from "app/utils/web_search/web_search_getter";
 
 class Lyrics {
   async find(song) {
@@ -12,7 +12,7 @@ class Lyrics {
 
     const query = `site:genius.com ${song.artist} ${song.title}`;
     logger.info(`querying: ${query}`);
-    const href = await webSearch.firstHref(query);
+    const href = await webSearchGetter.get().firstHref(query);
     logger.info(`got href: ${href}`);
 
     if (href) {

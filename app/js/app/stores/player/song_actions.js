@@ -3,7 +3,7 @@ import loggerCreator from "app/utils/logger";
 const moduleLogger = loggerCreator("SongActions");
 
 import retries from "app/utils/retries";
-import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
+import { backendMetadataApiGetter } from "app/utils/backend_metadata_api/backend_metadata_api_getter";
 
 export default class SongActions {
   constructor(song) {
@@ -17,7 +17,7 @@ export default class SongActions {
     let logger = loggerCreator(this.changeRating.name, moduleLogger);
     logger.info(`start: ${newRating}`);
 
-    await retries.promiseRetry(() => backendMetadataApi.updateRating(this.song.id, newRating));
+    await retries.promiseRetry(() => backendMetadataApiGetter.get().updateRating(this.song.id, newRating));
     logger.info(`Success`);
     this.song.rating = newRating;
   }
@@ -26,7 +26,7 @@ export default class SongActions {
     let logger = loggerCreator("delete", moduleLogger);
 
     logger.debug(`start: ${this.song.toString()}`);
-    await retries.promiseRetry(() => backendMetadataApi.markAsDeleted(this.song.id));
+    await retries.promiseRetry(() => backendMetadataApiGetter.get().markAsDeleted(this.song.id));
     logger.debug(`complete: ${this.song.toString()}`);
   }
 }

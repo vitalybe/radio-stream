@@ -5,28 +5,50 @@ import { AsyncStorage } from "react-native";
 
 let DEFAULT_USER = "radio";
 
-let PERSISTENCE_HOST = "host";
-let PERSISTENCE_PASSWORD = "password";
-
 class Settings {
-  constructor() {
-    let logger = loggerCreator(this.constructor.name, moduleLogger);
+  isLoaded = false;
 
-    this.host = null;
-    this.user = DEFAULT_USER;
-    this.password = null;
+  values = {
+    host: null,
+    user: null,
+    password: null,
+    isMock: null,
+    isMockStartPlaying: null,
+    isMockStartSettings: null,
+  };
+
+  convertValueToBool(key) {
+    // noinspection EqualityComparisonWithCoercionJS
+    this.values[key] = this.values[key] == "true";
   }
 
   async load() {
     let logger = loggerCreator("load", moduleLogger);
 
-    this.host = (await AsyncStorage.getItem(PERSISTENCE_HOST)) || "";
-    this.password = (await AsyncStorage.getItem(PERSISTENCE_PASSWORD)) || "";
+    for (key of Object.keys(this.values)) {
+      this.values[key] = (await AsyncStorage.getItem(key)) || "";
+      logger.info(`loaded setting ${key} = ${this.values[key]}`);
+    }
+    this.values["user"] = DEFAULT_USER;
+    this.convertValueToBool("isMock");
+    this.convertValueToBool("isMockStartPlaying");
+    this.convertValueToBool("isMockStartSettings");
+    logger.info(`loaded settings: ${JSON.stringify(this.values)}`);
+
+    this.isLoaded = true;
   }
 
-  async save() {
-    await AsyncStorage.setItem(PERSISTENCE_HOST, this.host);
-    await AsyncStorage.setItem(PERSISTENCE_PASSWORD, this.password);
+  async save(changedValues) {
+    const logger = loggerCreator("save", moduleLogger);
+
+    for (key of Object.keys(this.values)) {
+      if (key in changedValues) {
+        this.values[key] = changedValues[key];
+      }
+
+      logger.info(`saving setting ${key} = ${this.values[key]}`);
+      await AsyncStorage.setItem(key, this.values[key].toString());
+    }
   }
 }
 

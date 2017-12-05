@@ -44,5 +44,5 @@ export default class RoundedTextInput extends Component {
 
 TextInput.propTypes = {
   value: PropTypes.string.isRequired,
-  onChangeText: PropTypes.func.isRequired,
+  onChangeText: PropTypes.func,
 };

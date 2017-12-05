@@ -6,7 +6,7 @@ import { Platform, StyleSheet, View } from "react-native";
 import { observer } from "mobx-react";
 
 import { masterStore } from "app/stores/master_store";
-
+import settings from "app/utils/settings/settings";
 import { colors } from "app/styles/styles";
 import PlayerContextMenu from "./player_context_menu";
 import { player } from "app/stores/player/player";
@@ -71,10 +71,13 @@ const styles = StyleSheet.create({
 export default class PlayerPage extends Component {
   async componentWillMount() {
     loggerCreator("componentWillMount", moduleLogger);
-    // Mock: Starts playing automatically
-    // await player.changePlaylist("mock");
-    // masterStore.closeSidebars();
-    // player.play();
+
+    // MOCK: Starts playing automatically
+    if (settings.values.isMock && settings.values.isMockStartPlaying) {
+      await player.changePlaylist("mock");
+      masterStore.closeSidebars();
+      player.play();
+    }
   }
 
   componentDidMount() {

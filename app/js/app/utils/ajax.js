@@ -33,9 +33,9 @@ export default class Ajax {
     return Promise.resolve()
       .then(() => fetch(url, config))
       .then(function(response) {
-        if (response.message < 200 || response.message >= 300) {
-          logger.warn(`received network error status: ${response.message}`);
-          throw new NetworkError(`Received status ${response.message} from the server`);
+        if (response.status < 200 || response.status >= 300) {
+          logger.warn(`received network error status: ${response.status}`);
+          throw new NetworkError(`Received status ${response.status} from the server`);
         }
 
         return response;

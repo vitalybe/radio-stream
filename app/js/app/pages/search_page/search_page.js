@@ -4,7 +4,7 @@ var moduleLogger = loggerCreator("SearchPage");
 
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
+import { backendMetadataApiGetter } from "app/utils/backend_metadata_api/backend_metadata_api_getter";
 import { playlistsStore } from "app/stores/playlists_store";
 import { navigator } from "app/stores/navigator";
 import { player } from "app/stores/player/player";
@@ -43,7 +43,7 @@ export default class SearchPage extends Component {
 
     this.setState({ saving: true });
     try {
-      await backendMetadataApi.savePlaylist(playlistName, query);
+      await backendMetadataApiGetter.get().savePlaylist(playlistName, query);
       await playlistsStore.updatePlaylists();
 
       await player.changePlaylist(playlistName);
@@ -70,7 +70,7 @@ export default class SearchPage extends Component {
     logger.info(`deleting: ${playlistName}`);
 
     this.setState({ saving: true });
-    await backendMetadataApi.deletePlaylist(playlistName);
+    await backendMetadataApiGetter.get().deletePlaylist(playlistName);
     await playlistsStore.updatePlaylists();
 
     masterStore.isNavigationSidebarOpen = true;

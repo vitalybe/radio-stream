@@ -10,7 +10,7 @@ import { autorun } from "mobx";
 import BigText from "app/shared_components/text/big_text";
 import contentStyle from "./content_style";
 import SmallText from "app/shared_components/text/small_text";
-import { lyrics } from "app/utils/lyrics/lyrics";
+import { lyricsGetter } from "app/utils/lyrics/lyrics_getter";
 
 const styles = StyleSheet.create({
   containerView: {
@@ -71,7 +71,7 @@ export default class LyricsContent extends Component {
     let displayedLyrics = "No lyrics were found";
 
     try {
-      let result = await lyrics.find(song);
+      let result = await lyricsGetter.get().find(song);
       if (result) {
         logger.info(`got lyrics`);
         displayedLyrics = result;
