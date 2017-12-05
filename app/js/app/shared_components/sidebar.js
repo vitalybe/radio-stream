@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     top: 54,
     bottom: -1,
     flexDirection: "row",
+    zIndex: 10,
   },
   scrub: {
     width: SCRUB_WIDTH,

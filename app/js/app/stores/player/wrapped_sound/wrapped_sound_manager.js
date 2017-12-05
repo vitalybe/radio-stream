@@ -5,7 +5,6 @@ const logger = loggerCreator(__filename);
 import { soundManager } from "soundmanager2";
 import WrappedSound from "./wrapped_sound.js";
 import settings from "app/utils/settings/settings";
-import constants from "app/utils/constants";
 
 function soundId(songId) {
   return "i" + songId.toString();
@@ -54,7 +53,9 @@ export function loadSound(song, options) {
   } else {
     flogger.debug(`Starting createSound for song...`);
     loadingPromise = new Promise(function(resolve, reject) {
-      let soundUrl = !constants.MOCK_MODE ? `http://${settings.host}/radio-stream/music/${song.path}` : song.path;
+      let soundUrl = !settings.values.isMock
+        ? `http://${settings.values.host}/radio-stream/music/${song.path}`
+        : song.path;
       let sound = soundManager.createSound(
         Object.assign(
           {

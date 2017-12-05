@@ -6,7 +6,7 @@ import { extendObservable } from "mobx";
 import assert from "app/utils/assert";
 import retries from "app/utils/retries";
 
-import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
+import { backendMetadataApiGetter } from "app/utils/backend_metadata_api/backend_metadata_api_getter";
 import * as backendLastFm from "app/utils/backend_lastfm_api";
 import * as wrappedSoundManager from "app/stores/player/wrapped_sound/wrapped_sound_manager";
 import SongActions from "app/stores/player/song_actions";
@@ -144,7 +144,7 @@ export default class Song {
     logger.debug(`start: ${this.toString()}`);
     if (!this.markingAsPlayedPromise) {
       this.markingAsPlayedPromise = retries
-        .promiseRetry(() => backendMetadataApi.updateLastPlayed(this.id))
+        .promiseRetry(() => backendMetadataApiGetter.get().updateLastPlayed(this.id))
         .then(() => {
           logger.debug(`complete: ${this.toString()}`);
 

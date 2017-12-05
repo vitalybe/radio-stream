@@ -11,7 +11,7 @@ import RectangleButton from "app/shared_components/rectangle_button";
 import ButtonText from "app/shared_components/text/button_text";
 import { colors } from "app/styles/styles";
 import SongsGrid from "app/shared_components/songs_grid/songs_grid";
-import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
+import { backendMetadataApiGetter } from "app/utils/backend_metadata_api/backend_metadata_api_getter";
 import constants from "app/utils/constants";
 import Keyboard from "app/utils/keyboard/keyboard";
 
@@ -108,7 +108,7 @@ export default class SearchPart extends Component {
 
     this.setState({ isSearching: true });
     logger.info(`searching for: ${query}`);
-    let songs = await backendMetadataApi.querySongs(query);
+    let songs = await backendMetadataApiGetter.get().querySongs(query);
     logger.info(`got results: ${songs.length}. limiting amount for performance to: ${MAX_RESULTS}`);
     this.setState({ songs: songs.slice(0, MAX_RESULTS), isSearching: false });
   };
@@ -149,25 +149,27 @@ export default class SearchPart extends Component {
           </RectangleButton>
         </View>
         <ScrollView horizontal={false} style={styles.searchResult}>
-          {this.state.isSearching
-            ? <ActivityIndicator size="large" />
-            : <SongsGrid style={styles.songGrid} songs={this.state.songs} />}
+          {this.state.isSearching ? (
+            <ActivityIndicator size="large" />
+          ) : (
+            <SongsGrid style={styles.songGrid} songs={this.state.songs} />
+          )}
         </ScrollView>
         <View style={styles.buttons}>
-          {this.props.playlistName
-            ? <RectangleButton style={[styles.button, styles.firstButton]} onPress={this.onDeletePlaylist}>
-                <ButtonText>Delete playlist</ButtonText>
-              </RectangleButton>
-            : <RectangleButton
-                style={[styles.button, styles.firstButton]}
-                disabled={this.state.songs.length < 1}
-                onPress={this.onPlayResults}>
-                <ButtonText>Play results</ButtonText>
-              </RectangleButton>}
+          {this.props.playlistName ? (
+            <RectangleButton style={[styles.button, styles.firstButton]} onPress={this.onDeletePlaylist}>
+              <ButtonText>Delete playlist</ButtonText>
+            </RectangleButton>
+          ) : (
+            <RectangleButton
+              style={[styles.button, styles.firstButton]}
+              disabled={this.state.songs.length < 1}
+              onPress={this.onPlayResults}>
+              <ButtonText>Play results</ButtonText>
+            </RectangleButton>
+          )}
           <RectangleButton style={styles.button} onPress={this.onSaveAsPlaylist} disabled={this.state.songs.length < 1}>
-            <ButtonText>
-              {this.props.playlistName ? "Update playlist" : "Save as playlist"}
-            </ButtonText>
+            <ButtonText>{this.props.playlistName ? "Update playlist" : "Save as playlist"}</ButtonText>
           </RectangleButton>
         </View>
       </View>

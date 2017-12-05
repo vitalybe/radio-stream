@@ -12,7 +12,7 @@ import ButtonText from "app/shared_components/text/button_text";
 import SettingsPageNative from "./settings_page_native";
 import settings from "app/utils/settings/settings";
 import settingsNative from "app/utils/settings/settings_native";
-import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
+import { backendMetadataApiGetter } from "app/utils/backend_metadata_api/backend_metadata_api_getter";
 import { navigator } from "app/stores/navigator.js";
 import SettingsTextInput from "./settings_text_input";
 import { playlistsStore } from "app/stores/playlists_store";
@@ -87,7 +87,7 @@ export default class SettingsPage extends Component {
 
     try {
       this.saveMessage = "Connecting with the given host/password...";
-      await backendMetadataApi.testConnection(host, password);
+      await backendMetadataApiGetter.get().testConnection(host, password);
       this.saveMessage = "Connected";
 
       logger.info(`saving settings`);

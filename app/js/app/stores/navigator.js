@@ -8,9 +8,7 @@ import { routes } from "app/utils/routes";
 class Navigator {
   @observable activeRoute = null;
 
-  constructor() {
-    this.navigateToSettings();
-  }
+  constructor() {}
 
   _navigateTo(address, params) {
     let logger = loggerCreator("_navigateTo", moduleLogger);

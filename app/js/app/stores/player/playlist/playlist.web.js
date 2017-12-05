@@ -4,7 +4,7 @@ const moduleLogger = loggerCreator("playlist.web");
 import { computed, observable } from "mobx";
 
 import Song from "app/stores/player/song/song.web";
-import { backendMetadataApi } from "app/utils/backend_metadata_api/backend_metadata_api";
+import { backendMetadataApiGetter } from "app/utils/backend_metadata_api/backend_metadata_api_getter";
 import constants from "app/utils/constants";
 
 export default class Playlist {
@@ -80,7 +80,7 @@ export default class Playlist {
     } else {
       logger.info(`reloading songs`);
 
-      let songsData = await backendMetadataApi.playlistSongs(this.name);
+      let songsData = await backendMetadataApiGetter.get().playlistSongs(this.name);
       logger.info(`fetched songs: ${songsData.length}`);
       // the backend might return songs that are already in the playlist, e.g, if we skipped them before marking them
       // as played. in this case we must filter them out to prevent duplicates in the playlist

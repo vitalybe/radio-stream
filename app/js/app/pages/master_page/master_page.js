@@ -61,18 +61,29 @@ export default class MasterPage extends Component {
     await settingsNative.load();
 
     logger.info(`is host configured?`);
-    if (settings.host) {
+    if (settings.values.host) {
+      logger.info(`navigating to player`);
+      navigator.navigateToPlayer();
+
       logger.info(`updated status. playing? ${player.isPlaying}`);
       if (player.isPlaying) {
-        logger.info(`player currently playing - navigating to player`);
-        navigator.navigateToPlayer();
+        logger.info(`player currently playing - closing sidebars`);
+        masterStore.closeSidebars();
       }
+
       logger.info(`loading playlists`);
       playlistsStore.updatePlaylists().then(() => {
         logger.info(`finishing loading playlists`);
       });
     } else {
       logger.info(`host not found in settings - showing settings page`);
+      navigator.navigateToSettings();
+      masterStore.closeSidebars();
+    }
+
+    // MOCK
+    if (settings.values.isMock && settings.values.isMockStartSettings) {
+      logger.info(`MOCK MODE - Navigating to settings`);
       navigator.navigateToSettings();
       masterStore.closeSidebars();
     }
