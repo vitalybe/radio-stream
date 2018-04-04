@@ -1,0 +1,5 @@
+launch_strategy: tab
+layout:
+  -
+    - `realpath ./node_modules/react-native/packager/launchPackager.command`
+    - yarn run android

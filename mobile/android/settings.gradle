@@ -1,5 +1,0 @@
-rootProject.name = 'RadioStream'
-
-include ':app'
-include ':react-native-testfairy'
-project(':react-native-testfairy').projectDir = new File(settingsDir, '../node_modules/react-native-testfairy/android')

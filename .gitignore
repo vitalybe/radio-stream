@@ -4,3 +4,4 @@ server/output.log
 .idea/
 *.ipynb
 npm-debug.log
+app/node_modules_dev

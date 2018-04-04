@@ -14,7 +14,7 @@ RUN apk add nginx=1.8.1-r1 && \
     chown -R nginx:www-data /var/lib/nginx
 
 # Various useful linux utilities
-RUN apk add util-linux ffmpeg bash openssl coreutils
+RUN apk add util-linux ffmpeg bash openssl coreutils vim
 
 # Useful pip utilities
 RUN pip install youtube_dl

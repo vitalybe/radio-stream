@@ -1,0 +1,43 @@
+@startuml
+
+package "Shared react-native code" {
+
+package "Android application" as android {
+    [React-native based application]
+    [Platform-specific parts in Java/Android\n (e.g background music player)]
+}
+
+package "Desktop application" as desktop {
+    [React-native-web based application, \nrunning on electron]
+    [Platform-specific parts using Electron functionality\n (e.g keyboard media keys)]
+}
+
+}
+
+node "Server" {
+    [Launcher] as cli
+    interface "HTTP" as exposedHttp
+
+    frame "Docker container" as docker {
+        [nginx]
+        interface "HTTP" as unexposedHttp
+        [beets]
+        interface "File storage" as storage
+        [Music files] as music
+    }
+}
+
+cli .. docker: Launch,\n add music,\n manage
+
+desktop--exposedHttp
+android--exposedHttp
+
+exposedHttp--nginx
+nginx--unexposedHttp: : Song/Playlist metadata
+unexposedHttp--beets
+
+nginx--storage: Stream songs
+storage--music
+
+
+@enduml

@@ -20,11 +20,11 @@ function prevent_text() {
 
 function web_hook() {
 	echo "Running web pre-commit hook"
-	prevent_text web "debugger;"
-	prevent_text web/test \.only\(
+	prevent_text app/js/app "debugger;"
+	prevent_text app/js/test \.only\(
 
 	echo "Running tests..."
-	node web/node_modules/mocha/bin/_mocha --compilers js:babel-register --ui bdd --recursive web/test --require babel-polyfill
+        (cd app; npm run web-test)
 	if [[ $? = 0 ]]
 	then
 	    echo "> Tests passed"
@@ -38,7 +38,7 @@ function android_hook() {
 	echo "Running web pre-commit hook"
 	
 	echo "Running tests..."
-	cd mobile/android
+	cd app/android
 	./gradlew testDebug
 	if [[ $? = 0 ]]
 	then
@@ -46,6 +46,7 @@ function android_hook() {
 	else
 	    echo "> Tests DID NOT pass"
 	    exit 1
+
 	fi
 
 }
@@ -61,13 +62,13 @@ function any_changes_in_folder() {
 }
 
 
-if [ $(any_changes_in_folder ^web/) ]; then
-	echo "Found changes in web"
+if [ $(any_changes_in_folder ^app/js) ]; then
+	echo "Found changes in app/js"
 	web_hook
 fi
 
-if [ $(any_changes_in_folder ^mobile/android) ]; then
-	echo "Found changes in mobile/android"
+if [ $(any_changes_in_folder ^app/android) ]; then
+	echo "Found changes in app/android"
 	android_hook
 fi
 
@@ -87,7 +88,7 @@ has_hook_script () {
   [ -f package.json ] && cat package.json | grep -q "\"$1\"[[:space:]]*:"
 }
 
-cd mobile
+cd app
 
 has_hook_script precommit || exit 0
 
