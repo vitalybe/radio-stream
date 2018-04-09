@@ -24,13 +24,7 @@ Development
 
 Connect to a server running radio-stream backend and run in development mode by adding `-d` parameter to regular cli running, like so:
 
-`./cli/bin/server/start -d sh`
-
-Then once in the container shell, write:
-
-`/radio-stream/beets/beet radio -d`
-
-You can now see the error stack in case of errors and modify beets code in `/radio-stream/beets/beetsplug/radio_stream/` (wihtout restarting the server)
+`./cli/bin/server/start -d /radio-stream/beets/beet radio -d`
 
 Now you can modify beet files on the server and it will automatically reload. To work in IDE mount the remote server locally.
 

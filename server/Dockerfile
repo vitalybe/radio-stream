@@ -10,7 +10,7 @@ RUN echo "http://dl-4.alpinelinux.org/alpine/v3.3/main" >> /etc/apk/repositories
     apk update
 
 # Instal NGINX
-RUN apk add nginx=1.8.1-r1 && \
+RUN apk add nginx && \
     chown -R nginx:www-data /var/lib/nginx
 
 # Various useful linux utilities
@@ -46,6 +46,7 @@ RUN ln -s -f /radio-stream/beets/beet /usr/local/bin/beet
 # Nginx
 #######
 
+RUN mkdir -p /run/nginx
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Auto execution
