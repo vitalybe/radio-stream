@@ -1,4 +1,4 @@
-FROM python:2.7-alpine
+FROM jboesl/docker-nginx-headers-more
 
 MAINTAINER Vitaly Belman <vitalyb+dockerfile@gmail.com>
 
@@ -10,8 +10,7 @@ RUN echo "http://dl-4.alpinelinux.org/alpine/v3.3/main" >> /etc/apk/repositories
     apk update
 
 # Instal NGINX
-RUN apk add nginx nginx-mod-http-headers-more && \
-    chown -R nginx:www-data /var/lib/nginx
+# DONE
 
 # Various useful linux utilities
 RUN apk add util-linux ffmpeg bash openssl coreutils vim
