@@ -10,7 +10,7 @@ RUN echo "http://dl-4.alpinelinux.org/alpine/v3.3/main" >> /etc/apk/repositories
     apk update
 
 # Instal NGINX
-RUN apk add nginx && \
+RUN apk add nginx nginx-mod-http-headers-more && \
     chown -R nginx:www-data /var/lib/nginx
 
 # Various useful linux utilities
