@@ -33,11 +33,15 @@ Mounting
 
 To mount the server folder in OSX do:
 
+```
 brew cask install osxfuse
 brew install sshfs
 mkdir /tmp/droplet-mnt
-sudo sshfs -o allow_other,defer_permissions,IdentityFile=~/.ssh/id_rsa root@138.68.72.243:/ /tmp/droplet-mnt
+sudo sshfs -o allow_other,defer_permissions,IdentityFile=~/.ssh/id_rsa root@138.68.72.243:/root/radio-stream/server /tmp/droplet-mnt-radio-stream
+```
 
 Now you can use local IDE to open the folder (note - It will be a bit slow)
 
+Once done, you can unmount like so:
 
+`umount /tmp/droplet-mnt-radio-stream`
