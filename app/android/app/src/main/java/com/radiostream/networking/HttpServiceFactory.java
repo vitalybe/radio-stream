@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @DebugLog
 public class HttpServiceFactory {
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    private static OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
@@ -28,7 +28,7 @@ public class HttpServiceFactory {
     static {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-        httpClient.addInterceptor(logging);
+        httpClientBuilder.addInterceptor(logging);
     }
 
     public static <S> S createService(Class<S> serviceClass, String baseUrl, String username, String password) {
@@ -37,7 +37,7 @@ public class HttpServiceFactory {
             final String basic =
                     "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
-            httpClient.addInterceptor(new Interceptor() {
+            httpClientBuilder.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Interceptor.Chain chain) throws IOException {
                     Request original = chain.request();
@@ -54,7 +54,7 @@ public class HttpServiceFactory {
         }
 
 
-        OkHttpClient client = httpClient.build();
+        OkHttpClient client = httpClientBuilder.build();
         Retrofit retrofit = builder.baseUrl(baseUrl).client(client).build();
         return retrofit.create(serviceClass);
     }
