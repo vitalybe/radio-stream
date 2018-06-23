@@ -3,6 +3,7 @@ package com.radiostream.networking;
 import android.util.Base64;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import hugo.weaving.DebugLog;
 import okhttp3.Interceptor;
@@ -54,7 +55,10 @@ public class HttpServiceFactory {
         }
 
 
+        httpClientBuilder.readTimeout(180, TimeUnit.SECONDS);
+        httpClientBuilder.connectTimeout(180, TimeUnit.SECONDS);
         OkHttpClient client = httpClientBuilder.build();
+
         Retrofit retrofit = builder.baseUrl(baseUrl).client(client).build();
         return retrofit.create(serviceClass);
     }
